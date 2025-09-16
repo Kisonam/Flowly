@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Навігація -->
+  <data name="Dashboard" xml:space="preserve">
+    <value>Дашборд</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Нотатки</value>
+  </data>
+  <data name="Todos" xml:space="preserve">
+    <value>Список задач</value>
+  </data>
+  <data name="Finance" xml:space="preserve">
+    <value>Фінанси</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профіль</value>
+  </data>
+  
+  <!-- Загальні UI елементи -->
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Створити</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Вхід</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Вихід</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Реєстрація</value>
+  </data>
+  
+  <!-- Форми -->
+  <data name="Title" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Сума</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="DueDate" xml:space="preserve">
+    <value>Термін виконання</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  
+  <!-- Повідомлення -->
+  <data name="Success" xml:space="preserve">
+    <value>Успішно</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Попередження</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити цей елемент?</value>
+  </data>
+  
+  <!-- Фінанси -->
+  <data name="Income" xml:space="preserve">
+    <value>Дохід</value>
+  </data>
+  <data name="Expense" xml:space="preserve">
+    <value>Витрата</value>
+  </data>
+  <data name="Balance" xml:space="preserve">
+    <value>Баланс</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Разом</value>
+  </data>
+  
+  <!-- Перемикач мови -->
+  <data name="Language" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Англійська</value>
+  </data>
+  <data name="Ukrainian" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+</root>
