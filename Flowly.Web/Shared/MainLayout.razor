@@ -1,0 +1,37 @@
+﻿@* Головний лейаут *@
+@namespace Flowly.Web          
+@* фіксуємо простір імен, щоб тип був точно Flowly.Web.MainLayout *@
+@inherits LayoutComponentBase
+@using Flowly.Web.Shared.Components
+
+<link rel="stylesheet" href="/css/auth.css" />
+
+<header class="navbar">
+    <a href="/" class="logo">Flowly</a>
+    <nav class="links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/notes">Notes</a>
+        <a href="/todos">Todos</a>
+        <a href="/finance">Finance</a>
+        <a href="/profile">Profile</a>
+        <a href="/auth/logout">Logout</a>
+    </nav>
+    <div class="right">
+        <CultureSwitch />
+    </div>
+</header>
+
+<main class="content">
+    @Body
+</main>
+
+<style>
+.navbar{display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.75rem 1rem;background:var(--card);border-bottom:1px solid var(--card-border)}
+.logo{font-weight:700;color:var(--fg);text-decoration:none}
+.links{display:flex;gap:.8rem;flex-wrap:wrap}
+.links a{color:var(--fg);text-decoration:none}
+.links a:hover{text-decoration:underline}
+.right{display:flex;align-items:center;gap:.5rem}
+.content{padding:1rem;min-height:calc(100vh - 56px)}
+@@media (max-width: 600px){ .links{display:none} }
+</style>

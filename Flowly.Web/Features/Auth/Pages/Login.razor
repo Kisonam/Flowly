@@ -1,22 +1,35 @@
 @page "/auth/login"
 
-<h3>Login</h3>
+<link rel="stylesheet" href="/css/auth.css" />
 
-<form id="loginForm" onsubmit="return loginSubmit(event)" @formname="login-html">
-  <div style="display:grid;gap:.5rem;max-width:16rem">
-    <input id="lemail"    name="email"    placeholder="Email"      required />
-    <input id="lpassword" name="password" placeholder="Password"   type="password" required />
-    <label style="font-size:.9rem">
-      <input id="remember" type="checkbox" /> Remember me
-    </label>
-    <button type="submit">Login</button>
-    <div id="loginMsg" style="color:#b00"></div>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-title">Вхід</div>
+      <div class="auth-alt">
+        Немає акаунта? <a href="/auth/register">Зареєструватись</a>
+      </div>
+    </div>
+
+    <form id="loginForm" onsubmit="return loginSubmit(event)" @formname="login-html">
+      <div class="form-grid">
+        <input id="lemail" class="input" name="email" placeholder="Email" required />
+        <input id="lpassword" class="input" name="password" placeholder="Пароль" type="password" required />
+        <label style="display:flex;align-items:center;gap:.5rem;">
+          <input id="remember" type="checkbox" /> <span class="note">Запам’ятати мене</span>
+        </label>
+        <button type="submit" class="btn btn-primary">Увійти</button>
+        <div id="loginMsg" class="error" aria-live="polite"></div>
+      </div>
+    </form>
   </div>
-</form>
+</div>
 
 <script>
 async function loginSubmit(e) {
   e.preventDefault();
+  const msg = document.getElementById('loginMsg');
+  msg.textContent = '';
 
   const body = {
     email: document.getElementById('lemail').value.trim(),
@@ -28,17 +41,18 @@ async function loginSubmit(e) {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include'
-    , body: JSON.stringify(body) });
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
 
     if (!res.ok) {
-      document.getElementById('loginMsg').textContent = 'Invalid credentials';
+      msg.textContent = 'Invalid credentials';
       return false;
     }
     window.location.href = '/dashboard';
     return false;
   } catch {
-    document.getElementById('loginMsg').textContent = 'Network error';
+    msg.textContent = 'Network error';
     return false;
   }
 }

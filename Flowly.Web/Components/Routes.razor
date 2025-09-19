@@ -1,6 +1,12 @@
 ﻿<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        <!-- Важливо: перед routeData, і повністю кваліфікований тип лейаута -->
+        <RouteView RouteData="@routeData" DefaultLayout="typeof(Flowly.Web.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(Flowly.Web.MainLayout)">
+            <p class="p-4">404 — сторінку не знайдено.</p>
+        </LayoutView>
+    </NotFound>
 </Router>

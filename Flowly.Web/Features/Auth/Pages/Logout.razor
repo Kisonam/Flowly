@@ -1,0 +1,31 @@
+@page "/auth/logout"
+
+<link rel="stylesheet" href="/css/auth.css" />
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-title">Вихід із акаунта</div>
+      <div class="auth-alt"><a href="/dashboard">Назад</a></div>
+    </div>
+
+    <div class="form-grid">
+      <button class="btn btn-primary" onclick="return doLogout()">Вийти</button>
+      <div id="logoutMsg" class="note"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function doLogout() {
+  const el = document.getElementById('logoutMsg');
+  try {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    el.textContent = 'Вихід виконано…';
+    window.location.href = '/auth/login';
+  } catch {
+    el.textContent = 'Не вдалося виконати вихід';
+  }
+  return false;
+}
+</script>
