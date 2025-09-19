@@ -5,7 +5,9 @@ using Flowly.Infrastructure.Identity;
 using Flowly.Web.Components;
 using Flowly.Web.Features.Auth; // ← DTO тут
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,21 +54,28 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddAntiforgery();
 
-// Локалізація
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+// Localization
+builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var supported = new[] { "uk", "en" }.Select(c => new CultureInfo(c)).ToArray();
-    options.SupportedCultures = supported;
-    options.SupportedUICultures = supported;
-    options.SetDefaultCulture("uk");
+    var cultures = new[] { new CultureInfo("en"), new CultureInfo("pl") };
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = cultures;
+    options.SupportedUICultures = cultures;
+
+    // cookie-провайдер першим у ланцюжку (щоб брав культуру саме з куки)
+    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
 });
 
 var app = builder.Build();
-// === Автоміграція БД на старті (створює таблиці Identity + наші) ===
+app.UseStaticFiles();
+var loc = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(loc.Value);
+
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<Flowly.Infrastructure.Data.AppDbContext>();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate(); // якщо БД/таблиць нема — створить і накотить всі міграції
 }
 if (!app.Environment.IsDevelopment())
@@ -74,7 +83,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
 }
 
-app.UseStaticFiles();
+
 
 app.UseAuthentication();
 app.UseAuthorization();

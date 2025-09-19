@@ -1,24 +1,28 @@
 @page "/auth/login"
 
+@using Microsoft.Extensions.Localization
+@using Flowly.Web.Resources
+@inject IStringLocalizer<SharedResources> T
+
 <link rel="stylesheet" href="/css/auth.css" />
 
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="auth-header">
-      <div class="auth-title">Вхід</div>
+      <div class="auth-title">@T["Auth_Login_Title"]</div>
       <div class="auth-alt">
-        Немає акаунта? <a href="/auth/register">Зареєструватись</a>
+        @T["Auth_NoAccount"] <a href="/auth/register">@T["Auth_GoToRegister"]</a>
       </div>
     </div>
 
     <form id="loginForm" onsubmit="return loginSubmit(event)" @formname="login-html">
       <div class="form-grid">
-        <input id="lemail" class="input" name="email" placeholder="Email" required />
-        <input id="lpassword" class="input" name="password" placeholder="Пароль" type="password" required />
+        <input id="lemail"    class="input" name="email"     placeholder="@T["Auth_Email"]"    required />
+        <input id="lpassword" class="input" name="password"  placeholder="@T["Auth_Password"]" type="password" required />
         <label style="display:flex;align-items:center;gap:.5rem;">
-          <input id="remember" type="checkbox" /> <span class="note">Запам’ятати мене</span>
+          <input id="remember" type="checkbox" /> <span class="note">@T["Auth_RememberMe"]</span>
         </label>
-        <button type="submit" class="btn btn-primary">Увійти</button>
+        <button type="submit" class="btn btn-primary">@T["Auth_SignIn"]</button>
         <div id="loginMsg" class="error" aria-live="polite"></div>
       </div>
     </form>

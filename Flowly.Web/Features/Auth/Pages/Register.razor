@@ -1,30 +1,32 @@
 @page "/auth/register"
 
+@using Microsoft.Extensions.Localization
+@using Flowly.Web.Resources
+@inject IStringLocalizer<SharedResources> T
+
 <link rel="stylesheet" href="/css/auth.css" />
 
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="auth-header">
-      <div class="auth-title">Створити акаунт</div>
+      <div class="auth-title">@T["Auth_Register_Title"]</div>
       <div class="auth-alt">
-        Маєш акаунт? <a href="/auth/login">Увійти</a>
+        @T["Auth_HaveAccount"] <a href="/auth/login">@T["Auth_GoToLogin"]</a>
       </div>
     </div>
 
     <form id="regForm" onsubmit="return registerSubmit(event)" @formname="reg-html">
       <div class="form-grid">
-        <input id="email" class="input" name="email" placeholder="Email" required />
-        <input id="password" class="input" name="password" placeholder="Пароль" type="password" required />
-        <input id="first" class="input" name="first" placeholder="Ім’я" required />
-        <input id="last" class="input" name="last" placeholder="Прізвище" required />
-        <button type="submit" class="btn btn-primary">Створити</button>
-        <div class="note">Пароль у dev можна спростити; у проді підкрутимо політику.</div>
+        <input id="email"    class="input" name="email"     placeholder="@T["Auth_Email"]"     required />
+        <input id="password" class="input" name="password"  placeholder="@T["Auth_Password"]"  type="password" required />
+        <input id="first"    class="input" name="first"     placeholder="@T["Auth_FirstName"]" required />
+        <input id="last"     class="input" name="last"      placeholder="@T["Auth_LastName"]"  required />
+        <button type="submit" class="btn btn-primary">@T["Auth_Create"]</button>
         <div id="regMsg" class="error" aria-live="polite"></div>
       </div>
     </form>
   </div>
 </div>
-
 <script>
 async function registerSubmit(e) {
   e.preventDefault();

@@ -1,24 +1,23 @@
-﻿@* Головний лейаут *@
-@namespace Flowly.Web          
-@* фіксуємо простір імен, щоб тип був точно Flowly.Web.MainLayout *@
+﻿@namespace Flowly.Web
 @inherits LayoutComponentBase
-@using Flowly.Web.Shared.Components
+@using Flowly.Web.Shared
+@using Microsoft.Extensions.Localization
+@using Flowly.Web.Resources
+@inject IStringLocalizer<SharedResources> T
 
 <link rel="stylesheet" href="/css/auth.css" />
 
 <header class="navbar">
     <a href="/" class="logo">Flowly</a>
     <nav class="links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/notes">Notes</a>
-        <a href="/todos">Todos</a>
-        <a href="/finance">Finance</a>
-        <a href="/profile">Profile</a>
-        <a href="/auth/logout">Logout</a>
+        <a href="/dashboard">@T["Nav_Dashboard"]</a>
+        <a href="/notes">@T["Nav_Notes"]</a>
+        <a href="/todos">@T["Nav_Todos"]</a>
+        <a href="/finance">@T["Nav_Finance"]</a>
+        <a href="/profile">@T["Nav_Profile"]</a>
+        <a href="/auth/logout">@T["Nav_Logout"]</a>
     </nav>
-    <div class="right">
-        <CultureSwitch />
-    </div>
+    <div class="right"><CultureSwitch /></div>
 </header>
 
 <main class="content">

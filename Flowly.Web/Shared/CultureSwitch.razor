@@ -1,0 +1,37 @@
+@inject IHttpContextAccessor HttpAccessor
+@inject NavigationManager NavigationManager
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization
+
+<select class="border rounded px-2 py-1 text-sm" @bind="currentCulture" @onchange="OnChange">
+    <option value="en">English</option>
+    <option value="pl">Polski</option>
+</select>
+
+@code {
+    private string currentCulture =
+    CultureInfo.CurrentUICulture.TwoLetterISOLanguageName is "pl" ? "pl" : "en"; // дефолт en
+
+    void OnChange(ChangeEventArgs e)
+    {
+        var culture = (e.Value?.ToString() == "pl") ? "pl" : "en";
+        var ctx = HttpAccessor.HttpContext;
+        if (ctx is not null)
+        {
+            ctx.Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName, // ".AspNetCore.Culture"
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddYears(1),
+                IsEssential = true,
+                Path = "/" // щоб кука читалась на всіх шляхах
+            });
+        }
+
+        currentCulture = culture;
+
+        // повне перезавантаження сторінки — щоб сервер відрендерив із новою культурою
+        NavigationManager.NavigateTo(new Uri(NavigationManager.Uri).GetLeftPart(UriPartial.Path), forceLoad: true);
+    }
+}
