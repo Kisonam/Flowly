@@ -3,11 +3,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Flowly.Contracts\Flowly.Contracts.csproj" />
     <ProjectReference Include="..\Flowly.Application\Flowly.Application.csproj" />
+    <ProjectReference Include="..\Flowly.Infrastructure\Flowly.Infrastructure.csproj" />
+    
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.42.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
   </ItemGroup>
 

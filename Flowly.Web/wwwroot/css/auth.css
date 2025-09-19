@@ -1,0 +1,122 @@
+:root {
+  --bg: #0b0c10;
+  --card: #111218;
+  --card-border: #1e2130;
+  --fg: #e7e7ea;
+  --muted: #9aa0a6;
+  --accent: #5b8cff;
+  --accent-press: #4a73d6;
+  --danger: #e85d75;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f7fb;
+    --card: #ffffff;
+    --card-border: #e4e6ee;
+    --fg: #1f2430;
+    --muted: #616977;
+    --accent: #3d6bf6;
+    --accent-press: #2e56c8;
+    --danger: #d6405e;
+  }
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.auth-wrap {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+  padding: 1.25rem;
+}
+
+.auth-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.auth-title {
+  font-weight: 700;
+  letter-spacing: .2px;
+  font-size: 1.15rem;
+}
+
+.auth-alt {
+  font-size: .9rem;
+  color: var(--muted);
+}
+
+.auth-alt a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.auth-alt a:hover { text-decoration: underline; }
+
+.form-grid {
+  display: grid;
+  gap: .75rem;
+}
+
+.input {
+  width: 100%;
+  padding: .6rem .7rem;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: transparent;
+  color: var(--fg);
+  outline: none;
+}
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,140,255,.2); }
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  padding: .65rem .9rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:active { background: var(--accent-press); }
+.btn-ghost {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--card-border);
+}
+
+.note {
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+.error {
+  margin-top: .35rem;
+  color: var(--danger);
+  font-size: .9rem;
+}

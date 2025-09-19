@@ -1,0 +1,80 @@
+@page "/profile"
+@using Flowly.Domain.Entities
+@using Flowly.Infrastructure.Data
+@using Flowly.Infrastructure.Identity
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@attribute [Authorize]
+@inject AppDbContext Db
+@inject UserManager<AppUser> UserManager
+
+<h3>Profile</h3>
+
+@if (model is null)
+{
+    <p class="p-3">Loading…</p>
+}
+else
+{
+    <EditForm Model="@model" OnValidSubmit="Save" FormName="profile">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="grid gap-2 w-full max-w-md">
+            <InputText @bind-Value="model.FirstName" placeholder="First name" class="border px-2 py-1" />
+            <InputText @bind-Value="model.LastName" placeholder="Last name" class="border px-2 py-1" />
+            <InputText @bind-Value="model.PreferredCulture" placeholder="Culture (uk|en)" class="border px-2 py-1" />
+            <InputText @bind-Value="model.AvatarPath" placeholder="Avatar path (optional)" class="border px-2 py-1" />
+            <button type="submit" class="border px-3 py-1">Save</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> AuthStateTask { get; set; } = default!;
+
+    private UserProfile? entity;
+    private ProfileVm? model;
+
+    public class ProfileVm
+    {
+        [Required, MaxLength(100)] public string FirstName { get; set; } = "";
+        [Required, MaxLength(100)] public string LastName { get; set; } = "";
+        [Required, MaxLength(12)] public string PreferredCulture { get; set; } = "uk";
+        [MaxLength(512)] public string? AvatarPath { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthStateTask;
+        var userId = UserManager.GetUserId(auth.User);
+        if (userId is null) return;
+
+        entity = await Db.UserProfiles.FirstOrDefaultAsync(x => x.UserId == userId);
+        if (entity is null) return;
+
+        model = new ProfileVm
+        {
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            PreferredCulture = entity.PreferredCulture,
+            AvatarPath = entity.AvatarPath
+        };
+    }
+
+    async Task Save()
+    {
+        if (entity is null || model is null) return;
+
+        entity.FirstName = model.FirstName.Trim();
+        entity.LastName = model.LastName.Trim();
+        entity.PreferredCulture = model.PreferredCulture.Trim();
+        entity.AvatarPath = string.IsNullOrWhiteSpace(model.AvatarPath) ? null : model.AvatarPath.Trim();
+
+        await Db.SaveChangesAsync();
+        // опційно: показати toast
+    }
+}

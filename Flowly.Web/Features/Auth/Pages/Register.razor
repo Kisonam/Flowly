@@ -1,0 +1,50 @@
+@page "/auth/register"
+
+<h3>Register</h3>
+
+<form id="regForm" onsubmit="return registerSubmit(event)" @formname="reg-html">
+  <div style="display:grid;gap:.5rem;max-width:16rem">
+    <input id="email"    name="email"    placeholder="Email"      required />
+    <input id="password" name="password" placeholder="Password"   type="password" required />
+    <input id="first"    name="first"    placeholder="First name" required />
+    <input id="last"     name="last"     placeholder="Last name"  required />
+    <button type="submit">Create account</button>
+    <div id="regMsg" style="color:#b00"></div>
+  </div>
+</form>
+
+<script>
+async function registerSubmit(e) {
+  e.preventDefault(); // блокуємо стандартний POST по формі
+
+  const body = {
+    email:    document.getElementById('email').value.trim(),
+    password: document.getElementById('password').value,
+    firstName:document.getElementById('first').value.trim(),
+    lastName: document.getElementById('last').value.trim()
+  };
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include' // обов'язково: щоб кукі-сесія збереглась
+    , body: JSON.stringify(body) });
+
+    if (!res.ok) {
+      const err = await safeJson(res);
+      document.getElementById('regMsg').textContent =
+        err?.error ?? 'Registration failed';
+      return false;
+    }
+    // успіх -> на дашборд
+    window.location.href = '/dashboard';
+    return false;
+  } catch (ex) {
+    document.getElementById('regMsg').textContent = 'Network error';
+    return false;
+  }
+}
+
+async function safeJson(r) { try { return await r.json(); } catch { return null; } }
+</script>

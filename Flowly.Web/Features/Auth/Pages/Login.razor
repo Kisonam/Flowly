@@ -1,0 +1,45 @@
+@page "/auth/login"
+
+<h3>Login</h3>
+
+<form id="loginForm" onsubmit="return loginSubmit(event)" @formname="login-html">
+  <div style="display:grid;gap:.5rem;max-width:16rem">
+    <input id="lemail"    name="email"    placeholder="Email"      required />
+    <input id="lpassword" name="password" placeholder="Password"   type="password" required />
+    <label style="font-size:.9rem">
+      <input id="remember" type="checkbox" /> Remember me
+    </label>
+    <button type="submit">Login</button>
+    <div id="loginMsg" style="color:#b00"></div>
+  </div>
+</form>
+
+<script>
+async function loginSubmit(e) {
+  e.preventDefault();
+
+  const body = {
+    email: document.getElementById('lemail').value.trim(),
+    password: document.getElementById('lpassword').value,
+    rememberMe: document.getElementById('remember').checked
+  };
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
+    , body: JSON.stringify(body) });
+
+    if (!res.ok) {
+      document.getElementById('loginMsg').textContent = 'Invalid credentials';
+      return false;
+    }
+    window.location.href = '/dashboard';
+    return false;
+  } catch {
+    document.getElementById('loginMsg').textContent = 'Network error';
+    return false;
+  }
+}
+</script>
