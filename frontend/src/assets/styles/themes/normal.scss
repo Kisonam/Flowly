@@ -1,0 +1,13 @@
+// Normal theme - default colors and animations
+:root.theme-normal {
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --info: #17a2b8;
+
+  --animation-speed: 0.3s;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --border-radius: 0.25rem;
+}

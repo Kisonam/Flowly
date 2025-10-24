@@ -1,0 +1,17 @@
+// Low-stimulus theme - reduced animations and muted colors
+:root.theme-low-stimulus {
+  --primary: #6c757d;
+  --secondary: #6c757d;
+  --success: #6c757d;
+  --danger: #6c757d;
+  --warning: #6c757d;
+  --info: #6c757d;
+
+  --animation-speed: 0s;
+  --shadow: none;
+  --border-radius: 0.25rem;
+}
+.theme-low-stimulus * {
+  animation: none !important;
+  transition: none !important;
+}
