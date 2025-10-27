@@ -1,4 +1,3 @@
 export const environment = {
-  production: false,
-  apiUrl: '/api'
+  apiUrl: process.env['ANGULAR_API_URL'] || 'http://localhost:5000/api'
 };
