@@ -45,6 +45,33 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<Currency>(entity =>
+                {
+                    entity.HasKey(e => e.Code);
+                    entity.Property(e => e.Code).HasMaxLength(3);
+                    entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+                    entity.Property(e => e.Symbol).HasMaxLength(10).IsRequired();
+                });
+
+        // Category
+        builder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+            entity.HasIndex(e => new { e.UserId, e.Name }).IsUnique(); // Unique per user
+        });
+
+        builder.Entity<NoteTag>(entity =>
+        {
+            entity.HasKey(e => new { e.NoteId, e.TagId }); // Composite Key
+        });
+
+        // TaskTag - Many-to-Many join table
+        builder.Entity<TaskTag>(entity =>
+        {
+            entity.HasKey(e => new { e.TaskId, e.TagId }); // Composite Key
+        });
+
         // Apply all configurations from this assembly
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
@@ -62,6 +89,7 @@ public class AppDbContext : DbContext
         builder.Entity<IdentityUserRole<Guid>>(entity =>
         {
             entity.ToTable("UserRoles");
+            entity.HasKey(e => new { e.UserId, e.RoleId });
         });
 
         builder.Entity<IdentityUserClaim<Guid>>(entity =>
@@ -72,11 +100,13 @@ public class AppDbContext : DbContext
         builder.Entity<IdentityUserLogin<Guid>>(entity =>
         {
             entity.ToTable("UserLogins");
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
         });
 
         builder.Entity<IdentityUserToken<Guid>>(entity =>
         {
             entity.ToTable("UserTokens");
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
         });
 
         builder.Entity<IdentityRoleClaim<Guid>>(entity =>
@@ -97,16 +127,16 @@ public class AppDbContext : DbContext
         );
         var defaultCategories = new[]
         {
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Food & Drinks" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Transport" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Shopping" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Entertainment" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Health" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Education" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Utilities" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Salary" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Freelance" },
-            new Category { Id = Guid.NewGuid(), UserId = null, Name = "Other" }
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), UserId = null, Name = "Food & Drinks" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), UserId = null, Name = "Transport" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000003"), UserId = null, Name = "Shopping" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000004"), UserId = null, Name = "Entertainment" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000005"), UserId = null, Name = "Health" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000006"), UserId = null, Name = "Education" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000007"), UserId = null, Name = "Utilities" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000008"), UserId = null, Name = "Salary" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-000000000009"), UserId = null, Name = "Freelance" },
+            new Category { Id = Guid.Parse("00000000-0000-0000-0000-00000000000A"), UserId = null, Name = "Other" }
         };
 
         builder.Entity<Category>().HasData(defaultCategories);

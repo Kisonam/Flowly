@@ -9,19 +9,19 @@ WORKDIR /src
 
 # Copy solution and project files
 COPY ["Flowly.sln", "./"]
-COPY ["src/Flowly.Api/Flowly.Api.csproj", "src/Flowly.Api/"]
-COPY ["src/Flowly.Application/Flowly.Application.csproj", "src/Flowly.Application/"]
-COPY ["src/Flowly.Domain/Flowly.Domain.csproj", "src/Flowly.Domain/"]
-COPY ["src/Flowly.Infrastructure/Flowly.Infrastructure.csproj", "src/Flowly.Infrastructure/"]
+COPY ["backend/src/Flowly.Api/Flowly.Api.csproj", "backend/src/Flowly.Api/"]
+COPY ["backend/src/Flowly.Application/Flowly.Application.csproj", "backend/src/Flowly.Application/"]
+COPY ["backend/src/Flowly.Domain/Flowly.Domain.csproj", "backend/src/Flowly.Domain/"]
+COPY ["backend/src/Flowly.Infrastructure/Flowly.Infrastructure.csproj", "backend/src/Flowly.Infrastructure/"]
 
 # Restore dependencies
 RUN dotnet restore "Flowly.sln"
 
 # Copy all source code
-COPY . .
+COPY backend/ backend/
 
 # Build the API project
-WORKDIR "/src/src/Flowly.Api"
+WORKDIR "/src/backend/src/Flowly.Api"
 RUN dotnet build "Flowly.Api.csproj" -c Release -o /app/build
 
 # ============================================
