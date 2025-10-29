@@ -1,3 +1,6 @@
+using Flowly.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +9,7 @@ builder.Services.AddSwaggerGen();
 var cs = builder.Configuration["ConnectionStrings:DefaultConnection"]
          ?? builder.Configuration["DATABASE_CONNECTION_STRING"];
 
-// builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(cs));
+builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(cs));
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

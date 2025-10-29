@@ -1,8 +1,5 @@
-using System;
-
 namespace Flowly.Domain.Entities;
 
-public class TaskItem
-{
+public class TaskSubtask { 
     public Guid Id { get; set; }
-}
+     }
