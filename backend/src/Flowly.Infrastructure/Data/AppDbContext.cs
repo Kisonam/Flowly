@@ -113,8 +113,6 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("RoleClaims");
         });
-
-        // Seed data
         SeedData(builder);
     }
     private void SeedData(ModelBuilder builder)
