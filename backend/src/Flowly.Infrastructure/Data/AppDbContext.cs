@@ -12,7 +12,7 @@ public class AppDbContext : DbContext
         : base(options)
     {
     }
-
+    public DbSet<User> DomainUsers { get; set; }
     // Notes
     public DbSet<Note> Notes { get; set; } = null!;
     public DbSet<NoteTag> NoteTags { get; set; } = null!;
@@ -81,6 +81,12 @@ public class AppDbContext : DbContext
             entity.ToTable("Users");
         });
 
+        builder.Entity<User>(entity =>
+        {
+            entity.ToTable("Users"); 
+            entity.HasKey(u => u.Id);
+        });
+
         builder.Entity<IdentityRole<Guid>>(entity =>
         {
             entity.ToTable("Roles");
@@ -113,6 +119,8 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("RoleClaims");
         });
+
+        // Seed data
         SeedData(builder);
     }
     private void SeedData(ModelBuilder builder)

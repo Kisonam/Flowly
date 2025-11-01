@@ -17,10 +17,5 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
 
         builder.HasIndex(t => t.UserId);
         builder.HasIndex(t => new { t.UserId, t.Name }).IsUnique();
-
-        builder.HasOne(t => t.User)
-            .WithMany()
-            .HasForeignKey(t => t.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

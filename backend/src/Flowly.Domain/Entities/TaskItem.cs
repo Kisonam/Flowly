@@ -19,7 +19,6 @@ public class TaskItem
     public DateTime? CompletedAt { get; set; }
 
     // Navigation Properties
-    public ApplicationUser User { get; set; } = null!;
     public TaskTheme? TaskTheme { get; set; }
     public ICollection<TaskSubtask> Subtasks { get; set; } = new List<TaskSubtask>();
     public TaskRecurrence? Recurrence { get; set; }

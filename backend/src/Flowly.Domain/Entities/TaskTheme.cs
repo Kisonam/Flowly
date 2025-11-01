@@ -11,7 +11,6 @@ public class TaskTheme
     public DateTime? UpdatedAt { get; set; }
 
     // Navigation Properties
-    public ApplicationUser User { get; set; } = null!;
     public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>();
 
     // Methods

@@ -20,10 +20,5 @@ public class MediaAssetConfiguration : IEntityTypeConfiguration<MediaAsset>
         builder.HasIndex(m => m.UserId);
         builder.HasIndex(m => m.NoteId);
         builder.HasIndex(m => m.CreatedAt);
-
-        builder.HasOne(m => m.User)
-            .WithMany()
-            .HasForeignKey(m => m.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }
