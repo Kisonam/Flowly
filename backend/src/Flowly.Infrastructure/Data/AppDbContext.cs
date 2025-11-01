@@ -2,11 +2,12 @@ using System;
 using Flowly.Domain.Entities;
 using Flowly.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flowly.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
@@ -78,12 +79,12 @@ public class AppDbContext : DbContext
         // Custom table names for Identity (optional - cleaner naming)
         builder.Entity<ApplicationUser>(entity =>
         {
-            entity.ToTable("Users");
+            entity.ToTable("AspNetUsers"); // Identity users
         });
 
         builder.Entity<User>(entity =>
         {
-            entity.ToTable("Users"); 
+            entity.ToTable("Users");
             entity.HasKey(u => u.Id);
         });
 
@@ -146,5 +147,79 @@ public class AppDbContext : DbContext
         };
 
         builder.Entity<Category>().HasData(defaultCategories);
+    }
+
+    // ============================================
+    // Save Changes Override (for automatic timestamps)
+    // ============================================
+
+    public override int SaveChanges()
+    {
+        UpdateTimestamps();
+        return base.SaveChanges();
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        UpdateTimestamps();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void UpdateTimestamps()
+    {
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+        foreach (var entry in entries)
+        {
+            var now = DateTime.UtcNow;
+
+            // Update CreatedAt for new entities
+            if (entry.State == EntityState.Added)
+            {
+                switch (entry.Entity)
+                {
+                    case ApplicationUser user:
+                        user.CreatedAt = now;
+                        break;
+                    case Note note:
+                        note.CreatedAt = now;
+                        note.UpdatedAt = now;
+                        break;
+                    case TaskItem task:
+                        task.CreatedAt = now;
+                        task.UpdatedAt = now;
+                        break;
+                    case Transaction transaction:
+                        transaction.CreatedAt = now;
+                        transaction.UpdatedAt = now;
+                        break;
+                    case FinancialGoal goal:
+                        goal.CreatedAt = now;
+                        goal.UpdatedAt = now;
+                        break;
+                }
+            }
+
+            // Update UpdatedAt for modified entities
+            if (entry.State == EntityState.Modified)
+            {
+                switch (entry.Entity)
+                {
+                    case Note note:
+                        note.UpdatedAt = now;
+                        break;
+                    case TaskItem task:
+                        task.UpdatedAt = now;
+                        break;
+                    case Transaction transaction:
+                        transaction.UpdatedAt = now;
+                        break;
+                    case FinancialGoal goal:
+                        goal.UpdatedAt = now;
+                        break;
+                }
+            }
+        }
     }
 }

@@ -25,11 +25,6 @@ public class TaskItemConfiguration : IEntityTypeConfiguration<TaskItem>
         builder.HasIndex(t => t.DueDate);
         builder.HasIndex(t => t.IsArchived);
 
-        builder.HasOne(t => t.User)
-            .WithMany()
-            .HasForeignKey(t => t.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne(t => t.TaskTheme)
             .WithMany(th => th.Tasks)
             .HasForeignKey(t => t.TaskThemeId)

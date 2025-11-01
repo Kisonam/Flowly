@@ -41,12 +41,6 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.HasIndex(n => n.CreatedAt);
         builder.HasIndex(n => new { n.UserId, n.IsArchived }); // Composite for filtering
 
-        // Relationships
-        builder.HasOne(n => n.User)
-            .WithMany(u => u.Notes)
-            .HasForeignKey(n => n.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasMany(n => n.MediaAssets)
             .WithOne(m => m.Note)
             .HasForeignKey(m => m.NoteId)

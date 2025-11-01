@@ -60,22 +60,26 @@ db-reset: ## Видалити БД і створити заново (ВИДАЛ�
 	@make seed
 
 ## Migrations
-migrate: ## Застосувати міграції
-	@chmod +x tools/migrate.sh
-	@./tools/migrate.sh
+migrate: ## Застосувати міграції через Docker
+	@chmod +x ../tools/apply-migrations.sh
+	@../tools/apply-migrations.sh
 
 migrate-add: ## Створити нову міграцію (use: make migrate-add name=MigrationName)
-	@echo "${GREEN}📝 Creating migration: $(name)${RESET}"
-	@cd backend/src/Flowly.Infrastructure && \
-		dotnet ef migrations add $(name) --startup-project ../Flowly.Api/Flowly.Api.csproj --context AppDbContext
+	@if [ -z "$(name)" ]; then \
+		echo "${YELLOW}❌ Помилка: Вкажіть назву міграції${RESET}"; \
+		echo "Використання: make migrate-add name=НазваМіграції"; \
+		exit 1; \
+	fi
+	@chmod +x ../tools/create-migration.sh
+	@../tools/create-migration.sh $(name)
 
 migrate-remove: ## Видалити останню міграцію
 	@echo "${YELLOW}🗑️  Removing last migration...${RESET}"
-	@cd backend/src/Flowly.Infrastructure && \
+	@cd ../backend/src/Flowly.Infrastructure && \
 		dotnet ef migrations remove --startup-project ../Flowly.Api/Flowly.Api.csproj --context AppDbContext
 
 migrate-list: ## Показати список міграцій
-	@cd backend/src/Flowly.Infrastructure && \
+	@cd ../backend/src/Flowly.Infrastructure && \
 		dotnet ef migrations list --startup-project ../Flowly.Api/Flowly.Api.csproj --context AppDbContext
 
 seed: ## Заповнити БД початковими даними
