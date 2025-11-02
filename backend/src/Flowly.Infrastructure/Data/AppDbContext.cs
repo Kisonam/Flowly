@@ -13,7 +13,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         : base(options)
     {
     }
-    public DbSet<User> DomainUsers { get; set; }
     // Notes
     public DbSet<Note> Notes { get; set; } = null!;
     public DbSet<NoteTag> NoteTags { get; set; } = null!;
