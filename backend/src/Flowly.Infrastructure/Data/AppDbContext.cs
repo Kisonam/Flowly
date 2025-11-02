@@ -36,6 +36,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<MediaAsset> MediaAssets { get; set; } = null!;
     public DbSet<Link> Links { get; set; } = null!;
     public DbSet<ArchiveEntry> ArchiveEntries { get; set; } = null!;
+    
+    public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
 
     // ============================================
     // Configuration
@@ -75,16 +77,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         // Apply all configurations from this assembly
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        // Custom table names for Identity (optional - cleaner naming)
         builder.Entity<ApplicationUser>(entity =>
         {
-            entity.ToTable("AspNetUsers"); // Identity users
-        });
-
-        builder.Entity<User>(entity =>
-        {
             entity.ToTable("Users");
-            entity.HasKey(u => u.Id);
         });
 
         builder.Entity<IdentityRole<Guid>>(entity =>
