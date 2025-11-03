@@ -8,7 +8,11 @@ public static class CorsConfiguration
         {
             options.AddPolicy("AllowAngular", policy =>
             {
-                policy.WithOrigins("http://localhost:4200")
+                policy.WithOrigins(
+                          "http://localhost:4200",
+                          "https://localhost:4200",
+                          "http://localhost:5001",
+                          "https://localhost:5001")
                       .AllowAnyMethod()
                       .AllowAnyHeader()
                       .AllowCredentials();
@@ -28,14 +32,15 @@ public static class CorsConfiguration
 
     public static IApplicationBuilder UseCorsConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // Use different CORS policies based on environment
+        // Use AllowAll policy for Development and Production (Docker)
+        // This allows testing from different origins including Google OAuth redirects
         if (env.IsDevelopment() || env.IsProduction())
         {
-            app.UseCors("AllowAll"); // Allow all for Swagger testing
+            app.UseCors("AllowAll");
         }
         else
         {
-            app.UseCors("AllowAngular"); // Restrict in production
+            app.UseCors("AllowAngular");
         }
 
         return app;

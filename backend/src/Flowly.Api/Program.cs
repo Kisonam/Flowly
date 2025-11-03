@@ -51,7 +51,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 // Middleware Pipeline
-// app.UseHttpsRedirection();
+// Only use HTTPS redirection in Development when not in Docker
+if (!app.Environment.IsProduction())
+{
+    // app.UseHttpsRedirection(); // Disabled for Docker compatibility
+}
 app.UseStaticFiles();
 app.UseCorsConfiguration(app.Environment);
 app.UseAuthentication();
