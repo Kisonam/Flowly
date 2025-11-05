@@ -11,6 +11,11 @@ $shadow-md: 0 4px 12px rgba(102, 126, 234, 0.3);
 $transition-base: all 0.3s ease;
 $transition-fast: all 0.2s ease;
 
+// Primary Colors (from your style guide)
+$primary: #667eea;
+$primary-dark: #5568d3;
+$primary-light: #8b9aef;
+
 // Navbar Header
 .navbar {
   background: $navbar-bg;
@@ -21,15 +26,14 @@ $transition-fast: all 0.2s ease;
   z-index: 1000;
 
   .navbar-content {
-    max-width: 1600px;
-    margin: 0 auto;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 }
 
-// Left Section
+// Left Section - тільки логотип та назва
 .navbar-left {
   display: flex;
   align-items: center;
@@ -45,6 +49,7 @@ $transition-fast: all 0.2s ease;
     transition: $transition-fast;
     cursor: pointer;
     flex-shrink: 0;
+    background: $primary;
 
     &:hover {
       transform: scale(1.05);
@@ -66,7 +71,7 @@ $transition-fast: all 0.2s ease;
   }
 }
 
-// Right Section
+// Right Section - всі кнопки справа
 .navbar-right {
   display: flex;
   align-items: center;
@@ -119,6 +124,7 @@ $transition-fast: all 0.2s ease;
     cursor: pointer;
     transition: $transition-fast;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    background: #6c757d;
 
     &:hover {
       transform: scale(1.1);
@@ -135,22 +141,23 @@ $transition-fast: all 0.2s ease;
   }
 }
 
-// Navigation Tabs
+// Navigation Tabs - прозорий фон
 .tabs-container {
   background: $navbar-bg;
   border-bottom: 1px solid $border-color;
 }
 
 .tabs {
-  max-width: 1600px;
-  margin: 0 auto;
+  width: 100%;
   padding: 0.75rem 2rem;
   display: flex;
   gap: 0.75rem;
 
   .tab {
+    -webkit-appearance: none;
+    appearance: none;
     padding: 0.625rem 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid transparent;
     border-radius: 8px;
     background: transparent;
     color: rgba(255, 255, 255, 0.7);
@@ -166,16 +173,16 @@ $transition-fast: all 0.2s ease;
     overflow: hidden;
 
     &:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.15);
       color: rgba(255, 255, 255, 0.9);
     }
 
     &.active {
-      background: linear-gradient(135deg, #667eea, #5568d3);
-      border-color: transparent;
+      background: transparent;
+      border-color: $primary;
       color: #ffffff;
-      box-shadow: $shadow-md;
+      box-shadow: none;
 
       .tab-icon svg {
         stroke: #ffffff;
@@ -215,10 +222,6 @@ $transition-fast: all 0.2s ease;
 
   .navbar-left {
     gap: 0.625rem;
-
-    .app-title {
-      font-size: 1.25rem;
-    }
   }
 
   .navbar-right {
@@ -302,7 +305,7 @@ $transition-fast: all 0.2s ease;
 .icon-btn:focus-visible,
 .tab:focus-visible,
 .user-avatar:focus-visible {
-  outline: 2px solid #667eea;
+  outline: 2px solid $primary;
   outline-offset: 2px;
 }
 
