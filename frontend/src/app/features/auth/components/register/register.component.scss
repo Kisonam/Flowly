@@ -1,0 +1,153 @@
+// frontend/src/app/features/auth/components/register/register.component.scss
+
+.register-container {
+  width: 100%;
+}
+
+.auth-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.auth-subtitle {
+  color: #6c757d;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  span {
+    padding: 0 1rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+}
+
+.google-icon {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.google-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+
+  // Style Google's button to match our design
+  :deep(div[role="button"]) {
+    width: 100% !important;
+    border-radius: 0.5rem !important;
+  }
+}
+
+.google-fallback-button {
+  // This button is shown only if Google SDK button fails to render
+  border-color: #dee2e6;
+
+  &:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #212529;
+  }
+}
+
+.password-requirements {
+  font-size: 0.875rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+
+  ul {
+    margin-top: 0.5rem;
+    padding-left: 0;
+
+    li {
+      padding: 0.25rem 0;
+      font-size: 0.875rem;
+
+      i {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+
+  &:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-outline-secondary {
+  border-color: #dee2e6;
+
+  &:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #212529;
+  }
+}
+
+.alert {
+  border-radius: 0.5rem;
+  border: none;
+
+  &.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+}
+
+a {
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

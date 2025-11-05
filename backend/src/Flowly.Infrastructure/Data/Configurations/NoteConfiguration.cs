@@ -45,5 +45,11 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
             .WithOne(m => m.Note)
             .HasForeignKey(m => m.NoteId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        // Group relationship configured in NoteGroupConfiguration; ensure FK exists
+        builder.HasOne(n => n.NoteGroup)
+            .WithMany(g => g.Notes)
+            .HasForeignKey(n => n.NoteGroupId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

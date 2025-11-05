@@ -1,0 +1,238 @@
+<!-- frontend/src/app/features/notes/components/note-editor/note-editor.component.html -->
+
+<div class="note-editor-container">
+  <!-- Header -->
+  <div class="editor-header">
+    <div class="header-left">
+      <button
+        type="button"
+        class="btn-back"
+        (click)="onCancel()"
+        title="Back to notes">
+        Back
+      </button>
+      <h1 class="editor-title">
+        {{ isEditMode ? 'Edit Note' : 'New Note' }}
+      </h1>
+    </div>
+
+    <div class="header-actions">
+      <!-- View Mode Toggles -->
+      <div class="view-toggles">
+        <button
+          type="button"
+          class="btn-toggle"
+          [class.active]="!isPreviewMode && !isSplitView"
+          (click)="isPreviewMode = false; isSplitView = false"
+          title="Editor only">
+          ✍️ Editor
+        </button>
+        <button
+          type="button"
+          class="btn-toggle"
+          [class.active]="isSplitView"
+          (click)="toggleSplitView()"
+          title="Split view">
+          ↔️ Split
+        </button>
+        <button
+          type="button"
+          class="btn-toggle"
+          [class.active]="isPreviewMode"
+          (click)="togglePreview()"
+          title="Preview only">
+          👁️ Preview
+        </button>
+      </div>
+
+      <!-- Save Status -->
+      <div class="save-status" *ngIf="lastSavedTime">
+        ✅ <span class="save-time">Saved {{ lastSavedTime | date: 'short' }}</span>
+      </div>
+
+      <!-- Actions -->
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSaving">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="onSubmit()"
+        [disabled]="noteForm.invalid || isSaving">
+        <span *ngIf="!isSaving">{{ isEditMode ? 'Update' : 'Create' }}</span>
+        <span *ngIf="isSaving">⏳ Saving...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    <i class="bi bi-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading note...</p>
+  </div>
+
+  <!-- Editor Content -->
+  <div class="editor-content" *ngIf="!isLoading" [formGroup]="noteForm">
+    <!-- Sidebar: Tags & Upload -->
+    <aside class="editor-sidebar">
+      <!-- Tags Section -->
+      <div class="sidebar-section">
+        <app-tag-selector
+          [title]="'Tags'"
+          [tags]="availableTags"
+          [selectedIds]="selectedTagIds"
+          (selectedIdsChange)="onTagsChanged($event)">
+        </app-tag-selector>
+      </div>
+
+      <!-- References Section -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">
+          <i class="bi bi-link-45deg"></i>
+          Посилання
+        </h3>
+        <div class="ref-controls">
+          <div class="row">
+            <select class="form-select" [(ngModel)]="refType" [ngModelOptions]="{standalone: true}" (ngModelChange)="onRefTypeChanged()">
+              <option value="task">Завдання</option>
+              <option value="tx">Транзакція</option>
+            </select>
+          </div>
+          <!-- Dynamic dropdowns -->
+          <div class="row" *ngIf="refType === 'task'">
+            <input class="form-control" type="text" placeholder="Пошук завдання" [ngModel]="refSearch" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSearchRef($event)">
+          </div>
+          <div class="row" *ngIf="refType === 'task'">
+            <select class="form-select w-100" [(ngModel)]="refId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSelectTask($event)">
+              <option *ngFor="let t of taskOptions" [ngValue]="t.id">{{ t.title }}</option>
+            </select>
+          </div>
+          <div class="row" *ngIf="refType === 'tx'">
+            <input class="form-control" type="text" placeholder="Пошук транзакції" [ngModel]="refSearch" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSearchRef($event)">
+          </div>
+          <div class="row" *ngIf="refType === 'tx'">
+            <select class="form-select w-100" [(ngModel)]="refId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSelectTx($event)">
+              <option *ngFor="let x of txOptions" [ngValue]="x.id">
+                {{ x.type === 'Expense' ? '-' : '+' }}{{ x.amount }} {{ x.currencyCode }} · {{ x.date | date:'shortDate' }}
+                <span *ngIf="x.description"> · {{ x.description }}</span>
+              </option>
+            </select>
+          </div>
+          <div class="row">
+            <input class="form-control" type="text" placeholder="Мітка (необов'язково)" [(ngModel)]="refLabel" [ngModelOptions]="{standalone: true}">
+          </div>
+          <div class="row">
+            <button class="btn-secondary w-100" type="button" (click)="insertReference()">
+              Додати посилання
+            </button>
+          </div>
+          <p class="ref-hint">
+            Формат токена: [[task:ID|Label]] або [[tx:ID|Label]]. У прев'ю відображається як інтерактивна пігулка.
+          </p>
+        </div>
+      </div>
+
+      <!-- Upload Section -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">
+          <i class="bi bi-image"></i>
+          Images
+        </h3>
+
+        <div
+          class="drop-zone"
+          [class.dragging]="isDragging"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
+          <i class="bi bi-cloud-upload drop-icon"></i>
+          <p class="drop-text">Drag & drop images here</p>
+          <p class="drop-subtext">or</p>
+          <label class="btn-upload">
+            <i class="bi bi-upload"></i>
+            Browse Files
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              (change)="onFileSelected($event)"
+              style="display: none;">
+          </label>
+        </div>
+
+        <!-- Upload Progress -->
+        <div class="upload-progress" *ngIf="uploadProgress !== null">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+          </div>
+          <span class="progress-text">{{ uploadProgress }}%</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Editor Area -->
+    <div class="editor-main">
+      <!-- Title Input -->
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-control title-input"
+          formControlName="title"
+          placeholder="Note title..."
+          [class.invalid]="titleControl?.invalid && titleControl?.touched">
+        <div class="error-message" *ngIf="titleControl?.invalid && titleControl?.touched">
+          <span *ngIf="titleControl?.errors?.['required']">Title is required</span>
+          <span *ngIf="titleControl?.errors?.['maxlength']">Title is too long (max 200 characters)</span>
+        </div>
+      </div>
+
+      <!-- Editor/Preview Container -->
+      <div class="editor-preview-container" [class.split-view]="isSplitView">
+        <!-- Markdown Editor -->
+        <div class="markdown-editor" *ngIf="!isPreviewMode">
+          <textarea
+            class="form-control markdown-textarea"
+            formControlName="markdown"
+            placeholder="Write your note in Markdown...
+
+**Bold text**
+*Italic text*
+[Link](url)
+![Image](url)
+- List item
+1. Numbered item
+> Quote
+`code`
+```
+code block
+```
+"
+            [class.invalid]="markdownControl?.invalid && markdownControl?.touched">
+          </textarea>
+          <div class="error-message" *ngIf="markdownControl?.invalid && markdownControl?.touched">
+            <span *ngIf="markdownControl?.errors?.['required']">Content is required</span>
+          </div>
+        </div>
+
+        <!-- Markdown Preview -->
+        <div class="markdown-preview" *ngIf="isPreviewMode || isSplitView">
+          <div class="preview-label">Preview</div>
+          <div
+            class="preview-content markdown-body"
+            [innerHTML]="markdownPreview">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

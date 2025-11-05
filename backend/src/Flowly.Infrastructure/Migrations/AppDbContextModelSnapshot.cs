@@ -420,6 +420,9 @@ namespace Flowly.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("NoteGroupId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -437,11 +440,49 @@ namespace Flowly.Infrastructure.Migrations
 
                     b.HasIndex("IsArchived");
 
+                    b.HasIndex("NoteGroupId");
+
                     b.HasIndex("UserId");
 
                     b.HasIndex("UserId", "IsArchived");
 
                     b.ToTable("Notes", (string)null);
+                });
+
+            modelBuilder.Entity("Flowly.Domain.Entities.NoteGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Order")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Order");
+
+                    b.ToTable("NoteGroups", (string)null);
                 });
 
             modelBuilder.Entity("Flowly.Domain.Entities.NoteTag", b =>
@@ -1056,6 +1097,16 @@ namespace Flowly.Infrastructure.Migrations
                     b.Navigation("Note");
                 });
 
+            modelBuilder.Entity("Flowly.Domain.Entities.Note", b =>
+                {
+                    b.HasOne("Flowly.Domain.Entities.NoteGroup", "NoteGroup")
+                        .WithMany("Notes")
+                        .HasForeignKey("NoteGroupId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("NoteGroup");
+                });
+
             modelBuilder.Entity("Flowly.Domain.Entities.NoteTag", b =>
                 {
                     b.HasOne("Flowly.Domain.Entities.Note", "Note")
@@ -1205,6 +1256,11 @@ namespace Flowly.Infrastructure.Migrations
                     b.Navigation("MediaAssets");
 
                     b.Navigation("NoteTags");
+                });
+
+            modelBuilder.Entity("Flowly.Domain.Entities.NoteGroup", b =>
+                {
+                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("Flowly.Domain.Entities.Tag", b =>

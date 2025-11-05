@@ -1,0 +1,82 @@
+<div class="note-detail-container" *ngIf="!isLoading; else loadingTpl">
+  <div class="header">
+    <button class="btn-back" type="button" title="Back" (click)="onBack()">
+      Back
+    </button>
+    <h1 class="title">{{ note?.title }}</h1>
+
+    <div class="spacer"></div>
+
+    <div class="actions">
+      <button type="button" class="btn" (click)="onEdit()">
+        <i class="bi bi-pencil"></i> Edit
+      </button>
+      <button type="button" class="btn" (click)="onExport()">
+        <i class="bi bi-download"></i> Export
+      </button>
+      <button *ngIf="!note?.isArchived" type="button" class="btn danger" (click)="onArchive()">
+        <i class="bi bi-archive"></i> Archive
+      </button>
+      <button *ngIf="note?.isArchived" type="button" class="btn" (click)="onRestore()">
+        <i class="bi bi-arrow-counterclockwise"></i> Restore
+      </button>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div class="tags" *ngIf="note?.tags?.length">
+      <span class="tag" *ngFor="let t of note?.tags" [ngStyle]="{ '--tag-color': t.color || '#6b7280' }">
+        <i class="bi bi-tag"></i> {{ t.name }}
+      </span>
+    </div>
+    <div class="dates">
+      <span>Created: {{ note?.createdAt | date: 'medium' }}</span>
+      <span>Updated: {{ note?.updatedAt | date: 'medium' }}</span>
+    </div>
+  </div>
+
+  <div class="content markdown-body" [innerHTML]="safeHtml"></div>
+
+  <div class="linked">
+    <h3><i class="bi bi-link-45deg"></i> Linked items</h3>
+    <div class="linked-sections">
+      <div class="linked-section">
+        <h4>Tasks</h4>
+        <ul *ngIf="tasks.length; else noTasks">
+          <li *ngFor="let task of tasks">
+            <i class="bi bi-check2-square" *ngIf="task.completed; else notDone"></i>
+            <ng-template #notDone><i class="bi bi-square"></i></ng-template>
+            {{ task.title || task.name || 'Untitled task' }}
+          </li>
+        </ul>
+        <ng-template #noTasks>
+          <div class="empty">No linked tasks</div>
+        </ng-template>
+      </div>
+
+      <div class="linked-section">
+        <h4>Transactions</h4>
+        <ul *ngIf="transactions.length; else noTx">
+          <li *ngFor="let tx of transactions">
+            <i class="bi bi-cash-coin"></i>
+            {{ tx.amount | number:'1.2-2' }} · {{ tx.category || tx.type || 'Transaction' }}
+          </li>
+        </ul>
+        <ng-template #noTx>
+          <div class="empty">No linked transactions</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading note…</p>
+  </div>
+</ng-template>

@@ -1,0 +1,129 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { takeUntil, Subject } from 'rxjs';
+import { NotesService } from '../../services/notes.service';
+import { Note } from '../../models/note.models';
+import { marked } from 'marked';
+
+@Component({
+  selector: 'app-note-detail',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './note-detail.component.html',
+  styleUrls: ['./note-detail.component.scss']
+})
+export class NoteDetailComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private notesService = inject(NotesService);
+  private sanitizer = inject(DomSanitizer);
+  private destroy$ = new Subject<void>();
+
+  noteId!: string;
+  note: Note | null = null;
+  isLoading = true;
+  errorMessage = '';
+  safeHtml: SafeHtml | null = null;
+  tasks: any[] = [];
+  transactions: any[] = [];
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.errorMessage = 'Invalid note id';
+      this.isLoading = false;
+      return;
+    }
+    this.noteId = id;
+    this.loadNote();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadNote(): void {
+    this.isLoading = true;
+    this.notesService.getNoteById(this.noteId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (note) => {
+          this.note = note;
+          let html = note.htmlCache && note.htmlCache.trim().length > 0
+            ? note.htmlCache
+            : marked(note.markdown || '') as string;
+          html = this.replaceReferenceTokens(html);
+          this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+          // Optional linked collections if present in payload
+          const asAny: any = note as any;
+          this.tasks = Array.isArray(asAny?.tasks) ? asAny.tasks : [];
+          this.transactions = Array.isArray(asAny?.transactions) ? asAny.transactions : [];
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.errorMessage = err?.message || 'Failed to load note';
+          this.isLoading = false;
+        }
+      });
+  }
+
+  onEdit(): void {
+    this.router.navigate(['/notes', this.noteId, 'edit']);
+  }
+
+  onArchive(): void {
+    if (!confirm('Archive this note? You can restore it later.')) return;
+    this.notesService.deleteNote(this.noteId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => this.router.navigate(['/notes']),
+        error: (err) => this.errorMessage = err?.message || 'Failed to archive note'
+      });
+  }
+
+  onExport(): void {
+    this.notesService.exportMarkdown(this.noteId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {},
+        error: (err) => this.errorMessage = err?.message || 'Failed to export note'
+      });
+  }
+
+  onRestore(): void {
+    if (!confirm('Restore this note from archive?')) return;
+    this.notesService.restoreNote(this.noteId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => this.router.navigate(['/notes']),
+        error: (err) => this.errorMessage = err?.message || 'Failed to restore note'
+      });
+  }
+
+  onBack(): void {
+    this.router.navigate(['/notes']);
+  }
+
+  // Replace [[task:ID|Label]] and [[tx:ID|Label]] tokens with styled pills
+  private replaceReferenceTokens(html: string): string {
+    const refRegex = /\[\[(task|tx):([A-Za-z0-9\-]{6,})\|?([^\]]*)\]\]/g;
+    return html.replace(refRegex, (_match, type: string, id: string, label: string) => {
+      const kind = type === 'task' ? 'Завдання' : 'Транзакція';
+      const text = (label && label.trim().length > 0) ? label.trim() : `${kind} ${id.substring(0, 6)}…`;
+      const cls = type === 'task' ? 'ref-pill task' : 'ref-pill tx';
+      return `<span class="${cls}" data-id="${id}" data-type="${type}"><i class="bi ${type === 'task' ? 'bi-check2-square' : 'bi-cash-coin'}"></i> ${this.escapeHtml(text)}</span>`;
+    });
+  }
+
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+}

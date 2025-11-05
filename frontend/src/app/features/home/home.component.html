@@ -1,0 +1,100 @@
+<!-- frontend/src/app/features/home/home.component.html -->
+
+<div class="home-container">
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <div class="welcome-message">
+            <h1 class="display-4">{{ greeting }}, {{ user?.displayName }}! 👋</h1>
+            <p class="lead">Welcome to your personal routine organizer</p>
+            <p class="text-muted">{{ currentTime | date:'EEEE, MMMM d, y' }} • {{ currentTime | date:'h:mm:ss a' }}</p>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="illustration">
+            <img src="assets/images/hero-illustration.svg" alt="Organizer" class="img-fluid"
+                 onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="container my-5">
+    <h2 class="section-title text-center mb-4">Quick Actions</h2>
+    <div class="row g-4">
+      <!-- Notes Card -->
+      <div class="col-md-4">
+        <div class="action-card">
+          <div class="card-icon notes-icon">📝</div>
+          <h3>Notes</h3>
+          <p>Create and organize your notes with Markdown support</p>
+          <button class="btn btn-primary" (click)="router.navigate(['/notes'])">
+            Go to Notes
+          </button>
+        </div>
+      </div>
+
+      <!-- Tasks Card -->
+      <div class="col-md-4">
+        <div class="action-card">
+          <div class="card-icon tasks-icon">✅</div>
+          <h3>Tasks</h3>
+          <p>Manage your tasks and track your progress</p>
+          <button class="btn btn-primary" (click)="router.navigate(['/tasks'])">
+            Go to Tasks
+          </button>
+        </div>
+      </div>
+
+      <!-- Finance Card -->
+      <div class="col-md-4">
+        <div class="action-card">
+          <div class="card-icon finance-icon">💰</div>
+          <h3>Finance</h3>
+          <p>Track your income, expenses, and budgets</p>
+          <button class="btn btn-primary" (click)="router.navigate(['/finance'])">
+            Go to Finance
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-section py-5">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-4">
+          <div class="stat-item">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Notes</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-item">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Active Tasks</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-item">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Transactions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer mt-auto py-3">
+    <div class="container text-center">
+      <span class="text-muted">© 2024 Flowly. All rights reserved.</span>
+    </div>
+  </footer>
+</div>

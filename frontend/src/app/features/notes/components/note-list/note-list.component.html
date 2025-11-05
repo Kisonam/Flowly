@@ -1,0 +1,271 @@
+<div class="note-list-container">
+  <!-- Header -->
+  <div class="notes-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        {{ filter.isArchived ? 'Archived Notes' : 'My Notes' }}
+      </h1>
+      <span class="notes-count" *ngIf="paginatedResult">
+        {{ paginatedResult.totalCount }} {{ paginatedResult.totalCount === 1 ? 'note' : 'notes' }}
+      </span>
+    </div>
+
+    <div class="header-actions">
+      <button
+        class="btn btn-secondary"
+        (click)="router.navigate(['/notes/board'])"
+        title="Board view"
+      >
+        Board View
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        (click)="toggleViewMode()"
+        title="Toggle view mode"
+      >
+        {{ viewMode === 'list' ? 'Grid View' : 'List View' }}
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        (click)="toggleArchiveFilter()"
+      >
+        🗄️ {{ filter.isArchived ? 'Show Active' : 'Show Archived' }}
+      </button>
+
+      <button
+        class="btn btn-primary"
+        (click)="createNote()"
+      >
+        ➕ Quick Create
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">🔎</span>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search notes..."
+        [ngModel]="filter.search"
+        (ngModelChange)="onSearchChange($event)"
+      >
+      <button
+        class="btn-clear"
+        *ngIf="filter.search"
+        (click)="filter.search = ''; onSearchChange('')"
+      >
+        ✖
+      </button>
+    </div>
+
+    <button
+      class="btn btn-outline-secondary"
+      (click)="toggleFilters()"
+      [class.active]="showFilters"
+    >
+      Filters
+      <span class="badge" *ngIf="filter.tagIds && filter.tagIds.length > 0">
+        {{ filter.tagIds.length }}
+      </span>
+    </button>
+
+    <button
+      class="btn btn-link"
+      *ngIf="filter.search || (filter.tagIds && filter.tagIds.length > 0)"
+      (click)="clearFilters()"
+    >
+      Clear all
+    </button>
+  </div>
+
+  <!-- Expanded Filters -->
+  <div class="filters-panel" *ngIf="showFilters">
+    <div class="filter-section">
+      <label class="filter-label">Filter by Tags</label>
+      <div class="tags-filter">
+        <button
+          *ngFor="let tag of availableTags"
+          class="tag-chip"
+          [class.selected]="isTagSelected(tag.id)"
+          [style.--tag-color]="tag.color"
+          (click)="toggleTagFilter(tag.id)"
+        >
+          <span *ngIf="isTagSelected(tag.id)" aria-hidden="true">✓</span>
+          {{ tag.name }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Loading notes...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="alert alert-danger" *ngIf="errorMessage && !isLoading">
+    ⚠️ {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadNotes()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && notes.length === 0 && !errorMessage">
+    <div class="empty-icon">📒</div>
+    <h3>{{ filter.isArchived ? 'No archived notes' : 'No notes yet' }}</h3>
+    <p>
+      {{ filter.search ? 'No notes match your search criteria.' :
+         filter.isArchived ? 'You have no archived notes.' :
+         'Start capturing your thoughts and ideas!' }}
+    </p>
+    <button class="btn btn-primary" (click)="createNote()" *ngIf="!filter.search && !filter.isArchived">
+      ➕ Create Your First Note
+    </button>
+  </div>
+
+  <!-- Notes Grid/List -->
+  <div class="notes-container" *ngIf="!isLoading && notes.length > 0" [class.view-list]="viewMode === 'list'">
+    <div
+      *ngFor="let note of notes"
+      class="note-card"
+      draggable="true"
+      (dragstart)="onDragStart(note.id)"
+      (dragover)="onDragOver($event, note.id)"
+      (drop)="onDrop($event, note.id)"
+      (click)="viewNote(note.id)"
+    >
+      <!-- Note Header -->
+      <div class="note-header">
+        <h3 class="note-title">{{ note.title }}</h3>
+        <div class="note-actions">
+          <button
+            class="btn-icon"
+            (click)="editNote(note.id, $event)"
+            title="Edit"
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            class="btn-icon"
+            (click)="exportNote(note.id, $event)"
+            title="Export"
+          >
+            ⬇️ Export
+          </button>
+
+          <button
+            class="btn-icon"
+            *ngIf="!note.isArchived"
+            (click)="archiveNote(note.id, $event)"
+            title="Archive"
+          >
+            🗄️ Archive
+          </button>
+
+          <button
+            class="btn-icon"
+            *ngIf="note.isArchived"
+            (click)="restoreNote(note.id, $event)"
+            title="Restore"
+          >
+            🔄 Restore
+          </button>
+        </div>
+      </div>
+
+      <!-- Note Preview -->
+      <div class="note-content">
+        <p class="note-preview">{{ getPreview(note.markdown) }}</p>
+      </div>
+
+      <!-- Note Footer -->
+      <div class="note-footer">
+        <div class="note-tags">
+          <span
+            *ngFor="let tag of note.tags.slice(0, 3)"
+            class="tag-badge"
+            [style.--tag-color]="tag.color || '#6b7280'"
+          >
+            {{ tag.name }}
+          </span>
+          <span class="tag-badge more" *ngIf="note.tags.length > 3">
+            +{{ note.tags.length - 3 }}
+          </span>
+        </div>
+
+        <div class="note-meta">
+          <span class="note-date" title="{{ note.updatedAt | date: 'medium' }}">
+            ⏰ {{ formatDate(note.updatedAt) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Archived Badge -->
+      <div class="archived-badge" *ngIf="note.isArchived">
+        🗄️ Archived
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="!isLoading && paginatedResult && paginatedResult.totalPages > 1">
+    <div class="pagination-info">
+      Showing {{ (paginatedResult.page - 1) * paginatedResult.pageSize + 1 }}
+      to
+      {{ getEndItem() }}
+      of {{ paginatedResult.totalCount }} notes
+    </div>
+
+    <div class="pagination">
+      <button
+        class="btn btn-pagination"
+        [disabled]="!paginatedResult.hasPreviousPage"
+        (click)="goToPage(paginatedResult.page - 1)"
+      >
+        ← Previous
+      </button>
+
+      <div class="pagination-numbers">
+        <button
+          *ngFor="let page of getPaginationArray()"
+          class="btn btn-page"
+          [class.active]="page === paginatedResult.page"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <button
+        class="btn btn-pagination"
+        [disabled]="!paginatedResult.hasNextPage"
+        (click)="goToPage(paginatedResult.page + 1)"
+      >
+        Next →
+      </button>
+    </div>
+
+    <div class="page-size-selector">
+      <label>Show:</label>
+      <select
+        class="form-select form-select-sm"
+        [ngModel]="filter.pageSize"
+        (ngModelChange)="changePageSize($event)"
+      >
+        <option [value]="12">12</option>
+        <option [value]="24">24</option>
+        <option [value]="48">48</option>
+      </select>
+    </div>
+  </div>
+</div>

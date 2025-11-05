@@ -6,6 +6,7 @@ public class Note
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
+    public Guid? NoteGroupId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Markdown { get; set; } = string.Empty;
     public string? HtmlCache { get; set; }
@@ -19,6 +20,7 @@ public class Note
 
     public ICollection<Link> LinksFrom { get; set; } = new List<Link>();
     public ICollection<Link> LinksTo { get; set; } = new List<Link>();
+    public NoteGroup? NoteGroup { get; set; }
 
     // Methods
 

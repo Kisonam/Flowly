@@ -1,0 +1,61 @@
+<div class="themes-board">
+  <div class="toolbar">
+    <h1>Теми</h1>
+    <div class="new-theme">
+      <input class="form-control" type="text" placeholder="Назва теми" [(ngModel)]="newThemeName">
+      <button class="btn" type="button" (click)="addTheme()">Додати тему</button>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="theme-column add" *ngIf="themes.length === 0">
+      <p>Ще немає тем. Додайте першу, а потім перетягуйте нотатки у колонки.</p>
+    </div>
+
+    <div class="theme-column" *ngFor="let theme of themes" [ngStyle]="{ '--theme-color': theme.color }" (dragover)="allowDrop($event)" (drop)="onDropToTheme($event, theme)">
+      <div class="theme-header">
+        <div class="title">
+          <span class="dot" [style.background]="theme.color"></span>
+          {{ theme.name }}
+        </div>
+        <div class="actions">
+          <button class="btn-icon" title="Вліво" (click)="moveTheme(theme, -1)">⟵</button>
+          <button class="btn-icon" title="Вправо" (click)="moveTheme(theme, 1)">⟶</button>
+          <button class="btn-icon danger" title="Видалити тему" (click)="removeTheme(theme.id)">✕</button>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div
+          class="note-card"
+          *ngFor="let id of theme.noteIds"
+          [class.placeholder]="!getNoteById(id)"
+        >
+          <ng-container *ngIf="getNoteById(id) as note">
+            <div class="title" draggable="true" (dragstart)="onDragStartNote($event, note.id)">{{ note.title }}</div>
+            <div class="meta">{{ note.updatedAt | date: 'short' }}</div>
+            <div class="tags">
+              <span class="tag" *ngFor="let t of note.tags" [ngStyle]="{ '--tag-color': t.color || '#6b7280' }">{{ t.name }}</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!getNoteById(id)">
+            <div class="title muted">Нотатку не знайдено</div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes-pool">
+    <h3>Нотатки без тем</h3>
+    <div class="pool">
+      <div
+        class="note-pill"
+        *ngFor="let n of notes"
+        draggable="true"
+        (dragstart)="onDragStartNote($event, n.id)">
+        {{ n.title }}
+      </div>
+    </div>
+  </div>
+</div>

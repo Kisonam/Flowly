@@ -1,0 +1,103 @@
+.note-detail-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-back {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.spacer { flex: 1; }
+
+.actions { display: flex; gap: 8px; }
+.btn {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.btn:hover { background: #f9fafb; }
+.btn.danger { border-color: #fecaca; color: #b91c1c; }
+.btn.danger:hover { background: #fef2f2; }
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0 20px 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+  --tag-color: #6b7280;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--tag-color) 50%, transparent);
+  background: color-mix(in srgb, var(--tag-color) 12%, white);
+  color: var(--tag-color);
+}
+
+.content {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.linked { margin-top: 24px; }
+.linked-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.linked-section { border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; background: #fff; }
+.linked-section h4 { margin: 0 0 8px 0; }
+.linked-section ul { margin: 0; padding-left: 18px; }
+.empty { color: #9ca3af; font-size: 12px; }
+
+.loading-state { display: grid; place-items: center; padding: 40px; color: #6b7280; }
+.spinner {
+  width: 24px; height: 24px; border-radius: 9999px;
+  border: 3px solid #e5e7eb; border-top-color: #3b82f6;
+  animation: spin 1s linear infinite; margin-bottom: 8px;
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Basic GitHub-like markdown styles (kept minimal, reuse editor styles if needed) */
+.markdown-body h1, .markdown-body h2, .markdown-body h3 { margin-top: 1.2em; }
+.markdown-body pre { background: #0b1021; color: #e5e7eb; padding: 12px; border-radius: 8px; overflow-x: auto; }
+.markdown-body code { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; }
+
+/* Reference pills */
+.ref-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
+}
+.ref-pill.task { background: #ecfeff; color: #0891b2; border-color: #a5f3fc; }
+.ref-pill.tx { background: #fef3c7; color: #b45309; border-color: #fde68a; }

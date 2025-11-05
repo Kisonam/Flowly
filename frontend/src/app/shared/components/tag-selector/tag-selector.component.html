@@ -1,0 +1,23 @@
+<div class="tag-selector">
+  <h3 class="sidebar-title" *ngIf="title">
+    <i class="bi bi-tags"></i>
+    {{ title }}
+  </h3>
+
+  <div class="tags-list" *ngIf="tags.length > 0; else noTags">
+    <button
+      *ngFor="let tag of tags"
+      type="button"
+      class="tag-chip"
+      [class.selected]="isSelected(tag.id)"
+      [ngStyle]="{ '--tag-color': tag.color || '#6b7280' }"
+      (click)="toggle(tag.id)">
+      <i class="bi" [class.bi-check-square]="isSelected(tag.id)" [class.bi-square]="!isSelected(tag.id)"></i>
+      {{ tag.name }}
+    </button>
+  </div>
+  <ng-template #noTags>
+    <p class="no-tags-hint">No tags yet</p>
+    <p class="no-tags-sub">Create tags in the Tags section to organize your notes.</p>
+   </ng-template>
+</div>

@@ -1,0 +1,143 @@
+<div class="tags-manager-container">
+  <!-- Header -->
+  <div class="tags-header">
+    <div class="header-left">
+      <h1 class="page-title">Теги</h1>
+      <span class="tags-count" *ngIf="tags.length > 0">
+        {{ tags.length }} {{ tags.length === 1 ? 'тег' : 'тегів' }}
+      </span>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openCreateForm()">
+        <i class="bi bi-plus-lg"></i>
+        Створити тег
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Завантаження тегів...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="alert alert-danger" *ngIf="errorMessage && !isLoading">
+    <i class="bi bi-exclamation-triangle"></i>
+    {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadTags()">
+      Спробувати знову
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && tags.length === 0 && !errorMessage">
+    <div class="empty-icon">
+      <i class="bi bi-tags"></i>
+    </div>
+    <h3>Поки що немає тегів</h3>
+    <p>Створіть теги для організації ваших нотаток і завдань</p>
+    <button class="btn btn-primary" (click)="openCreateForm()">
+      <i class="bi bi-plus-lg"></i>
+      Створити перший тег
+    </button>
+  </div>
+
+  <!-- Tags Grid -->
+  <div class="tags-grid" *ngIf="!isLoading && tags.length > 0">
+    <div
+      *ngFor="let tag of tags"
+      class="tag-card"
+      [style.--tag-color]="tag.color || '#6b7280'"
+    >
+      <div class="tag-info">
+        <div class="tag-color-preview" [style.background-color]="tag.color"></div>
+        <div class="tag-details">
+          <h3 class="tag-name">{{ tag.name }}</h3>
+          <p class="tag-color">{{ tag.color || 'Без кольору' }}</p>
+        </div>
+      </div>
+
+      <div class="tag-actions">
+        <button class="btn-icon" (click)="openEditForm(tag)" title="Редагувати">
+          <i class="bi bi-pencil"></i>
+        </button>
+        <button class="btn-icon btn-danger" (click)="deleteTag(tag)" title="Видалити">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Form Modal -->
+  <div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? 'Редагувати тег' : 'Створити тег' }}</h2>
+        <button class="btn-close" (click)="closeForm()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="tagName">Назва тегу</label>
+            <input
+              type="text"
+              id="tagName"
+              class="form-control"
+              [(ngModel)]="formData.name"
+              name="name"
+              placeholder="напр. робота, особисте, важливе..."
+              required
+              maxlength="50"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Колір</label>
+            <div class="color-picker">
+              <button
+                *ngFor="let color of predefinedColors"
+                type="button"
+                class="color-option"
+                [class.selected]="formData.color === color"
+                [style.background-color]="color"
+                (click)="selectColor(color)"
+              >
+                <i class="bi bi-check" *ngIf="formData.color === color"></i>
+              </button>
+            </div>
+            <input
+              type="color"
+              class="form-control form-control-color"
+              [(ngModel)]="formData.color"
+              name="color"
+              title="Обрати інший колір"
+            >
+          </div>
+
+          <div class="tag-preview">
+            <label>Попередній перегляд</label>
+            <div class="preview-tag" [style.--tag-color]="formData.color">
+              {{ formData.name || 'Назва тегу' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeForm()">
+            Скасувати
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="!formData.name.trim()">
+            {{ isEditMode ? 'Зберегти' : 'Створити' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

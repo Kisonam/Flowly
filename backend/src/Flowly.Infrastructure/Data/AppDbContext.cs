@@ -15,6 +15,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     }
     // Notes
     public DbSet<Note> Notes { get; set; } = null!;
+    public DbSet<NoteGroup> NoteGroups { get; set; } = null!;
     public DbSet<NoteTag> NoteTags { get; set; } = null!;
 
     // Tasks
@@ -67,6 +68,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         {
             entity.HasKey(e => new { e.NoteId, e.TagId }); // Composite Key
         });
+
+        // NoteGroup relationship handled via configurations
 
         // TaskTag - Many-to-Many join table
         builder.Entity<TaskTag>(entity =>

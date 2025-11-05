@@ -14,6 +14,13 @@ public static class ApplicationServicesConfiguration
         // Register application services
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<INoteService, NoteService>();
+        services.AddScoped<INoteGroupService, NoteGroupService>();
+        services.AddScoped<ITagService, TagService>();
+        services.AddScoped<ITaskItemQueryService, TaskItemQueryService>();
+        services.AddScoped<ITaskThemeService, TaskThemeService>();
+        services.AddScoped<ITransactionQueryService, TransactionQueryService>();
+
 
         return services;
     }

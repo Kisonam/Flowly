@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowly Dashboard - Angular</title>
+  <script src="https://unpkg.com/@angular/core@17.0.0/bundles/core.umd.js"></script>
+  <script src="https://unpkg.com/@angular/common@17.0.0/bundles/common.umd.js"></script>
+  <script src="https://unpkg.com/@angular/platform-browser@17.0.0/bundles/platform-browser.umd.js"></script>
+  <script src="https://unpkg.com/@angular/platform-browser-dynamic@17.0.0/bundles/platform-browser-dynamic.umd.js"></script>
+  <script src="https://unpkg.com/rxjs@7.8.0/dist/bundles/rxjs.umd.js"></script>
+  <script src="https://unpkg.com/zone.js@0.14.2/dist/zone.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .app-container {
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    .header {
+      background: white;
+      padding: 1.25rem 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .icon-btn {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .icon-btn:hover {
+      opacity: 0.8;
+    }
+
+    .lang-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .main-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tab:not(.active) {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .tab:not(.active):hover {
+      background: #f3f4f6 !important;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-trend {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      margin-bottom: 0.375rem;
+      color: #6b7280;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart-header h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: #111827;
+    }
+
+    .chart-header p {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .chart-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .line-chart {
+      height: 200px;
+      border-bottom: 1px solid #e5e7eb;
+      border-left: 1px solid #e5e7eb;
+      position: relative;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .activity-content p {
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.125rem;
+      color: #111827;
+    }
+
+    .activity-content span {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    .bottom-charts {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .bar-chart {
+      height: 220px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.75rem;
+    }
+
+    .bar-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bar {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      min-height: 20px;
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .bar:hover {
+      transform: scaleY(1.05);
+      filter: brightness(1.1);
+    }
+
+    .bar-label {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .bar-day {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      color: #4b5563;
+    }
+
+    .distribution-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .distribution-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .distribution-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+    }
+
+    .distribution-header span:first-child {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .distribution-header span:last-child {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+
+    .total-activity {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .total-activity p {
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+      color: #6b7280;
+    }
+
+    .total-activity h4 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .module-header h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .module-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+      background: #f3f4f6;
+    }
+
+    .groups-container {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+
+    .group-column {
+      min-width: 320px;
+      max-width: 320px;
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .group-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .group-title h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .count-badge {
+      padding: 0.125rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .group-content {
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .note-card, .task-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: move;
+      transition: all 0.2s ease;
+    }
+
+    .note-card:hover, .task-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .note-card.dragging, .task-card.dragging {
+      opacity: 0.5;
+    }
+
+    .note-card h4 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #111827;
+    }
+
+    .note-card p {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+      color: #4b5563;
+    }
+
+    .note-card span {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .task-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .task-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .task-content span {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .task-priority {
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .empty-state {
+      padding: 2rem 1rem;
+      text-align: center;
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+    }
+
+    .empty-state p {
+      font-size: 0.875rem;
+      color: #9ca3af;
+    }
+
+    .add-item-btn {
+      width: 100%;
+      padding: 0.625rem;
+      margin-top: 0.75rem;
+      border: 1px dashed #d1d5db;
+      border-radius: 8px;
+      background: transparent;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .add-item-btn:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    .finance-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+    }
+
+    .summary-card p {
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #6b7280;
+    }
+
+    .summary-card h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #111827;
+    }
+
+    .summary-card.featured {
+      color: white;
+    }
+
+    .summary-card.featured p,
+    .summary-card.featured h2 {
+      color: white;
+    }
+
+    .trend-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+
+    .finance-chart {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+    }
+
+    .finance-chart h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #111827;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+
+    .legend-item span {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .finance-bars {
+      height: 320px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      border-bottom: 2px solid #e5e7eb;
+      border-left: 2px solid #e5e7eb;
+      padding-left: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .finance-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .bars {
+      width: 100%;
+      display: flex;
+      gap: 6px;
+      align-items: flex-end;
+      height: 280px;
+    }
+
+    .finance-bar {
+      flex: 1;
+      border-radius: 6px 6px 0 0;
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .finance-bar:hover {
+      filter: brightness(1.1);
+      transform: scaleY(1.02);
+    }
+
+    .bar-value {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .month-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      color: #374151;
+    }
+
+    .finance-summary-footer {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 2rem;
+      padding: 1.25rem;
+      background: #f9fafb;
+      border-radius: 10px;
+    }
+
+    .finance-summary-footer > div {
+      flex: 1;
+    }
+
+    .finance-summary-footer p {
+      font-size: 0.8125rem;
+      margin-bottom: 0.25rem;
+      color: #6b7280;
+    }
+
+    .finance-summary-footer h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .drop-zone {
+      min-height: 100px;
+    }
+
+    .drag-over {
+      background: #f3f4f6 !important;
+      border: 2px dashed #667eea !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // Flowly Dashboard App
+    const app = {
+      activeModule: 'overview',
+      isLowStim: false,
+      language: 'en',
+      draggedItem: null,
+      draggedType: null,
+      sourceGroupId: null,
+
+      colors: {
+        standard: {
+          primary: '#667eea',
+          primaryDark: '#5568d3',
+          secondary: '#764ba2',
+          accent: '#f093fb',
+          success: '#4ade80',
+          warning: '#fbbf24',
+          danger: '#f87171',
+          info: '#60a5fa',
+          notes: '#8b5cf6',
+          tasks: '#3b82f6',
+          finance: '#10b981',
+        },
+        lowStim: {
+          primary: '#6b7280',
+          primaryDark: '#4b5563',
+          secondary: '#6b7280',
+          accent: '#9ca3af',
+          success: '#6b7280',
+          warning: '#9ca3af',
+          danger: '#6b7280',
+          info: '#9ca3af',
+          notes: '#6b7280',
+          tasks: '#6b7280',
+          finance: '#6b7280',
+        }
+      },
+
+      translations: {
+        en: {
+          appName: 'Flowly',
+          overview: 'Overview',
+          notes: 'Notes',
+          tasks: 'Tasks',
+          finance: 'Finance',
+          archive: 'Archive',
+          newNote: 'New Note',
+          newTask: 'New Task',
+          newGroup: 'New Group',
+          addTransaction: 'Add Transaction',
+          activeTasks: 'Active Tasks',
+          newNotes: 'New Notes',
+          balance: 'Balance',
+          productivity: 'Productivity',
+          completedTasks30Days: 'Tasks Completed in 30 Days',
+          totalCompleted: 'Total completed',
+          average: 'Average',
+          perDay: 'day',
+          perMonth: 'month',
+          recentActivity: 'Recent Activity',
+          weeklyProductivity: 'Weekly Productivity',
+          activityDistribution: 'Activity Distribution',
+          totalActivity: 'Total Activity',
+          actions: 'actions',
+          income: 'Income',
+          expenses: 'Expenses',
+          dynamics6Months: 'Dynamics over 6 months',
+          avgIncome: 'Average income',
+          avgExpenses: 'Average expenses',
+          savings: 'Savings',
+          high: 'High',
+          medium: 'Medium',
+          low: 'Low',
+          dropHere: 'Drop here',
+          addedNewNote: 'Added new note',
+          completedTask: 'Completed task',
+          newTransaction: 'New transaction',
+          projectUpdated: 'Project updated',
+          commentAdded: 'Comment added',
+          other: 'Other',
+        },
+        ua: {
+          appName: 'Flowly',
+          overview: 'Огляд',
+          notes: 'Нотатки',
+          tasks: 'Завдання',
+          finance: 'Фінанси',
+          archive: 'Архів',
+          newNote: 'Нова нотатка',
+          newTask: 'Нове завдання',
+          newGroup: 'Нова група',
+          addTransaction: 'Додати транзакцію',
+          activeTasks: 'Активні завдання',
+          newNotes: 'Нові нотатки',
+          balance: 'Баланс',
+          productivity: 'Продуктивність',
+          completedTasks30Days: 'Виконані завдання за 30 днів',
+          totalCompleted: 'Всього виконано',
+          average: 'Середнє',
+          perDay: 'день',
+          perMonth: 'міс',
+          recentActivity: 'Остання активність',
+          weeklyProductivity: 'Продуктивність за тиждень',
+          activityDistribution: 'Розподіл активності',
+          totalActivity: 'Загальна активність',
+          actions: 'дії',
+          income: 'Дохід',
+          expenses: 'Витрати',
+          dynamics6Months: 'Динаміка за 6 місяців',
+          avgIncome: 'Середній дохід',
+          avgExpenses: 'Середні витрати',
+          savings: 'Економія',
+          high: 'Високий',
+          medium: 'Середній',
+          low: 'Низький',
+          dropHere: 'Перетягни сюди',
+          addedNewNote: 'Додано нову нотатку',
+          completedTask: 'Завершено завдання',
+          newTransaction: 'Нова транзакція',
+          projectUpdated: 'Оновлено проєкт',
+          commentAdded: 'Коментар додано',
+          other: 'Інше',
+        }
+      },
+
+      noteGroups: [
+        {
+          id: 'group-1',
+          title: 'Work',
+          color: '#8b5cf6',
+          notes: [
+            { id: 'note-1', title: 'Ideas for new project', date: '2 hrs ago', preview: 'Consider integration with existing system...' },
+            { id: 'note-2', title: 'Technical documentation', date: 'Yesterday', preview: 'API endpoints for new authentication module...' },
+          ]
+        },
+        {
+          id: 'group-2',
+          title: 'Meetings',
+          color: '#3b82f6',
+          notes: [
+            { id: 'note-3', title: 'Meeting notes', date: '5 hrs ago', preview: 'Discussed main roadmap points...' },
+          ]
+        },
+        {
+          id: 'group-3',
+          title: 'Learning',
+          color: '#10b981',
+          notes: [
+            { id: 'note-4', title: 'Reading list', date: '2 days ago', preview: 'Articles about clean architecture...' },
+          ]
+        },
+      ],
+
+      taskGroups: [
+        {
+          id: 'task-group-1',
+          title: 'To Do',
+          color: '#f87171',
+          tasks: [
+            { id: 'task-1', title: 'Review pull request', priority: 'high' },
+            { id: 'task-2', title: 'Fix bugs in auth module', priority: 'high' },
+            { id: 'task-3', title: 'Conduct code review', priority: 'medium' },
+          ]
+        },
+        {
+          id: 'task-group-2',
+          title: 'In Progress',
+          color: '#fbbf24',
+          tasks: [
+            { id: 'task-4', title: 'Write unit tests', priority: 'medium' },
+          ]
+        },
+        {
+          id: 'task-group-3',
+          title: 'Done',
+          color: '#4ade80',
+          tasks: [
+            { id: 'task-5', title: 'Update API documentation', priority: 'medium' },
+            { id: 'task-6', title: 'Prepare presentation', priority: 'low' },
+          ]
+        },
+      ],
+
+      financeData: [
+        { month: 'Jan', income: 45000, expenses: 32000 },
+        { month: 'Feb', income: 52000, expenses: 35000 },
+        { month: 'Mar', income: 48000, expenses: 33000 },
+        { month: 'Apr', income: 61000, expenses: 38000 },
+        { month: 'May', income: 55000, expenses: 36000 },
+        { month: 'Jun', income: 58000, expenses: 37000 },
+      ],
+
+      weeklyProductivity: [
+        { day: 'Mon', tasks: 12 },
+        { day: 'Tue', tasks: 15 },
+        { day: 'Wed', tasks: 10 },
+        { day: 'Thu', tasks: 18 },
+        { day: 'Fri', tasks: 14 },
+        { day: 'Sat', tasks: 8 },
+        { day: 'Sun', tasks: 5 },
+      ],
+
+      taskCompletionData: Array.from({ length: 30 }, (_, i) => ({
+        day: i + 1,
+        completed: Math.floor(Math.random() * 7) + 3
+      })),
+
+      getColors() {
+        return this.isLowStim ? this.colors.lowStim : this.colors.standard;
+      },
+
+      getT() {
+        return this.translations[this.language];
+      },
+
+      toggleTheme() {
+        this.isLowStim = !this.isLowStim;
+        this.render();
+      },
+
+      toggleLanguage() {
+        this.language = this.language === 'en' ? 'ua' : 'en';
+        this.updateTranslations();
+        this.render();
+      },
+
+      updateTranslations() {
+        const groupTitles = {
+          en: {
+            notes: ['Work', 'Meetings', 'Learning'],
+            tasks: ['To Do', 'In Progress', 'Done']
+          },
+          ua: {
+            notes: ['Робота', 'Зустрічі', 'Навчання'],
+            tasks: ['Потрібно зробити', 'У процесі', 'Виконано']
+          }
+        };
+
+        this.noteGroups.forEach((group, i) => {
+          group.title = groupTitles[this.language].notes[i];
+        });
+
+        this.taskGroups.forEach((group, i) => {
+          group.title = groupTitles[this.language].tasks[i];
+        });
+
+        const months = {
+          en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          ua: ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер']
+        };
+
+        this.financeData.forEach((data, i) => {
+          data.month = months[this.language][i];
+        });
+
+        const days = {
+          en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          ua: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд']
+        };
+
+        this.weeklyProductivity.forEach((data, i) => {
+          data.day = days[this.language][i];
+        });
+      },
+
+      setActiveModule(module) {
+        this.activeModule = module;
+        this.render();
+      },
+
+      handleDragStart(e, item, type, groupId) {
+        this.draggedItem = item;
+        this.draggedType = type;
+        this.sourceGroupId = groupId;
+        e.target.classList.add('dragging');
+      },
+
+      handleDragEnd(e) {
+        e.target.classList.remove('dragging');
+      },
+
+      handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+      },
+
+      handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+      },
+
+      handleDrop(e, targetGroupId) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+
+        if (!this.draggedItem || this.sourceGroupId === targetGroupId) return;
+
+        if (this.draggedType === 'note') {
+          const sourceGroup = this.noteGroups.find(g => g.id === this.sourceGroupId);
+          const targetGroup = this.noteGroups.find(g => g.id === targetGroupId);
+          
+          const noteIndex = sourceGroup.notes.findIndex(n => n.id === this.draggedItem.id);
+          const [note] = sourceGroup.notes.splice(noteIndex, 1);
+          targetGroup.notes.push(note);
+        } else if (this.draggedType === 'task') {
+          const sourceGroup = this.taskGroups.find(g => g.id === this.sourceGroupId);
+          const targetGroup = this.taskGroups.find(g => g.id === targetGroupId);
+          
+          const taskIndex = sourceGroup.tasks.findIndex(t => t.id === this.draggedItem.id);
+          const [task] = sourceGroup.tasks.splice(taskIndex, 1);
+          targetGroup.tasks.push(task);
+        }
+
+        this.draggedItem = null;
+        this.draggedType = null;
+        this.sourceGroupId = null;
+        this.render();
+      },
+
+      render() {
+        const colors = this.getColors();
+        const t = this.getT();
+        const container = document.getElementById('app');
+
+        const bgGradient = this.isLowStim 
+          ? '#f9fafb' 
+          : `linear-gradient(135deg, ${colors.primary}08 0%, ${colors.accent}08 100%)`;
+
+        const logoGradient = this.isLowStim 
+          ? colors.primary 
+          : `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`;
+
+        let content = '';
+
+        if (this.activeModule === 'overview') {
+          const totalCompleted = this.taskCompletionData.reduce((sum, d) => sum + d.completed, 0);
+          const avgPerDay = (totalCompleted / 30).toFixed(1);
+          const maxWeekly = Math.max(...this.weeklyProductivity.map(d => d.tasks));
+
+          content = `
+            <div class="stats-grid">
+              ${[
+                { label: t.activeTasks, value: '12', trend: '+3', color: colors.tasks },
+                { label: t.newNotes, value: '24', trend: '+8', color: colors.notes },
+                { label: t.balance, value: '₴21k', trend: '+12%', color: colors.finance },
+                { label: t.productivity, value: '94%', trend: '-2%', color: colors.warning }
+              ].map(stat => `
+                <div class="stat-card">
+                  <div class="stat-header">
+                    <div class="stat-icon" style="background: ${stat.color}15;">
+                      <div style="width: 24px; height: 24px; background: ${stat.color}; border-radius: 50%;"></div>
+                    </div>
+                    <div class="stat-trend" style="color: ${colors.success};">
+                      ↗ ${stat.trend}
+                    </div>
+                  </div>
+                  <p class="stat-label">${stat.label}</p>
+                  <h2 class="stat-value">${stat.value}</h2>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="charts-grid">
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3>${t.completedTasks30Days}</h3>
+                    <p>${t.totalCompleted}: ${totalCompleted} • ${t.average}: ${avgPerDay}/${t.perDay}</p>
+                  </div>
+                  <div class="chart-badge" style="background: ${colors.success}15; color: ${colors.success};">
+                    +18%
+                  </div>
+                </div>
+                <div class="line-chart">
+                  <svg width="100%" height="200" viewBox="0 0 600 200" preserveAspectRatio="none">
+                    <polyline 
+                      points="${this.taskCompletionData.map((d, i) => `${(i/29)*600},${200-(d.completed/10)*180}`).join(' ')}"
+                      fill="none"
+                      stroke="${colors.tasks}"
+                      stroke-width="3"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="chart-card">
+                <h3 style="color: #111827;">${t.recentActivity}</h3>
+                <div class="activity-list">
+                  ${[
+                    { text: t.addedNewNote, time: '5 min ago', color: colors.notes },
+                    { text: t.completedTask, time: '12 min ago', color: colors.success },
+                    { text: t.newTransaction, time: '1 hr ago', color: colors.finance },
+                    { text: t.projectUpdated, time: '2 hrs ago', color: colors.info },
+                    { text: t.commentAdded, time: '3 hrs ago', color: colors.warning }
+                  ].map(activity => `
+                    <div class="activity-item">
+                      <div class="activity-dot" style="background: ${activity.color};"></div>
+                      <div class="activity-content">
+                        <p>${activity.text}</p>
+                        <span>${activity.time}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+
+            <div class="bottom-charts">
+              <div class="chart-card">
+                <h3>${t.weeklyProductivity}</h3>
+                <div class="bar-chart">
+                  ${this.weeklyProductivity.map(day => `
+                    <div class="bar-container">
+                      <div class="bar" style="height: ${(day.tasks/maxWeekly)*100}%; background: ${this.isLowStim ? colors.primary : `linear-gradient(180deg, ${colors.primary}, ${colors.primaryDark})`};">
+                        <span class="bar-label">${day.tasks}</span>
+                      </div>
+                      <span class="bar-day">${day.day}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="chart-card">
+                <h3>${t.activityDistribution}</h3>
+                <div class="distribution-list">
+                  ${[
+                    { label: t.tasks, value: 45, color: colors.tasks },
+                    { label: t.notes, value: 30, color: colors.notes },
+                    { label: t.finance, value: 15, color: colors.finance },
+                    { label: t.other, value: 10, color: '#9ca3af' }
+                  ].map(item => `
+                    <div class="distribution-item">
+                      <div class="distribution-header">
+                        <span>${item.label}</span>
+                        <span>${item.value}%</span>
+                      </div>
+                      <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${item.value}%; background: ${item.color};"></div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="total-activity" style="background: ${colors.primary}08;">
+                  <p>${t.totalActivity}</p>
+                  <h4 style="color: ${colors.primary};">152 ${t.actions}</h4>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (this.activeModule === 'notes') {
+          content = `
+            <div class="module-header">
+              <h2>${t.notes}</h2>
+              <div class="module-actions">
+                <button class="btn-secondary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                    <rect x="1" y="3" width="22" height="5"></rect>
+                  </svg>
+                  ${t.archive}
+                </button>
+                <button class="btn-primary" style="background: ${this.isLowStim ? colors.notes : `linear-gradient(135deg, ${colors.notes}, ${colors.secondary})`};">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  ${t.newNote}
+                </button>
+                <button class="btn-secondary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  ${t.newGroup}
+                </button>
+              </div>
+            </div>
+
+            <div class="groups-container">
+              ${this.noteGroups.map(group => `
+                <div class="group-column">
+                  <div class="group-header" style="border-bottom: 2px solid ${group.color};">
+                    <div class="group-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="5" r="1"></circle>
+                        <circle cx="9" cy="12" r="1"></circle>
+                        <circle cx="9" cy="19" r="1"></circle>
+                        <circle cx="15" cy="5" r="1"></circle>
+                        <circle cx="15" cy="12" r="1"></circle>
+                        <circle cx="15" cy="19" r="1"></circle>
+                      </svg>
+                      <h3>${group.title}</h3>
+                      <span class="count-badge" style="background: ${group.color}15; color: ${group.color};">
+                        ${group.notes.length}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="group-content drop-zone" 
+                       ondragover="app.handleDragOver(event)"
+                       ondragleave="app.handleDragLeave(event)"
+                       ondrop="app.handleDrop(event, '${group.id}')">
+                    ${group.notes.length === 0 ? `
+                      <div class="empty-state">
+                        <p>${t.dropHere}</p>
+                      </div>
+                    ` : group.notes.map(note => `
+                      <div class="note-card" 
+                           draggable="true"
+                           ondragstart="app.handleDragStart(event, ${JSON.stringify(note).replace(/"/g, '&quot;')}, 'note', '${group.id}')"
+                           ondragend="app.handleDragEnd(event)">
+                        <h4>${note.title}</h4>
+                        <p>${note.preview}</p>
+                        <span>${note.date}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+
+                  <button class="add-item-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    ${t.newNote}
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else if (this.activeModule === 'tasks') {
+          content = `
+            <div class="module-header">
+              <h2>${t.tasks}</h2>
+              <div class="module-actions">
+                <button class="btn-secondary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                    <rect x="1" y="3" width="22" height="5"></rect>
+                  </svg>
+                  ${t.archive}
+                </button>
+                <button class="btn-primary" style="background: ${this.isLowStim ? colors.tasks : `linear-gradient(135deg, ${colors.tasks}, ${colors.info})`};">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  ${t.newTask}
+                </button>
+                <button class="btn-secondary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  ${t.newGroup}
+                </button>
+              </div>
+            </div>
+
+            <div class="groups-container">
+              ${this.taskGroups.map(group => `
+                <div class="group-column">
+                  <div class="group-header" style="border-bottom: 2px solid ${group.color};">
+                    <div class="group-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="5" r="1"></circle>
+                        <circle cx="9" cy="12" r="1"></circle>
+                        <circle cx="9" cy="19" r="1"></circle>
+                        <circle cx="15" cy="5" r="1"></circle>
+                        <circle cx="15" cy="12" r="1"></circle>
+                        <circle cx="15" cy="19" r="1"></circle>
+                      </svg>
+                      <h3>${group.title}</h3>
+                      <span class="count-badge" style="background: ${group.color}15; color: ${group.color};">
+                        ${group.tasks.length}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="group-content drop-zone"
+                       ondragover="app.handleDragOver(event)"
+                       ondragleave="app.handleDragLeave(event)"
+                       ondrop="app.handleDrop(event, '${group.id}')">
+                    ${group.tasks.length === 0 ? `
+                      <div class="empty-state">
+                        <p>${t.dropHere}</p>
+                      </div>
+                    ` : group.tasks.map(task => {
+                      const priorityColor = task.priority === 'high' ? colors.danger : task.priority === 'medium' ? colors.warning : colors.success;
+                      const priorityLabel = task.priority === 'high' ? t.high : task.priority === 'medium' ? t.medium : t.low;
+                      return `
+                        <div class="task-card"
+                             draggable="true"
+                             ondragstart="app.handleDragStart(event, ${JSON.stringify(task).replace(/"/g, '&quot;')}, 'task', '${group.id}')"
+                             ondragend="app.handleDragEnd(event)">
+                          <div class="task-content">
+                            <div class="task-checkbox"></div>
+                            <span>${task.title}</span>
+                          </div>
+                          <span class="task-priority" style="background: ${priorityColor}15; color: ${priorityColor};">
+                            ${priorityLabel}
+                          </span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+
+                  <button class="add-item-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    ${t.newTask}
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else if (this.activeModule === 'finance') {
+          const maxValue = Math.max(...this.financeData.map(d => Math.max(d.income, d.expenses)));
+          
+          content = `
+            <div class="module-header">
+              <h2>${t.finance}</h2>
+              <div class="module-actions">
+                <button class="btn-secondary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                    <rect x="1" y="3" width="22" height="5"></rect>
+                  </svg>
+                  ${t.archive}
+                </button>
+                <button class="btn-primary" style="background: ${this.isLowStim ? colors.finance : `linear-gradient(135deg, ${colors.finance}, ${colors.success})`};">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  ${t.addTransaction}
+                </button>
+              </div>
+            </div>
+
+            <div class="finance-summary">
+              <div class="summary-card">
+                <p>${t.income}</p>
+                <h2>₴58,000</h2>
+                <div class="trend-badge" style="color: ${colors.success};">
+                  <span>↗</span> +8.2%
+                </div>
+              </div>
+              <div class="summary-card">
+                <p>${t.expenses}</p>
+                <h2>₴37,000</h2>
+                <div class="trend-badge" style="color: ${colors.danger};">
+                  <span>↗</span> +3.1%
+                </div>
+              </div>
+              <div class="summary-card featured" style="background: ${this.isLowStim ? colors.finance : `linear-gradient(135deg, ${colors.finance}, ${colors.success})`};">
+                <p>${t.balance}</p>
+                <h2>₴21,000</h2>
+                <div class="trend-badge">
+                  <span>↗</span> +36.2%
+                </div>
+              </div>
+            </div>
+
+            <div class="finance-chart">
+              <h3>${t.dynamics6Months}</h3>
+
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-color" style="background: ${colors.finance};"></div>
+                  <span>${t.income}</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: ${colors.danger};"></div>
+                  <span>${t.expenses}</span>
+                </div>
+              </div>
+
+              <div class="finance-bars">
+                ${this.financeData.map(data => `
+                  <div class="finance-bar-group">
+                    <div class="bars">
+                      <div class="finance-bar" style="height: ${(data.income/maxValue)*100}%; background: ${colors.finance};">
+                        <span class="bar-value">${(data.income/1000).toFixed(0)}k</span>
+                      </div>
+                      <div class="finance-bar" style="height: ${(data.expenses/maxValue)*100}%; background: ${colors.danger};">
+                        <span class="bar-value">${(data.expenses/1000).toFixed(0)}k</span>
+                      </div>
+                    </div>
+                    <span class="month-label">${data.month}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="finance-summary-footer">
+                <div>
+                  <p>${t.avgIncome}</p>
+                  <h4 style="color: ${colors.finance};">₴53,167 / ${t.perMonth}</h4>
+                </div>
+                <div>
+                  <p>${t.avgExpenses}</p>
+                  <h4 style="color: ${colors.danger};">₴35,167 / ${t.perMonth}</h4>
+                </div>
+                <div>
+                  <p>${t.savings}</p>
+                  <h4 style="color: ${colors.success};">₴18,000 / ${t.perMonth}</h4>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML = `
+          <div class="app-container" style="background: ${bgGradient};">
+            <header class="header">
+              <div class="header-content">
+                <div class="header-left">
+                  <div class="logo" style="background: ${logoGradient};">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </div>
+                  <h1 class="app-title" style="background: ${logoGradient};">
+                    ${t.appName}
+                  </h1>
+                </div>
+
+                <div class="header-right">
+                  <button class="icon-btn" onclick="app.toggleTheme()" style="background: #f3f4f6; color: #4b5563;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+                      <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+                      <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+                      <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+                    </svg>
+                  </button>
+
+                  <button class="icon-btn lang-btn" onclick="app.toggleLanguage()" style="background: #f3f4f6; color: #4b5563;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    ${this.language === 'en' ? 'EN' : 'UA'}
+                  </button>
+
+                  <button class="icon-btn" style="background: #f3f4f6; color: #4b5563;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M12 1v6m0 6v6m5.2-13.2 4.3 4.3m-4.3 5.7 4.3 4.3M1 12h6m6 0h6M4.9 4.9l4.3 4.3m5.7 5.7 4.3 4.3"></path>
+                    </svg>
+                  </button>
+
+                  <div class="user-avatar" style="background: ${this.isLowStim ? '#9ca3af' : `linear-gradient(135deg, ${colors.accent}, #f5b5ff)`};">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            <div class="main-content">
+              <div class="tabs">
+                ${['overview', 'notes', 'tasks', 'finance'].map(module => {
+                  const labels = { overview: t.overview, notes: t.notes, tasks: t.tasks, finance: t.finance };
+                  const isActive = this.activeModule === module;
+                  const tabBg = isActive 
+                    ? (this.isLowStim ? colors.primary : `linear-gradient(135deg, ${colors.primary}, ${colors.primaryDark})`)
+                    : 'white';
+                  const tabColor = isActive ? 'white' : '#4b5563';
+                  return `
+                    <button class="tab ${isActive ? 'active' : ''}" 
+                            onclick="app.setActiveModule('${module}')"
+                            style="background: ${tabBg}; color: ${tabColor};">
+                      ${labels[module]}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+
+              ${content}
+            </div>
+          </div>
+        `;
+      }
+    };
+
+    // Initialize app
+    app.render();
+  </script>
+</body>
+</html>

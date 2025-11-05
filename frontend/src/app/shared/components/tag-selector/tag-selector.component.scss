@@ -1,0 +1,44 @@
+.tag-selector {
+  .sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 8px 0;
+  }
+
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag-chip {
+    --tag-color: #6b7280;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--tag-color) 50%, transparent);
+    background: color-mix(in srgb, var(--tag-color) 12%, white);
+    color: var(--tag-color);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .tag-chip:hover {
+    background: color-mix(in srgb, var(--tag-color) 18%, white);
+    border-color: color-mix(in srgb, var(--tag-color) 60%, transparent);
+  }
+
+  .tag-chip.selected {
+    background: color-mix(in srgb, var(--tag-color) 22%, white);
+    border-color: color-mix(in srgb, var(--tag-color) 70%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--tag-color) 25%, transparent);
+  }
+}

@@ -1,0 +1,175 @@
+<!-- frontend/src/app/features/auth/components/register/register.component.html -->
+
+<div class="register-container">
+  <h2 class="auth-title">Create Account</h2>
+  <p class="auth-subtitle">Join Flowly to organize your routine</p>
+
+  <!-- Error Alert -->
+  <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+    <strong>Error:</strong> {{ errorMessage }}
+  </div>
+
+  <!-- Register Form -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <!-- Display Name -->
+    <div class="mb-3">
+      <label for="displayName" class="form-label">Display Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="displayName"
+        formControlName="displayName"
+        [class.is-invalid]="displayName?.invalid && displayName?.touched"
+        placeholder="John Doe"
+      >
+      <div class="invalid-feedback" *ngIf="displayName?.invalid && displayName?.touched">
+        <span *ngIf="displayName?.errors?.['required']">Display name is required</span>
+        <span *ngIf="displayName?.errors?.['minlength']">Name must be at least 2 characters</span>
+        <span *ngIf="displayName?.errors?.['maxlength']">Name must not exceed 100 characters</span>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Email address</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        formControlName="email"
+        [class.is-invalid]="email?.invalid && email?.touched"
+        placeholder="your.email@example.com"
+      >
+      <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+        <span *ngIf="email?.errors?.['required']">Email is required</span>
+        <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <div class="input-group">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          [class.is-invalid]="password?.invalid && password?.touched"
+          placeholder="Create a strong password"
+        >
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          (click)="togglePasswordVisibility('password')"
+        >
+          <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+        </button>
+      </div>
+      <div class="invalid-feedback d-block" *ngIf="password?.invalid && password?.touched">
+        <span *ngIf="password?.errors?.['required']">Password is required</span>
+        <span *ngIf="password?.errors?.['minlength']">Password must be at least 8 characters</span>
+      </div>
+
+      <!-- Password Strength Indicator -->
+      <div class="password-requirements mt-2" *ngIf="password?.errors?.['passwordStrength'] && password?.touched">
+        <small class="text-muted">Password must contain:</small>
+        <ul class="list-unstyled mb-0">
+          <li [class.text-success]="password?.errors?.['passwordStrength'].hasUpperCase"
+              [class.text-danger]="!password?.errors?.['passwordStrength'].hasUpperCase">
+            <i class="bi" [class.bi-check-circle-fill]="password?.errors?.['passwordStrength'].hasUpperCase"
+               [class.bi-x-circle-fill]="!password?.errors?.['passwordStrength'].hasUpperCase"></i>
+            One uppercase letter
+          </li>
+          <li [class.text-success]="password?.errors?.['passwordStrength'].hasLowerCase"
+              [class.text-danger]="!password?.errors?.['passwordStrength'].hasLowerCase">
+            <i class="bi" [class.bi-check-circle-fill]="password?.errors?.['passwordStrength'].hasLowerCase"
+               [class.bi-x-circle-fill]="!password?.errors?.['passwordStrength'].hasLowerCase"></i>
+            One lowercase letter
+          </li>
+          <li [class.text-success]="password?.errors?.['passwordStrength'].hasNumeric"
+              [class.text-danger]="!password?.errors?.['passwordStrength'].hasNumeric">
+            <i class="bi" [class.bi-check-circle-fill]="password?.errors?.['passwordStrength'].hasNumeric"
+               [class.bi-x-circle-fill]="!password?.errors?.['passwordStrength'].hasNumeric"></i>
+            One number
+          </li>
+          <li [class.text-success]="password?.errors?.['passwordStrength'].hasSpecialChar"
+              [class.text-danger]="!password?.errors?.['passwordStrength'].hasSpecialChar">
+            <i class="bi" [class.bi-check-circle-fill]="password?.errors?.['passwordStrength'].hasSpecialChar"
+               [class.bi-x-circle-fill]="!password?.errors?.['passwordStrength'].hasSpecialChar"></i>
+            One special character (!&#64;#$%^&*...)
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="mb-3">
+      <label for="confirmPassword" class="form-label">Confirm Password</label>
+      <div class="input-group">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          class="form-control"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          [class.is-invalid]="(confirmPassword?.invalid && confirmPassword?.touched) || (passwordMismatch && confirmPassword?.touched)"
+          placeholder="Re-enter your password"
+        >
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          (click)="togglePasswordVisibility('confirmPassword')"
+        >
+          <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
+        </button>
+      </div>
+      <div class="invalid-feedback d-block" *ngIf="confirmPassword?.touched">
+        <span *ngIf="confirmPassword?.errors?.['required']">Please confirm your password</span>
+        <span *ngIf="passwordMismatch && !confirmPassword?.errors?.['required']">Passwords do not match</span>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="btn btn-primary w-100 mb-3"
+      [disabled]="isLoading"
+    >
+      <span *ngIf="!isLoading">Create Account</span>
+      <span *ngIf="isLoading">
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Creating account...
+      </span>
+    </button>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>OR</span>
+    </div>
+
+    <!-- Google Sign-Up Button Container -->
+    <div id="googleSignUpButton" class="google-button-container mb-3"></div>
+
+    <!-- Fallback Google Sign-Up Button (if SDK button doesn't render) -->
+    <button
+      type="button"
+      class="btn btn-outline-secondary w-100 mb-3 google-fallback-button"
+      (click)="registerWithGoogle()"
+      [disabled]="isLoading"
+    >
+      <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px">
+        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+      </svg>
+      Sign up with Google
+    </button>
+
+    <!-- Login Link -->
+    <p class="text-center mt-4">
+      Already have an account?
+      <a routerLink="/auth/login" class="text-primary">Sign in</a>
+    </p>
+  </form>
+</div>
