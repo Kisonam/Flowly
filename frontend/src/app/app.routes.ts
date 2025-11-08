@@ -55,6 +55,42 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'tasks',
+    redirectTo: 'tasks/board',
+    pathMatch: 'full'
+  },
+  {
+    path: 'tasks/board',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/tasks/components/task-board/task-board.component').then(m => m.TaskBoardComponent)
+  },
+  {
+    path: 'tasks/archived',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/tasks/components/task-board/task-board.component').then(m => m.TaskBoardComponent),
+    data: { archived: true }
+  },
+  {
+    path: 'tasks/new',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/tasks/components/task-editor/task-editor.component').then(m => m.TaskEditorComponent)
+  },
+  {
+    path: 'tasks/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/tasks/components/task-editor/task-editor.component').then(m => m.TaskEditorComponent)
+  },
+  {
+    path: 'tasks/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/tasks/components/task-detail/task-detail.component').then(m => m.TaskDetailComponent)
+  },
+  {
+    path: 'tasks/themes',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/tasks/components/theme-manager/theme-manager.component').then(m => m.ThemeManagerComponent)
+  },
+  {
     path: 'tags',
     component: TagsManagerComponent,
     canActivate: [authGuard]

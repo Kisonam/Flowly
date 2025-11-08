@@ -1,4 +1,5 @@
 using Flowly.Api.Configuration;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,12 @@ builder.Services.AddValidationConfiguration();
 builder.Services.AddApplicationServices(builder.Configuration);
 
 // Controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Serialize/deserialize enums as strings (e.g., "High" instead of 3)
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // API Documentation
 builder.Services.AddEndpointsApiExplorer();

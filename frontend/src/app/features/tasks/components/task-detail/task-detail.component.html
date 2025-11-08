@@ -1,0 +1,78 @@
+<div class="task-detail" *ngIf="task; else loadingTpl">
+  <header>
+    <div class="header-content">
+      <h1 class="task-title">{{ task.title }}</h1>
+      <button class="edit-btn" [routerLink]="['/tasks', task.id, 'edit']">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M11.333 2A1.886 1.886 0 0 1 14 4.667l-9 9-3.667.333.334-3.666 9-9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Edit
+      </button>
+    </div>
+    <div class="metadata">
+      <div class="meta-item">
+        <span class="meta-label">Status:</span>
+        <span class="status-badge" [attr.data-status]="task.status">{{ task.status }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Priority:</span>
+        <span class="priority-badge" [attr.data-priority]="task.priority">{{ task.priority }}</span>
+      </div>
+      <div class="meta-item" *ngIf="task.dueDate">
+        <span class="meta-label">Due Date:</span>
+        <span class="meta-value">{{ task.dueDate | date:'medium' }}</span>
+      </div>
+      <div class="meta-item" *ngIf="task.theme">
+        <span class="meta-label">Theme:</span>
+        <span class="meta-value">{{ task.theme.title }}</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="description" *ngIf="task.description">
+    <h3>Description</h3>
+    <div class="description-text markdown-body" [innerHTML]="descriptionHtml"></div>
+  </section>
+
+  <section class="subtasks">
+    <h3>Subtasks ({{ task.subtasks.length }})</h3>
+    <div class="subtask" *ngFor="let sub of task.subtasks">
+      <label>
+        <input type="checkbox" [checked]="sub.isDone" (change)="toggleSubtask(sub)" />
+        <span [class.done]="sub.isDone">{{ sub.title }}</span>
+      </label>
+    </div>
+    <div *ngIf="task.subtasks.length === 0" class="empty">No subtasks yet. You can add them in the task editor.</div>
+  </section>
+
+  <section class="tags">
+    <h3>Tags</h3>
+    <div class="tag-pool">
+      <span *ngFor="let tag of allTags"
+            class="tag-chip"
+            [class.selected]="hasTag(tag.id)"
+            [style.background]="tag.color || '#e5e7eb'"
+            (click)="toggleTag(tag)">
+        {{ tag.name }}
+      </span>
+    </div>
+    <div *ngIf="task.tags.length" class="selected-tags">
+      <strong>Selected:</strong>
+      <span *ngFor="let tag of task.tags" class="tag-chip mini" [style.background]="tag.color || '#e5e7eb'">{{ tag.name }}</span>
+    </div>
+  </section>
+
+  <section class="links">
+    <h3>Linked Items</h3>
+    <div class="placeholder">Linked notes and transactions will appear here (future feature).</div>
+  </section>
+
+  <footer>
+    <div class="error" *ngIf="error">{{ error }}</div>
+    <div class="updated">Last updated: {{ task.updatedAt | date:'short' }}</div>
+  </footer>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading task...</div>
+</ng-template>

@@ -17,6 +17,7 @@ public static class ApplicationServicesConfiguration
         services.AddScoped<INoteService, NoteService>();
         services.AddScoped<INoteGroupService, NoteGroupService>();
         services.AddScoped<ITagService, TagService>();
+        services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<ITaskItemQueryService, TaskItemQueryService>();
         services.AddScoped<ITaskThemeService, TaskThemeService>();
         services.AddScoped<ITransactionQueryService, TransactionQueryService>();

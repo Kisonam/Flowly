@@ -14,8 +14,8 @@ export class NavbarComponent {
   readonly modules = [
     { id: 'overview', icon: 'target', label: 'Огляд', route: '/home' },
     { id: 'notes', icon: 'file-text', label: 'Нотатки', route: '/notes' },
-    { id: 'tasks', icon: 'check-square', label: 'Завдання', route: '/' },
-    { id: 'finance', icon: 'dollar-sign', label: 'Фінанси', route: '/' },
+    { id: 'tasks', icon: 'check-square', label: 'Завдання', route: '/tasks' },
+    { id: 'finance', icon: 'dollar-sign', label: 'Фінанси', route: '/finance' },
   ];
 
   constructor(private router: Router) {}

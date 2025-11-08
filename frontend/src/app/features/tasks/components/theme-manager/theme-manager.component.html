@@ -1,0 +1,41 @@
+<div class="theme-manager">
+  <header>
+    <h2>Task Themes</h2>
+    <button type="button" class="btn btn-primary" (click)="toggleNewForm()">
+      {{ showNewForm ? 'Cancel' : '+ New Theme' }}
+    </button>
+  </header>
+
+  <div class="new-form" *ngIf="showNewForm" [formGroup]="newForm">
+    <input type="text" formControlName="title" placeholder="Theme title" />
+    <input type="color" formControlName="color" />
+    <button type="button" class="btn btn-success" (click)="createTheme()" [disabled]="newForm.invalid">Create</button>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="loading" *ngIf="loading">Loading themes...</div>
+
+  <div class="themes" cdkDropList (cdkDropListDropped)="onDrop($event)">
+    <div class="theme" *ngFor="let theme of themes" cdkDrag [cdkDragData]="theme">
+      <div class="drag-handle" cdkDragHandle>☰</div>
+      <div class="color-preview" [style.background]="theme.color || '#e5e7eb'"></div>
+
+      <div *ngIf="editingId !== theme.id" class="view">
+        <span class="title">{{ theme.title }}</span>
+        <div class="actions">
+          <button type="button" class="btn btn-sm" (click)="startEdit(theme)">Edit</button>
+          <button type="button" class="btn btn-sm btn-danger" (click)="deleteTheme(theme.id)">Delete</button>
+        </div>
+      </div>
+
+      <div *ngIf="editingId === theme.id" class="edit" [formGroup]="editForm">
+        <input type="text" formControlName="title" placeholder="Title" />
+        <input type="color" formControlName="color" />
+        <button type="button" class="btn btn-sm btn-success" (click)="saveEdit(theme)" [disabled]="editForm.invalid">Save</button>
+        <button type="button" class="btn btn-sm" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty" *ngIf="themes.length === 0 && !loading">No themes yet.</div>
+</div>

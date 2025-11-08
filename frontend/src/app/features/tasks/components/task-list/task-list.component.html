@@ -1,0 +1,87 @@
+<div class="task-list" *ngIf="!loading; else loadingTpl">
+  <div class="toolbar">
+    <a class="btn" routerLink="/tasks/board">Board</a>
+    <a class="btn" routerLink="/tasks/list">List</a>
+    <a class="btn btn-primary" routerLink="/tasks/new">New Task</a>
+    <a class="btn" routerLink="/tasks/themes">Themes</a>
+  </div>
+  <div class="filters" [formGroup]="filterForm">
+    <input type="text" placeholder="Search" formControlName="search" />
+
+    <select formControlName="status">
+      <option value="">All Statuses</option>
+      <option value="Todo">Todo</option>
+      <option value="InProgress">In Progress</option>
+      <option value="Done">Done</option>
+    </select>
+
+    <select formControlName="priority">
+      <option value="">All Priorities</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+      <option value="None">None</option>
+    </select>
+
+    <select formControlName="themeId">
+      <option value="">All Themes</option>
+      <option *ngFor="let t of themes" [value]="t.id">{{ t.title }}</option>
+    </select>
+
+    <div class="date-range">
+      <label>Due from</label>
+      <input type="date" formControlName="dueFrom" />
+      <label>to</label>
+      <input type="date" formControlName="dueTo" />
+    </div>
+
+    <div class="tags">
+      <span *ngFor="let tag of tags" class="tag-chip" [style.background]="tag.color || '#e5e7eb'" (click)="toggleTag(tag.id)">
+        {{ tag.name }}
+      </span>
+    </div>
+
+    <button class="btn btn-secondary" type="button" (click)="clearFilters()">Clear</button>
+  </div>
+
+  <div class="sort">
+    <label>Sort by:</label>
+    <button *ngFor="let opt of sortOptions"
+            class="btn btn-link"
+            [class.active]="currentSort?.key === opt.key"
+            (click)="setSort(opt)">
+      {{ opt.label }}
+      <span *ngIf="currentSort?.key === opt.key">({{ sortDirection }})</span>
+    </button>
+  </div>
+
+  <div class="list">
+    <div class="row" *ngFor="let task of tasks">
+      <div class="title">
+        <span class="status-dot" [style.background]="task.color || '#94a3b8'"></span>
+        {{ task.title }}
+      </div>
+      <div class="meta">
+        <span *ngIf="task.dueDate">Due: {{ task.dueDate | date: 'mediumDate' }}</span>
+        <span>Priority: {{ task.priority }}</span>
+        <span>Status: {{ task.status }}</span>
+        <span *ngIf="task.theme">Theme: {{ task.theme.title }}</span>
+      </div>
+      <div class="tags">
+        <span class="tag-chip" *ngFor="let tag of task.tags" [style.background]="tag.color || '#e5e7eb'">{{ tag.name }}</span>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="empty">No tasks found.</div>
+  </div>
+
+  <div class="pagination">
+    <button class="btn" (click)="prevPage()" [disabled]="page <= 1">Prev</button>
+    <span>Page {{ page }} / {{ totalPages }}</span>
+    <button class="btn" (click)="nextPage()" [disabled]="page >= totalPages">Next</button>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading tasks...</div>
+</ng-template>

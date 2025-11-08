@@ -1,0 +1,111 @@
+<div class="task-editor-layout" [formGroup]="form">
+  <!-- Header -->
+  <div class="editor-header">
+    <div class="header-left">
+  <button type="button" class="btn-back" (click)="onCancel()" title="Back to tasks">Back</button>
+      <h1 class="editor-title">{{ isEdit ? 'Edit Task' : 'New Task' }}</h1>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-secondary" (click)="togglePreview()" [class.active]="isPreviewMode && !isSplitView">👁️ Preview</button>
+      <button type="button" class="btn-secondary" (click)="toggleSplitView()" [class.active]="isSplitView">↔️ Split</button>
+      <button type="button" class="btn-secondary" (click)="isPreviewMode=false; isSplitView=false" [class.active]="!isPreviewMode && !isSplitView">✍️ Editor</button>
+      <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="saving">Cancel</button>
+      <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="saving || form.invalid">
+        <span *ngIf="!saving">{{ isEdit ? 'Update' : 'Create' }}</span>
+        <span *ngIf="saving">⏳ Saving...</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="editor-body">
+    <!-- Sidebar -->
+    <aside class="editor-sidebar">
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Meta</h3>
+        <label class="form-field">Status
+          <select formControlName="status"><option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option></select>
+        </label>
+        <label class="form-field">Priority
+          <select formControlName="priority"><option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</option></select>
+          <span class="priority-badge" *ngIf="form.controls['priority'].value" [attr.data-priority]="form.controls['priority'].value.toLowerCase()">
+            {{ form.controls['priority'].value }}
+          </span>
+        </label>
+        <label class="form-field">Due
+          <input type="date" formControlName="dueDate" />
+        </label>
+        <label class="form-field">Time (optional)
+          <input type="time" formControlName="dueTime" />
+        </label>
+        <label class="form-field">Color
+          <input type="color" formControlName="color" />
+        </label>
+        <div class="theme-display" *ngIf="initialThemeId">In group: <code>{{ initialThemeId }}</code></div>
+      </div>
+
+      <div class="sidebar-section" formArrayName="subtasks">
+        <h3 class="sidebar-title">Subtasks</h3>
+        <div class="subtask-item" *ngFor="let s of subtasks.controls; let i = index" [formGroupName]="i">
+          <input type="text" formControlName="title" placeholder="Subtask title" />
+          <button type="button" class="icon-btn" (click)="removeSubtaskField(i)" title="Remove">🗑️</button>
+        </div>
+        <button type="button" class="btn-secondary w-100" (click)="addSubtaskField()">+ Add subtask</button>
+        <div class="empty" *ngIf="subtasks.length === 0">No subtasks yet</div>
+      </div>
+
+      <div class="sidebar-section recurrence">
+        <h3 class="sidebar-title">Recurrence</h3>
+        <label class="checkbox-inline"><input type="checkbox" formControlName="enableRecurrence" /> Enable</label>
+        <div class="rule" *ngIf="form.controls['enableRecurrence'].value">
+          <select formControlName="recurrenceRule">
+            <option *ngFor="let opt of recurrenceOptions" [value]="opt.key">{{ opt.label }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sidebar-section references">
+        <h3 class="sidebar-title">References</h3>
+        <div class="ref-switch">
+          <select [(ngModel)]="refType" [ngModelOptions]="{standalone:true}" (ngModelChange)="onRefTypeChanged()">
+            <option value="note">Note</option>
+            <option value="tx">Transaction</option>
+          </select>
+        </div>
+        <input type="text" class="ref-search" placeholder="Пошук" [(ngModel)]="refSearch" [ngModelOptions]="{standalone:true}" (ngModelChange)="onSearchRef(refSearch)" />
+        <ng-container *ngIf="refType==='note'; else txTpl">
+          <select class="ref-select" [(ngModel)]="refId" [ngModelOptions]="{standalone:true}">
+            <option *ngFor="let n of noteOptions" [value]="n.id">{{ n.title }}</option>
+          </select>
+        </ng-container>
+        <ng-template #txTpl>
+          <select class="ref-select" [(ngModel)]="refId" [ngModelOptions]="{standalone:true}">
+            <option *ngFor="let x of txOptions" [value]="x.id">{{ (x.type==='Expense' ? '-' : '+') + x.amount + ' ' + x.currencyCode }}</option>
+          </select>
+        </ng-template>
+        <input type="text" class="ref-label" placeholder="Label (optional)" [(ngModel)]="refLabel" [ngModelOptions]="{standalone:true}" />
+        <button type="button" class="btn-secondary w-100" (click)="insertReferenceToken()">Insert reference</button>
+        <p class="hint">Формат: [[note:ID|Label]] або [[tx:ID|Label]]</p>
+      </div>
+    </aside>
+
+    <!-- Main editor -->
+    <div class="editor-main">
+      <div class="form-group">
+        <input type="text" formControlName="title" class="title-input" placeholder="Task title..." />
+        <div class="error" *ngIf="form.controls['title'].touched && form.controls['title'].invalid">Title required</div>
+      </div>
+      <div class="editor-preview-container" [class.split-view]="isSplitView">
+        <div class="markdown-editor" *ngIf="!isPreviewMode">
+          <textarea formControlName="description" class="markdown-textarea" placeholder="Write task description in Markdown..."></textarea>
+        </div>
+        <div class="markdown-preview" *ngIf="isPreviewMode || isSplitView">
+          <div class="preview-label">Preview</div>
+          <div class="preview-content markdown-body" [innerHTML]="descriptionPreview"></div>
+        </div>
+      </div>
+      <div class="actions-inline">
+        <span class="error" *ngIf="error">{{ error }}</span>
+      </div>
+    </div>
+  </div>
+</div>

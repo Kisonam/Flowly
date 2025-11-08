@@ -7,6 +7,8 @@ public class TaskItem
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid? TaskThemeId { get; set; }
+
+    public int Order { get; set; } = 0;
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
     public DateTime? DueDate { get; set; }

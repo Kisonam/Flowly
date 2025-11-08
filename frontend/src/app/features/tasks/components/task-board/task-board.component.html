@@ -1,0 +1,137 @@
+<div class="tasks-page" *ngIf="!loading; else loadingTpl">
+  <div class="module-header">
+    <h2>Tasks</h2>
+    <div class="module-actions">
+      <a
+        class="btn-secondary"
+        [routerLink]="showArchivedTasks ? ['/tasks/board'] : ['/tasks/archived']"
+        [class.active]="showArchivedTasks"
+        aria-label="Toggle archived tasks">
+        {{ showArchivedTasks ? 'Show Active' : 'View Archived' }}
+      </a>
+      <button class="btn-secondary" (click)="toggleFilters()" aria-label="Filters">Filters</button>
+      <a class="btn-primary" routerLink="/tasks/new">+ New Task</a>
+      <button class="btn-secondary" (click)="toggleAddTheme()">{{ showAddTheme ? 'Cancel' : '+ New Group' }}</button>
+    </div>
+  </div>
+
+  <div class="filters-panel" *ngIf="showFilters">
+    <form class="filters-form" (ngSubmit)="applyFilters()">
+      <div class="filters-row">
+        <label>Status
+          <select [(ngModel)]="filter.status" name="status">
+            <option value="">All</option>
+            <option value="Todo">To Do</option>
+            <option value="InProgress">In Progress</option>
+            <option value="Done">Done</option>
+          </select>
+        </label>
+        <label>Priority
+          <select [(ngModel)]="filter.priority" name="priority">
+            <option value="">All</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </label>
+        <label>Search
+          <input type="text" [(ngModel)]="filter.search" name="search" placeholder="Title..." />
+        </label>
+        <label>Due From
+          <input type="date" [(ngModel)]="filter.dueDateFrom" name="dueDateFrom" />
+        </label>
+        <label>Due To
+          <input type="date" [(ngModel)]="filter.dueDateTo" name="dueDateTo" />
+        </label>
+      </div>
+      <div class="filters-actions">
+        <button type="submit" class="btn-primary small">Apply</button>
+        <button type="button" class="btn-secondary small" (click)="resetFilters()">Reset</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="add-theme" *ngIf="showAddTheme">
+    <input type="text" [(ngModel)]="newTheme.title" placeholder="Group title" />
+    <input type="color" [(ngModel)]="newTheme.color" />
+    <button class="btn-primary" (click)="saveTheme()">Save</button>
+  </div>
+
+  <div
+    class="board-wrapper"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    [cdkDropListData]="columns"
+    (cdkDropListDropped)="onThemesDrop($event)">
+    <div class="board" cdkDropListGroup>
+      <div class="group-column" *ngFor="let col of columns" cdkDrag>
+        <div class="group-header" [style.borderBottomColor]="col.color">
+          <div class="group-title">
+            <span class="drag-icon">⋮⋮</span>
+            <h3>{{ col.title }}</h3>
+            <span class="count-badge">{{ (tasksByColumn.get(col.id) || []).length }}</span>
+          </div>
+          <button
+            *ngIf="col.id !== null"
+            class="delete-theme-btn"
+            (click)="deleteTheme($event, col.id)"
+            aria-label="Delete group"
+            title="Delete group">
+            🗑️
+          </button>
+        </div>
+      <div class="group-content"
+           cdkDropList
+           [id]="listId(col.id)"
+           [cdkDropListData]="listData(col.id)"
+           [cdkDropListConnectedTo]="getDropListIds()"
+           (cdkDropListDropped)="onTaskDrop($event, col.id)">
+  <div class="task-card" *ngFor="let task of listData(col.id)" cdkDrag [cdkDragData]="task" [class.overdue]="task.isOverdue">
+          <div class="task-content" [routerLink]="['/tasks', task.id]">
+            <div class="task-checkbox">
+              <input
+                type="checkbox"
+                [checked]="task.status === 'Done'"
+                (click)="$event.stopPropagation()"
+                (change)="toggleTaskComplete($event, task)"
+                [id]="'task-' + task.id"
+              />
+              <label [for]="'task-' + task.id"></label>
+            </div>
+            <span [class.completed]="task.status === 'Done'">{{ task.title }}</span>
+          </div>
+          <div class="task-meta">
+            <span class="task-priority" [attr.data-priority]="task.priority">{{ task.priority }}</span>
+            <span *ngIf="task.dueDate" class="task-due-date" [title]="task.dueDate | date:'medium'">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style="vertical-align:middle;margin-right:2px;"><path d="M6 2v2M14 2v2M3 7h14M5 11h2v2H5v-2z" stroke="#8b5cf6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="14" height="12" rx="2" stroke="#8b5cf6" stroke-width="1.5"/></svg>
+              {{ task.dueDate | date:'shortDate' }}
+            </span>
+            <span *ngIf="task.subtasks && task.subtasks.length > 0" class="task-subtasks-meta" [title]="getSubtaskProgress(task)[0] + '/' + getSubtaskProgress(task)[1] + ' subtasks done'">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style="vertical-align:middle;margin-right:2px;"><rect x="3" y="5" width="14" height="10" rx="2" stroke="#10b981" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {{ getSubtaskProgress(task)[0] }}/{{ getSubtaskProgress(task)[1] }}
+            </span>
+            <button
+              class="task-archive-btn"
+              (click)="archiveTask($event, task)"
+              title="Archive"
+              aria-label="Archive task"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M2 3h12v2H2V3zm1 3h10v8H3V6zm2 2v4h6V8H5z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="listData(col.id).length === 0">
+          <p>No tasks</p>
+        </div>
+      </div>
+      <button class="add-item-btn" (click)="quickAddTask(col.id)">+ New Task</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading tasks...</div>
+</ng-template>

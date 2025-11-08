@@ -7,7 +7,7 @@ namespace Flowly.Infrastructure.Data.Configurations;
 
 public class TaskItemConfiguration : IEntityTypeConfiguration<TaskItem>
 {
- public void Configure(EntityTypeBuilder<TaskItem> builder)
+    public void Configure(EntityTypeBuilder<TaskItem> builder)
     {
         builder.ToTable("Tasks");
         builder.HasKey(t => t.Id);
@@ -18,9 +18,11 @@ public class TaskItemConfiguration : IEntityTypeConfiguration<TaskItem>
         builder.Property(t => t.Status).IsRequired().HasConversion<string>().HasMaxLength(20);
         builder.Property(t => t.Priority).IsRequired().HasConversion<string>().HasMaxLength(20);
         builder.Property(t => t.IsArchived).HasDefaultValue(false);
+        builder.Property(t => t.Order).IsRequired();
 
         builder.HasIndex(t => t.UserId);
         builder.HasIndex(t => t.TaskThemeId);
+        builder.HasIndex(t => new { t.TaskThemeId, t.Order });
         builder.HasIndex(t => t.Status);
         builder.HasIndex(t => t.DueDate);
         builder.HasIndex(t => t.IsArchived);
