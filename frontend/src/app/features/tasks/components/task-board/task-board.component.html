@@ -37,10 +37,7 @@
         <label>Search
           <input type="text" [(ngModel)]="filter.search" name="search" placeholder="Title..." />
         </label>
-        <label>Due From
-          <input type="date" [(ngModel)]="filter.dueDateFrom" name="dueDateFrom" />
-        </label>
-        <label>Due To
+        <label>Due On
           <input type="date" [(ngModel)]="filter.dueDateTo" name="dueDateTo" />
         </label>
       </div>
@@ -102,9 +99,9 @@
           </div>
           <div class="task-meta">
             <span class="task-priority" [attr.data-priority]="task.priority">{{ task.priority }}</span>
-            <span *ngIf="task.dueDate" class="task-due-date" [title]="task.dueDate | date:'medium'">
+            <span *ngIf="task.dueDate" class="task-due-date" [title]="task.dueDate | date:'dd/MM/yy'">
               <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style="vertical-align:middle;margin-right:2px;"><path d="M6 2v2M14 2v2M3 7h14M5 11h2v2H5v-2z" stroke="#8b5cf6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="14" height="12" rx="2" stroke="#8b5cf6" stroke-width="1.5"/></svg>
-              {{ task.dueDate | date:'shortDate' }}
+              {{ task.dueDate | date:'dd/MM/yy' }}
             </span>
             <span *ngIf="task.subtasks && task.subtasks.length > 0" class="task-subtasks-meta" [title]="getSubtaskProgress(task)[0] + '/' + getSubtaskProgress(task)[1] + ' subtasks done'">
               <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style="vertical-align:middle;margin-right:2px;"><rect x="3" y="5" width="14" height="10" rx="2" stroke="#10b981" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>

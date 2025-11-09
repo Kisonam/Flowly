@@ -32,7 +32,7 @@ export class TasksService {
     let params = new HttpParams();
 
     if (filter) {
-      if (filter.search) params = params.set('search', filter.search);
+  if (filter.search) params = params.set('search', filter.search);
       if (filter.tagIds?.length) params = params.set('tagIds', filter.tagIds.join(','));
       if (filter.themeIds?.length) params = params.set('themeIds', filter.themeIds.join(','));
       if (filter.status) params = params.set('status', filter.status);
@@ -40,12 +40,13 @@ export class TasksService {
       if (filter.isArchived !== undefined) params = params.set('isArchived', String(filter.isArchived));
       if (filter.isOverdue !== undefined) params = params.set('isOverdue', String(filter.isOverdue));
       // Normalize dates to ISO (UTC) to ensure consistent backend parsing
-      if (filter.dueDateFrom) {
-        const fromIso = this.toIsoDate(filter.dueDateFrom);
-        params = params.set('dueDateFrom', fromIso);
+      if (filter.dueDateOn) {
+        const onIso = this.toIsoStartOfDay(filter.dueDateOn);
+        params = params.set('dueDateOn', onIso);
       }
       if (filter.dueDateTo) {
-        const toIso = this.toIsoDate(filter.dueDateTo);
+        // Interpret date-only values as end-of-day in the user's local time, then convert to UTC
+        const toIso = this.toIsoEndOfDay(filter.dueDateTo);
         params = params.set('dueDateTo', toIso);
       }
       if (filter.page) params = params.set('page', String(filter.page));
@@ -276,14 +277,58 @@ export class TasksService {
     return throwError(() => new Error(message));
   }
 
-  /** Convert string or Date to trimmed ISO (yyyy-MM-ddTHH:mm:ss) for backend query */
+  /** Convert value to ISO string at end-of-day (23:59:59Z). Always returns UTC ISO with 'Z'. */
+  private toIsoEndOfDay(value: string | Date): string {
+    if (typeof value === 'string') {
+      const dateOnlyMatch = /^\d{4}-\d{2}-\d{2}$/.test(value);
+      if (dateOnlyMatch) {
+        // Construct local date at 23:59:59
+        const [y, m, d] = value.split('-').map(Number);
+        const local = new Date(y, (m - 1), d, 23, 59, 59, 0);
+        if (isNaN(local.getTime())) return value;
+        return new Date(Date.UTC(
+          local.getUTCFullYear(),
+          local.getUTCMonth(),
+          local.getUTCDate(),
+          local.getUTCHours(),
+          local.getUTCMinutes(),
+          local.getUTCSeconds()
+        )).toISOString(); // keep trailing 'Z'
+      }
+    }
+    // Fallback: keep original conversion
+    return this.toIsoDate(value);
+  }
+
+  /** Convert value to ISO string at start-of-day (00:00:00Z). Always returns UTC ISO with 'Z'. */
+  private toIsoStartOfDay(value: string | Date): string {
+    if (typeof value === 'string') {
+      const dateOnlyMatch = /^\d{4}-\d{2}-\d{2}$/.test(value);
+      if (dateOnlyMatch) {
+        const [y, m, d] = value.split('-').map(Number);
+        const local = new Date(y, (m - 1), d, 0, 0, 0, 0);
+        if (isNaN(local.getTime())) return value;
+        return new Date(Date.UTC(
+          local.getUTCFullYear(),
+          local.getUTCMonth(),
+          local.getUTCDate(),
+          local.getUTCHours(),
+          local.getUTCMinutes(),
+          local.getUTCSeconds()
+        )).toISOString();
+      }
+    }
+    return this.toIsoDate(value);
+  }
+
+  /** Convert string or Date to ISO with timezone Z for backend query (keeps seconds, may include .000Z) */
   private toIsoDate(value: string | Date): string {
     const dateObj = typeof value === 'string' ? new Date(value) : value;
     // If invalid date, skip normalization and return original string to let backend handle
     if (isNaN(dateObj.getTime())) {
       return typeof value === 'string' ? value : '';
     }
-    // Remove milliseconds & ensure UTC
+    // Ensure UTC and include 'Z'
     return new Date(Date.UTC(
       dateObj.getUTCFullYear(),
       dateObj.getUTCMonth(),
@@ -291,6 +336,6 @@ export class TasksService {
       dateObj.getUTCHours(),
       dateObj.getUTCMinutes(),
       dateObj.getUTCSeconds()
-    )).toISOString().substring(0,19);
+    )).toISOString();
   }
 }

@@ -46,7 +46,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
   // Filters panel state
   showFilters = false;
   showArchivedTasks = false;
-  filter: { status?: string; priority?: string; search?: string; dueDateFrom?: string; dueDateTo?: string } = {};
+  filter: { status?: string; priority?: string; search?: string; dueDateTo?: string } = {};
 
   // Returns [done, total] subtasks count for a task
   getSubtaskProgress(task: Task): [number, number] {
@@ -233,8 +233,10 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
     if (this.filter.status) taskFilter.status = this.filter.status;
     if (this.filter.priority) taskFilter.priority = this.filter.priority;
     if (this.filter.search) taskFilter.search = this.filter.search.trim();
-    if (this.filter.dueDateFrom) taskFilter.dueDateFrom = this.filter.dueDateFrom;
-    if (this.filter.dueDateTo) taskFilter.dueDateTo = this.filter.dueDateTo;
+    if (this.filter.dueDateTo) {
+      // Date equality: send as dueDateOn (date-only). Service will normalize to start-of-day UTC.
+      taskFilter.dueDateOn = this.filter.dueDateTo;
+    }
 
     forkJoin({
       themes: this.tasksService.getThemes(),

@@ -65,14 +65,16 @@ public class TaskService : ITaskService
             query = query.Where(t => t.IsArchived == filter.IsArchived.Value);
         }
 
-        if (filter.DueDateFrom.HasValue)
+        if (filter.DueDateOn.HasValue)
         {
-            query = query.Where(t => t.DueDate.HasValue && t.DueDate.Value >= filter.DueDateFrom.Value);
+            var start = DateTime.SpecifyKind(filter.DueDateOn.Value, DateTimeKind.Utc);
+            var end = start.AddDays(1);
+            query = query.Where(t => t.DueDate.HasValue && t.DueDate.Value >= start && t.DueDate.Value < end);
         }
-
-        if (filter.DueDateTo.HasValue)
+        else if (filter.DueDateTo.HasValue)
         {
-            query = query.Where(t => t.DueDate.HasValue && t.DueDate.Value <= filter.DueDateTo.Value);
+            var endExclusive = DateTime.SpecifyKind(filter.DueDateTo.Value, DateTimeKind.Utc);
+            query = query.Where(t => t.DueDate.HasValue && t.DueDate.Value <= endExclusive);
         }
 
         if (filter.IsOverdue.HasValue && filter.IsOverdue.Value)

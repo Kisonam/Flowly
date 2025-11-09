@@ -20,7 +20,7 @@
       </div>
       <div class="meta-item" *ngIf="task.dueDate">
         <span class="meta-label">Due Date:</span>
-        <span class="meta-value">{{ task.dueDate | date:'medium' }}</span>
+  <span class="meta-value">{{ task.dueDate | date:'dd/MM/yy' }}</span>
       </div>
       <div class="meta-item" *ngIf="task.theme">
         <span class="meta-label">Theme:</span>
@@ -69,7 +69,7 @@
 
   <footer>
     <div class="error" *ngIf="error">{{ error }}</div>
-    <div class="updated">Last updated: {{ task.updatedAt | date:'short' }}</div>
+  <div class="updated">Last updated: {{ task.updatedAt | date:'dd/MM/yy HH:mm' }}</div>
   </footer>
 </div>
 

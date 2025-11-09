@@ -26,11 +26,6 @@ public class TaskFilterDtoValidator : AbstractValidator<TaskFilterDto>
         RuleFor(x => x.PageSize)
             .InclusiveBetween(1, 100).WithMessage("PageSize must be between 1 and 100");
 
-        RuleFor(x => x.DueDateFrom)
-            .LessThanOrEqualTo(x => x.DueDateTo ?? DateTime.MaxValue)
-            .WithMessage("DueDateFrom must be before or equal to DueDateTo")
-            .When(x => x.DueDateFrom.HasValue && x.DueDateTo.HasValue);
-
         RuleFor(x => x.TagIds)
             .Must(tags => tags == null || tags.Count <= 20)
             .WithMessage("Cannot filter by more than 20 tags");

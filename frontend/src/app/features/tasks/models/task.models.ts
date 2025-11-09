@@ -92,7 +92,7 @@ export interface TaskFilter {
   priority?: TaskPriority;
   isArchived?: boolean;
   isOverdue?: boolean;
-  dueDateFrom?: string;
+  dueDateOn?: string; // ISO string representing start of day in UTC
   dueDateTo?: string;
   page?: number;
   pageSize?: number;

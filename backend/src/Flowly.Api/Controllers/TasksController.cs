@@ -40,16 +40,16 @@ public class TasksController : ControllerBase
         [FromQuery] TasksStatus? status = null,
         [FromQuery] TaskPriority? priority = null,
         [FromQuery] bool? isArchived = null,
-        [FromQuery] bool? isOverdue = null,
-        [FromQuery] DateTime? dueDateFrom = null,
-        [FromQuery] DateTime? dueDateTo = null,
+    [FromQuery] bool? isOverdue = null,
+    [FromQuery] DateTime? dueDateOn = null,
+    [FromQuery] DateTime? dueDateTo = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
         try
         {
-            _logger.LogInformation("➡️ GET /api/tasks: search={Search} tagIds={TagIds} themeIds={ThemeIds} status={Status} priority={Priority} archived={Archived} overdue={Overdue} dueFrom={DueFrom} dueTo={DueTo} page={Page} pageSize={PageSize}",
-                search, tagIds, themeIds, status, priority, isArchived, isOverdue, dueDateFrom, dueDateTo, page, pageSize);
+            _logger.LogInformation("➡️ GET /api/tasks: search={Search} tagIds={TagIds} themeIds={ThemeIds} status={Status} priority={Priority} archived={Archived} overdue={Overdue} dueOn={DueOn} dueTo={DueTo} page={Page} pageSize={PageSize}",
+                search, tagIds, themeIds, status, priority, isArchived, isOverdue, dueDateOn, dueDateTo, page, pageSize);
             var userId = GetCurrentUserId();
 
             // Parse tag IDs
@@ -86,7 +86,7 @@ public class TasksController : ControllerBase
                 Priority = priority,
                 IsArchived = isArchived,
                 IsOverdue = isOverdue,
-                DueDateFrom = dueDateFrom,
+                DueDateOn = dueDateOn,
                 DueDateTo = dueDateTo,
                 Page = page,
                 PageSize = pageSize
@@ -109,8 +109,8 @@ public class TasksController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get tasks. Raw query params: search={Search} tagIds={TagIds} themeIds={ThemeIds} status={Status} priority={Priority} archived={Archived} overdue={Overdue} dueFrom={DueFrom} dueTo={DueTo} page={Page} pageSize={PageSize}",
-                search, tagIds, themeIds, status, priority, isArchived, isOverdue, dueDateFrom, dueDateTo, page, pageSize);
+            _logger.LogError(ex, "Failed to get tasks. Raw query params: search={Search} tagIds={TagIds} themeIds={ThemeIds} status={Status} priority={Priority} archived={Archived} overdue={Overdue} dueOn={DueOn} dueTo={DueTo} page={Page} pageSize={PageSize}",
+                search, tagIds, themeIds, status, priority, isArchived, isOverdue, dueDateOn, dueDateTo, page, pageSize);
             return BadRequest(new ErrorResponse
             {
                 StatusCode = 400,

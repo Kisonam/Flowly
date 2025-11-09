@@ -56,7 +56,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
     priority: [''],
     themeId: [''],
     tagIds: [[] as string[]],
-    dueFrom: [''],
     dueTo: ['']
   });
 
@@ -100,8 +99,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
       priority: v.priority || undefined,
       themeIds: v.themeId ? [v.themeId] : undefined,
       tagIds: v.tagIds?.length ? v.tagIds : undefined,
-      dueDateFrom: v.dueFrom || undefined,
-      dueDateTo: v.dueTo || undefined,
+      dueDateOn: v.dueTo || undefined,
       page: this.page,
       pageSize: this.pageSize
     };
@@ -220,7 +218,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
       priority: '',
       themeId: '',
       tagIds: [],
-      dueFrom: '',
       dueTo: ''
     });
   }

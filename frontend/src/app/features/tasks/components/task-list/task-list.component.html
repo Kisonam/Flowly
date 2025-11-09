@@ -29,9 +29,7 @@
     </select>
 
     <div class="date-range">
-      <label>Due from</label>
-      <input type="date" formControlName="dueFrom" />
-      <label>to</label>
+      <label>Due to</label>
       <input type="date" formControlName="dueTo" />
     </div>
 
@@ -62,7 +60,7 @@
         {{ task.title }}
       </div>
       <div class="meta">
-        <span *ngIf="task.dueDate">Due: {{ task.dueDate | date: 'mediumDate' }}</span>
+  <span *ngIf="task.dueDate">Due: {{ task.dueDate | date:'dd/MM/yy' }}</span>
         <span>Priority: {{ task.priority }}</span>
         <span>Status: {{ task.status }}</span>
         <span *ngIf="task.theme">Theme: {{ task.theme.title }}</span>

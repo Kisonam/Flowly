@@ -14,7 +14,10 @@ public class TaskFilterDto
     public TaskPriority? Priority { get; set; }
     public bool? IsArchived { get; set; }
     public bool? IsOverdue { get; set; }
-    public DateTime? DueDateFrom { get; set; }
+    /// <summary>
+    /// Match tasks whose DueDate falls on this exact calendar day (UTC) ignoring time component.
+    /// </summary>
+    public DateTime? DueDateOn { get; set; }
     public DateTime? DueDateTo { get; set; }
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;
