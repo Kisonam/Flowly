@@ -20,6 +20,11 @@ public class Transaction
     public Guid UserId { get; set; }
 
     /// <summary>
+    /// Transaction title/name
+    /// </summary>
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
     /// Transaction amount (always positive, type determines income/expense)
     /// </summary>
     public decimal Amount { get; set; }
@@ -79,6 +84,11 @@ public class Transaction
     public Category Category { get; set; } = null!;
 
     /// <summary>
+    /// Tags associated with this transaction
+    /// </summary>
+    public ICollection<TransactionTag> TransactionTags { get; set; } = new List<TransactionTag>();
+
+    /// <summary>
     /// Links from this transaction to other entities
     /// </summary>
     public ICollection<Link> LinksFrom { get; set; } = new List<Link>();
@@ -95,11 +105,15 @@ public class Transaction
     /// <summary>
     /// Update transaction details
     /// </summary>
-    public void Update(decimal amount, string currencyCode, TransactionType type, Guid categoryId, DateTime date, string? description = null)
+    public void Update(string title, decimal amount, string currencyCode, TransactionType type, Guid categoryId, DateTime date, string? description = null)
     {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new ArgumentException("Title cannot be empty", nameof(title));
+        
         if (amount <= 0)
             throw new ArgumentException("Amount must be positive", nameof(amount));
 
+        Title = title.Trim();
         Amount = amount;
         CurrencyCode = currencyCode;
         Type = type;

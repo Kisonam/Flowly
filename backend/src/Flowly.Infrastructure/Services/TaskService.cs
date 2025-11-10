@@ -822,6 +822,9 @@ public class TaskService : ITaskService
     public async Task CompleteTaskAsync(Guid userId, Guid taskId)
     {
         var task = await _dbContext.Tasks
+            .Include(t => t.Subtasks)
+            .Include(t => t.TaskTags)
+                .ThenInclude(tt => tt.Tag)
             .Include(t => t.Recurrence)
             .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
         if (task == null) throw new InvalidOperationException("Task not found");
@@ -832,49 +835,190 @@ public class TaskService : ITaskService
             return;
         }
 
+        // Mark current as completed
         task.Complete();
 
-        // Rolling recurrence: if rule exists, advance DueDate by FREQ while preserving time-of-day
-        if (task.Recurrence != null)
+        // If task is archived or has no recurrence, just save completion
+        if (task.IsArchived || task.Recurrence == null)
         {
-            var rule = task.Recurrence.Rule?.Trim().ToUpperInvariant() ?? string.Empty;
-
-            // Base next date from existing due date if any, otherwise from now (date part only)
-            var baseDateTime = task.DueDate ?? DateTime.UtcNow;
-            var timeOfDay = baseDateTime.TimeOfDay;
-            var baseDate = baseDateTime.Date;
-
-            DateTime nextDate;
-            if (rule.Contains("FREQ=DAILY"))
-            {
-                nextDate = baseDate.AddDays(1);
-            }
-            else if (rule.Contains("FREQ=WEEKLY"))
-            {
-                nextDate = baseDate.AddDays(7);
-            }
-            else if (rule.Contains("FREQ=MONTHLY"))
-            {
-                nextDate = baseDate.AddMonths(1);
-            }
-            else
-            {
-                // Default/fallback: daily
-                nextDate = baseDate.AddDays(1);
-            }
-
-            // Update recurrence metadata
-            task.Recurrence.LastOccurrence = DateTime.UtcNow;
-            task.Recurrence.NextOccurrence = nextDate + timeOfDay;
-
-            // Restart same task for next occurrence (rolling): set to Todo, clear completion, and move due date forward
-            task.Status = Domain.Enums.TasksStatus.Todo;
-            task.CompletedAt = null;
-            task.DueDate = nextDate + timeOfDay; // preserve time component
-            task.UpdatedAt = DateTime.UtcNow;
+            await _dbContext.SaveChangesAsync();
+            return;
         }
 
+        // Parse recurrence rule and create a NEW task instance scheduled for the next occurrence
+        var parsed = ParseRecurrenceRule(task.Recurrence.Rule);
+        var baseDateTime = task.DueDate ?? DateTime.UtcNow;
+        var timeOfDay = baseDateTime.TimeOfDay;
+        var nextDate = ComputeNextDate(baseDateTime.Date, parsed);
+
+        // Determine order in the target theme (append to the end)
+        var maxOrder = await _dbContext.Tasks
+            .Where(t => t.UserId == userId && t.TaskThemeId == task.TaskThemeId && !t.IsArchived)
+            .Select(t => (int?)t.Order)
+            .MaxAsync() ?? -1;
+
+        var newTask = new TaskItem
+        {
+            Id = Guid.NewGuid(),
+            UserId = task.UserId,
+            TaskThemeId = task.TaskThemeId,
+            Order = maxOrder + 1,
+            Title = task.Title,
+            Description = task.Description,
+            DueDate = nextDate + timeOfDay,
+            Color = task.Color,
+            Status = Domain.Enums.TasksStatus.Todo,
+            Priority = task.Priority,
+            IsArchived = false,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        // Clone subtasks (titles and order), reset completion
+        foreach (var s in task.Subtasks.OrderBy(x => x.Order))
+        {
+            newTask.Subtasks.Add(new TaskSubtask
+            {
+                Id = Guid.NewGuid(),
+                TaskItemId = newTask.Id,
+                Title = s.Title,
+                IsDone = false,
+                Order = s.Order,
+                CreatedAt = DateTime.UtcNow,
+                CompletedAt = null
+            });
+        }
+
+        // Clone tags
+        foreach (var tt in task.TaskTags)
+        {
+            newTask.TaskTags.Add(new TaskTag
+            {
+                TaskId = newTask.Id,
+                TagId = tt.TagId
+            });
+        }
+
+        // Transfer recurrence to the new task: mark last occurrence on old, then create a new recurrence on the new task
+        task.Recurrence.LastOccurrence = DateTime.UtcNow;
+        var newRecurrence = new TaskRecurrence
+        {
+            Id = Guid.NewGuid(),
+            TaskItemId = newTask.Id,
+            Rule = task.Recurrence.Rule,
+            CreatedAt = DateTime.UtcNow,
+            LastOccurrence = null,
+            NextOccurrence = ComputeNextDate(nextDate, parsed) + timeOfDay
+        };
+        newTask.Recurrence = newRecurrence;
+
+        // Remove recurrence from completed task to avoid duplicating schedules on old items
+        _dbContext.TaskRecurrences.Remove(task.Recurrence);
+
+        _dbContext.Tasks.Add(newTask);
         await _dbContext.SaveChangesAsync();
+    }
+
+    private enum RecurrenceFrequency { Daily, Weekly, Monthly }
+
+    private sealed class ParsedRecurrence
+    {
+        public RecurrenceFrequency Frequency { get; set; }
+        public int Interval { get; set; } = 1;
+        public DayOfWeek[]? ByDays { get; set; }
+    }
+
+    private static ParsedRecurrence ParseRecurrenceRule(string? rule)
+    {
+        var result = new ParsedRecurrence { Frequency = RecurrenceFrequency.Daily, Interval = 1 };
+        if (string.IsNullOrWhiteSpace(rule)) return result;
+
+        var parts = rule.Trim().ToUpperInvariant().Split(';', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var p in parts)
+        {
+            var kv = p.Split('=', 2);
+            if (kv.Length != 2) continue;
+            var key = kv[0].Trim();
+            var val = kv[1].Trim();
+            switch (key)
+            {
+                case "FREQ":
+                    result.Frequency = val switch
+                    {
+                        "DAILY" => RecurrenceFrequency.Daily,
+                        "WEEKLY" => RecurrenceFrequency.Weekly,
+                        "MONTHLY" => RecurrenceFrequency.Monthly,
+                        _ => result.Frequency
+                    };
+                    break;
+                case "INTERVAL":
+                    if (int.TryParse(val, out var interval) && interval > 0) result.Interval = interval;
+                    break;
+                case "BYDAY":
+                    // e.g. MO,TU,WE
+                    var days = val.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(StringToDayOfWeek)
+                        .Where(d => d.HasValue)
+                        .Select(d => d!.Value)
+                        .Distinct()
+                        .ToArray();
+                    result.ByDays = days.Length > 0 ? days : null;
+                    break;
+            }
+        }
+        return result;
+    }
+
+    private static DayOfWeek? StringToDayOfWeek(string s)
+    {
+        return s switch
+        {
+            "MO" => DayOfWeek.Monday,
+            "TU" => DayOfWeek.Tuesday,
+            "WE" => DayOfWeek.Wednesday,
+            "TH" => DayOfWeek.Thursday,
+            "FR" => DayOfWeek.Friday,
+            "SA" => DayOfWeek.Saturday,
+            "SU" => DayOfWeek.Sunday,
+            _ => null
+        };
+    }
+
+    private static DateTime ComputeNextDate(DateTime baseDate, ParsedRecurrence r)
+    {
+        baseDate = DateTime.SpecifyKind(baseDate.Date, DateTimeKind.Utc);
+        return r.Frequency switch
+        {
+            RecurrenceFrequency.Daily => baseDate.AddDays(r.Interval),
+            RecurrenceFrequency.Weekly => NextWeekly(baseDate, r),
+            RecurrenceFrequency.Monthly => AddMonthsClamped(baseDate, r.Interval),
+            _ => baseDate.AddDays(1)
+        };
+    }
+
+    private static DateTime NextWeekly(DateTime baseDate, ParsedRecurrence r)
+    {
+        if (r.ByDays == null || r.ByDays.Length == 0)
+        {
+            return baseDate.AddDays(7 * r.Interval);
+        }
+        var set = r.ByDays.OrderBy(d => d).ToArray();
+        // find next day in set strictly after baseDate.DayOfWeek; otherwise jump weeks
+        for (int i = 1; i <= 7 * r.Interval; i++)
+        {
+            var candidate = baseDate.AddDays(i);
+            if (set.Contains(candidate.DayOfWeek)) return candidate;
+        }
+        // fallback
+        return baseDate.AddDays(7 * r.Interval);
+    }
+
+    private static DateTime AddMonthsClamped(DateTime date, int months)
+    {
+        var targetMonth = date.AddMonths(months);
+        var daysInMonth = DateTime.DaysInMonth(targetMonth.Year, targetMonth.Month);
+        var day = Math.Min(date.Day, daysInMonth);
+        return new DateTime(targetMonth.Year, targetMonth.Month, day, 0, 0, 0, DateTimeKind.Utc);
     }
 
     public async Task ChangeStatusAsync(Guid userId, Guid taskId, Domain.Enums.TasksStatus status)

@@ -1,4 +1,5 @@
 using Flowly.Application.DTOs.Transactions;
+using Flowly.Application.DTOs.Notes;
 using Flowly.Application.Interfaces;
 using Flowly.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -42,12 +43,27 @@ public class TransactionQueryService : ITransactionQueryService
             .Select(t => new TransactionListItemDto
             {
                 Id = t.Id,
+                Title = t.Title,
                 Amount = t.Amount,
                 CurrencyCode = t.CurrencyCode,
                 Type = t.Type,
+                CategoryId = t.CategoryId,
                 Date = t.Date,
+                CreatedAt = t.CreatedAt,
                 Description = t.Description,
-                IsArchived = t.IsArchived
+                IsArchived = t.IsArchived,
+                Category = t.Category != null ? new CategoryDto
+                {
+                    Id = t.Category.Id,
+                    Name = t.Category.Name,
+                    UserId = t.Category.UserId
+                } : null,
+                Tags = t.TransactionTags.Select(tt => new TagDto
+                {
+                    Id = tt.Tag.Id,
+                    Name = tt.Tag.Name,
+                    Color = tt.Tag.Color
+                }).ToList()
             })
             .ToListAsync();
     }

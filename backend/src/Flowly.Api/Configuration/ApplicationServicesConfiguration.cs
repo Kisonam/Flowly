@@ -20,7 +20,12 @@ public static class ApplicationServicesConfiguration
         services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<ITaskItemQueryService, TaskItemQueryService>();
         services.AddScoped<ITaskThemeService, TaskThemeService>();
-        services.AddScoped<ITransactionQueryService, TransactionQueryService>();
+        
+        // Finance Module Services
+        services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IBudgetService, BudgetService>();
+        services.AddScoped<IFinancialGoalService, FinancialGoalService>();
 
 
         return services;

@@ -1,0 +1,218 @@
+<div class="transaction-editor-container">
+  <!-- Header -->
+  <div class="editor-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="onCancel()">
+        ← Back
+      </button>
+      <h2>{{ isEdit ? 'Edit Transaction' : 'New Transaction' }}</h2>
+    </div>
+    <div class="header-right">
+      <button
+        *ngIf="isEdit"
+        class="btn btn-danger"
+        type="button"
+        (click)="onDelete()">
+        🗑️ Archive
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading transaction...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-banner">
+    <span>❌ {{ error }}</span>
+    <button class="btn-close" (click)="error = ''">✕</button>
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="!loading" class="editor-content">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Main Card -->
+      <div class="form-card">
+        <h3>Transaction Details</h3>
+
+        <!-- Type Toggle -->
+        <div class="form-group type-toggle-group">
+          <label class="form-label">Type *</label>
+          <div class="type-toggle">
+            <button
+              *ngFor="let typeOption of transactionTypes"
+              type="button"
+              class="type-btn"
+              [class.active]="form.get('type')?.value === typeOption.value"
+              [style.background]="form.get('type')?.value === typeOption.value ? getTransactionColor(typeOption.value) : 'white'"
+              [style.color]="form.get('type')?.value === typeOption.value ? 'white' : '#374151'"
+              (click)="form.patchValue({ type: typeOption.value })">
+              <span class="type-icon">{{ typeOption.icon }}</span>
+              {{ typeOption.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Amount & Currency Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="amount">Amount *</label>
+            <div class="amount-input-group">
+              <input
+                id="amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                formControlName="amount"
+                class="input-field amount-input"
+                [class.error]="form.get('amount')?.touched && form.get('amount')?.invalid"
+                placeholder="0.00"
+              />
+              <span class="currency-symbol">{{ getCurrencySymbol(form.get('currencyCode')?.value) }}</span>
+            </div>
+            <span class="error-message" *ngIf="form.get('amount')?.touched && form.get('amount')?.invalid">
+              {{ getFieldError('amount') }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="currencyCode">Currency *</label>
+            <select
+              id="currencyCode"
+              formControlName="currencyCode"
+              class="select-field"
+              [class.error]="form.get('currencyCode')?.touched && form.get('currencyCode')?.invalid">
+              <option *ngFor="let curr of currencies" [value]="curr.code">
+                {{ curr.code }} ({{ curr.symbol }}) - {{ curr.name }}
+              </option>
+            </select>
+            <span class="error-message" *ngIf="form.get('currencyCode')?.touched && form.get('currencyCode')?.invalid">
+              {{ getFieldError('currencyCode') }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Preview Amount -->
+        <div class="amount-preview">
+          <span class="preview-label">Preview:</span>
+          <span
+            class="preview-amount"
+            [style.color]="getTransactionColor(form.get('type')?.value)">
+            {{ formatPreviewAmount() }}
+          </span>
+        </div>
+
+        <!-- Title -->
+        <div class="form-group">
+          <label class="form-label" for="title">Title *</label>
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            class="input-field"
+            [class.error]="form.get('title')?.touched && form.get('title')?.invalid"
+            placeholder="e.g., Salary, Groceries, Coffee"
+            maxlength="200"
+          />
+          <span class="error-message" *ngIf="form.get('title')?.touched && form.get('title')?.invalid">
+            {{ getFieldError('title') }}
+          </span>
+        </div>
+
+        <!-- Date & Category Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="date">Date *</label>
+            <input
+              id="date"
+              type="date"
+              formControlName="date"
+              class="input-field"
+              [class.error]="form.get('date')?.touched && form.get('date')?.invalid"
+            />
+            <span class="error-message" *ngIf="form.get('date')?.touched && form.get('date')?.invalid">
+              {{ getFieldError('date') }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="categoryId">Category</label>
+            <select
+              id="categoryId"
+              formControlName="categoryId"
+              class="select-field">
+              <option value="">Uncategorized</option>
+              <option *ngFor="let cat of categories" [value]="cat.id">
+                <span *ngIf="cat.icon">{{ cat.icon }}</span> {{ cat.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label" for="description">
+            Description
+            <span class="optional">(optional)</span>
+          </label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="textarea-field"
+            [class.error]="form.get('description')?.touched && form.get('description')?.invalid"
+            placeholder="Add additional details..."
+            rows="4"
+            maxlength="1000">
+          </textarea>
+          <div class="char-counter">
+            {{ form.get('description')?.value?.length || 0 }} / 1000
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="form-group">
+          <label class="form-label">Tags</label>
+          <div class="tags-list" *ngIf="tags.length > 0">
+            <button
+              *ngFor="let tag of tags"
+              type="button"
+              class="tag-chip"
+              [class.selected]="isTagSelected(tag.id)"
+              [style.background]="isTagSelected(tag.id) ? (tag.color || '#8b5cf6') : '#e5e7eb'"
+              [style.color]="isTagSelected(tag.id) ? 'white' : '#374151'"
+              (click)="toggleTag(tag.id)">
+              {{ tag.name }}
+            </button>
+          </div>
+          <p class="tags-empty" *ngIf="tags.length === 0">
+            No tags available. <a routerLink="/tags">Create tags</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="saving">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="saving || form.invalid">
+          <span *ngIf="!saving">{{ isEdit ? '💾 Save Changes' : '✅ Create Transaction' }}</span>
+          <span *ngIf="saving">
+            <span class="spinner-small"></span>
+            Saving...
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

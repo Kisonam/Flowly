@@ -1,0 +1,359 @@
+<div class="transaction-list-container">
+  <!-- Header -->
+  <div class="module-header">
+    <h2>💰 Finance</h2>
+    <div class="header-actions">
+      <button class="btn btn-icon" (click)="toggleFilters()" [title]="showFilters ? 'Hide Filters' : 'Show Filters'">
+        <span>{{ showFilters ? '🔼' : '🔽' }}</span>
+        <span class="filter-badge" *ngIf="!showFilters && getActiveFiltersCount() > 0">
+          {{ getActiveFiltersCount() }}
+        </span>
+      </button>
+      <button class="btn btn-secondary" routerLink="/finance/categories">
+        <span>📂</span> Categories
+      </button>
+      <div class="quick-actions-wrapper">
+        <button class="btn btn-primary btn-circle" (click)="toggleQuickActions()" title="Quick Actions">
+          <span class="plus-icon">+</span>
+        </button>
+
+        <!-- Quick Actions Dropdown -->
+        <div class="quick-actions-menu" *ngIf="showQuickActions">
+          <div class="quick-actions-overlay" (click)="closeQuickActions()"></div>
+          <div class="quick-actions-content">
+            <h4>Create New</h4>
+            <button class="quick-action-item" routerLink="/finance/transactions/new" (click)="closeQuickActions()">
+              <span class="action-icon">💰</span>
+              <div class="action-text">
+                <strong>Transaction</strong>
+                <small>Add income or expense</small>
+              </div>
+            </button>
+            <button class="quick-action-item" routerLink="/finance/categories" (click)="closeQuickActions()">
+              <span class="action-icon">📂</span>
+              <div class="action-text">
+                <strong>Category</strong>
+                <small>Organize transactions</small>
+              </div>
+            </button>
+            <button class="quick-action-item disabled" disabled>
+              <span class="action-icon">💼</span>
+              <div class="action-text">
+                <strong>Budget</strong>
+                <small>Coming soon...</small>
+              </div>
+            </button>
+            <button class="quick-action-item disabled" disabled>
+              <span class="action-icon">🎯</span>
+              <div class="action-text">
+                <strong>Goal</strong>
+                <small>Coming soon...</small>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-card" [formGroup]="filterForm" *ngIf="showFilters">
+    <div class="filters-row">
+      <!-- Search -->
+      <div class="filter-group">
+        <label>Search</label>
+        <input
+          type="text"
+          placeholder="Search transactions..."
+          formControlName="search"
+          class="input-field"
+        />
+      </div>
+
+      <!-- Type -->
+      <div class="filter-group">
+        <label>Type</label>
+        <select formControlName="type" class="select-field">
+          <option value="">All Types</option>
+          <option *ngFor="let type of transactionTypes" [value]="type.value">
+            {{ type.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Category -->
+      <div class="filter-group">
+        <label>Category</label>
+        <select formControlName="categoryId" class="select-field">
+          <option value="">All Categories</option>
+          <option *ngFor="let cat of categories" [value]="cat.id">
+            {{ cat.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Currency -->
+      <div class="filter-group">
+        <label>Currency</label>
+        <select formControlName="currencyCode" class="select-field">
+          <option value="">All Currencies</option>
+          <option *ngFor="let curr of currencies" [value]="curr">
+            {{ curr }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <!-- Date Range -->
+      <div class="filter-group">
+        <label>From</label>
+        <input
+          type="date"
+          formControlName="dateFrom"
+          class="input-field"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>To</label>
+        <input
+          type="date"
+          formControlName="dateTo"
+          class="input-field"
+        />
+      </div>
+
+      <!-- Archived -->
+      <div class="filter-group checkbox-group">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            formControlName="isArchived"
+          />
+          <span>Show Archived</span>
+        </label>
+      </div>
+
+      <!-- Clear Button -->
+      <div class="filter-group">
+        <button
+          class="btn btn-secondary btn-clear"
+          type="button"
+          (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="tags-row" *ngIf="tags.length > 0">
+      <label>Tags:</label>
+      <div class="tags-list">
+        <span
+          *ngFor="let tag of tags"
+          class="tag-chip"
+          [class.selected]="isTagSelected(tag.id)"
+          [style.background]="isTagSelected(tag.id) ? (tag.color || '#8b5cf6') : '#e5e7eb'"
+          [style.color]="isTagSelected(tag.id) ? 'white' : '#374151'"
+          (click)="toggleTag(tag.id)">
+          {{ tag.name }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sort & Stats Bar -->
+  <div class="stats-bar">
+    <div class="sort-controls">
+      <label>Sort by:</label>
+      <button
+        *ngFor="let opt of sortOptions"
+        class="btn-sort"
+        [class.active]="currentSort?.key === opt.key"
+        (click)="setSort(opt)">
+        {{ opt.label }}
+        <span *ngIf="currentSort?.key === opt.key" class="sort-arrow">
+          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+        </span>
+      </button>
+    </div>
+    <div class="results-count">
+      Total: <strong>{{ totalCount }}</strong> transactions
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading transactions...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-state">
+    <p>❌ {{ errorMessage }}</p>
+    <button class="btn btn-primary" (click)="fetchTransactions()">Retry</button>
+  </div>
+
+  <!-- Transactions Table -->
+  <div *ngIf="!loading && !errorMessage" class="transactions-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Tags</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let tx of transactions"
+          class="transaction-row"
+          [class.archived]="tx.isArchived"
+          (click)="viewTransaction(tx)">
+
+          <!-- Type Indicator -->
+          <td class="type-cell">
+            <div
+              class="type-badge"
+              [style.background]="getTransactionColor(tx.type)"
+              [style.color]="'white'">
+              <span class="type-icon">{{ getTransactionIcon(tx.type) }}</span>
+              {{ tx.type }}
+            </div>
+          </td>
+
+          <!-- Title -->
+          <td class="title-cell">
+            <div class="title-content">
+              <strong>{{ tx.title }}</strong>
+              <p *ngIf="tx.description" class="description">{{ tx.description }}</p>
+            </div>
+          </td>
+
+          <!-- Category -->
+          <td class="category-cell">
+            <span
+              class="category-badge"
+              *ngIf="tx.category"
+              [style.background]="tx.category.color || '#e5e7eb'">
+              <span *ngIf="tx.category.icon">{{ tx.category.icon }}</span>
+              {{ tx.category.name }}
+            </span>
+            <span class="category-badge uncategorized" *ngIf="!tx.category">
+              Uncategorized
+            </span>
+          </td>
+
+          <!-- Amount -->
+          <td class="amount-cell">
+            <div
+              class="amount"
+              [style.color]="getTransactionColor(tx.type)">
+              <strong>{{ formatAmount(tx.amount, tx.currencyCode) }}</strong>
+            </div>
+          </td>
+
+          <!-- Date -->
+          <td class="date-cell">
+            <div class="date-info">
+              <div class="transaction-date">{{ formatDate(tx.date) }}</div>
+              <div class="created-date">Created: {{ formatDate(tx.createdAt) }}</div>
+            </div>
+          </td>
+
+          <!-- Tags -->
+          <td class="tags-cell">
+            <div class="tags-container">
+              <span
+                *ngFor="let tag of tx.tags || []"
+                class="tag-chip small"
+                [style.background]="tag.color || '#8b5cf6'"
+                [style.color]="'white'">
+                {{ tag.name }}
+              </span>
+              <span *ngIf="!tx.tags || tx.tags.length === 0" class="no-tags">—</span>
+            </div>
+          </td>
+
+          <!-- Actions -->
+          <td class="actions-cell" (click)="$event.stopPropagation()">
+            <div class="action-buttons">
+              <button
+                class="btn-icon edit"
+                [routerLink]="['/finance/transactions', tx.id, 'edit']"
+                title="Edit">
+                ✏️
+              </button>
+              <button
+                *ngIf="!tx.isArchived"
+                class="btn-icon archive"
+                (click)="archiveTransaction(tx)"
+                title="Archive">
+                📦
+              </button>
+              <button
+                *ngIf="tx.isArchived"
+                class="btn-icon restore"
+                (click)="restoreTransaction(tx)"
+                title="Restore">
+                ↩️
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Empty State -->
+        <tr *ngIf="empty" class="empty-row">
+          <td colspan="7">
+            <div class="empty-state">
+              <div class="empty-icon">💸</div>
+              <h3>No transactions found</h3>
+              <p>Try adjusting your filters or create a new transaction</p>
+              <button class="btn btn-primary" routerLink="/finance/transactions/new">
+                Add Transaction
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && !empty && totalPages > 1" class="pagination">
+    <button
+      class="btn-page"
+      (click)="prevPage()"
+      [disabled]="page <= 1">
+      ← Previous
+    </button>
+
+    <div class="page-numbers">
+      <button
+        *ngFor="let pageNum of getPageNumbers()"
+        class="btn-page-number"
+        [class.active]="page === pageNum"
+        (click)="goToPage(pageNum)">
+        {{ pageNum }}
+      </button>
+    </div>
+
+    <button
+      class="btn-page"
+      (click)="nextPage()"
+      [disabled]="page >= totalPages">
+      Next →
+    </button>
+
+    <div class="page-info">
+      Page <strong>{{ page }}</strong> of <strong>{{ totalPages }}</strong>
+      <span class="separator">•</span>
+      Showing <strong>{{ transactions.length }}</strong> of <strong>{{ totalCount }}</strong>
+    </div>
+  </div>
+</div>

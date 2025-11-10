@@ -31,6 +31,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<Budget> Budgets { get; set; } = null!;
     public DbSet<FinancialGoal> FinancialGoals { get; set; } = null!;
+    public DbSet<TransactionTag> TransactionTags { get; set; } = null!;
 
     // Shared
     public DbSet<Tag> Tags { get; set; } = null!;
@@ -75,6 +76,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         builder.Entity<TaskTag>(entity =>
         {
             entity.HasKey(e => new { e.TaskId, e.TagId }); // Composite Key
+        });
+
+        // TransactionTag - Many-to-Many join table
+        builder.Entity<TransactionTag>(entity =>
+        {
+            entity.HasKey(e => new { e.TransactionId, e.TagId }); // Composite Key
         });
 
         // Apply all configurations from this assembly

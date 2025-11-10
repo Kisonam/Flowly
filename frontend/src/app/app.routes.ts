@@ -1,10 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home.component';
-import { authGuard, guestGuard } from './features/auth/guards/auth.guard';
-import { NoteListComponent } from './features/notes/components/note-list/note-list.component';
-import { NoteEditorComponent } from './features/notes/components/note-editor/note-editor.component';
-import { NoteDetailComponent } from './features/notes/components/note-detail/note-detail.component';
-import { NotesBoardComponent } from './features/notes/components/notes-board/notes-board.component';
+import { authGuard } from './features/auth/guards/auth.guard';
 import { ThemesBoardComponent } from './features/themes/components/themes-board/themes-board.component';
 import { TagsManagerComponent } from './features/tags/components/tags-manager/tags-manager.component';
 
@@ -16,7 +12,6 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    canActivate: [guestGuard],
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
   {
@@ -31,64 +26,15 @@ export const routes: Routes = [
   },
   {
     path: 'notes',
-    component: NoteListComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'notes/board',
-    component: NotesBoardComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'notes/new',
-    component: NoteEditorComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'notes/:id',
-    component: NoteDetailComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'notes/:id/edit',
-    component: NoteEditorComponent,
-    canActivate: [authGuard]
+    loadChildren: () => import('./features/notes/notes.routes').then(m => m.NOTES_ROUTES)
   },
   {
     path: 'tasks',
-    redirectTo: 'tasks/board',
-    pathMatch: 'full'
+    loadChildren: () => import('./features/tasks/tasks.routes').then(m => m.TASKS_ROUTES)
   },
   {
-    path: 'tasks/board',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/tasks/components/task-board/task-board.component').then(m => m.TaskBoardComponent)
-  },
-  {
-    path: 'tasks/archived',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/tasks/components/task-board/task-board.component').then(m => m.TaskBoardComponent),
-    data: { archived: true }
-  },
-  {
-    path: 'tasks/new',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/tasks/components/task-editor/task-editor.component').then(m => m.TaskEditorComponent)
-  },
-  {
-    path: 'tasks/:id/edit',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/tasks/components/task-editor/task-editor.component').then(m => m.TaskEditorComponent)
-  },
-  {
-    path: 'tasks/:id',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/tasks/components/task-detail/task-detail.component').then(m => m.TaskDetailComponent)
-  },
-  {
-    path: 'tasks/themes',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/tasks/components/theme-manager/theme-manager.component').then(m => m.ThemeManagerComponent)
+    path: 'finance',
+    loadChildren: () => import('./features/finance/finance.routes').then(m => m.FINANCE_ROUTES)
   },
   {
     path: 'tags',
@@ -105,3 +51,4 @@ export const routes: Routes = [
     redirectTo: '/auth/login'
   }
 ];
+
