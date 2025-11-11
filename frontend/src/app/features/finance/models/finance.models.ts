@@ -12,6 +12,12 @@ export type TransactionType = 'Income' | 'Expense';
 // Entities
 // ============================================
 
+export interface Currency {
+  code: string;
+  name: string;
+  symbol: string;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -40,19 +46,23 @@ export interface Budget {
   id: string;
   title: string;
   description?: string | null;
-  limitAmount: number;
-  currentSpent: number;
-  categoryId?: string | null;
-  category?: Category | null;
-  currencyCode: string;
   periodStart: string | Date;
   periodEnd: string | Date;
+  limit: number;
+  currencyCode: string;
+  categoryId?: string | null;
+  currentSpent: number;
   createdAt: string | Date;
-  updatedAt: string | Date;
+  updatedAt?: string | Date | null;
+  isArchived: boolean;
+  archivedAt?: string | Date | null;
+  // Related entities
+  category?: Category | null;
   // Computed properties from backend
   remainingAmount: number;
   progressPercentage: number;
   isExceeded: boolean;
+  isActive: boolean;
   daysRemaining: number;
 }
 
@@ -152,21 +162,21 @@ export interface UpdateCategoryRequest {
 export interface CreateBudgetRequest {
   title: string;
   description?: string;
-  limitAmount: number;
-  categoryId?: string;
-  currencyCode: string;
   periodStart: string; // ISO date
   periodEnd: string; // ISO date
+  limit: number;
+  currencyCode: string;
+  categoryId?: string;
 }
 
 export interface UpdateBudgetRequest {
   title: string;
   description?: string;
-  limitAmount: number;
-  categoryId?: string;
-  currencyCode: string;
   periodStart: string; // ISO date
   periodEnd: string; // ISO date
+  limit: number;
+  currencyCode: string;
+  categoryId?: string;
 }
 
 export interface CreateGoalRequest {
@@ -208,7 +218,7 @@ export interface TransactionFilter {
 }
 
 export interface BudgetFilter {
-  isActive?: boolean;
+  isArchived?: boolean;
   categoryId?: string;
   currencyCode?: string;
   dateFrom?: string; // ISO date

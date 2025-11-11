@@ -12,6 +12,8 @@ public interface IBudgetService
     Task<BudgetDto> CreateAsync(Guid userId, CreateBudgetDto dto);
     Task<BudgetDto> UpdateAsync(Guid userId, Guid budgetId, UpdateBudgetDto dto);
     Task DeleteAsync(Guid userId, Guid budgetId);
+    Task ArchiveAsync(Guid userId, Guid budgetId);
+    Task RestoreAsync(Guid userId, Guid budgetId);
 
     /// <summary>
     /// Check whether budget is overspent

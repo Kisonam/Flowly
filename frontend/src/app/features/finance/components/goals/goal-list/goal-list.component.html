@@ -1,0 +1,159 @@
+<div class="goal-list">
+  <div class="list-header">
+    <h1>🎯 Фінансові цілі</h1>
+    <button class="btn btn-primary" (click)="createGoal()">➕ Створити ціль</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <form [formGroup]="filterForm" class="filters-form">
+      <div class="filter-row">
+        <div class="filter-group search-group">
+          <label>Пошук</label>
+          <input
+            type="text"
+            formControlName="search"
+            placeholder="Пошук по назві або опису..."
+            class="filter-input"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label>Статус</label>
+          <select formControlName="status" class="filter-select">
+            <option value="active">Активні</option>
+            <option value="completed">Завершені</option>
+            <option value="all">Всі цілі</option>
+            <option value="archived">Архівовані</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Валюта</label>
+          <select formControlName="currencyCode" class="filter-select" [disabled]="loadingCurrencies">
+            <option value="">{{ loadingCurrencies ? 'Завантаження...' : 'Всі валюти' }}</option>
+            <option *ngFor="let currency of currencies" [value]="currency.code">
+              {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
+            </option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-secondary" (click)="clearFilters()">🔄 Очистити</button>
+      </div>
+    </form>
+
+    <!-- Results counter -->
+    <div class="results-counter" *ngIf="!loading">
+      <span>{{ filteredGoals.length }} з {{ goals.length }} цілей</span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Завантаження цілей...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !loading" class="error-state">
+    <p>❌ {{ errorMessage }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && empty" class="empty-state">
+    <div class="empty-icon">🎯</div>
+    <h3>Немає цілей</h3>
+    <p>Створіть свою першу фінансову ціль</p>
+    <button class="btn btn-primary" (click)="createGoal()">➕ Створити ціль</button>
+  </div>
+
+  <!-- No Results State -->
+  <div *ngIf="!loading && !empty && filteredGoals.length === 0" class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h3>Нічого не знайдено</h3>
+    <p>Спробуйте змінити фільтри</p>
+  </div>
+
+  <!-- Goals Grid -->
+  <div *ngIf="!loading && filteredGoals.length > 0" class="goals-grid">
+    <div *ngFor="let goal of filteredGoals" class="goal-card"
+         [class.completed]="goal.isCompleted"
+         [class.archived]="goal.isArchived">
+
+      <!-- Card Header -->
+      <div class="card-header">
+        <h3 class="goal-title">{{ goal.title }}</h3>
+        <div class="goal-actions">
+          <button class="btn-icon" (click)="editGoal(goal.id)" title="Редагувати">✏️</button>
+
+          <button *ngIf="!goal.isArchived" class="btn-icon" (click)="archiveGoal(goal.id)" title="Архівувати">📦</button>
+          <button *ngIf="goal.isArchived" class="btn-icon" (click)="restoreGoal(goal.id)" title="Відновити">♻️</button>
+
+          <button *ngIf="goal.isArchived" class="btn-icon danger" (click)="deleteGoal(goal.id)" title="Видалити назавжди">🗑️</button>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <p *ngIf="goal.description" class="goal-description">{{ goal.description }}</p>
+
+      <!-- Status Badges -->
+      <div class="status-badges">
+        <span *ngIf="goal.isCompleted" class="badge completed">✅ Досягнуто</span>
+        <span *ngIf="goal.isArchived" class="badge archived">📦 Архів</span>
+        <span *ngIf="goal.isOverdue && !goal.isCompleted" class="badge overdue">⏰ Прострочено</span>
+        <span *ngIf="goal.isDeadlineApproaching && !goal.isCompleted && !goal.isOverdue" class="badge approaching">⚠️ Дедлайн наближається</span>
+      </div>
+
+      <!-- Progress Section -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-percentage">{{ goal.progressPercentage }}%</span>
+          <span class="progress-amounts">
+            {{ goal.currentAmount | number:'1.2-2' }} / {{ goal.targetAmount | number:'1.2-2' }} {{ goal.currencyCode }}
+          </span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+          <div class="progress-fill"
+               [style.width.%]="goal.progressPercentage"
+               [class.completed]="goal.isCompleted"
+               [class.high]="goal.progressPercentage >= 75 && !goal.isCompleted"
+               [class.medium]="goal.progressPercentage >= 50 && goal.progressPercentage < 75"
+               [class.low]="goal.progressPercentage < 50">
+          </div>
+        </div>
+
+        <!-- Deadline Countdown -->
+        <div class="deadline-section" *ngIf="goal.deadline">
+          <div class="deadline-info" [class]="getDeadlineClass(goal)">
+            <span class="deadline-icon">📅</span>
+            <span class="deadline-text">{{ getDeadlineCountdown(goal.deadline) }}</span>
+            <span class="deadline-date">({{ goal.deadline | date:'dd/MM/yyyy' }})</span>
+          </div>
+        </div>
+
+        <!-- Completion Info -->
+        <div class="completion-info" *ngIf="goal.completedAt">
+          <span class="completion-icon">🎉</span>
+          <span class="completion-text">Досягнуто {{ goal.completedAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+
+      <!-- Amount Controls -->
+      <div class="amount-controls" *ngIf="!goal.isCompleted && !goal.isArchived">
+        <button class="btn btn-small btn-success" (click)="addAmount(goal)" title="Додати суму">
+          ➕ Додати
+        </button>
+        <button class="btn btn-small btn-warning" (click)="subtractAmount(goal)" title="Відняти суму">
+          ➖ Відняти
+        </button>
+      </div>
+
+      <!-- Archived Timestamp -->
+      <div class="archived-info" *ngIf="goal.isArchived">
+        <span class="archived-text">📦 Архівовано {{ goal.createdAt | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

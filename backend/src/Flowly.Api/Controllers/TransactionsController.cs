@@ -39,6 +39,7 @@ public class TransactionsController : ControllerBase
         [FromQuery] Guid? categoryId = null,
         [FromQuery] string? currencyCode = null,
         [FromQuery] string? tagIds = null,
+        [FromQuery] bool? isArchived = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
@@ -69,6 +70,7 @@ public class TransactionsController : ControllerBase
                 CategoryId = categoryId,
                 CurrencyCode = currencyCode,
                 TagIds = tagIdList,
+                IsArchived = isArchived,
                 Page = page,
                 PageSize = pageSize
             };

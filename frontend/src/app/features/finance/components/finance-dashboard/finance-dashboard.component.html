@@ -1,0 +1,168 @@
+<div class="finance-dashboard">
+  <h1 class="dashboard-title">📊 Фінансовий дашборд</h1>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <form [formGroup]="filterForm" class="filters-form">
+      <div class="filter-group">
+        <label>Період від</label>
+        <input type="date" formControlName="periodStart" class="filter-input" />
+      </div>
+
+      <div class="filter-group">
+        <label>Період до</label>
+        <input type="date" formControlName="periodEnd" class="filter-input" />
+      </div>
+
+      <div class="filter-group">
+        <label>Валюта</label>
+        <select formControlName="currencyCode" class="filter-select">
+          <option *ngFor="let currency of currencies" [value]="currency.code">
+            {{ currency.symbol }} {{ currency.code }}
+          </option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Завантаження статистики...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !loading" class="error-state">
+    <p>❌ {{ errorMessage }}</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading && !errorMessage && stats" class="dashboard-content">
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card income">
+        <div class="card-icon">📈</div>
+        <div class="card-content">
+          <h3>Доходи</h3>
+          <p class="amount">{{ stats.totalIncome | number:'1.2-2' }} {{ stats.currencyCode }}</p>
+          <span class="subtitle">Середньо: {{ stats.averageIncome | number:'1.2-2' }}/день</span>
+        </div>
+      </div>
+
+      <div class="summary-card expense">
+        <div class="card-icon">📉</div>
+        <div class="card-content">
+          <h3>Витрати</h3>
+          <p class="amount">{{ stats.totalExpense | number:'1.2-2' }} {{ stats.currencyCode }}</p>
+          <span class="subtitle">Середньо: {{ stats.averageExpense | number:'1.2-2' }}/день</span>
+        </div>
+      </div>
+
+      <div class="summary-card balance" [class.positive]="stats.balance >= 0" [class.negative]="stats.balance < 0">
+        <div class="card-icon">💰</div>
+        <div class="card-content">
+          <h3>Баланс</h3>
+          <p class="amount">{{ stats.balance | number:'1.2-2' }} {{ stats.currencyCode }}</p>
+          <span class="subtitle">{{ stats.transactionCount }} транзакцій</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <!-- Income vs Expense Chart -->
+      <div class="chart-container">
+        <canvas #incomeExpenseChart></canvas>
+      </div>
+
+      <!-- Expense Breakdown Pie Chart -->
+      <div class="chart-container pie-chart-container">
+        <canvas #expensePieChart></canvas>
+
+        <!-- Empty state for pie chart -->
+        <div *ngIf="!stats.expenseByCategory || stats.expenseByCategory.length === 0" class="empty-chart">
+          <p>📊 Немає даних по категоріях</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Breakdown Tables -->
+    <div class="category-breakdown">
+      <!-- Expense Categories -->
+      <div class="category-table-wrapper" *ngIf="stats.expenseByCategory && stats.expenseByCategory.length > 0">
+        <h3>📉 Витрати по категоріях</h3>
+        <table class="category-table">
+          <thead>
+            <tr>
+              <th>Категорія</th>
+              <th class="align-right">Сума</th>
+              <th class="align-right">Транзакції</th>
+              <th class="align-right">%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let category of stats.expenseByCategory">
+              <td>{{ category.categoryName }}</td>
+              <td class="align-right">{{ category.totalAmount | number:'1.2-2' }} {{ stats.currencyCode }}</td>
+              <td class="align-right">{{ category.transactionCount }}</td>
+              <td class="align-right">{{ category.percentage | number:'1.1-1' }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Income Categories -->
+      <div class="category-table-wrapper" *ngIf="stats.incomeByCategory && stats.incomeByCategory.length > 0">
+        <h3>📈 Доходи по категоріях</h3>
+        <table class="category-table">
+          <thead>
+            <tr>
+              <th>Категорія</th>
+              <th class="align-right">Сума</th>
+              <th class="align-right">Транзакції</th>
+              <th class="align-right">%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let category of stats.incomeByCategory">
+              <td>{{ category.categoryName }}</td>
+              <td class="align-right">{{ category.totalAmount | number:'1.2-2' }} {{ stats.currencyCode }}</td>
+              <td class="align-right">{{ category.transactionCount }}</td>
+              <td class="align-right">{{ category.percentage | number:'1.1-1' }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="recent-transactions">
+      <h3>🕒 Останні транзакції</h3>
+
+      <div *ngIf="loadingTransactions" class="loading-transactions">
+        <div class="spinner-small"></div>
+        <p>Завантаження...</p>
+      </div>
+
+      <div *ngIf="!loadingTransactions && recentTransactions.length === 0" class="empty-transactions">
+        <p>📭 Немає транзакцій</p>
+      </div>
+
+      <div *ngIf="!loadingTransactions && recentTransactions.length > 0" class="transactions-list">
+        <div *ngFor="let transaction of recentTransactions" class="transaction-item" [class]="getTransactionTypeClass(transaction.type)">
+          <div class="transaction-icon">{{ getTransactionTypeIcon(transaction.type) }}</div>
+          <div class="transaction-details">
+            <strong>{{ transaction.title }}</strong>
+            <span class="transaction-category">{{ transaction.category?.name || 'Без категорії' }}</span>
+          </div>
+          <div class="transaction-amount">
+            <span class="amount">{{ transaction.type === 'Income' ? '+' : '-' }}{{ transaction.amount | number:'1.2-2' }} {{ transaction.currencyCode }}</span>
+            <span class="date">{{ transaction.date | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

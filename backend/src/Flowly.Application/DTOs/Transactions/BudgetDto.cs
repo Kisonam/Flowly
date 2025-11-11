@@ -6,6 +6,8 @@ namespace Flowly.Application.DTOs.Transactions;
 public class BudgetDto
 {
     public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
     public DateTime PeriodStart { get; set; }
     public DateTime PeriodEnd { get; set; }
     public decimal Limit { get; set; }
@@ -14,6 +16,8 @@ public class BudgetDto
     public decimal CurrentSpent { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public bool IsArchived { get; set; }
+    public DateTime? ArchivedAt { get; set; }
 
     // Related entities
     public CategoryDto? Category { get; set; }

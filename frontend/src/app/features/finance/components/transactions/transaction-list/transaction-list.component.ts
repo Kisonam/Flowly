@@ -133,7 +133,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
       tagIds: v.tagIds?.length ? v.tagIds : undefined,
       dateFrom: v.dateFrom || undefined,
       dateTo: v.dateTo || undefined,
-      isArchived: v.isArchived || undefined,
+      // When checkbox is unchecked (false), show only non-archived (false)
+      // When checkbox is checked (true), show only archived (true)
+      isArchived: v.isArchived === true ? true : false,
       page: this.page,
       pageSize: this.pageSize
     };

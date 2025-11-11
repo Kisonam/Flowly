@@ -1,0 +1,199 @@
+<div class="budget-editor-container">
+  <!-- Header -->
+  <div class="editor-header">
+    <h2>{{ isEditMode ? 'Edit Budget' : 'Create Budget' }}</h2>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading budget...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-banner">
+    <span class="error-icon">⚠️</span>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Form -->
+  <form *ngIf="!isLoading" [formGroup]="budgetForm" (ngSubmit)="onSubmit()" class="budget-form">
+
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <h3 class="section-title">Basic Information</h3>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="title">
+            Title <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="title"
+            formControlName="title"
+            placeholder="Enter budget title"
+            maxlength="100"
+            [class.invalid]="hasError('title')"
+          />
+          <span *ngIf="hasError('title')" class="error-message">
+            {{ getErrorMessage('title') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="description">Description (optional)</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            placeholder="Enter budget description"
+            rows="3"
+            maxlength="500"
+            [class.invalid]="hasError('description')"
+          ></textarea>
+          <span *ngIf="hasError('description')" class="error-message">
+            {{ getErrorMessage('description') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Budget Details Section -->
+    <div class="form-section">
+      <h3 class="section-title">Budget Details</h3>
+
+      <div class="form-row two-columns">
+        <div class="form-group">
+          <label for="limit">
+            Limit Amount <span class="required">*</span>
+          </label>
+          <input
+            type="number"
+            id="limit"
+            formControlName="limit"
+            placeholder="0.00"
+            step="0.01"
+            min="0.01"
+            [class.invalid]="hasError('limit')"
+          />
+          <span *ngIf="hasError('limit')" class="error-message">
+            {{ getErrorMessage('limit') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="currencyCode">
+            Currency <span class="required">*</span>
+          </label>
+          <select
+            id="currencyCode"
+            formControlName="currencyCode"
+            [class.invalid]="hasError('currencyCode')"
+          >
+            <option *ngFor="let currency of currencies" [value]="currency.code">
+              {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
+            </option>
+          </select>
+          <span *ngIf="hasError('currencyCode')" class="error-message">
+            {{ getErrorMessage('currencyCode') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="categoryId">Category (optional)</label>
+          <select
+            id="categoryId"
+            formControlName="categoryId"
+            [class.invalid]="hasError('categoryId')"
+          >
+            <option value="">All Categories</option>
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{ getCategoryIcon(category.id) }} {{ category.name }}
+            </option>
+          </select>
+          <div *ngIf="budgetForm.value.categoryId" class="category-preview">
+            <span
+              class="category-badge"
+              [style.background]="getCategoryColor(budgetForm.value.categoryId)"
+            >
+              {{ getCategoryIcon(budgetForm.value.categoryId) }}
+              {{ getCategoryName(budgetForm.value.categoryId) }}
+            </span>
+          </div>
+          <span *ngIf="hasError('categoryId')" class="error-message">
+            {{ getErrorMessage('categoryId') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Period Section -->
+    <div class="form-section">
+      <h3 class="section-title">Budget Period</h3>
+
+      <div class="form-row two-columns">
+        <div class="form-group">
+          <label for="periodStart">
+            Start Date <span class="required">*</span>
+          </label>
+          <input
+            type="date"
+            id="periodStart"
+            formControlName="periodStart"
+            [class.invalid]="hasError('periodStart') || hasDateRangeError()"
+          />
+          <span *ngIf="hasError('periodStart')" class="error-message">
+            {{ getErrorMessage('periodStart') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="periodEnd">
+            End Date <span class="required">*</span>
+          </label>
+          <input
+            type="date"
+            id="periodEnd"
+            formControlName="periodEnd"
+            [class.invalid]="hasError('periodEnd') || hasDateRangeError()"
+          />
+          <span *ngIf="hasError('periodEnd')" class="error-message">
+            {{ getErrorMessage('periodEnd') }}
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="hasDateRangeError()" class="error-message-box">
+        <span class="error-icon">⚠️</span>
+        <span>End date must be after start date</span>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSaving"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="budgetForm.invalid || isSaving"
+      >
+        <span *ngIf="!isSaving">{{ isEditMode ? 'Update Budget' : 'Create Budget' }}</span>
+        <span *ngIf="isSaving">
+          <span class="spinner-small"></span>
+          Saving...
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

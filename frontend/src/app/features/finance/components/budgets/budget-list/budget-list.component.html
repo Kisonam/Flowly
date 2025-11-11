@@ -1,0 +1,242 @@
+<div class="budget-list-container">
+  <!-- Header -->
+  <div class="module-header">
+    <h2>💼 Budgets</h2>
+    <div class="header-actions">
+      <button class="btn btn-secondary" routerLink="/finance/transactions">
+        <span>💰</span> Transactions
+      </button>
+      <button class="btn btn-secondary" routerLink="/finance/categories">
+        <span>📂</span> Categories
+      </button>
+      <button class="btn btn-primary" routerLink="/finance/budgets/new">
+        <span>+</span> New Budget
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-card" [formGroup]="filterForm">
+    <!-- Filter Results Counter -->
+    <div *ngIf="!loading && budgets.length > 0" class="filter-results">
+      Showing {{ filteredBudgets.length }} of {{ budgets.length }} budgets
+    </div>
+
+    <!-- First Row: Search and Status -->
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>Search</label>
+        <input
+          type="text"
+          formControlName="search"
+          placeholder="Search by title, description, or category..."
+          class="filter-input"
+        />
+      </div>      <div class="filter-group">
+        <label>Status</label>
+        <select formControlName="status" class="filter-select">
+          <option value="active">Active Only</option>
+          <option value="all">All Budgets</option>
+          <option value="archived">Archived Only</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Currency</label>
+        <select formControlName="currencyCode" class="filter-select" [disabled]="loadingCurrencies">
+          <option value="">{{ loadingCurrencies ? 'Loading...' : 'All Currencies' }}</option>
+          <option *ngFor="let currency of currencies" [value]="currency.code">
+            {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Second Row: Amount and Date Range -->
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>Min Amount</label>
+        <input
+          type="number"
+          formControlName="minAmount"
+          placeholder="0"
+          class="filter-input"
+          step="0.01"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Max Amount</label>
+        <input
+          type="number"
+          formControlName="maxAmount"
+          placeholder="No limit"
+          class="filter-input"
+          step="0.01"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Period Start</label>
+        <input
+          type="date"
+          formControlName="periodStart"
+          class="filter-input"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Period End</label>
+        <input
+          type="date"
+          formControlName="periodEnd"
+          class="filter-input"
+        />
+      </div>
+
+      <div class="filter-group filter-actions">
+        <button class="btn btn-secondary" (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading budgets...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && errorMessage" class="error-state">
+    <p class="error-message">{{ errorMessage }}</p>
+    <button class="btn btn-secondary" (click)="fetchBudgets()">Retry</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !errorMessage && budgets.length === 0" class="empty-state">
+    <div class="empty-icon">💼</div>
+    <h3>No budgets found</h3>
+    <p>Create your first budget to start tracking your spending</p>
+    <button class="btn btn-primary" routerLink="/finance/budgets/new">
+      <span>+</span> Create Budget
+    </button>
+  </div>
+
+  <!-- No Results After Filtering -->
+  <div *ngIf="!loading && !errorMessage && budgets.length > 0 && filteredBudgets.length === 0" class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h3>No budgets match your filters</h3>
+    <p>Try adjusting your search criteria</p>
+    <button class="btn btn-secondary" (click)="clearFilters()">
+      Clear Filters
+    </button>
+  </div>
+
+  <!-- Budget List -->
+  <div *ngIf="!loading && !errorMessage && filteredBudgets.length > 0" class="budgets-grid">
+    <div
+      *ngFor="let budget of filteredBudgets"
+      class="budget-card"
+      [class.overspent]="isOverspent(budget)"
+      [class.archived]="budget.isArchived"
+      (click)="viewBudget(budget)">
+
+      <!-- Header -->
+      <div class="budget-header">
+        <h3 class="budget-title">
+          {{ budget.isArchived ? '📦 ' : '' }}{{ budget.title }}
+        </h3>
+        <div class="budget-period">
+          {{ formatDate(budget.periodStart) }} - {{ formatDate(budget.periodEnd) }}
+        </div>
+      </div>
+
+      <!-- Description (if available) -->
+      <div class="budget-description" *ngIf="budget.description">
+        <p>{{ budget.description }}</p>
+      </div>
+
+      <!-- Category -->
+      <div class="budget-category" *ngIf="budget.category">
+        <span class="category-badge" [style.background]="budget.category.color || '#10b981'">
+          <span *ngIf="budget.category.icon">{{ budget.category.icon }}</span>
+          {{ budget.category.name }}
+        </span>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-info">
+          <span class="spent">
+            {{ formatCurrency(budget.currentSpent, budget.currencyCode) }}
+          </span>
+          <span class="divider">/</span>
+          <span class="limit">
+            {{ formatCurrency(budget.limit, budget.currencyCode) }}
+          </span>
+        </div>
+
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            [style.width.%]="getProgressPercentage(budget)"
+            [style.background]="getProgressColor(budget)">
+          </div>
+        </div>
+
+        <div class="progress-footer">
+          <span class="percentage" [style.color]="getProgressColor(budget)">
+            {{ getProgressPercentage(budget) }}%
+          </span>
+          <span class="remaining">
+            {{ formatCurrency(budget.remainingAmount, budget.currencyCode) }} remaining
+          </span>
+        </div>
+      </div>
+
+      <!-- Status Badge -->
+      <div class="budget-status">
+        <span *ngIf="isOverspent(budget)" class="status-badge overspent">
+          ⚠️ Over Budget
+        </span>
+        <span *ngIf="!isOverspent(budget) && getProgressPercentage(budget) >= 80" class="status-badge warning">
+          ⚡ Near Limit
+        </span>
+        <span *ngIf="getProgressPercentage(budget) < 80" class="status-badge ok">
+          ✅ On Track
+        </span>
+      </div>
+
+      <!-- Days Remaining -->
+      <div class="budget-days">
+        <span class="days-text">{{ getDaysRemaining(budget) }}</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="budget-actions" (click)="$event.stopPropagation()">
+        <button
+          *ngIf="budget.isArchived"
+          class="btn-icon restore"
+          (click)="restoreBudget(budget)"
+          title="Restore">
+          ♻️
+        </button>
+        <button
+          *ngIf="!budget.isArchived"
+          class="btn-icon edit"
+          [routerLink]="['/finance/budgets', budget.id, 'edit']"
+          title="Edit">
+          ✏️
+        </button>
+        <button
+          class="btn-icon delete"
+          (click)="deleteBudget(budget)"
+          [title]="budget.isArchived ? 'Delete Permanently' : 'Archive'">
+          {{ budget.isArchived ? '🗑️' : '📦' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

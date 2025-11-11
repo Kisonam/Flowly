@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import {
   Transaction,
   Category,
+  Currency,
   Budget,
   FinancialGoal,
   FinanceStats,
@@ -28,6 +29,7 @@ import {
 export class FinanceService {
   private http = inject(HttpClient);
   private readonly BASE_URL = `${environment.apiUrl}/finance`;
+  private readonly CURRENCIES_URL = `${environment.apiUrl}/currencies`;
 
   // ============================================
   // Transactions
@@ -154,7 +156,7 @@ export class FinanceService {
     let params = new HttpParams();
 
     if (filter) {
-      if (filter.isActive !== undefined) params = params.set('isActive', String(filter.isActive));
+      if (filter.isArchived !== undefined) params = params.set('isArchived', String(filter.isArchived));
       if (filter.categoryId) params = params.set('categoryId', filter.categoryId);
       if (filter.currencyCode) params = params.set('currencyCode', filter.currencyCode);
       if (filter.dateFrom) params = params.set('dateFrom', this.toIsoDate(filter.dateFrom));
@@ -196,9 +198,26 @@ export class FinanceService {
   }
 
   /** Delete budget */
+  /** Delete budget */
   deleteBudget(id: string): Observable<void> {
     return this.http.delete<void>(`${this.BASE_URL}/budgets/${id}`).pipe(
       tap(() => console.log('✅ Budget deleted:', id)),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Archive budget */
+  archiveBudget(id: string): Observable<void> {
+    return this.http.post<void>(`${this.BASE_URL}/budgets/${id}/archive`, {}).pipe(
+      tap(() => console.log('📦 Budget archived:', id)),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Restore archived budget */
+  restoreBudget(id: string): Observable<void> {
+    return this.http.post<void>(`${this.BASE_URL}/budgets/${id}/restore`, {}).pipe(
+      tap(() => console.log('♻️ Budget restored:', id)),
       catchError(this.handleError)
     );
   }
@@ -398,7 +417,7 @@ export class FinanceService {
       periodStart: new Date(budget.periodStart),
       periodEnd: new Date(budget.periodEnd),
       createdAt: new Date(budget.createdAt),
-      updatedAt: new Date(budget.updatedAt)
+      updatedAt: budget.updatedAt ? new Date(budget.updatedAt) : undefined
     };
   }
 
@@ -434,6 +453,18 @@ export class FinanceService {
       dateObj.getUTCMinutes(),
       dateObj.getUTCSeconds()
     )).toISOString();
+  }
+
+  // ============================================
+  // Currencies
+  // ============================================
+
+  /** Get all available currencies */
+  getCurrencies(): Observable<Currency[]> {
+    return this.http.get<Currency[]>(this.CURRENCIES_URL).pipe(
+      tap(currencies => console.log('💱 Currencies fetched:', currencies)),
+      catchError(this.handleError)
+    );
   }
 
   // ============================================

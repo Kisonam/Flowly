@@ -28,6 +28,7 @@ public class BudgetsController : ControllerBase
     [ProducesResponseType(typeof(List<BudgetDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
         [FromQuery] bool? isActive = null,
+        [FromQuery] bool? isArchived = null,
         [FromQuery] Guid? categoryId = null,
         [FromQuery] string? currencyCode = null,
         [FromQuery] DateTime? dateFrom = null,
@@ -36,9 +37,15 @@ public class BudgetsController : ControllerBase
         try
         {
             var userId = GetCurrentUserId();
+            
+            // Log received parameters
+            _logger.LogInformation("📥 GetAll parameters: isActive={IsActive}, isArchived={IsArchived}, dateFrom={DateFrom}, dateTo={DateTo}, currency={Currency}", 
+                isActive, isArchived, dateFrom, dateTo, currencyCode);
+            
             var filter = new BudgetFilterDto
             {
                 IsActive = isActive,
+                IsArchived = isArchived,
                 CategoryId = categoryId,
                 CurrencyCode = currencyCode,
                 DateFrom = dateFrom,
@@ -169,6 +176,60 @@ public class BudgetsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "❌ Failed to delete budget {Id}", id);
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Archive a budget
+    /// </summary>
+    [HttpPost("{id}/archive")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Archive(Guid id)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            await _budgetService.ArchiveAsync(userId, id);
+            _logger.LogInformation("✅ Budget archived: {Id}", id);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning("❌ Budget not found: {Id}", id);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Failed to archive budget {Id}", id);
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Restore an archived budget
+    /// </summary>
+    [HttpPost("{id}/restore")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Restore(Guid id)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            await _budgetService.RestoreAsync(userId, id);
+            _logger.LogInformation("✅ Budget restored: {Id}", id);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning("❌ Budget not found: {Id}", id);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Failed to restore budget {Id}", id);
             return BadRequest(new { message = ex.Message });
         }
     }

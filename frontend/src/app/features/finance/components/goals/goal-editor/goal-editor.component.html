@@ -1,0 +1,125 @@
+<div class="goal-editor">
+  <h2 class="editor-title">{{ isEditMode ? 'Редагувати ціль' : 'Створити ціль' }}</h2>
+
+  <form [formGroup]="goalForm" (ngSubmit)="onSubmit()" class="goal-form">
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title" class="form-label required">Назва цілі</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        class="form-input"
+        placeholder="Наприклад: Відпустка, Новий ноутбук, Навчання"
+        [class.error]="goalForm.get('title')?.invalid && goalForm.get('title')?.touched"
+      />
+      <span class="error-message" *ngIf="getError('title')">{{ getError('title') }}</span>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description" class="form-label">Опис</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-textarea"
+        rows="3"
+        placeholder="Додайте деталі про вашу ціль..."
+      ></textarea>
+    </div>
+
+    <!-- Target Amount & Currency -->
+    <div class="form-row">
+      <div class="form-group flex-2">
+        <label for="targetAmount" class="form-label required">Цільова сума</label>
+        <input
+          id="targetAmount"
+          type="number"
+          formControlName="targetAmount"
+          class="form-input"
+          placeholder="0.00"
+          step="0.01"
+          min="0.01"
+          [class.error]="goalForm.get('targetAmount')?.invalid && goalForm.get('targetAmount')?.touched"
+        />
+        <span class="error-message" *ngIf="getError('targetAmount')">{{ getError('targetAmount') }}</span>
+      </div>
+
+      <div class="form-group">
+        <label for="currencyCode" class="form-label required">Валюта</label>
+        <select
+          id="currencyCode"
+          formControlName="currencyCode"
+          class="form-select"
+        >
+          <option value="" disabled>{{ loadingCurrencies ? 'Завантаження...' : 'Оберіть валюту' }}</option>
+          <option *ngFor="let currency of currencies" [value]="currency.code">
+            {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Current Amount (only for create mode) -->
+    <div class="form-group" *ngIf="!isEditMode">
+      <label for="currentAmount" class="form-label">Поточна сума</label>
+      <input
+        id="currentAmount"
+        type="number"
+        formControlName="currentAmount"
+        class="form-input"
+        placeholder="0.00"
+        step="0.01"
+        min="0"
+        [class.error]="goalForm.get('currentAmount')?.invalid && goalForm.get('currentAmount')?.touched"
+      />
+      <span class="form-hint">Початкова сума, яка вже накопичена (за замовчуванням 0)</span>
+    </div>
+
+    <!-- Info message for edit mode -->
+    <div class="info-message" *ngIf="isEditMode && goal">
+      <span class="info-icon">ℹ️</span>
+      <div>
+        <strong>Поточна сума: {{ goal.currentAmount | number:'1.2-2' }} {{ goal.currencyCode }}</strong>
+        <p>Для зміни поточної суми використовуйте кнопки + / - у списку цілей</p>
+      </div>
+    </div>
+
+    <!-- Deadline -->
+    <div class="form-group">
+      <label for="deadline" class="form-label">Дедлайн</label>
+      <input
+        id="deadline"
+        type="date"
+        formControlName="deadline"
+        class="form-input"
+        [min]="minDate"
+      />
+      <span class="form-hint">Опціонально: коли ви плануєте досягти цієї цілі?</span>
+    </div>
+
+    <!-- Progress indicator (edit mode only) -->
+    <div class="progress-section" *ngIf="isEditMode && goal">
+      <div class="progress-header">
+        <span>Прогрес: {{ goal.progressPercentage }}%</span>
+        <span>{{ goal.currentAmount | number:'1.2-2' }} / {{ goal.targetAmount | number:'1.2-2' }} {{ goal.currencyCode }}</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="goal.progressPercentage"></div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="saving">
+        ❌ Скасувати
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="goalForm.invalid || saving">
+        <span *ngIf="!saving">{{ isEditMode ? '💾 Зберегти' : '➕ Створити' }}</span>
+        <span *ngIf="saving">⏳ Збереження...</span>
+      </button>
+    </div>
+
+  </form>
+</div>

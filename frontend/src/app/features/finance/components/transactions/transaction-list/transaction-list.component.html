@@ -12,6 +12,15 @@
       <button class="btn btn-secondary" routerLink="/finance/categories">
         <span>📂</span> Categories
       </button>
+      <button class="btn btn-secondary" routerLink="/finance/budgets">
+        <span>💼</span> Budgets
+      </button>
+      <button class="btn btn-secondary" routerLink="/finance/goals">
+        <span>🎯</span> Goals
+      </button>
+      <button class="btn btn-secondary" routerLink="/finance/dashboard">
+        <span>📊</span> Dashboard
+      </button>
       <div class="quick-actions-wrapper">
         <button class="btn btn-primary btn-circle" (click)="toggleQuickActions()" title="Quick Actions">
           <span class="plus-icon">+</span>
@@ -36,18 +45,18 @@
                 <small>Organize transactions</small>
               </div>
             </button>
-            <button class="quick-action-item disabled" disabled>
+            <button class="quick-action-item" routerLink="/finance/budgets/new" (click)="closeQuickActions()">
               <span class="action-icon">💼</span>
               <div class="action-text">
                 <strong>Budget</strong>
-                <small>Coming soon...</small>
+                <small>Set spending limits</small>
               </div>
             </button>
-            <button class="quick-action-item disabled" disabled>
+            <button class="quick-action-item" routerLink="/finance/goals/new" (click)="closeQuickActions()">
               <span class="action-icon">🎯</span>
               <div class="action-text">
                 <strong>Goal</strong>
-                <small>Coming soon...</small>
+                <small>Track savings goals</small>
               </div>
             </button>
           </div>

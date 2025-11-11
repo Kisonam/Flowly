@@ -18,6 +18,16 @@ public class Budget
     public Guid UserId { get; set; }
 
     /// <summary>
+    /// Budget title/name
+    /// </summary>
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Optional description
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
     /// Budget period start date
     /// </summary>
     public DateTime PeriodStart { get; set; }
@@ -52,6 +62,16 @@ public class Budget
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
 
+    /// <summary>
+    /// Whether the budget is archived
+    /// </summary>
+    public bool IsArchived { get; set; } = false;
+
+    /// <summary>
+    /// When the budget was archived
+    /// </summary>
+    public DateTime? ArchivedAt { get; set; }
+
     // ============================================
     // Navigation Properties
     // ============================================
@@ -73,14 +93,19 @@ public class Budget
     /// <summary>
     /// Update budget details
     /// </summary>
-    public void Update(DateTime periodStart, DateTime periodEnd, decimal limit, string currencyCode, Guid? categoryId = null)
+    public void Update(string title, string? description, DateTime periodStart, DateTime periodEnd, decimal limit, string currencyCode, Guid? categoryId = null)
     {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new ArgumentException("Title is required", nameof(title));
+
         if (periodEnd <= periodStart)
             throw new ArgumentException("Period end must be after period start");
 
         if (limit <= 0)
             throw new ArgumentException("Limit must be positive", nameof(limit));
 
+        Title = title;
+        Description = description;
         PeriodStart = periodStart;
         PeriodEnd = periodEnd;
         Limit = limit;
@@ -113,5 +138,25 @@ public class Budget
     {
         if (IsExpired()) return 0;
         return (PeriodEnd - DateTime.UtcNow).Days;
+    }
+
+    /// <summary>
+    /// Archive the budget
+    /// </summary>
+    public void Archive()
+    {
+        IsArchived = true;
+        ArchivedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Restore the budget from archive
+    /// </summary>
+    public void Restore()
+    {
+        IsArchived = false;
+        ArchivedAt = null;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

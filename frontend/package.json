@@ -21,8 +21,9 @@
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "@types/marked": "^5.0.2",
     "bootstrap": "^5.3.3",
-    "chart.js": "^4.4.0",
+    "chart.js": "^4.5.1",
     "marked": "^12.0.2",
+    "ng2-charts": "^8.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
