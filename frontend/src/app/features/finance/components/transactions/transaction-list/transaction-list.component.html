@@ -246,16 +246,34 @@
 
           <!-- Category -->
           <td class="category-cell">
-            <span
-              class="category-badge"
-              *ngIf="tx.category"
-              [style.background]="tx.category.color || '#e5e7eb'">
-              <span *ngIf="tx.category.icon">{{ tx.category.icon }}</span>
-              {{ tx.category.name }}
-            </span>
-            <span class="category-badge uncategorized" *ngIf="!tx.category">
-              Uncategorized
-            </span>
+            <div class="category-container">
+              <span
+                class="category-badge"
+                *ngIf="tx.category"
+                [style.background]="tx.category.color || '#e5e7eb'">
+                <span *ngIf="tx.category.icon">{{ tx.category.icon }}</span>
+                {{ tx.category.name }}
+              </span>
+              <span class="category-badge uncategorized" *ngIf="!tx.category">
+                Uncategorized
+              </span>
+
+              <!-- Budget Badge -->
+              <span
+                class="linked-badge budget-badge"
+                *ngIf="tx.budget"
+                [title]="'Budget: ' + tx.budget.title">
+                💼 {{ tx.budget.title }}
+              </span>
+
+              <!-- Goal Badge -->
+              <span
+                class="linked-badge goal-badge"
+                *ngIf="tx.goal"
+                [title]="'Goal: ' + tx.goal.title">
+                🎯 {{ tx.goal.title }}
+              </span>
+            </div>
           </td>
 
           <!-- Amount -->

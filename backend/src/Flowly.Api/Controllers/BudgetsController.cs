@@ -260,6 +260,33 @@ public class BudgetsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Get all transactions linked to a specific budget
+    /// </summary>
+    [HttpGet("{id}/transactions")]
+    [ProducesResponseType(typeof(List<TransactionListItemDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetBudgetTransactions(Guid id)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var transactions = await _budgetService.GetBudgetTransactionsAsync(userId, id);
+            _logger.LogInformation("✅ Budget transactions fetched: {Count} items for budget {BudgetId}", transactions.Count, id);
+            return Ok(transactions);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning("❌ Budget not found: {Id}", id);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Failed to get budget transactions {Id}", id);
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     private Guid GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

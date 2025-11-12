@@ -1,0 +1,127 @@
+<div class="transaction-detail-container">
+  <!-- Header -->
+  <div class="detail-header">
+    <button class="btn btn-back" (click)="goBack()">
+      <span>←</span> Back to Transactions
+    </button>
+    <h2>💰 Transaction Details</h2>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading transaction...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-state">
+    <p>❌ {{ errorMessage }}</p>
+    <button class="btn btn-primary" (click)="goBack()">Back to List</button>
+  </div>
+
+  <!-- Transaction Detail -->
+  <div *ngIf="!loading && !errorMessage && transaction" class="transaction-detail">
+    <!-- Main Card -->
+    <div class="detail-card main-card">
+      <div class="card-header" [style.background]="getTransactionColor(transaction.type)">
+        <div class="type-badge">
+          <span class="type-icon">{{ getTransactionIcon(transaction.type) }}</span>
+          <span class="type-label">{{ transaction.type }}</span>
+        </div>
+        <div class="amount-display">
+          <h1>{{ formatAmount(transaction.amount, transaction.currencyCode) }}</h1>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Title & Description -->
+        <div class="info-section">
+          <h3 class="transaction-title">{{ transaction.title }}</h3>
+          <p class="transaction-description" *ngIf="transaction.description">
+            {{ transaction.description }}
+          </p>
+          <p class="no-description" *ngIf="!transaction.description">
+            <em>No description</em>
+          </p>
+        </div>
+
+        <!-- Category -->
+        <div class="info-section">
+          <label>Category</label>
+          <div class="category-display" *ngIf="transaction.category">
+            <span
+              class="category-badge large"
+              [style.background]="transaction.category.color || '#e5e7eb'">
+              <span *ngIf="transaction.category.icon">{{ transaction.category.icon }}</span>
+              {{ transaction.category.name }}
+            </span>
+          </div>
+          <p class="no-category" *ngIf="!transaction.category">
+            <em>Uncategorized</em>
+          </p>
+        </div>
+
+        <!-- Tags -->
+        <div class="info-section" *ngIf="transaction.tags && transaction.tags.length > 0">
+          <label>Tags</label>
+          <div class="tags-display">
+            <span
+              *ngFor="let tag of transaction.tags"
+              class="tag-chip large"
+              [style.background]="tag.color || '#8b5cf6'">
+              {{ tag.name }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Date Information -->
+        <div class="info-section">
+          <div class="dates-grid">
+            <div class="date-item">
+              <label>Transaction Date</label>
+              <p class="date-value">{{ formatDate(transaction.date) }}</p>
+            </div>
+            <div class="date-item">
+              <label>Created At</label>
+              <p class="date-value">{{ formatDateTime(transaction.createdAt) }}</p>
+            </div>
+            <div class="date-item" *ngIf="transaction.updatedAt">
+              <label>Last Updated</label>
+              <p class="date-value">{{ formatDateTime(transaction.updatedAt) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="info-section">
+          <label>Status</label>
+          <div class="status-badge" [class.archived]="transaction.isArchived">
+            {{ transaction.isArchived ? '📦 Archived' : '✅ Active' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Card -->
+    <div class="detail-card actions-card">
+      <h3>Actions</h3>
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="editTransaction()">
+          <span>✏️</span> Edit Transaction
+        </button>
+        <button
+          *ngIf="!transaction.isArchived"
+          class="btn btn-secondary"
+          (click)="archiveTransaction()">
+          <span>📦</span> Archive
+        </button>
+        <button
+          *ngIf="transaction.isArchived"
+          class="btn btn-secondary"
+          (click)="restoreTransaction()">
+          <span>↩️</span> Restore
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

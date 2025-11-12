@@ -22,6 +22,10 @@ export const FINANCE_ROUTES: Routes = [
         loadComponent: () => import('./components/transactions/transaction-editor/transaction-editor.component').then(m => m.TransactionEditorComponent)
       },
       {
+        path: 'transactions/:id',
+        loadComponent: () => import('./components/transactions/transaction-detail/transaction-detail.component').then(m => m.TransactionDetailComponent)
+      },
+      {
         path: 'transactions/:id/edit',
         loadComponent: () => import('./components/transactions/transaction-editor/transaction-editor.component').then(m => m.TransactionEditorComponent)
       },
@@ -38,6 +42,10 @@ export const FINANCE_ROUTES: Routes = [
         loadComponent: () => import('./components/budgets/budget-editor/budget-editor.component').then(m => m.BudgetEditorComponent)
       },
       {
+        path: 'budgets/:id',
+        loadComponent: () => import('./components/budgets/budget-detail/budget-detail.component').then(m => m.BudgetDetailComponent)
+      },
+      {
         path: 'budgets/:id/edit',
         loadComponent: () => import('./components/budgets/budget-editor/budget-editor.component').then(m => m.BudgetEditorComponent)
       },
@@ -48,6 +56,10 @@ export const FINANCE_ROUTES: Routes = [
       {
         path: 'goals/new',
         loadComponent: () => import('./components/goals/goal-editor/goal-editor.component').then(m => m.GoalEditorComponent)
+      },
+      {
+        path: 'goals/:id',
+        loadComponent: () => import('./components/goals/goal-detail/goal-detail.component').then(m => m.GoalDetailComponent)
       },
       {
         path: 'goals/:id/edit',

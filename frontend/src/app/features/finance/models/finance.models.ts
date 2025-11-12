@@ -26,6 +26,18 @@ export interface Category {
   icon?: string | null;
 }
 
+export interface BudgetSummary {
+  id: string;
+  title: string;
+  currencyCode: string;
+}
+
+export interface GoalSummary {
+  id: string;
+  title: string;
+  currencyCode: string;
+}
+
 export interface Transaction {
   id: string;
   title: string;
@@ -35,6 +47,10 @@ export interface Transaction {
   date: string | Date;
   categoryId?: string | null;
   category?: Category | null;
+  budgetId?: string | null;
+  budget?: BudgetSummary | null;
+  goalId?: string | null;
+  goal?: GoalSummary | null;
   currencyCode: string;
   tags: Tag[];
   isArchived: boolean;
@@ -132,6 +148,8 @@ export interface CreateTransactionRequest {
   type: TransactionType;
   date: string; // ISO date - matches backend DTO
   categoryId?: string;
+  budgetId?: string;
+  goalId?: string;
   currencyCode: string;
   tagIds?: string[];
 }
@@ -143,6 +161,8 @@ export interface UpdateTransactionRequest {
   type: TransactionType;
   date: string; // ISO date - matches backend DTO
   categoryId?: string;
+  budgetId?: string;
+  goalId?: string;
   currencyCode: string;
   tagIds?: string[];
 }

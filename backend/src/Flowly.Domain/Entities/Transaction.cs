@@ -40,9 +40,19 @@ public class Transaction
     public TransactionType Type { get; set; }
 
     /// <summary>
-    /// Category ID
+    /// Optional Category ID
     /// </summary>
-    public Guid CategoryId { get; set; }
+    public Guid? CategoryId { get; set; }
+
+    /// <summary>
+    /// Optional Budget ID - links transaction to a budget
+    /// </summary>
+    public Guid? BudgetId { get; set; }
+
+    /// <summary>
+    /// Optional Goal ID - links transaction to a financial goal
+    /// </summary>
+    public Guid? GoalId { get; set; }
 
     /// <summary>
     /// Transaction date
@@ -84,6 +94,16 @@ public class Transaction
     public Category Category { get; set; } = null!;
 
     /// <summary>
+    /// Budget reference (optional)
+    /// </summary>
+    public Budget? Budget { get; set; }
+
+    /// <summary>
+    /// Financial Goal reference (optional)
+    /// </summary>
+    public FinancialGoal? Goal { get; set; }
+
+    /// <summary>
     /// Tags associated with this transaction
     /// </summary>
     public ICollection<TransactionTag> TransactionTags { get; set; } = new List<TransactionTag>();
@@ -105,7 +125,7 @@ public class Transaction
     /// <summary>
     /// Update transaction details
     /// </summary>
-    public void Update(string title, decimal amount, string currencyCode, TransactionType type, Guid categoryId, DateTime date, string? description = null)
+    public void Update(string title, decimal amount, string currencyCode, TransactionType type, Guid? categoryId, DateTime date, string? description = null, Guid? budgetId = null, Guid? goalId = null)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException("Title cannot be empty", nameof(title));
@@ -120,6 +140,8 @@ public class Transaction
         CategoryId = categoryId;
         Date = date;
         Description = description?.Trim();
+        BudgetId = budgetId;
+        GoalId = goalId;
         UpdatedAt = DateTime.UtcNow;
     }
 

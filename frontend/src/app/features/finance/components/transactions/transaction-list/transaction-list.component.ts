@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
@@ -29,6 +29,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   private financeService = inject(FinanceService);
   private tagsService = inject(TagsService);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -265,8 +266,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
   // Actions
   viewTransaction(transaction: Transaction): void {
-    console.log('View transaction:', transaction);
-    // TODO: Navigate to transaction detail or open modal
+    this.router.navigate(['/finance/transactions', transaction.id]);
   }
 
   archiveTransaction(transaction: Transaction): void {

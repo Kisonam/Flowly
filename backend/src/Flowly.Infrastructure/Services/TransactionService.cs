@@ -81,6 +81,8 @@ public class TransactionService : ITransactionService
         // Apply pagination and include related entities
         var transactions = await query
             .Include(t => t.Category)
+            .Include(t => t.Budget)
+            .Include(t => t.Goal)
             .Include(t => t.TransactionTags)
                 .ThenInclude(tt => tt.Tag)
             .OrderByDescending(t => t.Date)
@@ -95,6 +97,8 @@ public class TransactionService : ITransactionService
                 CurrencyCode = t.CurrencyCode,
                 Type = t.Type,
                 CategoryId = t.CategoryId,
+                BudgetId = t.BudgetId,
+                GoalId = t.GoalId,
                 Date = t.Date,
                 CreatedAt = t.CreatedAt,
                 Description = t.Description,
@@ -104,6 +108,18 @@ public class TransactionService : ITransactionService
                     Id = t.Category.Id,
                     Name = t.Category.Name,
                     UserId = t.Category.UserId
+                } : null,
+                Budget = t.Budget != null ? new BudgetSummaryDto
+                {
+                    Id = t.Budget.Id,
+                    Title = t.Budget.Title,
+                    CurrencyCode = t.Budget.CurrencyCode
+                } : null,
+                Goal = t.Goal != null ? new GoalSummaryDto
+                {
+                    Id = t.Goal.Id,
+                    Title = t.Goal.Title,
+                    CurrencyCode = t.Goal.CurrencyCode
                 } : null,
                 Tags = t.TransactionTags.Select(tt => new TagDto
                 {
@@ -128,6 +144,8 @@ public class TransactionService : ITransactionService
         var transaction = await _dbContext.Transactions
             .AsNoTracking()
             .Include(t => t.Category)
+            .Include(t => t.Budget)
+            .Include(t => t.Goal)
             .Include(t => t.TransactionTags)
                 .ThenInclude(tt => tt.Tag)
             .FirstOrDefaultAsync(t => t.Id == transactionId && t.UserId == userId);
@@ -162,14 +180,17 @@ public class TransactionService : ITransactionService
             throw new ArgumentException("Amount must be positive", nameof(dto.Amount));
         }
 
-        // Verify category exists and belongs to user
-        var category = await _dbContext.Categories
-            .FirstOrDefaultAsync(c => c.Id == dto.CategoryId 
-                && (c.UserId == userId || c.UserId == null));
-
-        if (category == null)
+        // Verify category exists and belongs to user (if provided)
+        if (dto.CategoryId.HasValue)
         {
-            throw new InvalidOperationException("Category not found");
+            var category = await _dbContext.Categories
+                .FirstOrDefaultAsync(c => c.Id == dto.CategoryId.Value 
+                    && (c.UserId == userId || c.UserId == null));
+
+            if (category == null)
+            {
+                throw new InvalidOperationException("Category not found");
+            }
         }
 
         // Verify currency exists
@@ -181,6 +202,46 @@ public class TransactionService : ITransactionService
             throw new InvalidOperationException("Currency not found");
         }
 
+        // Verify budget exists if provided
+        if (dto.BudgetId.HasValue)
+        {
+            var budget = await _dbContext.Budgets
+                .FirstOrDefaultAsync(b => b.Id == dto.BudgetId.Value && b.UserId == userId);
+
+            if (budget == null)
+            {
+                throw new InvalidOperationException("Budget not found");
+            }
+
+            // Validate currency match - budget and transaction must use same currency
+            if (budget.CurrencyCode != dto.CurrencyCode)
+            {
+                throw new InvalidOperationException(
+                    $"Transaction currency ({dto.CurrencyCode}) must match budget currency ({budget.CurrencyCode}). " +
+                    "Currency conversion is not supported.");
+            }
+        }
+
+        // Verify goal exists if provided
+        if (dto.GoalId.HasValue)
+        {
+            var goal = await _dbContext.FinancialGoals
+                .FirstOrDefaultAsync(g => g.Id == dto.GoalId.Value && g.UserId == userId);
+
+            if (goal == null)
+            {
+                throw new InvalidOperationException("Financial goal not found");
+            }
+
+            // Validate currency match - goal and transaction must use same currency
+            if (goal.CurrencyCode != dto.CurrencyCode)
+            {
+                throw new InvalidOperationException(
+                    $"Transaction currency ({dto.CurrencyCode}) must match goal currency ({goal.CurrencyCode}). " +
+                    "Currency conversion is not supported.");
+            }
+        }
+
         var transaction = new Transaction
         {
             Id = Guid.NewGuid(),
@@ -190,6 +251,8 @@ public class TransactionService : ITransactionService
             CurrencyCode = dto.CurrencyCode,
             Type = dto.Type,
             CategoryId = dto.CategoryId,
+            BudgetId = dto.BudgetId,
+            GoalId = dto.GoalId,
             Date = DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc),
             Description = dto.Description?.Trim(),
             CreatedAt = DateTime.UtcNow,
@@ -206,6 +269,12 @@ public class TransactionService : ITransactionService
 
         await _dbContext.SaveChangesAsync();
 
+        // Update goal currentAmount if transaction is linked to a goal
+        if (dto.GoalId.HasValue)
+        {
+            await UpdateGoalAmountAsync(userId, dto.GoalId.Value);
+        }
+
         return await GetByIdAsync(userId, transaction.Id);
     }
 
@@ -220,14 +289,20 @@ public class TransactionService : ITransactionService
             throw new InvalidOperationException("Transaction not found");
         }
 
-        // Verify category exists
-        var category = await _dbContext.Categories
-            .FirstOrDefaultAsync(c => c.Id == dto.CategoryId 
-                && (c.UserId == userId || c.UserId == null));
+        // Store old goal ID to update its amount later
+        var oldGoalId = transaction.GoalId;
 
-        if (category == null)
+        // Verify category exists (if provided)
+        if (dto.CategoryId.HasValue)
         {
-            throw new InvalidOperationException("Category not found");
+            var category = await _dbContext.Categories
+                .FirstOrDefaultAsync(c => c.Id == dto.CategoryId.Value 
+                    && (c.UserId == userId || c.UserId == null));
+
+            if (category == null)
+            {
+                throw new InvalidOperationException("Category not found");
+            }
         }
 
         // Verify currency exists
@@ -239,6 +314,46 @@ public class TransactionService : ITransactionService
             throw new InvalidOperationException("Currency not found");
         }
 
+        // Verify budget exists if provided
+        if (dto.BudgetId.HasValue)
+        {
+            var budget = await _dbContext.Budgets
+                .FirstOrDefaultAsync(b => b.Id == dto.BudgetId.Value && b.UserId == userId);
+
+            if (budget == null)
+            {
+                throw new InvalidOperationException("Budget not found");
+            }
+
+            // Validate currency match - budget and transaction must use same currency
+            if (budget.CurrencyCode != dto.CurrencyCode)
+            {
+                throw new InvalidOperationException(
+                    $"Transaction currency ({dto.CurrencyCode}) must match budget currency ({budget.CurrencyCode}). " +
+                    "Currency conversion is not supported.");
+            }
+        }
+
+        // Verify goal exists if provided
+        if (dto.GoalId.HasValue)
+        {
+            var goal = await _dbContext.FinancialGoals
+                .FirstOrDefaultAsync(g => g.Id == dto.GoalId.Value && g.UserId == userId);
+
+            if (goal == null)
+            {
+                throw new InvalidOperationException("Financial goal not found");
+            }
+
+            // Validate currency match - goal and transaction must use same currency
+            if (goal.CurrencyCode != dto.CurrencyCode)
+            {
+                throw new InvalidOperationException(
+                    $"Transaction currency ({dto.CurrencyCode}) must match goal currency ({goal.CurrencyCode}). " +
+                    "Currency conversion is not supported.");
+            }
+        }
+
         transaction.Update(
             dto.Title.Trim(),
             dto.Amount,
@@ -246,7 +361,9 @@ public class TransactionService : ITransactionService
             dto.Type,
             dto.CategoryId,
             DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc),
-            dto.Description?.Trim()
+            dto.Description?.Trim(),
+            dto.BudgetId,
+            dto.GoalId
         );
 
         // Update tags if provided
@@ -265,6 +382,19 @@ public class TransactionService : ITransactionService
 
         await _dbContext.SaveChangesAsync();
 
+        // Update goal amounts if goal was changed or modified
+        if (oldGoalId.HasValue && oldGoalId != dto.GoalId)
+        {
+            // Update old goal (transaction was removed from it)
+            await UpdateGoalAmountAsync(userId, oldGoalId.Value);
+        }
+        
+        if (dto.GoalId.HasValue)
+        {
+            // Update new goal (transaction was added to it or its amount changed)
+            await UpdateGoalAmountAsync(userId, dto.GoalId.Value);
+        }
+
         return await GetByIdAsync(userId, transactionId);
     }
 
@@ -278,8 +408,16 @@ public class TransactionService : ITransactionService
             throw new InvalidOperationException("Transaction not found");
         }
 
+        var goalId = transaction.GoalId;
+        
         transaction.Archive();
         await _dbContext.SaveChangesAsync();
+
+        // Update goal amount after archiving (archived transactions don't count)
+        if (goalId.HasValue)
+        {
+            await UpdateGoalAmountAsync(userId, goalId.Value);
+        }
     }
 
     public async Task RestoreAsync(Guid userId, Guid transactionId)
@@ -292,8 +430,16 @@ public class TransactionService : ITransactionService
             throw new InvalidOperationException("Transaction not found");
         }
 
+        var goalId = transaction.GoalId;
+        
         transaction.Restore();
         await _dbContext.SaveChangesAsync();
+
+        // Update goal amount after restoring
+        if (goalId.HasValue)
+        {
+            await UpdateGoalAmountAsync(userId, goalId.Value);
+        }
     }
 
     // ============================================
@@ -332,11 +478,11 @@ public class TransactionService : ITransactionService
         // Stats by category
         var incomeByCategory = transactions
             .Where(t => t.Type == TransactionType.Income)
-            .GroupBy(t => new { t.CategoryId, t.Category.Name })
+            .GroupBy(t => new { t.CategoryId, CategoryName = t.Category != null ? t.Category.Name : "Uncategorized" })
             .Select(g => new CategoryStatsDto
             {
                 CategoryId = g.Key.CategoryId,
-                CategoryName = g.Key.Name,
+                CategoryName = g.Key.CategoryName,
                 TotalAmount = g.Sum(t => t.Amount),
                 TransactionCount = g.Count(),
                 Percentage = totalIncome > 0 ? (g.Sum(t => t.Amount) / totalIncome * 100) : 0
@@ -346,11 +492,11 @@ public class TransactionService : ITransactionService
 
         var expenseByCategory = transactions
             .Where(t => t.Type == TransactionType.Expense)
-            .GroupBy(t => new { t.CategoryId, t.Category.Name })
+            .GroupBy(t => new { t.CategoryId, CategoryName = t.Category != null ? t.Category.Name : "Uncategorized" })
             .Select(g => new CategoryStatsDto
             {
                 CategoryId = g.Key.CategoryId,
-                CategoryName = g.Key.Name,
+                CategoryName = g.Key.CategoryName,
                 TotalAmount = g.Sum(t => t.Amount),
                 TransactionCount = g.Count(),
                 Percentage = totalExpense > 0 ? (g.Sum(t => t.Amount) / totalExpense * 100) : 0
@@ -430,6 +576,8 @@ public class TransactionService : ITransactionService
             CurrencyCode = transaction.CurrencyCode,
             Type = transaction.Type,
             CategoryId = transaction.CategoryId,
+            BudgetId = transaction.BudgetId,
+            GoalId = transaction.GoalId,
             Date = transaction.Date,
             Description = transaction.Description,
             IsArchived = transaction.IsArchived,
@@ -441,7 +589,43 @@ public class TransactionService : ITransactionService
                 Name = transaction.Category.Name,
                 UserId = transaction.Category.UserId
             } : null,
+            Budget = transaction.Budget != null ? new BudgetSummaryDto
+            {
+                Id = transaction.Budget.Id,
+                Title = transaction.Budget.Title,
+                CurrencyCode = transaction.Budget.CurrencyCode
+            } : null,
+            Goal = transaction.Goal != null ? new GoalSummaryDto
+            {
+                Id = transaction.Goal.Id,
+                Title = transaction.Goal.Title,
+                CurrencyCode = transaction.Goal.CurrencyCode
+            } : null,
             Tags = tags
         };
+    }
+
+    /// <summary>
+    /// Recalculate and update goal currentAmount based on all linked transactions
+    /// </summary>
+    private async Task UpdateGoalAmountAsync(Guid userId, Guid goalId)
+    {
+        var goal = await _dbContext.FinancialGoals
+            .FirstOrDefaultAsync(g => g.Id == goalId && g.UserId == userId);
+
+        if (goal == null)
+        {
+            return; // Goal not found, skip update
+        }
+
+        // Calculate total from all transactions linked to this goal
+        // Income adds (+), Expense subtracts (-)
+        var totalAmount = await _dbContext.Transactions
+            .Where(t => t.UserId == userId && t.GoalId == goalId && !t.IsArchived)
+            .SumAsync(t => t.Type == TransactionType.Income ? t.Amount : -t.Amount);
+
+        // Update goal's current amount
+        goal.SetCurrentAmount(totalAmount);
+        await _dbContext.SaveChangesAsync();
     }
 }

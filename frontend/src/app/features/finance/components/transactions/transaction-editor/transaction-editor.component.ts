@@ -38,6 +38,10 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
 
   // Data
   categories: Category[] = [];
+  budgets: any[] = []; // All budgets list
+  filteredBudgets: any[] = []; // Budgets filtered by currency and type
+  goals: any[] = []; // All goals list
+  filteredGoals: any[] = []; // Goals filtered by currency
   tags: { id: string; name: string; color?: string }[] = [];
   selectedTagIds: string[] = [];
 
@@ -62,6 +66,8 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     type: ['Expense' as TransactionType, Validators.required],
     date: ['', Validators.required],
     categoryId: [''],
+    budgetId: [''],
+    goalId: [''],
     currencyCode: ['UAH', Validators.required]
   });
 
@@ -77,7 +83,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   }
 
   loadAuxData(): void {
-    // Load categories and tags
+    // Load categories
     this.financeService.getCategories()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -90,6 +96,37 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Load budgets (active only)
+    this.financeService.getBudgets({ isArchived: false })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (budgets) => {
+          this.budgets = budgets;
+          console.log('💼 Budgets loaded:', budgets);
+          // Filter budgets after loading
+          this.filterBudgets();
+        },
+        error: (err) => {
+          console.error('❌ Failed to load budgets', err);
+        }
+      });
+
+    // Load goals (active, non-archived only)
+    this.financeService.getGoals({ isArchived: false })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (goals) => {
+          this.goals = goals;
+          console.log('🎯 Goals loaded:', goals);
+          // Filter goals after loading
+          this.filterGoals();
+        },
+        error: (err) => {
+          console.error('❌ Failed to load goals', err);
+        }
+      });
+
+    // Load tags
     this.tagsService.getTags()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -108,6 +145,63 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     if (!this.isEdit) {
       const today = new Date().toISOString().split('T')[0];
       this.form.patchValue({ date: today });
+    }
+
+    // Filter budgets and goals when currency or type changes
+    this.form.get('currencyCode')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.filterBudgets();
+        this.filterGoals();
+      });
+
+    this.form.get('type')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.filterBudgets();
+        this.filterGoals();
+      });
+  }
+
+  filterBudgets(): void {
+    const currencyCode = this.form.get('currencyCode')?.value;
+
+    // Both Income and Expense transactions can be linked to budgets
+    // Income adds to budget, Expense subtracts from budget
+
+    // Filter budgets by currency
+    this.filteredBudgets = this.budgets.filter(
+      budget => budget.currencyCode === currencyCode
+    );
+
+    // Clear budget selection if current budget doesn't match currency
+    const currentBudgetId = this.form.get('budgetId')?.value;
+    if (currentBudgetId) {
+      const budgetStillValid = this.filteredBudgets.some(b => b.id === currentBudgetId);
+      if (!budgetStillValid) {
+        this.form.patchValue({ budgetId: '' });
+      }
+    }
+  }
+
+  filterGoals(): void {
+    const currencyCode = this.form.get('currencyCode')?.value;
+
+    // Both Income and Expense transactions can be linked to goals
+    // Income adds to goal (contributes), Expense withdraws from goal
+
+    // Filter goals by currency
+    this.filteredGoals = this.goals.filter(
+      goal => goal.currencyCode === currencyCode
+    );
+
+    // Clear goal selection if current goal doesn't match currency
+    const currentGoalId = this.form.get('goalId')?.value;
+    if (currentGoalId) {
+      const goalStillValid = this.filteredGoals.some(g => g.id === currentGoalId);
+      if (!goalStillValid) {
+        this.form.patchValue({ goalId: '' });
+      }
     }
   }
 
@@ -167,6 +261,8 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       type: transaction.type,
       date: dateStr,
       categoryId: transaction.categoryId || '',
+      budgetId: transaction.budgetId || '',
+      goalId: transaction.goalId || '',
       currencyCode: transaction.currencyCode
     });
 
@@ -220,26 +316,38 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   }
 
   buildCreateDto(formValue: any): CreateTransactionRequest {
+    const categoryId = formValue.categoryId?.trim();
+    const budgetId = formValue.budgetId?.trim();
+    const goalId = formValue.goalId?.trim();
+
     return {
       title: formValue.title.trim(),
       description: formValue.description?.trim() || undefined,
       amount: Number(formValue.amount),
       type: formValue.type,
       date: formValue.date,
-      categoryId: formValue.categoryId || undefined,
+      categoryId: categoryId || undefined,
+      budgetId: budgetId || undefined,
+      goalId: goalId || undefined,
       currencyCode: formValue.currencyCode,
       tagIds: this.selectedTagIds.length > 0 ? this.selectedTagIds : undefined
     };
   }
 
   buildUpdateDto(formValue: any): UpdateTransactionRequest {
+    const categoryId = formValue.categoryId?.trim();
+    const budgetId = formValue.budgetId?.trim();
+    const goalId = formValue.goalId?.trim();
+
     return {
       title: formValue.title.trim(),
       description: formValue.description?.trim() || undefined,
       amount: Number(formValue.amount),
       type: formValue.type,
       date: formValue.date,
-      categoryId: formValue.categoryId || undefined,
+      categoryId: categoryId || undefined,
+      budgetId: budgetId || undefined,
+      goalId: goalId || undefined,
       currencyCode: formValue.currencyCode,
       tagIds: this.selectedTagIds.length > 0 ? this.selectedTagIds : undefined
     };

@@ -1,4 +1,5 @@
 using Flowly.Application.DTOs.Transactions;
+using Flowly.Application.DTOs.Notes;
 using Flowly.Application.Interfaces;
 using Flowly.Domain.Entities;
 using Flowly.Infrastructure.Data;
@@ -250,6 +251,53 @@ public class FinancialGoalService : IFinancialGoalService
         await _dbContext.SaveChangesAsync();
 
         return MapToDto(goal);
+    }
+
+    public async Task<List<TransactionListItemDto>> GetGoalTransactionsAsync(Guid userId, Guid goalId)
+    {
+        // Verify goal exists and belongs to user
+        var goal = await _dbContext.FinancialGoals
+            .FirstOrDefaultAsync(g => g.Id == goalId && g.UserId == userId);
+
+        if (goal == null)
+        {
+            throw new InvalidOperationException("Financial goal not found");
+        }
+
+        // Get all transactions linked to this goal
+        var transactions = await _dbContext.Transactions
+            .Include(t => t.Category)
+            .Include(t => t.TransactionTags)
+                .ThenInclude(tt => tt.Tag)
+            .Where(t => t.UserId == userId && t.GoalId == goalId)
+            .OrderByDescending(t => t.Date)
+            .Select(t => new TransactionListItemDto
+            {
+                Id = t.Id,
+                Type = t.Type,
+                Amount = t.Amount,
+                CurrencyCode = t.CurrencyCode,
+                Category = t.Category != null ? new CategoryDto
+                {
+                    Id = t.Category.Id,
+                    Name = t.Category.Name,
+                    UserId = t.Category.UserId
+                } : null,
+                Date = t.Date,
+                Description = t.Description,
+                BudgetId = t.BudgetId,
+                GoalId = t.GoalId,
+                CreatedAt = t.CreatedAt,
+                Tags = t.TransactionTags.Select(tt => new TagDto
+                {
+                    Id = tt.Tag.Id,
+                    Name = tt.Tag.Name,
+                    Color = tt.Tag.Color
+                }).ToList()
+            })
+            .ToListAsync();
+
+        return transactions;
     }
 
     // ============================================

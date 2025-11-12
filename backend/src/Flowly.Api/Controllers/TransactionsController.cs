@@ -33,6 +33,7 @@ public class TransactionsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<TransactionListItemDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
+        [FromQuery] string? search = null,
         [FromQuery] DateTime? dateFrom = null,
         [FromQuery] DateTime? dateTo = null,
         [FromQuery] TransactionType? type = null,
@@ -64,6 +65,7 @@ public class TransactionsController : ControllerBase
 
             var filter = new TransactionFilterDto
             {
+                Search = search,
                 DateFrom = dateFrom,
                 DateTo = dateTo,
                 Type = type,

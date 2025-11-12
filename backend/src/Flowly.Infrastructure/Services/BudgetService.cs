@@ -1,4 +1,5 @@
 using Flowly.Application.DTOs.Transactions;
+using Flowly.Application.DTOs.Notes;
 using Flowly.Application.Interfaces;
 using Flowly.Domain.Entities;
 using Flowly.Domain.Enums;
@@ -291,28 +292,84 @@ public class BudgetService : IBudgetService
         return currentSpent > budget.Limit;
     }
 
+    public async Task<List<TransactionListItemDto>> GetBudgetTransactionsAsync(Guid userId, Guid budgetId)
+    {
+        // Verify budget exists and belongs to user
+        var budget = await _dbContext.Budgets
+            .AsNoTracking()
+            .FirstOrDefaultAsync(b => b.Id == budgetId && b.UserId == userId);
+
+        if (budget == null)
+        {
+            throw new InvalidOperationException("Budget not found");
+        }
+
+        // Get all transactions linked to this budget
+        var transactions = await _dbContext.Transactions
+            .AsNoTracking()
+            .Include(t => t.Category)
+            .Include(t => t.TransactionTags)
+                .ThenInclude(tt => tt.Tag)
+            .Where(t => t.UserId == userId
+                && t.BudgetId == budgetId
+                && t.Date >= budget.PeriodStart
+                && t.Date <= budget.PeriodEnd)
+            .OrderByDescending(t => t.Date)
+            .ThenByDescending(t => t.CreatedAt)
+            .Select(t => new TransactionListItemDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Amount = t.Amount,
+                CurrencyCode = t.CurrencyCode,
+                Date = t.Date,
+                Type = t.Type,
+                CategoryId = t.CategoryId,
+                BudgetId = t.BudgetId,
+                CreatedAt = t.CreatedAt,
+                Description = t.Description,
+                IsArchived = t.IsArchived,
+                Category = t.Category != null ? new CategoryDto
+                {
+                    Id = t.Category.Id,
+                    Name = t.Category.Name,
+                    UserId = t.Category.UserId
+                } : null,
+                Tags = t.TransactionTags.Select(tt => new TagDto
+                {
+                    Id = tt.Tag.Id,
+                    Name = tt.Tag.Name,
+                    Color = tt.Tag.Color
+                }).ToList()
+            })
+            .ToListAsync();
+
+        return transactions;
+    }
+
     // ============================================
     // Private Helpers
     // ============================================
 
     private async Task<decimal> CalculateCurrentSpentAsync(Guid userId, Budget budget)
     {
-        var query = _dbContext.Transactions
+        // Get all transactions linked to this budget
+        var linkedTransactions = await _dbContext.Transactions
             .AsNoTracking()
             .Where(t => t.UserId == userId
                 && !t.IsArchived
-                && t.Type == TransactionType.Expense
+                && t.BudgetId == budget.Id
                 && t.CurrencyCode == budget.CurrencyCode
                 && t.Date >= budget.PeriodStart
-                && t.Date <= budget.PeriodEnd);
+                && t.Date <= budget.PeriodEnd)
+            .ToListAsync();
 
-        // Filter by category if budget is category-specific
-        if (budget.CategoryId.HasValue)
-        {
-            query = query.Where(t => t.CategoryId == budget.CategoryId.Value);
-        }
+        // Calculate net spent:
+        // - Expense transactions subtract from budget (add to spent) - positive
+        // - Income transactions add to budget (reduce spent) - negative
+        var spent = linkedTransactions
+            .Sum(t => t.Type == TransactionType.Expense ? t.Amount : -t.Amount);
 
-        var spent = await query.SumAsync(t => (decimal?)t.Amount) ?? 0;
         return spent;
     }
 

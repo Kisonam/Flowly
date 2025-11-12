@@ -78,18 +78,19 @@
   <div *ngIf="!loading && filteredGoals.length > 0" class="goals-grid">
     <div *ngFor="let goal of filteredGoals" class="goal-card"
          [class.completed]="goal.isCompleted"
-         [class.archived]="goal.isArchived">
+         [class.archived]="goal.isArchived"
+         (click)="viewGoal(goal.id)">
 
       <!-- Card Header -->
       <div class="card-header">
         <h3 class="goal-title">{{ goal.title }}</h3>
         <div class="goal-actions">
-          <button class="btn-icon" (click)="editGoal(goal.id)" title="Редагувати">✏️</button>
+          <button class="btn-icon" (click)="editGoal(goal.id); $event.stopPropagation()" title="Редагувати">✏️</button>
 
-          <button *ngIf="!goal.isArchived" class="btn-icon" (click)="archiveGoal(goal.id)" title="Архівувати">📦</button>
-          <button *ngIf="goal.isArchived" class="btn-icon" (click)="restoreGoal(goal.id)" title="Відновити">♻️</button>
+          <button *ngIf="!goal.isArchived" class="btn-icon" (click)="archiveGoal(goal.id); $event.stopPropagation()" title="Архівувати">📦</button>
+          <button *ngIf="goal.isArchived" class="btn-icon" (click)="restoreGoal(goal.id); $event.stopPropagation()" title="Відновити">♻️</button>
 
-          <button *ngIf="goal.isArchived" class="btn-icon danger" (click)="deleteGoal(goal.id)" title="Видалити назавжди">🗑️</button>
+          <button *ngIf="goal.isArchived" class="btn-icon danger" (click)="deleteGoal(goal.id); $event.stopPropagation()" title="Видалити назавжди">🗑️</button>
         </div>
       </div>
 
@@ -138,16 +139,6 @@
           <span class="completion-icon">🎉</span>
           <span class="completion-text">Досягнуто {{ goal.completedAt | date:'dd/MM/yyyy' }}</span>
         </div>
-      </div>
-
-      <!-- Amount Controls -->
-      <div class="amount-controls" *ngIf="!goal.isCompleted && !goal.isArchived">
-        <button class="btn btn-small btn-success" (click)="addAmount(goal)" title="Додати суму">
-          ➕ Додати
-        </button>
-        <button class="btn btn-small btn-warning" (click)="subtractAmount(goal)" title="Відняти суму">
-          ➖ Відняти
-        </button>
       </div>
 
       <!-- Archived Timestamp -->

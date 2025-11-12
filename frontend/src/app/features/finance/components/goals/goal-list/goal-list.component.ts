@@ -199,6 +199,10 @@ export class GoalListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/finance/goals/new']);
   }
 
+  viewGoal(id: string): void {
+    this.router.navigate(['/finance/goals', id]);
+  }
+
   editGoal(id: string): void {
     this.router.navigate(['/finance/goals/edit', id]);
   }
@@ -242,50 +246,6 @@ export class GoalListComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Failed to delete goal:', err);
         alert('Не вдалося видалити ціль');
-      }
-    });
-  }
-
-  addAmount(goal: FinancialGoal): void {
-    const amount = prompt('Скільки додати до поточної суми?');
-    if (!amount) return;
-
-    const numAmount = parseFloat(amount);
-    if (isNaN(numAmount) || numAmount <= 0) {
-      alert('Введіть коректну суму');
-      return;
-    }
-
-    this.financeService.addGoalAmount(goal.id, { amount: numAmount }).subscribe({
-      next: () => {
-        console.log('✅ Goal amount updated');
-        this.fetchGoals();
-      },
-      error: (err: any) => {
-        console.error('Failed to update goal amount:', err);
-        alert('Не вдалося оновити суму');
-      }
-    });
-  }
-
-  subtractAmount(goal: FinancialGoal): void {
-    const amount = prompt('Скільки відняти від поточної суми?');
-    if (!amount) return;
-
-    const numAmount = parseFloat(amount);
-    if (isNaN(numAmount) || numAmount <= 0) {
-      alert('Введіть коректну суму');
-      return;
-    }
-
-    this.financeService.subtractGoalAmount(goal.id, { amount: numAmount }).subscribe({
-      next: () => {
-        console.log('✅ Goal amount updated');
-        this.fetchGoals();
-      },
-      error: (err: any) => {
-        console.error('Failed to update goal amount:', err);
-        alert('Не вдалося оновити суму');
       }
     });
   }

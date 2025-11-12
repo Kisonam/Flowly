@@ -20,4 +20,7 @@ public interface IFinancialGoalService
     Task<FinancialGoalDto> AddAmountAsync(Guid userId, Guid goalId, UpdateGoalAmountDto dto);
     Task<FinancialGoalDto> SubtractAmountAsync(Guid userId, Guid goalId, UpdateGoalAmountDto dto);
     Task<FinancialGoalDto> SetCurrentAmountAsync(Guid userId, Guid goalId, UpdateGoalAmountDto dto);
+    
+    // Transactions
+    Task<List<TransactionListItemDto>> GetGoalTransactionsAsync(Guid userId, Guid goalId);
 }

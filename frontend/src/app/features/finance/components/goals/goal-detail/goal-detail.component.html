@@ -1,0 +1,209 @@
+<div class="goal-detail-container">
+  <!-- Header -->
+  <div class="detail-header">
+    <button class="btn btn-back" (click)="goBack()">
+      <span>←</span> Back to Goals
+    </button>
+    <h2>🎯 Goal Details</h2>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading goal...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-state">
+    <p>❌ {{ errorMessage }}</p>
+    <button class="btn btn-primary" (click)="goBack()">Back to List</button>
+  </div>
+
+  <!-- Goal Detail -->
+  <div *ngIf="!loading && !errorMessage && goal" class="goal-detail">
+    <!-- Main Card -->
+    <div class="detail-card main-card">
+      <!-- Header -->
+      <div class="card-header">
+        <div class="goal-title-section">
+          <h1>{{ goal.title }}</h1>
+          <p *ngIf="goal.description" class="goal-description">
+            {{ goal.description }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Progress Section -->
+      <div class="progress-section">
+        <div class="amount-summary">
+          <div class="amount-item saved">
+            <label>Saved</label>
+            <div class="amount-value">
+              {{ formatAmount(goal.currentAmount, goal.currencyCode) }}
+            </div>
+          </div>
+          <div class="amount-divider">/</div>
+          <div class="amount-item target">
+            <label>Target</label>
+            <div class="amount-value">
+              {{ formatAmount(goal.targetAmount, goal.currencyCode) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="getProgressPercentage()"
+              [style.background]="getProgressColor()">
+            </div>
+          </div>
+          <div class="progress-label">
+            {{ getProgressPercentage().toFixed(1) }}%
+          </div>
+        </div>
+
+        <div class="remaining-section" *ngIf="!isCompleted()">
+          <div class="remaining-icon">💰</div>
+          <div class="remaining-text">
+            <strong>{{ formatAmount(getRemainingAmount(), goal.currencyCode) }}</strong>
+            <span>remaining to reach goal</span>
+          </div>
+        </div>
+
+        <div class="completed-section" *ngIf="isCompleted()">
+          <div class="completed-icon">🎉</div>
+          <div class="completed-text">
+            <strong>Goal Completed!</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Section -->
+      <div class="details-section">
+        <!-- Deadline -->
+        <div class="detail-item" *ngIf="goal.deadline">
+          <label>Deadline</label>
+          <div class="deadline-display">
+            <span class="deadline-date">{{ formatDate(goal.deadline) }}</span>
+            <span
+              *ngIf="goal.isOverdue"
+              class="deadline-status overdue">
+              ⚠️ Overdue
+            </span>
+            <span
+              *ngIf="!goal.isOverdue && goal.isDeadlineApproaching"
+              class="deadline-status approaching">
+              ⏰ Approaching
+            </span>
+          </div>
+        </div>
+
+        <!-- Completion Date -->
+        <div class="detail-item" *ngIf="goal.completedAt">
+          <label>Completed</label>
+          <div class="completed-date">
+            <span class="completed-icon">✅</span>
+            {{ formatDate(goal.completedAt) }}
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="detail-item">
+          <label>Status</label>
+          <div class="status-badges">
+            <span class="status-badge" [class.archived]="goal.isArchived">
+              {{ goal.isArchived ? '📦 Archived' : '✅ Active' }}
+            </span>
+            <span class="status-badge completed" *ngIf="isCompleted()">
+              🎉 Completed
+            </span>
+          </div>
+        </div>
+
+        <!-- Created/Updated -->
+        <div class="detail-item">
+          <label>Created</label>
+          <div class="timestamp">{{ formatDate(goal.createdAt) }}</div>
+        </div>
+        <div class="detail-item" *ngIf="goal.updatedAt">
+          <label>Last Updated</label>
+          <div class="timestamp">{{ formatDate(goal.updatedAt) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Card -->
+    <div class="detail-card actions-card">
+      <h3>Actions</h3>
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="editGoal()">
+          <span>✏️</span> Edit Goal
+        </button>
+        <button
+          *ngIf="!goal.isArchived"
+          class="btn btn-secondary"
+          (click)="deleteGoal()">
+          <span>📦</span> Archive
+        </button>
+        <button
+          *ngIf="goal.isArchived"
+          class="btn btn-secondary"
+          (click)="restoreGoal()">
+          <span>↩️</span> Restore
+        </button>
+        <button
+          *ngIf="goal.isArchived"
+          class="btn btn-danger"
+          (click)="deleteGoal()">
+          <span>🗑️</span> Delete Permanently
+        </button>
+      </div>
+    </div>
+
+    <!-- Transactions Card -->
+    <div class="detail-card transactions-card">
+      <div class="card-header">
+        <h3>💰 Linked Transactions</h3>
+        <span class="transaction-count">{{ transactions.length }} transaction{{ transactions.length !== 1 ? 's' : '' }}</span>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loadingTransactions" class="loading-state">
+        <div class="spinner-small"></div>
+        <p>Loading transactions...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loadingTransactions && transactions.length === 0" class="empty-state">
+        <p>📭 No transactions linked to this goal yet</p>
+      </div>
+
+      <!-- Transactions List -->
+      <div *ngIf="!loadingTransactions && transactions.length > 0" class="transactions-list">
+        <div
+          *ngFor="let transaction of transactions"
+          class="transaction-item"
+          (click)="viewTransaction(transaction.id)">
+          <div class="transaction-icon" [style.color]="getTransactionTypeColor(transaction.type)">
+            {{ getTransactionTypeIcon(transaction.type) }}
+          </div>
+          <div class="transaction-info">
+            <div class="transaction-title">{{ transaction.title || transaction.description || 'Transaction' }}</div>
+            <div class="transaction-meta">
+              <span class="transaction-date">{{ formatDate(transaction.date) }}</span>
+              <span *ngIf="transaction.category" class="transaction-category">
+                • {{ transaction.category.name }}
+              </span>
+            </div>
+          </div>
+          <div class="transaction-amount" [style.color]="getTransactionTypeColor(transaction.type)">
+            <span class="amount-sign">{{ transaction.type === 'Income' ? '+' : '-' }}</span>
+            {{ formatAmount(transaction.amount, transaction.currencyCode) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

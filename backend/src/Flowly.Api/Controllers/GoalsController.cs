@@ -327,6 +327,33 @@ public class GoalsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Get all transactions linked to a specific financial goal
+    /// </summary>
+    [HttpGet("{id}/transactions")]
+    [ProducesResponseType(typeof(List<TransactionListItemDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetGoalTransactions(Guid id)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var transactions = await _goalService.GetGoalTransactionsAsync(userId, id);
+            _logger.LogInformation("✅ Goal transactions fetched: {Count} items for goal {GoalId}", transactions.Count, id);
+            return Ok(transactions);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning("❌ Financial goal not found: {Id}", id);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Failed to get goal transactions {Id}", id);
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     private Guid GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

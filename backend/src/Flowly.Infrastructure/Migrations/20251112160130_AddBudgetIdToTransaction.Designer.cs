@@ -3,6 +3,7 @@ using System;
 using Flowly.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Flowly.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251112160130_AddBudgetIdToTransaction")]
+    partial class AddBudgetIdToTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -797,7 +800,7 @@ namespace Flowly.Infrastructure.Migrations
                     b.Property<Guid?>("BudgetId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -814,9 +817,6 @@ namespace Flowly.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
-
-                    b.Property<Guid?>("GoalId")
-                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsArchived")
                         .ValueGeneratedOnAdd()
@@ -847,8 +847,6 @@ namespace Flowly.Infrastructure.Migrations
                     b.HasIndex("CurrencyCode");
 
                     b.HasIndex("Date");
-
-                    b.HasIndex("GoalId");
 
                     b.HasIndex("IsArchived");
 
@@ -1239,7 +1237,8 @@ namespace Flowly.Infrastructure.Migrations
                     b.HasOne("Flowly.Domain.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Flowly.Domain.Entities.Currency", "Currency")
                         .WithMany()
@@ -1247,17 +1246,11 @@ namespace Flowly.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Flowly.Domain.Entities.FinancialGoal", "Goal")
-                        .WithMany()
-                        .HasForeignKey("GoalId");
-
                     b.Navigation("Budget");
 
                     b.Navigation("Category");
 
                     b.Navigation("Currency");
-
-                    b.Navigation("Goal");
                 });
 
             modelBuilder.Entity("Flowly.Domain.Entities.TransactionTag", b =>

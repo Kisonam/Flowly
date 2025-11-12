@@ -150,6 +150,56 @@
               </option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label class="form-label" for="budgetId">
+              Budget
+              <span class="optional">(optional)</span>
+            </label>
+            <select
+              id="budgetId"
+              formControlName="budgetId"
+              class="select-field">
+              <option value="">No Budget</option>
+              <option *ngFor="let budget of filteredBudgets" [value]="budget.id">
+                {{ budget.title }} ({{ budget.currencyCode }})
+              </option>
+            </select>
+            <small class="form-hint" *ngIf="form.get('type')?.value === 'Expense' && filteredBudgets.length > 0">
+              Link this expense to subtract from budget
+            </small>
+            <small class="form-hint" *ngIf="form.get('type')?.value === 'Income' && filteredBudgets.length > 0">
+              Link this income to add to budget (refill)
+            </small>
+            <small class="form-hint warning" *ngIf="filteredBudgets.length === 0 && form.get('currencyCode')?.value">
+              ⚠️ No budgets available for {{ form.get('currencyCode')?.value }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="goalId">
+              Financial Goal
+              <span class="optional">(optional)</span>
+            </label>
+            <select
+              id="goalId"
+              formControlName="goalId"
+              class="select-field">
+              <option value="">No Goal</option>
+              <option *ngFor="let goal of filteredGoals" [value]="goal.id">
+                {{ goal.title }} ({{ goal.currencyCode }})
+              </option>
+            </select>
+            <small class="form-hint" *ngIf="form.get('type')?.value === 'Income' && filteredGoals.length > 0">
+              Link this income to contribute to goal (+)
+            </small>
+            <small class="form-hint" *ngIf="form.get('type')?.value === 'Expense' && filteredGoals.length > 0">
+              Link this expense to withdraw from goal (-)
+            </small>
+            <small class="form-hint warning" *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value">
+              ⚠️ No goals available for {{ form.get('currencyCode')?.value }}
+            </small>
+          </div>
         </div>
 
         <!-- Description -->

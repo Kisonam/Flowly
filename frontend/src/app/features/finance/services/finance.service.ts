@@ -179,6 +179,15 @@ export class FinanceService {
     );
   }
 
+  /** Get budget transactions */
+  getBudgetTransactions(budgetId: string): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.BASE_URL}/budgets/${budgetId}/transactions`).pipe(
+      map(transactions => transactions.map(t => this.convertTransactionDates(t))),
+      tap(t => console.log('💰 Budget transactions fetched:', t)),
+      catchError(this.handleError)
+    );
+  }
+
   /** Create budget */
   createBudget(dto: CreateBudgetRequest): Observable<Budget> {
     return this.http.post<Budget>(`${this.BASE_URL}/budgets`, dto).pipe(
@@ -258,6 +267,15 @@ export class FinanceService {
     return this.http.get<FinancialGoal>(`${this.BASE_URL}/goals/${id}`).pipe(
       map(g => this.convertGoalDates(g)),
       tap(g => console.log('🎯 Goal fetched:', g)),
+      catchError(this.handleError)
+    );
+  }
+
+  /** Get goal transactions */
+  getGoalTransactions(goalId: string): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.BASE_URL}/goals/${goalId}/transactions`).pipe(
+      map(transactions => transactions.map(t => this.convertTransactionDates(t))),
+      tap(t => console.log('💰 Goal transactions fetched:', t)),
       catchError(this.handleError)
     );
   }

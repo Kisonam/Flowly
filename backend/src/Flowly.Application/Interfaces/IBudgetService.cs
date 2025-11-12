@@ -19,4 +19,9 @@ public interface IBudgetService
     /// Check whether budget is overspent
     /// </summary>
     Task<bool> IsOverspentAsync(Guid userId, Guid budgetId);
+
+    /// <summary>
+    /// Get all transactions linked to a specific budget
+    /// </summary>
+    Task<List<TransactionListItemDto>> GetBudgetTransactionsAsync(Guid userId, Guid budgetId);
 }

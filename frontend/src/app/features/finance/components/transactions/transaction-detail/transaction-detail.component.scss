@@ -1,0 +1,348 @@
+.transaction-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: #1f2937;
+  }
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+
+  span {
+    font-size: 1.2rem;
+  }
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  border: 3px solid #f3f4f6;
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.transaction-detail {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.detail-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.main-card {
+  .card-header {
+    color: white;
+    padding: 2rem;
+    text-align: center;
+
+    .type-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      opacity: 0.95;
+
+      .type-icon {
+        font-size: 1.5rem;
+      }
+
+      .type-label {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+    }
+
+    .amount-display h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+  }
+
+  .card-body {
+    padding: 2rem;
+  }
+}
+
+.info-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .transaction-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .transaction-description {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .no-description,
+  .no-category {
+    color: #9ca3af;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
+.category-display {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+
+  &.large {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  span {
+    font-size: 1.2rem;
+  }
+}
+
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+
+  &.large {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+  }
+}
+
+.dates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.date-item {
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .date-value {
+    font-size: 1rem;
+    color: #1f2937;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.attachments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #1f2937;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #10b981;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+
+  &.archived {
+    background: #6b7280;
+  }
+}
+
+.actions-card {
+  padding: 2rem;
+
+  h3 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.25rem;
+    color: #1f2937;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  span {
+    font-size: 1.2rem;
+  }
+
+  &.btn-primary {
+    background: #8b5cf6;
+    color: white;
+
+    &:hover {
+      background: #7c3aed;
+    }
+  }
+
+  &.btn-secondary {
+    background: #f3f4f6;
+    color: #1f2937;
+
+    &:hover {
+      background: #e5e7eb;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .transaction-detail-container {
+    padding: 1rem;
+  }
+
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .main-card .card-header .amount-display h1 {
+    font-size: 2rem;
+  }
+
+  .dates-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
