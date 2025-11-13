@@ -5,14 +5,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, forkJoin, of, switchMap, takeUntil, tap, debounceTime } from 'rxjs';
 import { marked } from 'marked';
 import { TasksService } from '../../services/tasks.service';
-import { Task, TaskPriority, TasksStatus, CreateTaskRequest, UpdateTaskRequest } from '../../models/task.models';
+import { Task, TaskPriority, TasksStatus, CreateTaskRequest, UpdateTaskRequest, Tag } from '../../models/task.models';
 import { LinkSelectorComponent } from '../../../../shared/components/link-selector/link-selector.component';
 import { Link, LinkEntityType } from '../../../../shared/models/link.models';
+import { TagManagerComponent } from '../../../../shared/components/tag-manager/tag-manager.component';
+import { TagsService } from '../../../../shared/services/tags.service';
 
 @Component({
   selector: 'app-task-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, LinkSelectorComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, LinkSelectorComponent, TagManagerComponent],
   templateUrl: './task-editor.component.html',
   styleUrls: ['./task-editor.component.scss']
 })
@@ -21,6 +23,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   router = inject(Router); // public for template
   private tasksService = inject(TasksService);
+  private tagsService = inject(TagsService);
   private destroy$ = new Subject<void>();
 
   isEdit = false;
@@ -38,6 +41,10 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
 
   // Expose LinkEntityType to template
   LinkEntityType = LinkEntityType;
+
+  // Tags state
+  availableTags: Tag[] = [];
+  selectedTagIds: string[] = [];
 
   loading = false;
   saving = false;
@@ -73,6 +80,9 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Capture query param for theme preselection (creation mode)
     this.initialThemeId = this.route.snapshot.queryParamMap.get('themeId');
+
+    // Load available tags
+    this.loadAvailableTags();
 
     this.route.paramMap
       .pipe(
@@ -127,6 +137,9 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
       color: task.color || ''
     });
 
+    // Load tags
+    this.selectedTagIds = task.tags?.map(t => t.id) || [];
+
     // existing subtasks preview (allow add new via form array)
     this.subtasks.clear();
     // Do not prefill form array with existing ones to avoid id handling here
@@ -135,6 +148,24 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     if (task.recurrence?.rule) {
       this.form.patchValue({ enableRecurrence: true, recurrenceRule: task.recurrence.rule });
     }
+  }
+
+  loadAvailableTags(): void {
+    this.tagsService.getTags()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (tags) => {
+          this.availableTags = tags || [];
+        },
+        error: (err) => {
+          console.error('Failed to load tags:', err);
+          this.availableTags = [];
+        }
+      });
+  }
+
+  onTagsChanged(tagIds: string[]): void {
+    this.selectedTagIds = tagIds;
   }
 
   addSubtaskField(): void {
@@ -182,7 +213,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
               priority: v.priority,
               color: task.color || undefined,
               themeId: task.theme?.id,
-              tagIds: task.tags?.map(t => t.id)
+              tagIds: this.selectedTagIds
             };
             calls.push(this.tasksService.updateTask(task.id, updateDto));
           }
@@ -222,7 +253,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
         priority: v.priority,
         color: v.color || undefined,
         themeId: this.task?.theme?.id,
-        tagIds: this.task?.tags?.map(t => t.id)
+        tagIds: this.selectedTagIds
       };
 
       this.tasksService.updateTask(this.taskId, updateDto).pipe(

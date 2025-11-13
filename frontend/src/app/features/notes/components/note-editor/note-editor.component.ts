@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { marked } from 'marked';
 import { NotesService } from '../../services/notes.service';
-import { TagSelectorComponent } from '../../../../shared/components/tag-selector/tag-selector.component';
+import { TagManagerComponent } from '../../../../shared/components/tag-manager/tag-manager.component';
 import { LinkSelectorComponent } from '../../../../shared/components/link-selector/link-selector.component';
 import { Note, CreateNoteRequest, UpdateNoteRequest, Tag } from '../../models/note.models';
 import { TagsService } from '../../../../shared/services/tags.service';
@@ -23,7 +23,7 @@ interface NoteDraft {
 @Component({
   selector: 'app-note-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TagSelectorComponent, LinkSelectorComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TagManagerComponent, LinkSelectorComponent],
   templateUrl: './note-editor.component.html',
   styleUrls: ['./note-editor.component.scss']
 })
@@ -146,7 +146,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
     this.updatePreview(note.markdown);
   }
 
-  private loadAvailableTags(): void {
+  loadAvailableTags(): void {
     this.tagsService.getTags()
       .pipe(takeUntil(this.destroy$))
       .subscribe({

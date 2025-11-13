@@ -239,22 +239,12 @@
 
         <!-- Tags -->
         <div class="form-group">
-          <label class="form-label">Tags</label>
-          <div class="tags-list" *ngIf="tags.length > 0">
-            <button
-              *ngFor="let tag of tags"
-              type="button"
-              class="tag-chip"
-              [class.selected]="isTagSelected(tag.id)"
-              [style.background]="isTagSelected(tag.id) ? (tag.color || '#8b5cf6') : '#e5e7eb'"
-              [style.color]="isTagSelected(tag.id) ? 'white' : '#374151'"
-              (click)="toggleTag(tag.id)">
-              {{ tag.name }}
-            </button>
-          </div>
-          <p class="tags-empty" *ngIf="tags.length === 0">
-            No tags available. <a routerLink="/tags">Create tags</a>
-          </p>
+          <app-tag-manager
+            [title]="'Tags'"
+            [selectedIds]="selectedTagIds"
+            (selectedIdsChange)="onTagsChanged($event)"
+            (tagsUpdated)="loadTags()">
+          </app-tag-manager>
         </div>
 
         <!-- Links -->

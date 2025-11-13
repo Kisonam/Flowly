@@ -87,12 +87,12 @@
     <aside class="editor-sidebar">
       <!-- Tags Section -->
       <div class="sidebar-section">
-        <app-tag-selector
+        <app-tag-manager
           [title]="'Tags'"
-          [tags]="availableTags"
           [selectedIds]="selectedTagIds"
-          (selectedIdsChange)="onTagsChanged($event)">
-        </app-tag-selector>
+          (selectedIdsChange)="onTagsChanged($event)"
+          (tagsUpdated)="loadAvailableTags()">
+        </app-tag-manager>
       </div>
 
       <!-- Links Section -->

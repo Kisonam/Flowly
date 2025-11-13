@@ -6,6 +6,7 @@ import { Subject, of, switchMap, takeUntil, tap } from 'rxjs';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
 import { LinkSelectorComponent } from '../../../../../shared/components/link-selector/link-selector.component';
+import { TagManagerComponent } from '../../../../../shared/components/tag-manager/tag-manager.component';
 import { Link, LinkEntityType } from '../../../../../shared/models/link.models';
 import {
   Transaction,
@@ -18,7 +19,7 @@ import {
 @Component({
   selector: 'app-transaction-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LinkSelectorComponent],
+  imports: [CommonModule, ReactiveFormsModule, LinkSelectorComponent, TagManagerComponent],
   templateUrl: './transaction-editor.component.html',
   styleUrls: ['./transaction-editor.component.scss']
 })
@@ -296,17 +297,22 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   }
 
   // Tag Management
-  toggleTag(tagId: string): void {
-    const index = this.selectedTagIds.indexOf(tagId);
-    if (index > -1) {
-      this.selectedTagIds.splice(index, 1);
-    } else {
-      this.selectedTagIds.push(tagId);
-    }
+  onTagsChanged(tagIds: string[]): void {
+    this.selectedTagIds = tagIds;
   }
 
-  isTagSelected(tagId: string): boolean {
-    return this.selectedTagIds.includes(tagId);
+  loadTags(): void {
+    this.tagsService.getTags()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (tags) => {
+          this.tags = tags || [];
+        },
+        error: (err) => {
+          console.error('Failed to load tags:', err);
+          this.tags = [];
+        }
+      });
   }
 
   // Form Actions
