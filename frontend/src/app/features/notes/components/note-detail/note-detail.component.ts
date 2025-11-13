@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { takeUntil, Subject } from 'rxjs';
 import { NotesService } from '../../services/notes.service';
 import { Note } from '../../models/note.models';
 import { marked } from 'marked';
+import { LinkService } from '../../../../shared/services/link.service';
+import { Link, LinkEntityType } from '../../../../shared/models/link.models';
 
 @Component({
   selector: 'app-note-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss']
 })
@@ -18,6 +20,7 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private notesService = inject(NotesService);
+  private linkService = inject(LinkService);
   private sanitizer = inject(DomSanitizer);
   private destroy$ = new Subject<void>();
 
@@ -26,8 +29,12 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
   isLoading = true;
   errorMessage = '';
   safeHtml: SafeHtml | null = null;
-  tasks: any[] = [];
-  transactions: any[] = [];
+  links: Link[] = [];
+
+  // Computed lists based on links
+  linkedTasks: any[] = [];
+  linkedTransactions: any[] = [];
+  linkedNotes: any[] = [];
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -57,17 +64,65 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
             : marked(note.markdown || '') as string;
           html = this.replaceReferenceTokens(html);
           this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(html);
-          // Optional linked collections if present in payload
-          const asAny: any = note as any;
-          this.tasks = Array.isArray(asAny?.tasks) ? asAny.tasks : [];
-          this.transactions = Array.isArray(asAny?.transactions) ? asAny.transactions : [];
-          this.isLoading = false;
+
+          // Load links for this note
+          this.loadLinks();
         },
         error: (err) => {
           this.errorMessage = err?.message || 'Failed to load note';
           this.isLoading = false;
         }
       });
+  }
+
+  private loadLinks(): void {
+    this.linkService.getLinksForNote(this.noteId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (links) => {
+          this.links = links;
+          this.processLinks(links);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Failed to load links:', err);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private processLinks(links: Link[]): void {
+    this.linkedTasks = [];
+    this.linkedTransactions = [];
+    this.linkedNotes = [];
+
+    links.forEach(link => {
+      // Get the "other" entity preview
+      const preview = link.fromType === LinkEntityType.Note && link.fromId === this.noteId
+        ? link.toPreview
+        : link.fromPreview;
+
+      if (!preview) return;
+
+      const item = {
+        id: preview.id,
+        title: preview.title,
+        snippet: preview.snippet,
+        type: preview.type
+      };
+
+      switch (preview.type) {
+        case LinkEntityType.Task:
+          this.linkedTasks.push(item);
+          break;
+        case LinkEntityType.Transaction:
+          this.linkedTransactions.push(item);
+          break;
+        case LinkEntityType.Note:
+          this.linkedNotes.push(item);
+          break;
+      }
+    });
   }
 
   onEdit(): void {

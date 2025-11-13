@@ -1,0 +1,131 @@
+<div class="link-selector">
+  <!-- Header -->
+  <div class="header">
+    <h3 class="title">
+      <i class="bi bi-link-45deg"></i>
+      {{ title }}
+    </h3>
+    <button
+      *ngIf="showAddButton"
+      type="button"
+      class="btn-add"
+      (click)="openAddDialog()"
+      title="Add link">
+      <i class="bi bi-plus-lg"></i>
+    </button>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading()" class="loading">
+    <i class="bi bi-hourglass-split spinner"></i>
+    Loading links...
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error()" class="error">
+    <i class="bi bi-exclamation-triangle"></i>
+    {{ error() }}
+  </div>
+
+  <!-- Links list -->
+  <div *ngIf="!isLoading() && !error()" class="links-list">
+    <div *ngIf="links().length === 0" class="no-links">
+      <i class="bi bi-link-45deg"></i>
+      <p>No links yet</p>
+      <small>Connect this {{ getEntityTypeName(entityType).toLowerCase() }} with other items</small>
+    </div>
+
+    <div *ngFor="let link of links()" class="link-item">
+      <div class="link-content">
+        <i class="bi entity-icon" [ngClass]="getEntityIcon(getLinkPreview(link)?.type!)"></i>
+        <div class="link-details">
+          <div class="link-title">{{ getLinkPreview(link)?.title }}</div>
+          <div class="link-snippet" *ngIf="getLinkPreview(link)?.snippet">
+            {{ getLinkPreview(link)?.snippet }}
+          </div>
+          <div class="link-type">
+            <i class="bi" [ngClass]="getEntityIcon(getLinkPreview(link)?.type!)"></i>
+            {{ getEntityTypeName(getLinkPreview(link)?.type!) }}
+          </div>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn-delete"
+        (click)="deleteLink(link)"
+        title="Remove link">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Add Link Dialog -->
+  <div *ngIf="showAddDialog()" class="dialog-overlay" (click)="closeAddDialog()">
+    <div class="dialog" (click)="$event.stopPropagation()">
+      <div class="dialog-header">
+        <h3>Add Link</h3>
+        <button type="button" class="btn-close" (click)="closeAddDialog()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="dialog-body">
+        <!-- Link Type Selector -->
+        <div class="form-group">
+          <label>Link to:</label>
+          <div class="link-type-buttons">
+            <button
+              *ngFor="let option of linkTypeOptions"
+              type="button"
+              class="link-type-btn"
+              [class.active]="selectedLinkType() === option.value"
+              [disabled]="option.value === entityType"
+              (click)="onLinkTypeChange(option.value)">
+              <i class="bi" [ngClass]="option.icon"></i>
+              {{ option.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Input -->
+        <div class="form-group">
+          <label>Search {{ getEntityTypeName(selectedLinkType()) }}:</label>
+          <div class="search-input">
+            <i class="bi bi-search"></i>
+            <input
+              type="text"
+              [value]="searchQuery()"
+              (input)="onSearchChange($any($event.target).value)"
+              placeholder="Type to search..."
+              autocomplete="off">
+            <i *ngIf="isSearching()" class="bi bi-hourglass-split spinner"></i>
+          </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="search-results">
+          <div *ngIf="searchQuery() && searchQuery().length < 2" class="search-hint">
+            Type at least 2 characters to search
+          </div>
+
+          <div *ngIf="searchQuery() && searchQuery().length >= 2 && searchResults().length === 0 && !isSearching()" class="no-results">
+            <i class="bi bi-inbox"></i>
+            No results found
+          </div>
+
+          <div
+            *ngFor="let result of searchResults()"
+            class="result-item"
+            (click)="createLink(result)">
+            <i class="bi result-icon" [ngClass]="getEntityIcon(selectedLinkType())"></i>
+            <div class="result-details">
+              <div class="result-title">{{ getResultTitle(result) }}</div>
+              <div class="result-subtitle">{{ getResultSubtitle(result) }}</div>
+            </div>
+            <i class="bi bi-plus-circle add-icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

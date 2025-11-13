@@ -8,12 +8,10 @@ import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { marked } from 'marked';
 import { NotesService } from '../../services/notes.service';
 import { TagSelectorComponent } from '../../../../shared/components/tag-selector/tag-selector.component';
+import { LinkSelectorComponent } from '../../../../shared/components/link-selector/link-selector.component';
 import { Note, CreateNoteRequest, UpdateNoteRequest, Tag } from '../../models/note.models';
 import { TagsService } from '../../../../shared/services/tags.service';
-import { TasksService } from '../../../../shared/services/tasks.service';
-import { TransactionsService } from '../../../../shared/services/transactions.service';
-import { TaskListItem } from '../../../../shared/models/tasks.models';
-import { TransactionListItem } from '../../../../shared/models/transactions.models';
+import { Link, LinkEntityType } from '../../../../shared/models/link.models';
 
 interface NoteDraft {
   title: string;
@@ -25,7 +23,7 @@ interface NoteDraft {
 @Component({
   selector: 'app-note-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TagSelectorComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TagSelectorComponent, LinkSelectorComponent],
   templateUrl: './note-editor.component.html',
   styleUrls: ['./note-editor.component.scss']
 })
@@ -33,8 +31,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   private notesService = inject(NotesService);
   private fb = inject(FormBuilder);
   private tagsService = inject(TagsService);
-  private tasksService = inject(TasksService);
-  private transactionsService = inject(TransactionsService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
@@ -60,14 +56,8 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   isDragging = false;
   uploadProgress: number | null = null;
 
-  // References (tasks/transactions)
-  refType: 'task' | 'tx' = 'task';
-  refId: string = '';
-  refLabel: string = '';
-  // Dropdown sources
-  taskOptions: TaskListItem[] = [];
-  txOptions: TransactionListItem[] = [];
-  refSearch = '';
+  // Expose LinkEntityType to template
+  LinkEntityType = LinkEntityType;
 
   // Auto-save
   private autoSaveSubject = new Subject<void>();
@@ -79,8 +69,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
     this.setupAutoSave();
     this.loadRouteData();
     this.loadAvailableTags();
-    // Preload default reference options (tasks)
-    this.loadTaskOptions();
   }
 
   ngOnDestroy(): void {
@@ -172,52 +160,10 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadTaskOptions(term?: string): void {
-    this.tasksService.list({ search: term, isArchived: false, take: 50 })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (items) => {
-          this.taskOptions = items || [];
-          // Preselect first task if nothing is selected
-          if (this.refType === 'task' && !this.refId && this.taskOptions.length > 0) {
-            const first = this.taskOptions[0];
-            this.refId = first.id;
-            this.refLabel = first.title || '';
-          }
-        },
-        error: (err) => {
-          console.error('Failed to load tasks:', err);
-          this.taskOptions = [];
-        }
-      });
-  }
-
-  private loadTxOptions(term?: string): void {
-    this.transactionsService.list({ search: term, isArchived: false, take: 50 })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (items) => {
-          this.txOptions = items || [];
-          // Preselect first transaction if nothing is selected
-          if (this.refType === 'tx' && !this.refId && this.txOptions.length > 0) {
-            const first = this.txOptions[0];
-            this.refId = first.id;
-            const amount = new Intl.NumberFormat(undefined, { style: 'currency', currency: first.currencyCode }).format(first.amount);
-            const date = new Date(first.date).toLocaleDateString();
-            this.refLabel = `${amount} · ${date}` + (first.description ? ` · ${first.description}` : '');
-          }
-        },
-        error: (err) => {
-          console.error('Failed to load transactions:', err);
-          this.txOptions = [];
-        }
-      });
-  }
-
   private updatePreview(markdown: string): void {
     try {
       const html = marked(markdown || '') as string;
-      this.markdownPreview = this.replaceReferenceTokens(html);
+      this.markdownPreview = html;
     } catch (error) {
       console.error('Error parsing markdown:', error);
       this.markdownPreview = '<p>Error rendering preview</p>';
@@ -523,87 +469,14 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   }
 
   // ============================================
-  // References helpers
+  // Link Management
   // ============================================
 
-  onRefTypeChanged(): void {
-    // Preload options for the selected type
-    this.refSearch = '';
-    if (this.refType === 'task') {
-      this.loadTaskOptions();
-    } else {
-      this.loadTxOptions();
-    }
-    // Selection will be set to the first item when options load
-    this.refId = '';
-    this.refLabel = '';
+  onLinkCreated(link: Link): void {
+    console.log('Link created:', link);
   }
 
-  onSearchRef(term: string): void {
-    this.refSearch = term;
-    if (this.refType === 'task') {
-      this.loadTaskOptions(term);
-    } else {
-      this.loadTxOptions(term);
-    }
-  }
-
-  onSelectTask(id: string): void {
-    this.refId = id;
-    const item = this.taskOptions.find(t => t.id === id);
-    this.refLabel = item ? item.title : '';
-  }
-
-  onSelectTx(id: string): void {
-    this.refId = id;
-    const item = this.txOptions.find(t => t.id === id);
-    if (item) {
-      const amount = new Intl.NumberFormat(undefined, { style: 'currency', currency: item.currencyCode }).format(item.amount);
-      const date = new Date(item.date).toLocaleDateString();
-      this.refLabel = `${amount} · ${date}` + (item.description ? ` · ${item.description}` : '');
-    } else {
-      this.refLabel = '';
-    }
-  }
-
-  insertReference(): void {
-    const id = (this.refId || '').trim();
-    if (!id) {
-      alert('Оберіть завдання або транзакцію зі списку');
-      return;
-    }
-    const label = (this.refLabel || '').trim();
-    const token = label
-      ? `[[${this.refType}:${id}|${label}]]`
-      : `[[${this.refType}:${id}]]`;
-
-    const currentMarkdown = this.noteForm.get('markdown')?.value || '';
-    const insertion = (currentMarkdown.endsWith('\n') ? '' : '\n') + token + '\n';
-    this.noteForm.patchValue({ markdown: currentMarkdown + insertion });
-
-    // Reset inputs
-    this.refId = '';
-    this.refLabel = '';
-  }
-
-  private replaceReferenceTokens(html: string): string {
-    // Matches [[task:GUID|Label]] or [[tx:GUID|Label]] (label optional)
-    const refRegex = /\[\[(task|tx):([A-Za-z0-9\-]{6,})\|?([^\]]*)\]\]/g;
-    return html.replace(refRegex, (_match, type: string, id: string, label: string) => {
-      const kind = type === 'task' ? 'Завдання' : 'Транзакція';
-      const text = (label && label.trim().length > 0) ? label.trim() : `${kind} ${id.substring(0, 6)}…`;
-      const cls = type === 'task' ? 'ref-pill task' : 'ref-pill tx';
-      // Safe HTML span we can style; later can turn into routerLink
-      return `<span class="${cls}" data-id="${id}" data-type="${type}"><i class="bi ${type === 'task' ? 'bi-check2-square' : 'bi-cash-coin'}"></i> ${this.escapeHtml(text)}</span>`;
-    });
-  }
-
-  private escapeHtml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+  onLinkDeleted(linkId: string): void {
+    console.log('Link deleted:', linkId);
   }
 }

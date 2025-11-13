@@ -27,6 +27,8 @@ public static class ApplicationServicesConfiguration
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<IFinancialGoalService, FinancialGoalService>();
 
+        // Links Module Services
+        services.AddScoped<ILinkService, LinkService>();
 
         return services;
     }

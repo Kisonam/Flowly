@@ -95,51 +95,15 @@
         </app-tag-selector>
       </div>
 
-      <!-- References Section -->
-      <div class="sidebar-section">
-        <h3 class="sidebar-title">
-          <i class="bi bi-link-45deg"></i>
-          Посилання
-        </h3>
-        <div class="ref-controls">
-          <div class="row">
-            <select class="form-select" [(ngModel)]="refType" [ngModelOptions]="{standalone: true}" (ngModelChange)="onRefTypeChanged()">
-              <option value="task">Завдання</option>
-              <option value="tx">Транзакція</option>
-            </select>
-          </div>
-          <!-- Dynamic dropdowns -->
-          <div class="row" *ngIf="refType === 'task'">
-            <input class="form-control" type="text" placeholder="Пошук завдання" [ngModel]="refSearch" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSearchRef($event)">
-          </div>
-          <div class="row" *ngIf="refType === 'task'">
-            <select class="form-select w-100" [(ngModel)]="refId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSelectTask($event)">
-              <option *ngFor="let t of taskOptions" [ngValue]="t.id">{{ t.title }}</option>
-            </select>
-          </div>
-          <div class="row" *ngIf="refType === 'tx'">
-            <input class="form-control" type="text" placeholder="Пошук транзакції" [ngModel]="refSearch" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSearchRef($event)">
-          </div>
-          <div class="row" *ngIf="refType === 'tx'">
-            <select class="form-select w-100" [(ngModel)]="refId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSelectTx($event)">
-              <option *ngFor="let x of txOptions" [ngValue]="x.id">
-                {{ x.type === 'Expense' ? '-' : '+' }}{{ x.amount }} {{ x.currencyCode }} · {{ x.date | date:'shortDate' }}
-                <span *ngIf="x.description"> · {{ x.description }}</span>
-              </option>
-            </select>
-          </div>
-          <div class="row">
-            <input class="form-control" type="text" placeholder="Мітка (необов'язково)" [(ngModel)]="refLabel" [ngModelOptions]="{standalone: true}">
-          </div>
-          <div class="row">
-            <button class="btn-secondary w-100" type="button" (click)="insertReference()">
-              Додати посилання
-            </button>
-          </div>
-          <p class="ref-hint">
-            Формат токена: [[task:ID|Label]] або [[tx:ID|Label]]. У прев'ю відображається як інтерактивна пігулка.
-          </p>
-        </div>
+      <!-- Links Section -->
+      <div class="sidebar-section" *ngIf="noteId">
+        <app-link-selector
+          [entityType]="LinkEntityType.Note"
+          [entityId]="noteId"
+          [title]="'Посилання'"
+          (linkCreated)="onLinkCreated($event)"
+          (linkDeleted)="onLinkDeleted($event)">
+        </app-link-selector>
       </div>
 
       <!-- Upload Section -->
