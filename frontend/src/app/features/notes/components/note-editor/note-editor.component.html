@@ -96,11 +96,19 @@
       </div>
 
       <!-- Links Section -->
-      <div class="sidebar-section" *ngIf="noteId">
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">
+          <i class="bi bi-link-45deg"></i>
+          Посилання
+        </h3>
+        <div *ngIf="!noteId" class="info-message">
+          💡 Збережіть нотатку, щоб додати посилання
+        </div>
         <app-link-selector
+          *ngIf="noteId"
           [entityType]="LinkEntityType.Note"
           [entityId]="noteId"
-          [title]="'Посилання'"
+          [title]="''"
           (linkCreated)="onLinkCreated($event)"
           (linkDeleted)="onLinkDeleted($event)">
         </app-link-selector>

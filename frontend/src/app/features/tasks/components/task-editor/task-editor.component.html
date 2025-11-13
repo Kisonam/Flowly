@@ -63,28 +63,20 @@
         </div>
       </div>
 
-      <div class="sidebar-section references">
-        <h3 class="sidebar-title">References</h3>
-        <div class="ref-switch">
-          <select [(ngModel)]="refType" [ngModelOptions]="{standalone:true}" (ngModelChange)="onRefTypeChanged()">
-            <option value="note">Note</option>
-            <option value="tx">Transaction</option>
-          </select>
+      <!-- Links Section -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Посилання</h3>
+        <div *ngIf="!taskId" class="info-message">
+          💡 Збережіть задачу, щоб додати посилання
         </div>
-        <input type="text" class="ref-search" placeholder="Пошук" [(ngModel)]="refSearch" [ngModelOptions]="{standalone:true}" (ngModelChange)="onSearchRef(refSearch)" />
-        <ng-container *ngIf="refType==='note'; else txTpl">
-          <select class="ref-select" [(ngModel)]="refId" [ngModelOptions]="{standalone:true}">
-            <option *ngFor="let n of noteOptions" [value]="n.id">{{ n.title }}</option>
-          </select>
-        </ng-container>
-        <ng-template #txTpl>
-          <select class="ref-select" [(ngModel)]="refId" [ngModelOptions]="{standalone:true}">
-            <option *ngFor="let x of txOptions" [value]="x.id">{{ (x.type==='Expense' ? '-' : '+') + x.amount + ' ' + x.currencyCode }}</option>
-          </select>
-        </ng-template>
-        <input type="text" class="ref-label" placeholder="Label (optional)" [(ngModel)]="refLabel" [ngModelOptions]="{standalone:true}" />
-        <button type="button" class="btn-secondary w-100" (click)="insertReferenceToken()">Insert reference</button>
-        <p class="hint">Формат: [[note:ID|Label]] або [[tx:ID|Label]]</p>
+        <app-link-selector
+          *ngIf="taskId"
+          [entityType]="LinkEntityType.Task"
+          [entityId]="taskId"
+          [title]="''"
+          (linkCreated)="onLinkCreated($event)"
+          (linkDeleted)="onLinkDeleted($event)">
+        </app-link-selector>
       </div>
     </aside>
 

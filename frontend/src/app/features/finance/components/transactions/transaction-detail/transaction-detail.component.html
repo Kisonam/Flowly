@@ -128,6 +128,94 @@
       </div>
     </div>
 
+    <!-- Linked Items Card -->
+    <div class="detail-card linked-card" *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
+      <h3>
+        <i class="bi bi-link-45deg"></i>
+        Зв'язані елементи
+      </h3>
+
+      <div class="linked-sections">
+        <!-- Linked Notes -->
+        <div class="linked-section" *ngIf="linkedNotes.length > 0">
+          <div class="section-header">
+            <i class="bi bi-journal-text"></i>
+            <span>Нотатки</span>
+            <span class="badge">{{ linkedNotes.length }}</span>
+          </div>
+          <div class="link-items">
+            <a
+              *ngFor="let note of linkedNotes"
+              [routerLink]="['/notes', note.id]"
+              class="link-item">
+              <div class="link-icon note-icon">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ note.title }}</div>
+                <div class="link-snippet" *ngIf="note.snippet">{{ note.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Linked Tasks -->
+        <div class="linked-section" *ngIf="linkedTasks.length > 0">
+          <div class="section-header">
+            <i class="bi bi-check-circle"></i>
+            <span>Задачі</span>
+            <span class="badge">{{ linkedTasks.length }}</span>
+          </div>
+          <div class="link-items">
+            <a
+              *ngFor="let task of linkedTasks"
+              [routerLink]="['/tasks', task.id]"
+              class="link-item">
+              <div class="link-icon task-icon">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ task.title }}</div>
+                <div class="link-snippet" *ngIf="task.snippet">{{ task.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Linked Transactions -->
+        <div class="linked-section" *ngIf="linkedTransactions.length > 0">
+          <div class="section-header">
+            <i class="bi bi-currency-dollar"></i>
+            <span>Транзакції</span>
+            <span class="badge">{{ linkedTransactions.length }}</span>
+          </div>
+          <div class="link-items">
+            <a
+              *ngFor="let tx of linkedTransactions"
+              [routerLink]="['/finance/transactions', tx.id]"
+              class="link-item">
+              <div class="link-icon transaction-icon">
+                <i class="bi bi-currency-dollar"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ tx.title }}</div>
+                <div class="link-snippet" *ngIf="tx.snippet">{{ tx.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Actions Card -->
     <div class="detail-card actions-card">
       <h3>Actions</h3>

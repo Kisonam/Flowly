@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FinanceService } from '../../../services/finance.service';
 import { Transaction } from '../../../models/finance.models';
+import { LinkService } from '../../../../../shared/services/link.service';
+import { Link, LinkEntityType, EntityPreview } from '../../../../../shared/models/link.models';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -16,11 +18,18 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private financeService = inject(FinanceService);
+  private linkService = inject(LinkService);
   private destroy$ = new Subject<void>();
 
   transaction: Transaction | null = null;
   loading = false;
   errorMessage = '';
+
+  // Links
+  links: Link[] = [];
+  linkedNotes: EntityPreview[] = [];
+  linkedTasks: EntityPreview[] = [];
+  linkedTransactions: EntityPreview[] = [];
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -45,6 +54,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
           this.transaction = transaction;
           this.loading = false;
           console.log('💰 Transaction loaded:', transaction);
+          this.loadLinks();
         },
         error: (err: any) => {
           console.error('❌ Failed to load transaction', err);
@@ -52,6 +62,50 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
           this.loading = false;
         }
       });
+  }
+
+  loadLinks(): void {
+    if (!this.transaction) return;
+
+    this.linkService.getLinksForEntity(LinkEntityType.Transaction, this.transaction.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (links) => {
+          this.links = links;
+          this.processLinks(links);
+          console.log('🔗 Links loaded:', links);
+        },
+        error: (err) => {
+          console.error('❌ Failed to load links', err);
+        }
+      });
+  }
+
+  processLinks(links: Link[]): void {
+    this.linkedNotes = [];
+    this.linkedTasks = [];
+    this.linkedTransactions = [];
+
+    links.forEach(link => {
+      // Get the preview of the entity we're linked to (the "other" entity)
+      const preview = link.fromType === LinkEntityType.Transaction && link.fromId === this.transaction?.id
+        ? link.toPreview
+        : link.fromPreview;
+
+      if (!preview) return;
+
+      switch (preview.type) {
+        case LinkEntityType.Note:
+          this.linkedNotes.push(preview);
+          break;
+        case LinkEntityType.Task:
+          this.linkedTasks.push(preview);
+          break;
+        case LinkEntityType.Transaction:
+          this.linkedTransactions.push(preview);
+          break;
+      }
+    });
   }
 
   getTransactionColor(type: string): string {

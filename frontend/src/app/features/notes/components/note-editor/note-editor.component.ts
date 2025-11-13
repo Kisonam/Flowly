@@ -215,7 +215,8 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
           this.clearDraft();
           this.lastSavedTime = new Date();
           this.isSaving = false;
-          this.router.navigate(['/notes']);
+          // Navigate to edit mode so user can add links
+          this.router.navigate(['/notes/edit', note.id]);
         },
         error: (error) => {
           this.errorMessage = 'Failed to create note';

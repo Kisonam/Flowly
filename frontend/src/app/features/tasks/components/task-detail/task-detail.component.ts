@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { filter, switchMap, takeUntil, tap } from 'rxjs';
 import { Subject } from 'rxjs';
 import { marked } from 'marked';
@@ -8,11 +8,13 @@ import { marked } from 'marked';
 import { TasksService } from '../../services/tasks.service';
 import { TagsService } from '../../../../shared/services/tags.service';
 import { Task, Tag, Subtask } from '../../models/task.models';
+import { LinkService } from '../../../../shared/services/link.service';
+import { Link, LinkEntityType } from '../../../../shared/models/link.models';
 
 @Component({
   selector: 'app-task-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterModule],
   templateUrl: './task-detail.component.html',
   styleUrls: ['./task-detail.component.scss']
 })
@@ -20,6 +22,7 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private tasksService = inject(TasksService);
   private tagsService = inject(TagsService);
+  private linkService = inject(LinkService);
   private destroy$ = new Subject<void>();
 
   taskId = '';
@@ -32,6 +35,12 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
 
   // Tags
   allTags: { id: string; name: string; color?: string }[] = [];
+
+  // Links
+  links: Link[] = [];
+  linkedNotes: any[] = [];
+  linkedTasks: any[] = [];
+  linkedTransactions: any[] = [];
 
   ngOnInit(): void {
     // Read id from route and load data
@@ -48,6 +57,9 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
           this.task = task;
           this.descriptionHtml = this.renderMarkdown(task.description || '');
           this.loading = false;
+
+          // Load links for this task
+          this.loadLinks();
         },
         error: (err) => {
           this.error = err?.message || 'Failed to load task';
@@ -100,6 +112,59 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
         else this.task.tags = [...this.task.tags, tag];
       },
       error: (err) => console.error('Failed to toggle tag', err)
+    });
+  }
+
+  // =====================
+  // Links
+  // =====================
+  private loadLinks(): void {
+    if (!this.taskId) return;
+
+    this.linkService.getLinksForTask(this.taskId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (links) => {
+          this.links = links;
+          this.processLinks(links);
+        },
+        error: (err) => {
+          console.error('Failed to load links:', err);
+        }
+      });
+  }
+
+  private processLinks(links: Link[]): void {
+    this.linkedNotes = [];
+    this.linkedTasks = [];
+    this.linkedTransactions = [];
+
+    links.forEach(link => {
+      // Get the "other" entity preview
+      const preview = link.fromType === LinkEntityType.Task && link.fromId === this.taskId
+        ? link.toPreview
+        : link.fromPreview;
+
+      if (!preview) return;
+
+      const item = {
+        id: preview.id,
+        title: preview.title,
+        snippet: preview.snippet,
+        type: preview.type
+      };
+
+      switch (preview.type) {
+        case LinkEntityType.Task:
+          this.linkedTasks.push(item);
+          break;
+        case LinkEntityType.Transaction:
+          this.linkedTransactions.push(item);
+          break;
+        case LinkEntityType.Note:
+          this.linkedNotes.push(item);
+          break;
+      }
     });
   }
 

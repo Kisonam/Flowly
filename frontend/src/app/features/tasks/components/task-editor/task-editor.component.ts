@@ -6,11 +6,13 @@ import { Subject, forkJoin, of, switchMap, takeUntil, tap, debounceTime } from '
 import { marked } from 'marked';
 import { TasksService } from '../../services/tasks.service';
 import { Task, TaskPriority, TasksStatus, CreateTaskRequest, UpdateTaskRequest } from '../../models/task.models';
+import { LinkSelectorComponent } from '../../../../shared/components/link-selector/link-selector.component';
+import { Link, LinkEntityType } from '../../../../shared/models/link.models';
 
 @Component({
   selector: 'app-task-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, LinkSelectorComponent],
   templateUrl: './task-editor.component.html',
   styleUrls: ['./task-editor.component.scss']
 })
@@ -34,14 +36,8 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   // Cancel handler reused from note editor semantics
   onCancel(): void { this.router.navigate(['/tasks/board']); }
 
-  // Helper for reference option display
-  isTx(): boolean { return this.refType === 'tx'; }
-  refType: 'note' | 'tx' = 'note';
-  refId = '';
-  refLabel = '';
-  refSearch = '';
-  noteOptions: { id: string; title: string }[] = [];
-  txOptions: { id: string; amount: number; currencyCode: string; type: string; date: string; description?: string }[] = [];
+  // Expose LinkEntityType to template
+  LinkEntityType = LinkEntityType;
 
   loading = false;
   saving = false;
@@ -113,7 +109,6 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     // Live markdown preview & reference preload
     this.form.get('description')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => this.autoPreview$.next(val || ''));
     this.autoPreview$.pipe(debounceTime(250), takeUntil(this.destroy$)).subscribe((md: string) => this.updatePreview(md));
-    this.loadNoteOptions();
   }
 
   ngOnDestroy(): void {
@@ -209,7 +204,8 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: () => {
           this.saving = false;
-          this.router.navigate(['/tasks', this.task?.id]);
+          // Navigate to edit mode so user can add links
+          this.router.navigate(['/tasks/edit', this.task?.id]);
         },
         error: (err) => {
           this.error = err?.message || 'Failed to create task';
@@ -291,51 +287,20 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   private updatePreview(md: string): void {
     try {
       const raw = marked(md || '') as string;
-      this.descriptionPreview = this.replaceReferenceTokens(raw);
+      this.descriptionPreview = raw;
     } catch {
       this.descriptionPreview = '<p>Error rendering preview</p>';
     }
   }
 
   // =====================
-  // References
+  // Link handlers
   // =====================
-  onRefTypeChanged(): void {
-    this.refId = '';
-    this.refLabel = '';
-    if (this.refType === 'note') this.loadNoteOptions(); else this.loadTxOptions();
+  onLinkCreated(link: Link): void {
+    console.log('✅ Link created:', link);
   }
-  onSearchRef(term: string): void {
-    this.refSearch = term;
-    if (this.refType === 'note') this.loadNoteOptions(term); else this.loadTxOptions(term);
+
+  onLinkDeleted(linkId: string): void {
+    console.log('🗑️ Link deleted:', linkId);
   }
-  insertReferenceToken(): void {
-    const id = this.refId.trim();
-    if (!id) { alert('Оберіть елемент зі списку'); return; }
-    const label = this.refLabel.trim();
-    const token = label ? `[[${this.refType}:${id}|${label}]]` : `[[${this.refType}:${id}]]`;
-    const current = this.form.get('description')?.value || '';
-    const insertion = (current.endsWith('\n') ? '' : '\n') + token + '\n';
-    this.form.patchValue({ description: current + insertion });
-    this.refId = ''; this.refLabel='';
-  }
-  private replaceReferenceTokens(html: string): string {
-    const refRegex = /\[\[(note|tx):([A-Za-z0-9\-]{6,})\|?([^\]]*)\]\]/g;
-    return html.replace(refRegex, (_m, type: string, id: string, label: string) => {
-      const kind = type === 'note' ? 'Note' : 'Tx';
-      const text = label?.trim().length ? label.trim() : `${kind} ${id.substring(0,6)}…`;
-      const cls = type === 'note' ? 'ref-pill task' : 'ref-pill tx';
-      return `<span class="${cls}" data-id="${id}" data-type="${type}">${this.escapeHtml(text)}</span>`;
-    });
-  }
-  private escapeHtml(str: string): string {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-  }
-  private loadNoteOptions(term?: string): void {
-    // Reuse NotesService listing via tasks board? Simplified call: placeholder until real endpoint integrated
-    // For now clear options to avoid undefined usage if service absent.
-    // Could implement actual service injection later.
-    this.noteOptions = []; // TODO: hook into real notes list service
-  }
-  private loadTxOptions(term?: string): void { this.txOptions = []; }
 }

@@ -256,6 +256,25 @@
             No tags available. <a routerLink="/tags">Create tags</a>
           </p>
         </div>
+
+        <!-- Links -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="bi bi-link-45deg"></i>
+            Посилання
+          </label>
+          <div *ngIf="!transactionId" class="info-message">
+            💡 Збережіть транзакцію, щоб додати посилання
+          </div>
+          <app-link-selector
+            *ngIf="transactionId"
+            [entityType]="LinkEntityType.Transaction"
+            [entityId]="transactionId"
+            [title]="''"
+            (linkCreated)="onLinkCreated($event)"
+            (linkDeleted)="onLinkDeleted($event)">
+          </app-link-selector>
+        </div>
       </div>
 
       <!-- Actions -->

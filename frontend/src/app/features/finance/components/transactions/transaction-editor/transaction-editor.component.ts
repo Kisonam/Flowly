@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, of, switchMap, takeUntil, tap } from 'rxjs';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
+import { LinkSelectorComponent } from '../../../../../shared/components/link-selector/link-selector.component';
+import { Link, LinkEntityType } from '../../../../../shared/models/link.models';
 import {
   Transaction,
   TransactionType,
@@ -16,7 +18,7 @@ import {
 @Component({
   selector: 'app-transaction-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LinkSelectorComponent],
   templateUrl: './transaction-editor.component.html',
   styleUrls: ['./transaction-editor.component.scss']
 })
@@ -35,6 +37,9 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   loading = false;
   saving = false;
   error = '';
+
+  // Expose LinkEntityType to template
+  LinkEntityType = LinkEntityType;
 
   // Data
   categories: Category[] = [];
@@ -349,7 +354,12 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       next: (transaction) => {
         console.log('✅ Transaction saved:', transaction);
         this.saving = false;
-        this.router.navigate(['/finance/transactions']);
+        // Navigate to edit mode so user can add links
+        if (!this.isEdit) {
+          this.router.navigate(['/finance/transactions/edit', transaction.id]);
+        } else {
+          this.router.navigate(['/finance/transactions']);
+        }
       },
       error: (err) => {
         console.error('❌ Failed to save transaction', err);
@@ -508,5 +518,16 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     }
 
     return availableAmount >= Math.abs(Number(amount));
+  }
+
+  // =====================
+  // Link handlers
+  // =====================
+  onLinkCreated(link: Link): void {
+    console.log('✅ Link created:', link);
+  }
+
+  onLinkDeleted(linkId: string): void {
+    console.log('🗑️ Link deleted:', linkId);
   }
 }
