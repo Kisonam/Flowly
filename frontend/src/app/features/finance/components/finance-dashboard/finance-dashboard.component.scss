@@ -177,30 +177,33 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 2rem;
+  margin-bottom: 2rem; /* Add space before next section */
 }
 
-.chart-container {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  height: 400px;
-  position: relative;
+.chart-wrapper {
+  min-height: 350px;
+  height: auto; /* Allow wrapper to grow with content */
+  position: relative; /* Establish positioning context */
 
-  canvas {
-    max-height: 100%;
+  // Remove default padding/styling from chart components as they have their own
+  app-income-expense-chart,
+  app-category-breakdown-chart {
+    display: block;
+    width: 100%;
+    height: auto; /* Allow components to define their own height */
+    position: relative; /* Establish positioning context for child elements */
   }
 }
 
-.pie-chart-container {
-  .empty-chart {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: #a0aec0;
-    font-size: 1rem;
+// Budget Progress Section - separate from charts
+.budget-progress-section {
+  width: 100%;
+  margin-bottom: 2rem; /* Space before category tables */
+
+  app-budget-progress-chart {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -209,6 +212,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 2rem;
+  margin-top: 0; /* Remove top margin, space is from charts-section margin-bottom */
+  clear: both; /* Ensure this section starts below floating elements */
+  position: relative; /* Establish positioning context */
+  z-index: 1; /* Same level as other elements */
 }
 
 .category-table-wrapper {
@@ -216,6 +223,7 @@
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative; /* Establish positioning context */
 
   h3 {
     font-size: 1.25rem;
@@ -395,6 +403,10 @@
   .charts-section,
   .category-breakdown {
     grid-template-columns: 1fr;
+  }
+
+  .chart-wrapper {
+    min-height: 300px;
   }
 
   .chart-container {

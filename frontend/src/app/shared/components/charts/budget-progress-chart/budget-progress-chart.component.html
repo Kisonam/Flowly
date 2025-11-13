@@ -1,0 +1,32 @@
+<div class="chart-container">
+  @if (data.length > 0) {
+    <canvas #chartCanvas></canvas>
+
+    @if (showPercentage) {
+      <div class="budget-details">
+        @for (budget of data; track budget.title) {
+          <div class="budget-item" [class.over-budget]="getProgressPercentage(budget) >= dangerThreshold">
+            <div class="budget-info">
+              <span class="budget-title">{{ budget.title }}</span>
+              <span class="budget-percentage">{{ getProgressPercentage(budget).toFixed(1) }}%</span>
+            </div>
+            <div class="budget-amounts">
+              <span class="current">{{ budget.current.toFixed(2) }}</span>
+              <span class="separator">/</span>
+              <span class="limit">{{ budget.limit.toFixed(2) }}</span>
+              @if (getProgressPercentage(budget) < 100) {
+                <span class="remaining">(залишилось: {{ getRemainingAmount(budget).toFixed(2) }})</span>
+              } @else {
+                <span class="exceeded">(перевищено: {{ (budget.current - budget.limit).toFixed(2) }})</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  } @else {
+    <div class="no-data">
+      <p>Немає даних для відображення</p>
+    </div>
+  }
+</div>

@@ -44,18 +44,12 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   filteredGoals: any[] = []; // Goals filtered by currency
   tags: { id: string; name: string; color?: string }[] = [];
   selectedTagIds: string[] = [];
+  currencies: { code: string; name: string; symbol: string }[] = [];
 
   // Options
   readonly transactionTypes: { value: TransactionType; label: string; icon: string }[] = [
     { value: 'Income', label: 'Income', icon: '↑' },
     { value: 'Expense', label: 'Expense', icon: '↓' }
-  ];
-
-  readonly currencies = [
-    { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
-    { code: 'USD', symbol: '$', name: 'US Dollar' },
-    { code: 'EUR', symbol: '€', name: 'Euro' },
-    { code: 'GBP', symbol: '£', name: 'British Pound' }
   ];
 
   // Form
@@ -68,7 +62,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     categoryId: [''],
     budgetId: [''],
     goalId: [''],
-    currencyCode: ['UAH', Validators.required]
+    currencyCode: ['', Validators.required] // Will be set after currencies load
   });
 
   ngOnInit(): void {
@@ -83,6 +77,25 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   }
 
   loadAuxData(): void {
+    // Load currencies
+    this.financeService.getCurrencies()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (currencies) => {
+          this.currencies = currencies;
+          console.log('💱 Currencies loaded:', currencies);
+
+          // Set default currency if not already set and currencies are available
+          if (!this.form.get('currencyCode')?.value && currencies.length > 0) {
+            const defaultCurrency = currencies.find(c => c.code === 'UAH') || currencies[0];
+            this.form.patchValue({ currencyCode: defaultCurrency.code });
+          }
+        },
+        error: (err) => {
+          console.error('❌ Failed to load currencies', err);
+        }
+      });
+
     // Load categories
     this.financeService.getCategories()
       .pipe(takeUntil(this.destroy$))
@@ -186,16 +199,24 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
 
   filterGoals(): void {
     const currencyCode = this.form.get('currencyCode')?.value;
+    const type = this.form.get('type')?.value;
 
     // Both Income and Expense transactions can be linked to goals
     // Income adds to goal (contributes), Expense withdraws from goal
 
     // Filter goals by currency
-    this.filteredGoals = this.goals.filter(
+    let goals = this.goals.filter(
       goal => goal.currencyCode === currencyCode
     );
 
-    // Clear goal selection if current goal doesn't match currency
+    // For Income transactions, exclude completed goals
+    if (type === 'Income') {
+      goals = goals.filter(goal => !goal.isCompleted);
+    }
+
+    this.filteredGoals = goals;
+
+    // Clear goal selection if current goal doesn't match currency or is completed
     const currentGoalId = this.form.get('goalId')?.value;
     if (currentGoalId) {
       const goalStillValid = this.filteredGoals.some(g => g.id === currentGoalId);
@@ -291,10 +312,33 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Validate goal funds before submitting
+    const formValue = this.form.value;
+    if (formValue.type === 'Expense' && formValue.goalId) {
+      const goalId = formValue.goalId.trim();
+      if (goalId) {
+        const selectedGoal = this.filteredGoals.find(g => g.id === goalId);
+        if (selectedGoal) {
+          const amount = Math.abs(Number(formValue.amount));
+          if (selectedGoal.currentAmount < amount) {
+            const available = selectedGoal.currentAmount.toFixed(2);
+            const required = amount.toFixed(2);
+            alert(
+              `⚠️ Insufficient funds in goal "${selectedGoal.title}"!\n\n` +
+              `Available: ${available} ${selectedGoal.currencyCode}\n` +
+              `Required: ${required} ${formValue.currencyCode}\n\n` +
+              `Please reduce the transaction amount or add more funds to the goal first.`
+            );
+            this.error = `Insufficient funds in goal. Available: ${available} ${selectedGoal.currencyCode}`;
+            return;
+          }
+        }
+      }
+    }
+
     this.saving = true;
     this.error = '';
 
-    const formValue = this.form.value;
     const dto = this.isEdit ? this.buildUpdateDto(formValue) : this.buildCreateDto(formValue);
 
     const operation = this.isEdit
@@ -320,10 +364,21 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     const budgetId = formValue.budgetId?.trim();
     const goalId = formValue.goalId?.trim();
 
+    // Ensure amount is always positive
+    const amount = Math.abs(Number(formValue.amount));
+
+    console.log('📝 Building CreateDTO:', {
+      formAmount: formValue.amount,
+      parsedAmount: amount,
+      type: formValue.type,
+      budgetId,
+      goalId
+    });
+
     return {
       title: formValue.title.trim(),
       description: formValue.description?.trim() || undefined,
-      amount: Number(formValue.amount),
+      amount: amount,
       type: formValue.type,
       date: formValue.date,
       categoryId: categoryId || undefined,
@@ -339,10 +394,21 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     const budgetId = formValue.budgetId?.trim();
     const goalId = formValue.goalId?.trim();
 
+    // Ensure amount is always positive
+    const amount = Math.abs(Number(formValue.amount));
+
+    console.log('📝 Building UpdateDTO:', {
+      formAmount: formValue.amount,
+      parsedAmount: amount,
+      type: formValue.type,
+      budgetId,
+      goalId
+    });
+
     return {
       title: formValue.title.trim(),
       description: formValue.description?.trim() || undefined,
-      amount: Number(formValue.amount),
+      amount: amount,
       type: formValue.type,
       date: formValue.date,
       categoryId: categoryId || undefined,
@@ -422,5 +488,25 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     }).format(amount);
 
     return type === 'Income' ? `+${formatted}` : `-${formatted}`;
+  }
+
+  getSelectedGoalAvailableAmount(): number | null {
+    const goalId = this.form.get('goalId')?.value;
+    if (!goalId) return null;
+
+    const selectedGoal = this.filteredGoals.find(g => g.id === goalId);
+    return selectedGoal ? selectedGoal.currentAmount : null;
+  }
+
+  isGoalFundsSufficient(): boolean | null {
+    const type = this.form.get('type')?.value;
+    const amount = this.form.get('amount')?.value;
+    const availableAmount = this.getSelectedGoalAvailableAmount();
+
+    if (type !== 'Expense' || availableAmount === null || !amount) {
+      return null;
+    }
+
+    return availableAmount >= Math.abs(Number(amount));
   }
 }

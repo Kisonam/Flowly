@@ -131,4 +131,12 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   goBack(): void {
     this.router.navigate(['/finance/transactions']);
   }
+
+  navigateToBudget(budgetId: string): void {
+    this.router.navigate(['/finance/budgets', budgetId]);
+  }
+
+  navigateToGoal(goalId: string): void {
+    this.router.navigate(['/finance/goals', goalId]);
+  }
 }

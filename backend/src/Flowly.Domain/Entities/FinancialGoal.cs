@@ -138,9 +138,8 @@ public class FinancialGoal
     /// </summary>
     public void SetCurrentAmount(decimal amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount cannot be negative", nameof(amount));
-
+        // Allow negative amounts temporarily (e.g., if expenses exceed income)
+        // The validation for sufficient funds happens at transaction creation
         CurrentAmount = amount;
         UpdatedAt = DateTime.UtcNow;
 

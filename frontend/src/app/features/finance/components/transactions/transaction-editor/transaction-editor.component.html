@@ -191,12 +191,27 @@
               </option>
             </select>
             <small class="form-hint" *ngIf="form.get('type')?.value === 'Income' && filteredGoals.length > 0">
-              Link this income to contribute to goal (+)
+              Link this income to contribute to goal (+). Completed goals are hidden.
             </small>
-            <small class="form-hint" *ngIf="form.get('type')?.value === 'Expense' && filteredGoals.length > 0">
+            <small class="form-hint" *ngIf="form.get('type')?.value === 'Expense' && filteredGoals.length > 0 && !form.get('goalId')?.value">
               Link this expense to withdraw from goal (-)
             </small>
-            <small class="form-hint warning" *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value">
+            <small
+              class="form-hint"
+              [class.warning]="!isGoalFundsSufficient()"
+              [class.error]="isGoalFundsSufficient() === false"
+              *ngIf="form.get('type')?.value === 'Expense' && form.get('goalId')?.value && getSelectedGoalAvailableAmount() !== null">
+              <span *ngIf="isGoalFundsSufficient()">
+                💰 Available in goal: {{ getSelectedGoalAvailableAmount()! | number:'1.2-2' }} {{ form.get('currencyCode')?.value }}
+              </span>
+              <span *ngIf="!isGoalFundsSufficient()">
+                ⚠️ Insufficient funds! Available: {{ getSelectedGoalAvailableAmount()! | number:'1.2-2' }} {{ form.get('currencyCode')?.value }}, Required: {{ form.get('amount')?.value | number:'1.2-2' }} {{ form.get('currencyCode')?.value }}
+              </span>
+            </small>
+            <small class="form-hint warning" *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value && form.get('type')?.value === 'Income'">
+              ⚠️ No available goals for {{ form.get('currencyCode')?.value }} (all completed or none exist)
+            </small>
+            <small class="form-hint warning" *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value && form.get('type')?.value === 'Expense'">
               ⚠️ No goals available for {{ form.get('currencyCode')?.value }}
             </small>
           </div>
@@ -255,7 +270,7 @@
         <button
           type="submit"
           class="btn btn-primary"
-          [disabled]="saving || form.invalid">
+          [disabled]="saving || form.invalid || isGoalFundsSufficient() === false">
           <span *ngIf="!saving">{{ isEdit ? '💾 Save Changes' : '✅ Create Transaction' }}</span>
           <span *ngIf="saving">
             <span class="spinner-small"></span>

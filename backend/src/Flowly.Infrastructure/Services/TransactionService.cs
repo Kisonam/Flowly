@@ -240,6 +240,25 @@ public class TransactionService : ITransactionService
                     $"Transaction currency ({dto.CurrencyCode}) must match goal currency ({goal.CurrencyCode}). " +
                     "Currency conversion is not supported.");
             }
+
+            // Check if goal is already completed (cannot add transactions to completed goals)
+            if (goal.CurrentAmount >= goal.TargetAmount && dto.Type == TransactionType.Income)
+            {
+                throw new InvalidOperationException(
+                    $"Goal '{goal.Title}' is already completed. " +
+                    $"Current: {goal.CurrentAmount:F2} {goal.CurrencyCode}, " +
+                    $"Target: {goal.TargetAmount:F2} {goal.CurrencyCode}. " +
+                    "You cannot add more income to a completed goal.");
+            }
+
+            // Check if there are sufficient funds for expense transactions
+            if (dto.Type == TransactionType.Expense && goal.CurrentAmount < dto.Amount)
+            {
+                throw new InvalidOperationException(
+                    $"Insufficient funds in goal '{goal.Title}'. " +
+                    $"Available: {goal.CurrentAmount:F2} {goal.CurrencyCode}, " +
+                    $"Required: {dto.Amount:F2} {dto.CurrencyCode}");
+            }
         }
 
         var transaction = new Transaction
@@ -351,6 +370,44 @@ public class TransactionService : ITransactionService
                 throw new InvalidOperationException(
                     $"Transaction currency ({dto.CurrencyCode}) must match goal currency ({goal.CurrencyCode}). " +
                     "Currency conversion is not supported.");
+            }
+
+            // Calculate current amount excluding the old transaction if it was linked to this goal
+            var currentAmount = goal.CurrentAmount;
+            
+            // If this transaction was already linked to this goal, subtract its effect first
+            if (oldGoalId == dto.GoalId)
+            {
+                // Reverse the old transaction's effect
+                currentAmount -= (transaction.Type == TransactionType.Income ? transaction.Amount : -transaction.Amount);
+            }
+
+            // Check if goal would be over-filled by adding income
+            if (dto.Type == TransactionType.Income)
+            {
+                var futureAmount = currentAmount + dto.Amount;
+                if (futureAmount > goal.TargetAmount && goal.TargetAmount > 0)
+                {
+                    var remaining = Math.Max(0, goal.TargetAmount - currentAmount);
+                    throw new InvalidOperationException(
+                        $"This income would exceed the goal target. " +
+                        $"Current: {currentAmount:F2} {goal.CurrencyCode}, " +
+                        $"Target: {goal.TargetAmount:F2} {goal.CurrencyCode}, " +
+                        $"Maximum allowed: {remaining:F2} {goal.CurrencyCode}");
+                }
+            }
+
+            // Check if there are sufficient funds for expense transactions
+            if (dto.Type == TransactionType.Expense)
+            {
+                // Check if there are sufficient funds after applying the new expense
+                if (currentAmount < dto.Amount)
+                {
+                    throw new InvalidOperationException(
+                        $"Insufficient funds in goal '{goal.Title}'. " +
+                        $"Available: {currentAmount:F2} {goal.CurrencyCode}, " +
+                        $"Required: {dto.Amount:F2} {dto.CurrencyCode}");
+                }
             }
         }
 
@@ -625,6 +682,7 @@ public class TransactionService : ITransactionService
             .SumAsync(t => t.Type == TransactionType.Income ? t.Amount : -t.Amount);
 
         // Update goal's current amount
+        // Note: This can be negative if expenses exceed income
         goal.SetCurrentAmount(totalAmount);
         await _dbContext.SaveChangesAsync();
     }

@@ -1,0 +1,44 @@
+.chart-container {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  height: auto; /* Allow container to grow with content */
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: visible; /* Ensure content is not clipped */
+
+  canvas {
+    max-height: 100%;
+  }
+
+  .no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6c757d;
+    font-size: 1rem;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .chart-container {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .chart-container {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    min-height: 150px;
+  }
+}

@@ -307,8 +307,11 @@ form {
 // ============================================
 .icon-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
   gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.25rem;
 }
 
 .icon-option {
@@ -322,11 +325,13 @@ form {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0.25rem;
 
   &:hover {
     border-color: #10b981;
     background: #f0fdf4;
     transform: scale(1.1);
+    z-index: 1;
   }
 
   &.selected {
@@ -338,7 +343,7 @@ form {
 
 .color-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
   gap: 0.5rem;
 }
 
@@ -508,12 +513,9 @@ form {
     gap: 1rem;
   }
 
-  .icon-grid {
-    grid-template-columns: repeat(8, 1fr);
-  }
-
+  .icon-grid,
   .color-grid {
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
   }
 
   .form-card {

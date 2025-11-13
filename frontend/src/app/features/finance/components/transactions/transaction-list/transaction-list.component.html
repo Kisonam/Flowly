@@ -106,8 +106,8 @@
         <label>Currency</label>
         <select formControlName="currencyCode" class="select-field">
           <option value="">All Currencies</option>
-          <option *ngFor="let curr of currencies" [value]="curr">
-            {{ curr }}
+          <option *ngFor="let curr of currencies" [value]="curr.code">
+            {{ curr.code }} ({{ curr.symbol }}) - {{ curr.name }}
           </option>
         </select>
       </div>

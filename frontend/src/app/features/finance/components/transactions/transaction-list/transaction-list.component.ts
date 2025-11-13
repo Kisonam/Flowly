@@ -49,7 +49,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   showQuickActions = false; // Toggle quick actions menu
 
   // Currency options
-  currencies = ['UAH', 'USD', 'EUR', 'GBP'];
+  currencies: { code: string; name: string; symbol: string }[] = [];
 
   // Transaction types
   transactionTypes: { value: TransactionType; label: string; color: string }[] = [
@@ -63,7 +63,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     { key: 'amount', label: 'Amount' },
     { key: 'createdAt', label: 'Created' }
   ];
-  currentSort: SortOption | null = null;
+  currentSort: SortOption | null = { key: 'createdAt', label: 'Created' }; // Default sort by creation date
   sortDirection: 'asc' | 'desc' = 'desc';
 
   // Filter form
@@ -97,6 +97,15 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   }
 
   loadAuxData(): void {
+    // Load currencies
+    this.financeService.getCurrencies().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (currencies: any) => {
+        this.currencies = currencies;
+        console.log('💱 Currencies loaded:', currencies);
+      },
+      error: (err: any) => console.error('❌ Failed to load currencies', err)
+    });
+
     // Load categories & tags in parallel
     this.financeService.getCategories().pipe(takeUntil(this.destroy$)).subscribe({
       next: (categories: Category[]) => {
@@ -195,14 +204,14 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         case 'date': {
           const ad = new Date(a.date).getTime();
           const bd = new Date(b.date).getTime();
-          return (ad - bd) * dir;
+          return (bd - ad) * dir; // Fixed: bd - ad for descending by default
         }
         case 'amount':
-          return (a.amount - b.amount) * dir;
+          return (b.amount - a.amount) * dir; // Fixed: b - a for descending by default
         case 'createdAt': {
           const ad = new Date(a.createdAt).getTime();
           const bd = new Date(b.createdAt).getTime();
-          return (ad - bd) * dir;
+          return (bd - ad) * dir; // Fixed: bd - ad for descending by default
         }
         default:
           return 0;

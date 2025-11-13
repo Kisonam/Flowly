@@ -1,0 +1,179 @@
+.chart-container {
+  position: relative;
+  width: 100%;
+  min-height: auto; /* Remove fixed min-height to allow natural sizing */
+  height: auto; /* Allow container to grow with content */
+  padding: 1.5rem;
+  padding-bottom: 2rem; /* Extra padding at bottom for budget details */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  canvas {
+    max-height: 400px; /* Limit canvas height */
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6c757d;
+    font-size: 1rem;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .budget-details {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+
+    .budget-item {
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      background: #f9fafb;
+      border-radius: 6px;
+      border-left: 4px solid #22c55e;
+      transition: all 0.2s;
+
+      &.over-budget {
+        background: #fef2f2;
+        border-left-color: #ef4444;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .budget-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        .budget-title {
+          font-weight: 600;
+          color: #1f2937;
+          font-size: 0.95rem;
+        }
+
+        .budget-percentage {
+          font-weight: 700;
+          color: #22c55e;
+          font-size: 1rem;
+        }
+      }
+
+      &.over-budget .budget-info .budget-percentage {
+        color: #ef4444;
+      }
+
+      .budget-amounts {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+
+        .current {
+          font-weight: 600;
+          color: #1f2937;
+        }
+
+        .separator {
+          color: #9ca3af;
+        }
+
+        .limit {
+          color: #6b7280;
+        }
+
+        .remaining {
+          color: #22c55e;
+          font-size: 0.8rem;
+          margin-left: 0.25rem;
+        }
+
+        .exceeded {
+          color: #ef4444;
+          font-size: 0.8rem;
+          margin-left: 0.25rem;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .chart-container {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+
+    .budget-details {
+      margin-top: 1rem;
+
+      .budget-item {
+        padding: 0.5rem;
+
+        .budget-info {
+          .budget-title {
+            font-size: 0.875rem;
+          }
+
+          .budget-percentage {
+            font-size: 0.9rem;
+          }
+        }
+
+        .budget-amounts {
+          font-size: 0.8rem;
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .chart-container {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    min-height: 150px;
+
+    .budget-details {
+      .budget-item {
+        padding: 0.5rem;
+
+        .budget-info {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
+
+          .budget-title {
+            font-size: 0.8rem;
+          }
+
+          .budget-percentage {
+            font-size: 0.85rem;
+          }
+        }
+
+        .budget-amounts {
+          font-size: 0.75rem;
+
+          .remaining,
+          .exceeded {
+            font-size: 0.7rem;
+          }
+        }
+      }
+    }
+  }
+}

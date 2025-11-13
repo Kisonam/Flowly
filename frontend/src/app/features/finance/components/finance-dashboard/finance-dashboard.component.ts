@@ -1,19 +1,29 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
 import { FinanceService } from '../../services/finance.service';
-import { FinanceStats, Transaction, Currency } from '../../models/finance.models';
-
-// Register Chart.js components
-Chart.register(...registerables);
+import { FinanceStats, Transaction, Currency, Budget } from '../../models/finance.models';
+import {
+  IncomeExpenseChartComponent,
+  IncomeExpenseData,
+  CategoryBreakdownChartComponent,
+  CategoryBreakdownData,
+  BudgetProgressChartComponent,
+  BudgetProgressData
+} from '../../../../shared/components/charts';
 
 @Component({
   selector: 'app-finance-dashboard',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    IncomeExpenseChartComponent,
+    CategoryBreakdownChartComponent,
+    BudgetProgressChartComponent
+  ],
   templateUrl: './finance-dashboard.component.html',
   styleUrl: './finance-dashboard.component.scss'
 })
@@ -22,20 +32,21 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
   private financeService = inject(FinanceService);
   private fb = inject(FormBuilder);
 
-  @ViewChild('incomeExpenseChart') incomeExpenseChartRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('expensePieChart') expensePieChartRef!: ElementRef<HTMLCanvasElement>;
-
   stats: FinanceStats | null = null;
   recentTransactions: Transaction[] = [];
   currencies: Currency[] = [];
+  budgets: Budget[] = [];
 
   loading = false;
   loadingTransactions = false;
+  loadingBudgets = false;
   errorMessage = '';
 
-  // Charts
-  incomeExpenseChart?: Chart;
-  expensePieChart?: Chart;
+  // Chart data
+  incomeExpenseData: IncomeExpenseData[] = [];
+  expenseCategoryData: CategoryBreakdownData[] = [];
+  incomeCategoryData: CategoryBreakdownData[] = [];
+  budgetProgressData: BudgetProgressData[] = [];
 
   // Filter form
   filterForm: FormGroup;
@@ -56,6 +67,7 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
     this.loadCurrencies();
     this.loadStats();
     this.loadRecentTransactions();
+    this.loadBudgets();
 
     // Listen to filter changes
     this.filterForm.valueChanges
@@ -63,13 +75,13 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.loadStats();
         this.loadRecentTransactions();
+        this.loadBudgets();
       });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.destroyCharts();
   }
 
   private loadCurrencies(): void {
@@ -99,10 +111,8 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
           this.stats = stats;
           this.loading = false;
 
-          // Delay chart creation to ensure DOM is ready
-          setTimeout(() => {
-            this.createCharts();
-          }, 100);
+          // Prepare chart data
+          this.prepareChartData();
         },
         error: (err) => {
           console.error('Failed to load stats:', err);
@@ -137,143 +147,59 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private createCharts(): void {
+  private loadBudgets(): void {
+    this.loadingBudgets = true;
+
+    const formValue = this.filterForm.value;
+    const filter = {
+      currencyCode: formValue.currencyCode || undefined,
+      isArchived: false
+    };
+
+    this.financeService.getBudgets(filter)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (budgets) => {
+          this.budgets = budgets.filter(b => b.isActive);
+          this.loadingBudgets = false;
+          this.prepareBudgetChartData();
+        },
+        error: (err) => {
+          console.error('Failed to load budgets:', err);
+          this.loadingBudgets = false;
+        }
+      });
+  }
+
+  private prepareChartData(): void {
     if (!this.stats) return;
 
-    this.destroyCharts();
-    this.createIncomeExpenseChart();
-    this.createExpensePieChart();
+    // Prepare income vs expense timeline data
+    this.incomeExpenseData = this.stats.byMonth.map(m => ({
+      label: `${this.getMonthName(m.month)} ${m.year}`,
+      income: m.totalIncome,
+      expense: m.totalExpense
+    }));
+
+    // Prepare expense category breakdown data
+    this.expenseCategoryData = this.stats.expenseByCategory.map(c => ({
+      categoryName: c.categoryName,
+      amount: c.totalAmount
+    }));
+
+    // Prepare income category breakdown data
+    this.incomeCategoryData = this.stats.incomeByCategory.map(c => ({
+      categoryName: c.categoryName,
+      amount: c.totalAmount
+    }));
   }
 
-  private createIncomeExpenseChart(): void {
-    if (!this.stats || !this.incomeExpenseChartRef) return;
-
-    const ctx = this.incomeExpenseChartRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    const labels = this.stats.byMonth.map(m => `${this.getMonthName(m.month)} ${m.year}`);
-    const incomeData = this.stats.byMonth.map(m => m.totalIncome);
-    const expenseData = this.stats.byMonth.map(m => m.totalExpense);
-
-    const config: ChartConfiguration = {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Дохід',
-            data: incomeData,
-            backgroundColor: 'rgba(72, 187, 120, 0.6)',
-            borderColor: 'rgba(72, 187, 120, 1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Витрати',
-            data: expenseData,
-            backgroundColor: 'rgba(245, 101, 101, 0.6)',
-            borderColor: 'rgba(245, 101, 101, 1)',
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-          title: {
-            display: true,
-            text: 'Доходи vs Витрати'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    };
-
-    this.incomeExpenseChart = new Chart(ctx, config);
-  }
-
-  private createExpensePieChart(): void {
-    if (!this.stats || !this.expensePieChartRef || !this.stats.expenseByCategory.length) return;
-
-    const ctx = this.expensePieChartRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    const labels = this.stats.expenseByCategory.map(c => c.categoryName);
-    const data = this.stats.expenseByCategory.map(c => c.totalAmount);
-    const colors = this.generateColors(this.stats.expenseByCategory.length);
-
-    const config: ChartConfiguration = {
-      type: 'pie',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: data,
-          backgroundColor: colors,
-          borderWidth: 2,
-          borderColor: '#fff'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'right',
-          },
-          title: {
-            display: true,
-            text: 'Витрати по категоріях'
-          },
-          tooltip: {
-            callbacks: {
-              label: (context) => {
-                const label = context.label || '';
-                const value = context.parsed || 0;
-                const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
-                const percentage = ((value / total) * 100).toFixed(1);
-                return `${label}: ${value.toFixed(2)} (${percentage}%)`;
-              }
-            }
-          }
-        }
-      }
-    };
-
-    this.expensePieChart = new Chart(ctx, config);
-  }
-
-  private destroyCharts(): void {
-    if (this.incomeExpenseChart) {
-      this.incomeExpenseChart.destroy();
-      this.incomeExpenseChart = undefined;
-    }
-    if (this.expensePieChart) {
-      this.expensePieChart.destroy();
-      this.expensePieChart = undefined;
-    }
-  }
-
-  private generateColors(count: number): string[] {
-    const colors = [
-      'rgba(255, 99, 132, 0.6)',
-      'rgba(54, 162, 235, 0.6)',
-      'rgba(255, 206, 86, 0.6)',
-      'rgba(75, 192, 192, 0.6)',
-      'rgba(153, 102, 255, 0.6)',
-      'rgba(255, 159, 64, 0.6)',
-      'rgba(199, 199, 199, 0.6)',
-      'rgba(83, 102, 255, 0.6)',
-      'rgba(255, 99, 255, 0.6)',
-      'rgba(99, 255, 132, 0.6)'
-    ];
-    return colors.slice(0, count);
+  private prepareBudgetChartData(): void {
+    this.budgetProgressData = this.budgets.map(b => ({
+      title: b.title,
+      current: b.currentSpent,
+      limit: b.limit
+    }));
   }
 
   private getMonthName(month: number): string {

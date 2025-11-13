@@ -72,19 +72,46 @@
     <!-- Charts Section -->
     <div class="charts-section">
       <!-- Income vs Expense Chart -->
-      <div class="chart-container">
-        <canvas #incomeExpenseChart></canvas>
+      <div class="chart-wrapper">
+        <app-income-expense-chart
+          [data]="incomeExpenseData"
+          [chartType]="'bar'"
+          [title]="'Доходи vs Витрати'"
+          [height]="'350px'"
+        ></app-income-expense-chart>
       </div>
 
-      <!-- Expense Breakdown Pie Chart -->
-      <div class="chart-container pie-chart-container">
-        <canvas #expensePieChart></canvas>
-
-        <!-- Empty state for pie chart -->
-        <div *ngIf="!stats.expenseByCategory || stats.expenseByCategory.length === 0" class="empty-chart">
-          <p>📊 Немає даних по категоріях</p>
-        </div>
+      <!-- Expense Breakdown Chart -->
+      <div class="chart-wrapper">
+        <app-category-breakdown-chart
+          [data]="expenseCategoryData"
+          [chartType]="'doughnut'"
+          [title]="'Витрати по категоріях'"
+          [height]="'350px'"
+          [legendPosition]="'right'"
+        ></app-category-breakdown-chart>
       </div>
+
+      <!-- Income Breakdown Chart -->
+      <div class="chart-wrapper" *ngIf="incomeCategoryData.length > 0">
+        <app-category-breakdown-chart
+          [data]="incomeCategoryData"
+          [chartType]="'doughnut'"
+          [title]="'Доходи по категоріях'"
+          [height]="'350px'"
+          [legendPosition]="'right'"
+        ></app-category-breakdown-chart>
+      </div>
+    </div>
+
+    <!-- Budget Progress Section -->
+    <div class="budget-progress-section" *ngIf="budgetProgressData.length > 0">
+      <app-budget-progress-chart
+        [data]="budgetProgressData"
+        [title]="'Прогрес бюджетів'"
+        [height]="'400px'"
+        [showPercentage]="true"
+      ></app-budget-progress-chart>
     </div>
 
     <!-- Category Breakdown Tables -->

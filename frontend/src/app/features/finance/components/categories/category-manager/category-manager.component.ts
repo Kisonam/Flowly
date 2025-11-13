@@ -33,22 +33,6 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
   selectedColor = '#10b981';
   selectedIcon = '📁';
 
-  // Predefined immutable categories
-  readonly PREDEFINED_CATEGORIES = [
-    'Food & Dining',
-    'Transportation',
-    'Shopping',
-    'Entertainment',
-    'Bills & Utilities',
-    'Healthcare',
-    'Education',
-    'Travel',
-    'Investments',
-    'Salary',
-    'Freelance',
-    'Business'
-  ];
-
   // Icon options
   readonly ICON_OPTIONS = [
     '🍔', '🚗', '🛒', '🎬', '💡', '🏥', '📚', '✈️', '📈', '💰', '💼', '🏢',
@@ -231,10 +215,6 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
   }
 
   // Helpers
-  isPredefined(categoryName: string): boolean {
-    return this.PREDEFINED_CATEGORIES.includes(categoryName);
-  }
-
   isPredefinedCategory(category: Category): boolean {
     // System categories have userId = null
     return category.userId === null || category.userId === undefined;

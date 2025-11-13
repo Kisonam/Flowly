@@ -61,6 +61,32 @@
           </p>
         </div>
 
+        <!-- Budget -->
+        <div class="info-section" *ngIf="transaction.budget">
+          <label>Linked Budget</label>
+          <div class="linked-item budget-link" (click)="navigateToBudget(transaction.budgetId!)">
+            <span class="link-icon">💼</span>
+            <div class="link-info">
+              <span class="link-title">{{ transaction.budget.title }}</span>
+              <span class="link-currency">{{ transaction.budget.currencyCode }}</span>
+            </div>
+            <span class="link-arrow">→</span>
+          </div>
+        </div>
+
+        <!-- Goal -->
+        <div class="info-section" *ngIf="transaction.goal">
+          <label>Linked Goal</label>
+          <div class="linked-item goal-link" (click)="navigateToGoal(transaction.goalId!)">
+            <span class="link-icon">🎯</span>
+            <div class="link-info">
+              <span class="link-title">{{ transaction.goal.title }}</span>
+              <span class="link-currency">{{ transaction.goal.currencyCode }}</span>
+            </div>
+            <span class="link-arrow">→</span>
+          </div>
+        </div>
+
         <!-- Tags -->
         <div class="info-section" *ngIf="transaction.tags && transaction.tags.length > 0">
           <label>Tags</label>
