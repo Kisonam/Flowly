@@ -34,15 +34,64 @@
         </svg>
       </button>
 
-      <!-- User Avatar -->
-      <button class="user-avatar" aria-label="User Profile">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      </button>
+      <!-- User Avatar with Dropdown -->
+      <div class="user-menu-container">
+        <button
+          class="user-avatar"
+          aria-label="User Profile"
+          (click)="toggleUserMenu()"
+        >
+          <img
+            *ngIf="currentUser?.avatarUrl"
+            [src]="currentUser!.avatarUrl"
+            [alt]="currentUser!.displayName"
+            class="avatar-image"
+          />
+          <span *ngIf="!currentUser?.avatarUrl" class="avatar-initials">
+            {{ userInitials }}
+          </span>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="user-dropdown" *ngIf="showUserMenu" (click)="closeUserMenu()">
+          <div class="dropdown-header">
+            <div class="user-info">
+              <p class="user-name">{{ currentUser?.displayName }}</p>
+              <p class="user-email">{{ currentUser?.email }}</p>
+            </div>
+          </div>
+
+          <div class="dropdown-divider"></div>
+
+          <button class="dropdown-item" (click)="navigateToSettings()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 1v6m0 6v6m5.2-13.2 4.3 4.3m-4.3 5.7 4.3 4.3M1 12h6m6 0h6M4.9 4.9l4.3 4.3m5.7 5.7 4.3 4.3"></path>
+            </svg>
+            <span>Налаштування</span>
+          </button>
+
+          <div class="dropdown-divider"></div>
+
+          <button class="dropdown-item logout" (click)="logout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Вийти</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Backdrop for closing menu -->
+  <div
+    class="menu-backdrop"
+    *ngIf="showUserMenu"
+    (click)="closeUserMenu()"
+  ></div>
 </header>
 
 <!-- Navigation Tabs -->
@@ -111,6 +160,20 @@
         >
           <line x1="12" y1="1" x2="12" y2="23"></line>
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+
+        <svg
+          *ngIf="module.icon === 'archive'"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="21 8 21 21 3 21 3 8"></polyline>
+          <rect x="1" y="3" width="22" height="5"></rect>
+          <line x1="10" y1="12" x2="14" y2="12"></line>
         </svg>
       </span>
 

@@ -30,6 +30,10 @@ public static class ApplicationServicesConfiguration
         // Links Module Services
         services.AddScoped<ILinkService, LinkService>();
 
+        // Archive Service
+        services.AddScoped<IArchiveService, ArchiveService>();
+        services.AddScoped<ArchiveMigrationService>();
+
         return services;
     }
 }

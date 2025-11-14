@@ -3,6 +3,8 @@ import { HomeComponent } from './features/home/home.component';
 import { authGuard } from './features/auth/guards/auth.guard';
 import { ThemesBoardComponent } from './features/themes/components/themes-board/themes-board.component';
 import { TagsManagerComponent } from './features/tags/components/tags-manager/tags-manager.component';
+import { ArchiveListComponent } from './features/archive/archive-list/archive-list.component';
+import { SettingsComponent } from './features/settings/settings.component';
 
 export const routes: Routes = [
   {
@@ -44,6 +46,16 @@ export const routes: Routes = [
   {
     path: 'themes',
     component: ThemesBoardComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'archive',
+    component: ArchiveListComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
     canActivate: [authGuard]
   },
   {

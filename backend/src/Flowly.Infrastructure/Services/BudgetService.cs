@@ -11,10 +11,12 @@ namespace Flowly.Infrastructure.Services;
 public class BudgetService : IBudgetService
 {
     private readonly AppDbContext _dbContext;
+    private readonly IArchiveService _archiveService;
 
-    public BudgetService(AppDbContext dbContext)
+    public BudgetService(AppDbContext dbContext, IArchiveService archiveService)
     {
         _dbContext = dbContext;
+        _archiveService = archiveService;
     }
 
     public async Task<List<BudgetDto>> GetAllAsync(Guid userId, BudgetFilterDto? filter = null)
@@ -251,16 +253,7 @@ public class BudgetService : IBudgetService
 
     public async Task ArchiveAsync(Guid userId, Guid budgetId)
     {
-        var budget = await _dbContext.Budgets
-            .FirstOrDefaultAsync(b => b.Id == budgetId && b.UserId == userId);
-
-        if (budget == null)
-        {
-            throw new InvalidOperationException("Budget not found");
-        }
-
-        budget.Archive();
-        await _dbContext.SaveChangesAsync();
+        await _archiveService.ArchiveEntityAsync(userId, LinkEntityType.Budget, budgetId);
     }
 
     public async Task RestoreAsync(Guid userId, Guid budgetId)

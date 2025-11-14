@@ -2,9 +2,7 @@
   <!-- Header -->
   <div class="notes-header">
     <div class="header-left">
-      <h1 class="page-title">
-        {{ filter.isArchived ? 'Archived Notes' : 'My Notes' }}
-      </h1>
+      <h1 class="page-title">My Notes</h1>
       <span class="notes-count" *ngIf="paginatedResult">
         {{ paginatedResult.totalCount }} {{ paginatedResult.totalCount === 1 ? 'note' : 'notes' }}
       </span>
@@ -25,13 +23,6 @@
         title="Toggle view mode"
       >
         {{ viewMode === 'list' ? 'Grid View' : 'List View' }}
-      </button>
-
-      <button
-        class="btn btn-secondary"
-        (click)="toggleArchiveFilter()"
-      >
-        🗄️ {{ filter.isArchived ? 'Show Active' : 'Show Archived' }}
       </button>
 
       <button
@@ -121,13 +112,11 @@
   <!-- Empty State -->
   <div class="empty-state" *ngIf="!isLoading && notes.length === 0 && !errorMessage">
     <div class="empty-icon">📒</div>
-    <h3>{{ filter.isArchived ? 'No archived notes' : 'No notes yet' }}</h3>
+    <h3>No notes yet</h3>
     <p>
-      {{ filter.search ? 'No notes match your search criteria.' :
-         filter.isArchived ? 'You have no archived notes.' :
-         'Start capturing your thoughts and ideas!' }}
+      {{ filter.search ? 'No notes match your search criteria.' : 'Start capturing your thoughts and ideas!' }}
     </p>
-    <button class="btn btn-primary" (click)="createNote()" *ngIf="!filter.search && !filter.isArchived">
+    <button class="btn btn-primary" (click)="createNote()" *ngIf="!filter.search">
       ➕ Create Your First Note
     </button>
   </div>
@@ -208,11 +197,6 @@
             ⏰ {{ formatDate(note.updatedAt) }}
           </span>
         </div>
-      </div>
-
-      <!-- Archived Badge -->
-      <div class="archived-badge" *ngIf="note.isArchived">
-        🗄️ Archived
       </div>
     </div>
   </div>

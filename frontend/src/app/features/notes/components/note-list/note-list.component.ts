@@ -208,15 +208,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Toggle archive filter
-   */
-  toggleArchiveFilter(): void {
-    this.filter.isArchived = !this.filter.isArchived;
-    this.filter.page = 1; // Reset to first page
-    this.loadNotes();
-  }
-
-  /**
    * Clear all filters
    */
   clearFilters(): void {

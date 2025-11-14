@@ -7,15 +7,6 @@
       </button>
       <h2>{{ isEdit ? 'Edit Transaction' : 'New Transaction' }}</h2>
     </div>
-    <div class="header-right">
-      <button
-        *ngIf="isEdit"
-        class="btn btn-danger"
-        type="button"
-        (click)="onDelete()">
-        🗑️ Archive
-      </button>
-    </div>
   </div>
 
   <!-- Loading State -->

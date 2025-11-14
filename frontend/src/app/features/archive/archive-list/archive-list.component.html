@@ -1,0 +1,252 @@
+<div class="archive-container">
+  <div class="archive-header">
+    <div>
+      <h1><i class="bi bi-archive"></i> Архів</h1>
+      <p class="subtitle">Переглядайте та відновлюйте архівовані елементи</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="entityTypeFilter">
+        <i class="bi bi-funnel"></i> Тип:
+      </label>
+      <select
+        id="entityTypeFilter"
+        [(ngModel)]="selectedEntityType"
+        (change)="onEntityTypeChange()"
+        class="form-select"
+      >
+        <option *ngFor="let type of entityTypes" [ngValue]="type.value">
+          {{ type.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group search-group">
+      <label for="searchInput">
+        <i class="bi bi-search"></i> Пошук:
+      </label>
+      <input
+        id="searchInput"
+        type="text"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Пошук в архіві..."
+        class="form-control"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Завантаження архіву...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !loading" class="error-state">
+    <i class="bi bi-exclamation-triangle"></i>
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-primary" (click)="loadArchive()">
+      Спробувати знову
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !errorMessage && archivedItems.length === 0" class="empty-state">
+    <i class="bi bi-inbox"></i>
+    <h3>Архів порожній</h3>
+    <p>Тут з'являться архівовані елементи</p>
+  </div>
+
+  <!-- Archive Table -->
+  <div *ngIf="!loading && !errorMessage && archivedItems.length > 0" class="archive-table-container">
+    <div class="results-info">
+      <span>Знайдено: <strong>{{ totalCount }}</strong> {{ totalCount === 1 ? 'елемент' : 'елементів' }}</span>
+    </div>
+
+    <table class="archive-table">
+      <thead>
+        <tr>
+          <th class="col-type">Тип</th>
+          <th class="col-title">Назва</th>
+          <th class="col-metadata">Детальніше</th>
+          <th class="col-date">Архівовано</th>
+          <th class="col-actions">Дії</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of archivedItems" class="archive-row" (click)="viewDetails(item)">
+          <!-- Type -->
+          <td class="col-type">
+            <div class="entity-type-badge" [attr.data-type]="item.entityType">
+              <i class="bi" [ngClass]="getEntityTypeIcon(item.entityType)"></i>
+              <span>{{ getEntityTypeName(item.entityType) }}</span>
+            </div>
+          </td>
+
+          <!-- Title -->
+          <td class="col-title">
+            <div class="item-title">
+              <strong>{{ item.title }}</strong>
+              <small *ngIf="item.description" class="item-description">
+                {{ item.description }}
+              </small>
+            </div>
+          </td>
+
+          <!-- Metadata -->
+          <td class="col-metadata">
+            <span class="metadata-text" *ngIf="getMetadataDisplay(item)">
+              {{ getMetadataDisplay(item) }}
+            </span>
+            <span class="metadata-empty" *ngIf="!getMetadataDisplay(item)">—</span>
+          </td>
+
+          <!-- Date -->
+          <td class="col-date">
+            <span class="archived-date">{{ formatDate(item.archivedAt) }}</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions" (click)="$event.stopPropagation()">
+            <div class="action-buttons">
+              <button
+                class="btn btn-sm btn-restore"
+                (click)="$event.stopPropagation(); restore(item)"
+                title="Відновити"
+              >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Відновити
+              </button>
+              <button
+                class="btn btn-sm btn-delete"
+                (click)="$event.stopPropagation(); permanentDelete(item)"
+                title="Видалити назавжди"
+              >
+                <i class="bi bi-trash"></i>
+                Видалити
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button
+        class="btn btn-pagination"
+        [disabled]="currentPage === 1"
+        (click)="previousPage()"
+      >
+        <i class="bi bi-chevron-left"></i>
+        Попередня
+      </button>
+
+      <span class="page-info">
+        Сторінка {{ currentPage }} з {{ totalPages }}
+      </span>
+
+      <button
+        class="btn btn-pagination"
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()"
+      >
+        Наступна
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <i class="bi" [ngClass]="selectedItem ? getEntityTypeIcon(selectedItem.entityType) : ''"></i>
+        Деталі архівованого елемента
+      </h2>
+      <button class="btn-close" (click)="closeDetailModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedItem">
+      <!-- Basic Info -->
+      <div class="detail-section">
+        <h3>Основна інформація</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Тип:</label>
+            <span>{{ getEntityTypeName(selectedItem.entityType) }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Назва:</label>
+            <span>{{ selectedItem.title }}</span>
+          </div>
+          <div class="detail-item" *ngIf="selectedItem.description">
+            <label>Опис:</label>
+            <span>{{ selectedItem.description }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Архівовано:</label>
+            <span>{{ formatDate(selectedItem.archivedAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metadata -->
+      <div class="detail-section" *ngIf="selectedItem.metadata && Object.keys(selectedItem.metadata).length > 0">
+        <h3>Додаткова інформація</h3>
+        <div class="detail-grid">
+          <div class="detail-item" *ngFor="let meta of Object.entries(selectedItem.metadata)">
+            <label>{{ formatMetadataLabel(meta[0]) }}:</label>
+            <span>{{ formatMetadataValue(meta[0], meta[1]) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Content from Payload -->
+      <div class="detail-section" *ngIf="parsedPayload && !parsedPayload.error">
+        <h3>{{ getContentSectionTitle() }}</h3>
+        <div class="content-viewer">
+          <div *ngIf="getContentFromPayload()" class="content-text">
+            {{ getContentFromPayload() }}
+          </div>
+          <div *ngIf="!getContentFromPayload()" class="no-content">
+            <i class="bi bi-info-circle"></i>
+            <p>Додатковий вміст відсутній</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div class="detail-section" *ngIf="parsedPayload && parsedPayload.error">
+        <div class="error-message">
+          <i class="bi bi-exclamation-triangle"></i>
+          <p>{{ parsedPayload.error }}</p>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="detail-loading" *ngIf="!parsedPayload">
+        <div class="spinner"></div>
+        <p>Завантаження деталей...</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeDetailModal()">
+        Закрити
+      </button>
+      <button class="btn btn-primary" (click)="restore(selectedItem!); closeDetailModal()">
+        <i class="bi bi-arrow-counterclockwise"></i>
+        Відновити
+      </button>
+    </div>
+  </div>
+</div>

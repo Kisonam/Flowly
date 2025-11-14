@@ -1,0 +1,242 @@
+.data-export {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .section-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.5rem;
+
+    &.danger-zone {
+      border-color: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.05);
+    }
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f8fafc;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .section-description {
+    font-size: 0.9375rem;
+    color: #94a3b8;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .export-formats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .export-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+
+    &:hover:not(:disabled) {
+      border-color: #667eea;
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+
+      .export-action svg {
+        transform: translateY(2px);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .export-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg {
+        stroke: #667eea;
+      }
+    }
+
+    .export-info {
+      flex: 1;
+
+      .export-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #f8fafc;
+        margin: 0 0 0.25rem 0;
+      }
+
+      .export-description {
+        font-size: 0.8125rem;
+        color: #94a3b8;
+        margin: 0;
+      }
+    }
+
+    .export-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg {
+        stroke: #94a3b8;
+        transition: all 0.2s ease;
+      }
+    }
+  }
+
+  .danger-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    .danger-info {
+      flex: 1;
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #f8fafc;
+        margin: 0 0 0.5rem 0;
+      }
+
+      p {
+        font-size: 0.875rem;
+        color: #94a3b8;
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.btn-danger {
+      background: #ef4444;
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background: #dc2626;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .success-message {
+    padding: 0.75rem 1rem;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 8px;
+    color: #4ade80;
+    font-size: 0.875rem;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .error-message {
+    padding: 0.75rem 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #f87171;
+    font-size: 0.875rem;
+    animation: slideDown 0.3s ease-out;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .data-export {
+    .export-card {
+      padding: 1rem;
+
+      .export-icon {
+        width: 40px;
+        height: 40px;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .export-info {
+        .export-name {
+          font-size: 0.9375rem;
+        }
+
+        .export-description {
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    .danger-content {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

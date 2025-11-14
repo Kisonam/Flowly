@@ -113,9 +113,6 @@
         <div class="detail-item">
           <label>Status</label>
           <div class="status-badges">
-            <span class="status-badge" [class.archived]="goal.isArchived">
-              {{ goal.isArchived ? '📦 Archived' : '✅ Active' }}
-            </span>
             <span class="status-badge completed" *ngIf="isCompleted()">
               🎉 Completed
             </span>
@@ -140,24 +137,6 @@
       <div class="action-buttons">
         <button class="btn btn-primary" (click)="editGoal()">
           <span>✏️</span> Edit Goal
-        </button>
-        <button
-          *ngIf="!goal.isArchived"
-          class="btn btn-secondary"
-          (click)="deleteGoal()">
-          <span>📦</span> Archive
-        </button>
-        <button
-          *ngIf="goal.isArchived"
-          class="btn btn-secondary"
-          (click)="restoreGoal()">
-          <span>↩️</span> Restore
-        </button>
-        <button
-          *ngIf="goal.isArchived"
-          class="btn btn-danger"
-          (click)="deleteGoal()">
-          <span>🗑️</span> Delete Permanently
         </button>
       </div>
     </div>

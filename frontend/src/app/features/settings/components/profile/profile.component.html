@@ -1,0 +1,154 @@
+<div class="profile-section">
+  <!-- Avatar Section -->
+  <div class="section-card">
+    <h2 class="section-title">Аватар</h2>
+
+    <div class="avatar-container">
+      <div class="avatar-preview">
+        <div class="avatar-circle" [class.loading]="isUploadingAvatar">
+          <img *ngIf="avatarPreview" [src]="avatarPreview" alt="Avatar" />
+          <svg *ngIf="!avatarPreview" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <div class="avatar-actions">
+        <input
+          type="file"
+          id="avatar-upload"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          [disabled]="isUploadingAvatar"
+          style="display: none"
+        />
+        <label for="avatar-upload" class="btn btn-primary" [class.disabled]="isUploadingAvatar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>Завантажити фото</span>
+        </label>
+
+        <button
+          *ngIf="avatarPreview"
+          class="btn btn-danger"
+          (click)="deleteAvatar()"
+          [disabled]="isUploadingAvatar"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>Видалити</span>
+        </button>
+      </div>
+
+      <p class="avatar-hint">JPG, PNG або GIF. Максимальний розмір 5MB.</p>
+    </div>
+  </div>
+
+  <!-- Profile Information -->
+  <div class="section-card">
+    <h2 class="section-title">Інформація профілю</h2>
+
+    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+      <div class="form-group">
+        <label for="displayName">Ім'я</label>
+        <input
+          type="text"
+          id="displayName"
+          formControlName="displayName"
+          class="form-input"
+          placeholder="Введіть ваше ім'я"
+        />
+        <span *ngIf="displayNameError" class="error-message">{{ displayNameError }}</span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-input"
+          readonly
+        />
+        <span class="input-hint">Email не можна змінити</span>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="profileForm.invalid || isLoadingProfile"
+        >
+          <span *ngIf="!isLoadingProfile">Зберегти зміни</span>
+          <span *ngIf="isLoadingProfile">Збереження...</span>
+        </button>
+      </div>
+
+      <div *ngIf="profileMessage" class="success-message">{{ profileMessage }}</div>
+      <div *ngIf="profileError" class="error-message">{{ profileError }}</div>
+    </form>
+  </div>
+
+  <!-- Change Password -->
+  <div class="section-card">
+    <h2 class="section-title">Зміна пароля</h2>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <div class="form-group">
+        <label for="currentPassword">Поточний пароль</label>
+        <input
+          type="password"
+          id="currentPassword"
+          formControlName="currentPassword"
+          class="form-input"
+          placeholder="Введіть поточний пароль"
+        />
+        <span *ngIf="currentPasswordError" class="error-message">{{ currentPasswordError }}</span>
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword">Новий пароль</label>
+        <input
+          type="password"
+          id="newPassword"
+          formControlName="newPassword"
+          class="form-input"
+          placeholder="Введіть новий пароль"
+        />
+        <span *ngIf="newPasswordError" class="error-message">{{ newPasswordError }}</span>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Підтвердження пароля</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          class="form-input"
+          placeholder="Підтвердіть новий пароль"
+        />
+        <span *ngIf="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="passwordForm.invalid || isLoadingPassword"
+        >
+          <span *ngIf="!isLoadingPassword">Змінити пароль</span>
+          <span *ngIf="isLoadingPassword">Зміна...</span>
+        </button>
+      </div>
+
+      <div *ngIf="passwordMessage" class="success-message">{{ passwordMessage }}</div>
+      <div *ngIf="passwordError" class="error-message">{{ passwordError }}</div>
+    </form>
+  </div>
+</div>

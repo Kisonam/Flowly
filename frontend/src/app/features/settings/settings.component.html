@@ -1,0 +1,58 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h1 class="settings-title">Налаштування</h1>
+    <p class="settings-subtitle">Керуйте своїм профілем та налаштуваннями</p>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="settings-tabs">
+    <button
+      *ngFor="let tab of tabs"
+      class="tab-button"
+      [class.active]="activeTab === tab.id"
+      (click)="setActiveTab(tab.id)"
+    >
+      <!-- Tab Icon -->
+      <span class="tab-icon">
+        <!-- User Icon -->
+        <svg *ngIf="tab.icon === 'user'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+
+        <!-- Palette Icon -->
+        <svg *ngIf="tab.icon === 'palette'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="13.5" cy="6.5" r=".5"></circle>
+          <circle cx="17.5" cy="10.5" r=".5"></circle>
+          <circle cx="8.5" cy="7.5" r=".5"></circle>
+          <circle cx="6.5" cy="12.5" r=".5"></circle>
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+        </svg>
+
+        <!-- Globe Icon -->
+        <svg *ngIf="tab.icon === 'globe'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+
+        <!-- Download Icon -->
+        <svg *ngIf="tab.icon === 'download'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      </span>
+
+      <span class="tab-label">{{ tab.label }}</span>
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="settings-content">
+    <app-profile *ngIf="activeTab === 'profile'"></app-profile>
+    <app-theme-settings *ngIf="activeTab === 'theme'"></app-theme-settings>
+    <app-language-settings *ngIf="activeTab === 'language'"></app-language-settings>
+    <app-data-export *ngIf="activeTab === 'export'"></app-data-export>
+  </div>
+</div>

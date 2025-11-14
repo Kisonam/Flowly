@@ -12,10 +12,12 @@ namespace Flowly.Infrastructure.Services;
 public class TransactionService : ITransactionService
 {
     private readonly AppDbContext _dbContext;
+    private readonly IArchiveService _archiveService;
 
-    public TransactionService(AppDbContext dbContext)
+    public TransactionService(AppDbContext dbContext, IArchiveService archiveService)
     {
         _dbContext = dbContext;
+        _archiveService = archiveService;
     }
 
     // ============================================
@@ -467,8 +469,7 @@ public class TransactionService : ITransactionService
 
         var goalId = transaction.GoalId;
         
-        transaction.Archive();
-        await _dbContext.SaveChangesAsync();
+        await _archiveService.ArchiveEntityAsync(userId, LinkEntityType.Transaction, transactionId);
 
         // Update goal amount after archiving (archived transactions don't count)
         if (goalId.HasValue)

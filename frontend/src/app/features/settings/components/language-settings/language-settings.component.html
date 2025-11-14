@@ -1,0 +1,44 @@
+<div class="language-settings">
+  <div class="section-card">
+    <h2 class="section-title">Виберіть мову</h2>
+    <p class="section-description">
+      Змініть мову інтерфейсу програми
+    </p>
+
+    <div class="languages-list">
+      <button
+        *ngFor="let lang of languages"
+        class="language-card"
+        [class.selected]="selectedLanguage === lang.code"
+        (click)="selectLanguage(lang.code)"
+        [disabled]="isLoading"
+      >
+        <span class="language-flag">{{ lang.flag }}</span>
+        <div class="language-info">
+          <h3 class="language-name">{{ lang.nativeName }}</h3>
+          <p class="language-english">{{ lang.name }}</p>
+        </div>
+        <div class="language-check" *ngIf="selectedLanguage === lang.code">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </button>
+    </div>
+
+    <div class="info-box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <p>
+        Зміна мови буде застосована до всього інтерфейсу програми.
+        Деякі елементи можуть вимагати перезавантаження сторінки.
+      </p>
+    </div>
+
+    <div *ngIf="message" class="success-message">{{ message }}</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+  </div>
+</div>

@@ -133,47 +133,6 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteGoal(): void {
-    if (!this.goal) return;
-
-    const action = this.goal.isArchived ? 'delete permanently' : 'archive';
-    if (!confirm(`Are you sure you want to ${action} goal "${this.goal.title}"?`)) return;
-
-    const request = this.goal.isArchived
-      ? this.financeService.deleteGoal(this.goal.id)
-      : this.financeService.archiveGoal(this.goal.id);
-
-    request
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          console.log(this.goal?.isArchived ? '✅ Goal deleted permanently' : '📦 Goal archived');
-          this.router.navigate(['/finance/goals']);
-        },
-        error: (err: any) => {
-          console.error('❌ Failed to delete/archive goal', err);
-          alert('Failed to process goal: ' + err.message);
-        }
-      });
-  }
-
-  restoreGoal(): void {
-    if (!this.goal) return;
-
-    this.financeService.restoreGoal(this.goal.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          console.log('✅ Goal restored');
-          this.loadGoal(this.goal!.id);
-        },
-        error: (err: any) => {
-          console.error('❌ Failed to restore goal', err);
-          alert('Failed to restore goal: ' + err.message);
-        }
-      });
-  }
-
   goBack(): void {
     this.router.navigate(['/finance/goals']);
   }

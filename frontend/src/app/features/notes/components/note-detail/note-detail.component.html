@@ -34,7 +34,7 @@
       <span>Updated: {{ note?.updatedAt | date: 'medium' }}</span>
     </div>
   </div>
-  <!-- TODO -->
+  <!-- TODO Pictures must have a size editor-->
   <div class="content markdown-body" [innerHTML]="safeHtml"></div>
 
   <div class="linked" *ngIf="links.length > 0">

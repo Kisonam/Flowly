@@ -33,15 +33,6 @@
           class="filter-input"
         />
       </div>      <div class="filter-group">
-        <label>Status</label>
-        <select formControlName="status" class="filter-select">
-          <option value="active">Active Only</option>
-          <option value="all">All Budgets</option>
-          <option value="archived">Archived Only</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
         <label>Currency</label>
         <select formControlName="currencyCode" class="filter-select" [disabled]="loadingCurrencies">
           <option value="">{{ loadingCurrencies ? 'Loading...' : 'All Currencies' }}</option>
@@ -140,14 +131,11 @@
       *ngFor="let budget of filteredBudgets"
       class="budget-card"
       [class.overspent]="isOverspent(budget)"
-      [class.archived]="budget.isArchived"
       (click)="viewBudget(budget)">
 
       <!-- Header -->
       <div class="budget-header">
-        <h3 class="budget-title">
-          {{ budget.isArchived ? '📦 ' : '' }}{{ budget.title }}
-        </h3>
+        <h3 class="budget-title">{{ budget.title }}</h3>
         <div class="budget-period">
           {{ formatDate(budget.periodStart) }} - {{ formatDate(budget.periodEnd) }}
         </div>

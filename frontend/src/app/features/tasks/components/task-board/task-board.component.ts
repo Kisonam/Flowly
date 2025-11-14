@@ -418,7 +418,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
             tasks.splice(idx, 0, task);
             this.tasksByColumn.set(foundColumnId, tasks);
           }
-          alert(err.message || 'Failed to archive task');
+          alert(err.message || 'Failed to update task');
         }
       });
   }

@@ -2,13 +2,6 @@
   <div class="module-header">
     <h2>Tasks</h2>
     <div class="module-actions">
-      <a
-        class="btn-secondary"
-        [routerLink]="showArchivedTasks ? ['/tasks/board'] : ['/tasks/archived']"
-        [class.active]="showArchivedTasks"
-        aria-label="Toggle archived tasks">
-        {{ showArchivedTasks ? 'Show Active' : 'View Archived' }}
-      </a>
       <button class="btn-secondary" (click)="toggleFilters()" aria-label="Filters">Filters</button>
       <a class="btn-primary" routerLink="/tasks/new">+ New Task</a>
       <button class="btn-secondary" (click)="toggleAddTheme()">{{ showAddTheme ? 'Cancel' : '+ New Group' }}</button>

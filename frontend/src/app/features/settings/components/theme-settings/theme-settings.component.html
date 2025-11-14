@@ -1,0 +1,33 @@
+<div class="theme-settings">
+  <div class="section-card">
+    <h2 class="section-title">Виберіть тему</h2>
+    <p class="section-description">
+      Персоналізуйте інтерфейс програми згідно з вашими уподобаннями
+    </p>
+
+    <div class="themes-grid">
+      <button
+        *ngFor="let theme of themes"
+        class="theme-card"
+        [class.selected]="selectedTheme === theme.id"
+        (click)="selectTheme(theme.id)"
+        [disabled]="isLoading"
+      >
+        <div class="theme-preview" [style.background]="theme.preview">
+          <div class="theme-check" *ngIf="selectedTheme === theme.id">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="theme-info">
+          <h3 class="theme-name">{{ theme.name }}</h3>
+          <p class="theme-description">{{ theme.description }}</p>
+        </div>
+      </button>
+    </div>
+
+    <div *ngIf="message" class="success-message">{{ message }}</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+  </div>
+</div>

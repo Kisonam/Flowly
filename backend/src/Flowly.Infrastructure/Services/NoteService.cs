@@ -2,6 +2,7 @@ using Flowly.Application.DTOs.Common;
 using Flowly.Application.DTOs.Notes;
 using Flowly.Application.Interfaces;
 using Flowly.Domain.Entities;
+using Flowly.Domain.Enums;
 using Flowly.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,12 @@ namespace Flowly.Infrastructure.Services;
 public class NoteService : INoteService
 {
     private readonly AppDbContext _dbContext;
+    private readonly IArchiveService _archiveService;
 
-    public NoteService(AppDbContext dbContext)
+    public NoteService(AppDbContext dbContext, IArchiveService archiveService)
     {
         _dbContext = dbContext;
+        _archiveService = archiveService;
     }
 
     public async Task<PagedResult<NoteDto>> GetAllAsync(Guid userId, NoteFilterDto filter)
@@ -178,20 +181,13 @@ public class NoteService : INoteService
 
     public async Task ArchiveAsync(Guid userId, Guid noteId)
     {
-        var note = await _dbContext.Notes
-            .FirstOrDefaultAsync(n => n.Id == noteId && n.UserId == userId);
-
-        if (note == null)
-        {
-            throw new InvalidOperationException("Note not found");
-        }
-
-        note.Archive();
-        await _dbContext.SaveChangesAsync();
+        await _archiveService.ArchiveEntityAsync(userId, LinkEntityType.Note, noteId);
     }
 
     public async Task RestoreAsync(Guid userId, Guid noteId)
     {
+        // For direct restore by entity ID, we need to find the archive entry
+        // This is a simplified version - in production you might want to handle this differently
         var note = await _dbContext.Notes
             .FirstOrDefaultAsync(n => n.Id == noteId && n.UserId == userId);
 

@@ -2,6 +2,7 @@ using Flowly.Application.DTOs.Transactions;
 using Flowly.Application.DTOs.Notes;
 using Flowly.Application.Interfaces;
 using Flowly.Domain.Entities;
+using Flowly.Domain.Enums;
 using Flowly.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,12 @@ namespace Flowly.Infrastructure.Services;
 public class FinancialGoalService : IFinancialGoalService
 {
     private readonly AppDbContext _dbContext;
+    private readonly IArchiveService _archiveService;
 
-    public FinancialGoalService(AppDbContext dbContext)
+    public FinancialGoalService(AppDbContext dbContext, IArchiveService archiveService)
     {
         _dbContext = dbContext;
+        _archiveService = archiveService;
     }
 
     public async Task<List<FinancialGoalDto>> GetAllAsync(Guid userId, GoalFilterDto? filter = null)
@@ -175,16 +178,7 @@ public class FinancialGoalService : IFinancialGoalService
 
     public async Task ArchiveAsync(Guid userId, Guid goalId)
     {
-        var goal = await _dbContext.FinancialGoals
-            .FirstOrDefaultAsync(g => g.Id == goalId && g.UserId == userId);
-
-        if (goal == null)
-        {
-            throw new InvalidOperationException("Financial goal not found");
-        }
-
-        goal.Archive();
-        await _dbContext.SaveChangesAsync();
+        await _archiveService.ArchiveEntityAsync(userId, LinkEntityType.FinancialGoal, goalId);
     }
 
     public async Task RestoreAsync(Guid userId, Guid goalId)

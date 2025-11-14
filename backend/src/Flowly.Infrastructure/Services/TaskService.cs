@@ -3,6 +3,7 @@ using Flowly.Application.DTOs.Notes;
 using Flowly.Application.DTOs.Tasks;
 using Flowly.Application.Interfaces;
 using Flowly.Domain.Entities;
+using Flowly.Domain.Enums;
 using Flowly.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ namespace Flowly.Infrastructure.Services;
 public class TaskService : ITaskService
 {
     private readonly AppDbContext _dbContext;
+    private readonly IArchiveService _archiveService;
 
-    public TaskService(AppDbContext dbContext)
+    public TaskService(AppDbContext dbContext, IArchiveService archiveService)
     {
         _dbContext = dbContext;
+        _archiveService = archiveService;
     }
 
     // ============================================
@@ -265,22 +268,7 @@ public class TaskService : ITaskService
 
     public async Task ArchiveTaskAsync(Guid userId, Guid taskId)
     {
-        var task = await _dbContext.Tasks
-            .Include(t => t.Recurrence)
-            .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
-
-        if (task == null)
-        {
-            throw new InvalidOperationException("Task not found");
-        }
-
-        // Archive and remove recurrence if present to avoid ghost scheduling
-        task.Archive();
-        if (task.Recurrence != null)
-        {
-            _dbContext.TaskRecurrences.Remove(task.Recurrence);
-        }
-        await _dbContext.SaveChangesAsync();
+        await _archiveService.ArchiveEntityAsync(userId, LinkEntityType.Task, taskId);
     }
 
     public async Task RestoreTaskAsync(Guid userId, Guid taskId)
