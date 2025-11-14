@@ -38,7 +38,7 @@ export class DataExportComponent {
       name: 'CSV',
       description: 'Експорт даних у форматі CSV (для Excel)',
       icon: 'table',
-      fileExtension: 'csv'
+      fileExtension: 'zip'
     },
     {
       id: 'pdf',
@@ -50,11 +50,24 @@ export class DataExportComponent {
   ];
 
   exportMarkdown(): void {
+    this.exportData('markdown', 'zip');
+  }
+
+  exportFormat(formatId: string): void {
+    const format = this.exportFormats.find(f => f.id === formatId);
+    if (!format) return;
+
+    this.exportData(formatId, format.fileExtension);
+  }
+
+  private exportData(format: string, extension: string): void {
     this.isExporting = true;
     this.error = '';
     this.message = '';
 
-    this.http.get(`${this.apiUrl}/api/export`, {
+    const endpoint = format === 'markdown' ? '/api/export' : `/api/export/${format}`;
+
+    this.http.get(`${this.apiUrl}${endpoint}`, {
       responseType: 'blob',
       observe: 'response'
     }).subscribe({
@@ -68,7 +81,7 @@ export class DataExportComponent {
 
         // Extract filename from Content-Disposition header or use default
         const contentDisposition = response.headers.get('Content-Disposition');
-        let filename = 'flowly-notes-export.zip';
+        let filename = `flowly-export-${format}.${extension}`;
 
         if (contentDisposition) {
           const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
@@ -86,7 +99,8 @@ export class DataExportComponent {
 
         window.URL.revokeObjectURL(url);
 
-        this.message = 'Нотатки успішно експортовано у Markdown';
+        const formatName = format === 'markdown' ? 'Markdown ZIP' : format.toUpperCase();
+        this.message = `Дані успішно експортовано у форматі ${formatName}`;
         this.isExporting = false;
 
         setTimeout(() => this.message = '', 5000);
@@ -99,21 +113,6 @@ export class DataExportComponent {
         setTimeout(() => this.error = '', 5000);
       }
     });
-  }  exportData(format: ExportFormat): void {
-    this.isExporting = true;
-    this.error = '';
-    this.message = '';
-
-    // TODO: Implement actual export functionality
-    setTimeout(() => {
-      this.isExporting = false;
-      this.message = `Дані успішно експортовано у форматі ${format.name}`;
-
-      // Simulate file download
-      console.log(`Exporting data as ${format.fileExtension}`);
-
-      setTimeout(() => this.message = '', 5000);
-    }, 1500);
   }
 
   deleteAllData(): void {

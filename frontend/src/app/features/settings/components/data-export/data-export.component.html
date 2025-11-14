@@ -49,7 +49,7 @@
       <button
         *ngFor="let format of exportFormats"
         class="export-card"
-        (click)="exportData(format)"
+        (click)="exportFormat(format.id)"
         [disabled]="isExporting"
       >
         <div class="export-icon">

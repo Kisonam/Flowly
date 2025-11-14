@@ -34,6 +34,9 @@ public static class ApplicationServicesConfiguration
         services.AddScoped<IArchiveService, ArchiveService>();
         services.AddScoped<ArchiveMigrationService>();
 
+        // Export Service
+        services.AddScoped<IExportService, ExportService>();
+
         return services;
     }
 }
