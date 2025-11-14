@@ -1,7 +1,7 @@
 .theme-settings {
   .section-card {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 1.5rem;
   }
@@ -9,87 +9,149 @@
   .section-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #f8fafc;
+    color: #1f2937;
     margin: 0 0 0.5rem 0;
   }
 
   .section-description {
     font-size: 0.9375rem;
-    color: #94a3b8;
+    color: #6b7280;
     margin: 0 0 1.5rem 0;
   }
 
-  .themes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .theme-card {
+  // Radio Button Styles
+  .theme-options {
     display: flex;
     flex-direction: column;
-    background: #0f172a;
-    border: 2px solid #334155;
-    border-radius: 12px;
-    padding: 0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    overflow: hidden;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
 
-    &:hover:not(:disabled) {
-      border-color: #667eea;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  .theme-option {
+    display: block;
+    cursor: pointer;
+
+    input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
 
-    &.selected {
+    .option-content {
+      background: #f9fafb;
+      border: 2px solid #d1d5db;
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #667eea;
+        transform: translateX(4px);
+      }
+    }
+
+    &.selected .option-content {
       border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .option-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
-  }
 
-  .theme-preview {
-    width: 100%;
-    height: 100px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .theme-check {
-      width: 40px;
-      height: 40px;
-      background: rgba(102, 126, 234, 0.9);
+    .radio-circle {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #9ca3af;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    &.selected .radio-circle {
+      border-color: #667eea;
+    }
+
+    .radio-dot {
+      width: 12px;
+      height: 12px;
+      background: #667eea;
+      border-radius: 50%;
       animation: scaleIn 0.2s ease-out;
+    }
+
+    .option-text {
+      flex: 1;
+
+      .option-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 0.25rem 0;
+      }
+
+      .option-description {
+        font-size: 0.8125rem;
+        color: #6b7280;
+        margin: 0;
+      }
     }
   }
 
-  .theme-info {
-    padding: 1rem;
-    text-align: left;
+  // Preview Section
+  .theme-preview-section {
+    margin-bottom: 1.5rem;
 
-    .theme-name {
+    .preview-title {
       font-size: 1rem;
       font-weight: 600;
-      color: #f8fafc;
-      margin: 0 0 0.25rem 0;
+      color: #1f2937;
+      margin: 0 0 1rem 0;
     }
 
-    .theme-description {
-      font-size: 0.8125rem;
-      color: #94a3b8;
-      margin: 0;
-      line-height: 1.4;
+    .preview-container {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+    }
+
+    .preview-box {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .preview-content {
+      text-align: center;
+    }
+
+    .preview-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      min-width: 250px;
+
+      .preview-header {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+      }
+
+      .preview-text {
+        font-size: 0.9375rem;
+        color: #64748b;
+      }
     }
   }
 

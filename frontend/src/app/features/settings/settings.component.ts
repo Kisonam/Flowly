@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ThemeSettingsComponent } from './components/theme-settings/theme-settings.component';
-import { LanguageSettingsComponent } from './components/language-settings/language-settings.component';
 import { DataExportComponent } from './components/data-export/data-export.component';
 
 @Component({
@@ -14,7 +13,6 @@ import { DataExportComponent } from './components/data-export/data-export.compon
     RouterModule,
     ProfileComponent,
     ThemeSettingsComponent,
-    LanguageSettingsComponent,
     DataExportComponent
   ],
   templateUrl: './settings.component.html',
@@ -23,12 +21,11 @@ import { DataExportComponent } from './components/data-export/data-export.compon
 export class SettingsComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  activeTab: 'profile' | 'theme' | 'language' | 'export' = 'profile';
+  activeTab: 'profile' | 'theme' | 'export' = 'profile';
 
   readonly tabs = [
     { id: 'profile' as const, label: 'Профіль', icon: 'user' },
     { id: 'theme' as const, label: 'Тема', icon: 'palette' },
-    { id: 'language' as const, label: 'Мова', icon: 'globe' },
     { id: 'export' as const, label: 'Експорт даних', icon: 'download' }
   ];
 
@@ -42,11 +39,11 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  setActiveTab(tabId: 'profile' | 'theme' | 'language' | 'export'): void {
+  setActiveTab(tabId: 'profile' | 'theme' | 'export'): void {
     this.activeTab = tabId;
   }
 
-  private isValidTab(tab: string): tab is 'profile' | 'theme' | 'language' | 'export' {
-    return ['profile', 'theme', 'language', 'export'].includes(tab);
+  private isValidTab(tab: string): tab is 'profile' | 'theme' | 'export' {
+    return ['profile', 'theme', 'export'].includes(tab);
   }
 }

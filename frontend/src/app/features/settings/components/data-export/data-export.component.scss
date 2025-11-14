@@ -4,28 +4,106 @@
   gap: 1.5rem;
 
   .section-card {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 1.5rem;
 
     &.danger-zone {
       border-color: rgba(239, 68, 68, 0.3);
-      background: rgba(239, 68, 68, 0.05);
+      background: #fef2f2;
     }
   }
 
   .section-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #f8fafc;
+    color: #1f2937;
     margin: 0 0 0.5rem 0;
   }
 
   .section-description {
     font-size: 0.9375rem;
-    color: #94a3b8;
+    color: #6b7280;
     margin: 0 0 1.5rem 0;
+  }
+
+  // Markdown Export Button
+  .markdown-export-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 1rem;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+
+      .markdown-action svg {
+        transform: translateY(2px);
+      }
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .markdown-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg {
+        stroke: white;
+      }
+    }
+
+    .markdown-info {
+      flex: 1;
+
+      .markdown-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        margin: 0 0 0.25rem 0;
+      }
+
+      .markdown-description {
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+      }
+    }
+
+    .markdown-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg {
+        stroke: white;
+        transition: all 0.2s ease;
+      }
+    }
   }
 
   .export-formats {
@@ -39,8 +117,8 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: #0f172a;
-    border: 2px solid #334155;
+    background: #f9fafb;
+    border: 2px solid #d1d5db;
     border-radius: 12px;
     padding: 1.25rem;
     cursor: pointer;
@@ -83,13 +161,13 @@
       .export-name {
         font-size: 1rem;
         font-weight: 600;
-        color: #f8fafc;
+        color: #1f2937;
         margin: 0 0 0.25rem 0;
       }
 
       .export-description {
         font-size: 0.8125rem;
-        color: #94a3b8;
+        color: #6b7280;
         margin: 0;
       }
     }
@@ -119,13 +197,13 @@
       h3 {
         font-size: 1rem;
         font-weight: 600;
-        color: #f8fafc;
+        color: #991b1b;
         margin: 0 0 0.5rem 0;
       }
 
       p {
         font-size: 0.875rem;
-        color: #94a3b8;
+        color: #6b7280;
         margin: 0;
         line-height: 1.5;
       }

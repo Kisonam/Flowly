@@ -99,6 +99,19 @@ $primary-light: #8b9aef;
       transform: translateY(0);
     }
 
+    &.active {
+      background: rgba(102, 126, 234, 0.2);
+      color: #667eea;
+
+      svg {
+        stroke: #667eea;
+      }
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.3);
+      }
+    }
+
     svg {
       display: block;
     }
@@ -160,6 +173,11 @@ $primary-light: #8b9aef;
 
 // User Menu Container
 .user-menu-container {
+  position: relative;
+}
+
+// Language Menu Container
+.language-menu-container {
   position: relative;
 }
 
@@ -250,6 +268,91 @@ $primary-light: #8b9aef;
           stroke: #ef4444;
         }
       }
+    }
+  }
+}
+
+// Language Dropdown Menu
+.language-dropdown {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  min-width: 220px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 0;
+  z-index: 1001;
+  animation: dropdownSlide 0.2s ease-out;
+
+  .dropdown-header {
+    padding: 0.75rem 1rem;
+
+    .dropdown-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background: #334155;
+    margin: 0.5rem 0;
+  }
+
+  .language-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: $transition-fast;
+    text-align: left;
+
+    .language-flag {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .language-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+
+      .language-native {
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: #f8fafc;
+        line-height: 1.2;
+      }
+
+      .language-name {
+        font-size: 0.8125rem;
+        color: #94a3b8;
+        line-height: 1.2;
+      }
+    }
+
+    .check-icon {
+      flex-shrink: 0;
+      stroke: #667eea;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &.active {
+      background: rgba(102, 126, 234, 0.1);
     }
   }
 }

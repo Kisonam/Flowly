@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 interface ExportFormat {
   id: string;
@@ -17,6 +18,9 @@ interface ExportFormat {
   styleUrls: ['./data-export.component.scss']
 })
 export class DataExportComponent {
+  private http = inject(HttpClient);
+  private readonly apiUrl = 'http://localhost:5000'; // TODO: Use environment config
+
   isExporting = false;
   message = '';
   error = '';
@@ -45,7 +49,57 @@ export class DataExportComponent {
     }
   ];
 
-  exportData(format: ExportFormat): void {
+  exportMarkdown(): void {
+    this.isExporting = true;
+    this.error = '';
+    this.message = '';
+
+    this.http.get(`${this.apiUrl}/api/export`, {
+      responseType: 'blob',
+      observe: 'response'
+    }).subscribe({
+      next: (response) => {
+        const blob = response.body;
+        if (!blob) {
+          this.error = 'Помилка завантаження файлу';
+          this.isExporting = false;
+          return;
+        }
+
+        // Extract filename from Content-Disposition header or use default
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'flowly-notes-export.zip';
+
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1].replace(/['"]/g, '');
+          }
+        }
+
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+
+        this.message = 'Нотатки успішно експортовано у Markdown';
+        this.isExporting = false;
+
+        setTimeout(() => this.message = '', 5000);
+      },
+      error: (err) => {
+        console.error('Export error:', err);
+        this.error = 'Помилка при експорті даних. Спробуйте пізніше.';
+        this.isExporting = false;
+
+        setTimeout(() => this.error = '', 5000);
+      }
+    });
+  }  exportData(format: ExportFormat): void {
     this.isExporting = true;
     this.error = '';
     this.message = '';

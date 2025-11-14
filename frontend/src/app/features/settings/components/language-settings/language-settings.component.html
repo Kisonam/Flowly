@@ -5,25 +5,58 @@
       Змініть мову інтерфейсу програми
     </p>
 
-    <div class="languages-list">
-      <button
-        *ngFor="let lang of languages"
-        class="language-card"
-        [class.selected]="selectedLanguage === lang.code"
-        (click)="selectLanguage(lang.code)"
-        [disabled]="isLoading"
-      >
-        <span class="language-flag">{{ lang.flag }}</span>
-        <div class="language-info">
-          <h3 class="language-name">{{ lang.nativeName }}</h3>
-          <p class="language-english">{{ lang.name }}</p>
-        </div>
-        <div class="language-check" *ngIf="selectedLanguage === lang.code">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"></polyline>
+    <!-- Dropdown -->
+    <div class="language-dropdown-container">
+      <label class="dropdown-label">Мова інтерфейсу</label>
+      <div class="dropdown-wrapper">
+        <button
+          class="dropdown-trigger"
+          (click)="toggleDropdown()"
+          [disabled]="isLoading"
+        >
+          <span class="selected-language">
+            <span class="language-flag">{{ selectedLang?.flag }}</span>
+            <span class="language-name">{{ selectedLang?.nativeName }}</span>
+          </span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            [class.rotated]="isDropdownOpen"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
+        </button>
+
+        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+          <button
+            *ngFor="let lang of languages"
+            class="dropdown-item"
+            [class.active]="selectedLanguage === lang.code"
+            (click)="selectLanguage(lang.code)"
+          >
+            <span class="language-flag">{{ lang.flag }}</span>
+            <div class="language-info">
+              <span class="language-native">{{ lang.nativeName }}</span>
+              <span class="language-english">{{ lang.name }}</span>
+            </div>
+            <svg
+              *ngIf="selectedLanguage === lang.code"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
         </div>
-      </button>
+      </div>
     </div>
 
     <div class="info-box">
@@ -41,4 +74,11 @@
     <div *ngIf="message" class="success-message">{{ message }}</div>
     <div *ngIf="error" class="error-message">{{ error }}</div>
   </div>
+
+  <!-- Backdrop -->
+  <div
+    class="dropdown-backdrop"
+    *ngIf="isDropdownOpen"
+    (click)="closeDropdown()"
+  ></div>
 </div>

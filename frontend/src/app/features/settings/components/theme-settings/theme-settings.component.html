@@ -5,26 +5,51 @@
       Персоналізуйте інтерфейс програми згідно з вашими уподобаннями
     </p>
 
-    <div class="themes-grid">
-      <button
+    <!-- Radio Button Selection -->
+    <div class="theme-options">
+      <label
         *ngFor="let theme of themes"
-        class="theme-card"
+        class="theme-option"
         [class.selected]="selectedTheme === theme.id"
-        (click)="selectTheme(theme.id)"
-        [disabled]="isLoading"
       >
-        <div class="theme-preview" [style.background]="theme.preview">
-          <div class="theme-check" *ngIf="selectedTheme === theme.id">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
+        <input
+          type="radio"
+          name="theme"
+          [value]="theme.id"
+          [checked]="selectedTheme === theme.id"
+          (change)="selectTheme(theme.id)"
+          [disabled]="isLoading"
+        />
+        <div class="option-content">
+          <div class="option-header">
+            <div class="radio-circle">
+              <div class="radio-dot" *ngIf="selectedTheme === theme.id"></div>
+            </div>
+            <div class="option-text">
+              <h3 class="option-name">{{ theme.name }}</h3>
+              <p class="option-description">{{ theme.description }}</p>
+            </div>
           </div>
         </div>
-        <div class="theme-info">
-          <h3 class="theme-name">{{ theme.name }}</h3>
-          <p class="theme-description">{{ theme.description }}</p>
+      </label>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="theme-preview-section">
+      <h3 class="preview-title">Попередній перегляд</h3>
+      <div class="preview-container">
+        <div
+          class="preview-box"
+          [style.background]="getSelectedThemePreview()"
+        >
+          <div class="preview-content">
+            <div class="preview-card">
+              <div class="preview-header">{{ getSelectedThemeName() }}</div>
+              <div class="preview-text">Приклад тексту в обраній темі</div>
+            </div>
+          </div>
         </div>
-      </button>
+      </div>
     </div>
 
     <div *ngIf="message" class="success-message">{{ message }}</div>

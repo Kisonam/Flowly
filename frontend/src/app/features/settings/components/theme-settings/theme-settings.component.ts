@@ -62,6 +62,7 @@ export class ThemeSettingsComponent implements OnInit {
     const currentUser = this.authService.getCurrentUserValue();
     if (!currentUser) {
       this.error = 'Користувач не знайдений';
+      this.isLoading = false;
       return;
     }
 
@@ -79,5 +80,15 @@ export class ThemeSettingsComponent implements OnInit {
         this.error = error.message || 'Не вдалося змінити тему';
       }
     });
+  }
+
+  getSelectedThemePreview(): string {
+    const theme = this.themes.find(t => t.id === this.selectedTheme);
+    return theme?.preview || '';
+  }
+
+  getSelectedThemeName(): string {
+    const theme = this.themes.find(t => t.id === this.selectedTheme);
+    return theme?.name || '';
   }
 }

@@ -65,17 +65,6 @@ export class ProfileComponent implements OnInit {
         this.avatarPreview = user.avatarUrl || null;
       }
     });
-
-    // Fetch latest user data from server
-    this.authService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.currentUser = user;
-        this.avatarPreview = user.avatarUrl || null;
-      },
-      error: (error) => {
-        console.error('Failed to load user profile', error);
-      }
-    });
   }
 
   onFileSelected(event: Event): void {

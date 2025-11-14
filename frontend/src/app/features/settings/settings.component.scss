@@ -2,6 +2,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
+  min-height: 100vh;
   animation: fadeIn 0.3s ease-in;
 }
 
@@ -11,13 +12,13 @@
   .settings-title {
     font-size: 2rem;
     font-weight: 700;
-    color: #f8fafc;
+    color: #1f2937;
     margin: 0 0 0.5rem 0;
   }
 
   .settings-subtitle {
     font-size: 1rem;
-    color: #94a3b8;
+    color: #6b7280;
     margin: 0;
   }
 }
@@ -26,7 +27,7 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 2rem;
-  border-bottom: 2px solid #334155;
+  border-bottom: 2px solid #e5e7eb;
   padding-bottom: 0.5rem;
   flex-wrap: wrap;
 
@@ -38,7 +39,7 @@
     background: transparent;
     border: none;
     border-radius: 8px 8px 0 0;
-    color: #94a3b8;
+    color: #6b7280;
     font-size: 0.9375rem;
     font-weight: 500;
     cursor: pointer;
@@ -57,8 +58,8 @@
     }
 
     &:hover:not(.active) {
-      color: #cbd5e1;
-      background: rgba(255, 255, 255, 0.05);
+      color: #374151;
+      background: rgba(102, 126, 234, 0.05);
     }
 
     &.active {

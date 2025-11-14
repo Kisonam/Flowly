@@ -20,20 +20,34 @@ export class LanguageSettingsComponent {
   isLoading = false;
   message = '';
   error = '';
+  isDropdownOpen = false;
 
   readonly languages: Language[] = [
     { code: 'uk', name: 'Ukrainian', nativeName: 'Українська', flag: '🇺🇦' },
     { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
-    { code: 'pl', name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' },
-    { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' }
+    { code: 'pl', name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' }
   ];
+
+  get selectedLang(): Language | undefined {
+    return this.languages.find(lang => lang.code === this.selectedLanguage);
+  }
+
+  toggleDropdown(): void {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+  }
 
   selectLanguage(languageCode: string): void {
     if (languageCode === this.selectedLanguage) {
+      this.closeDropdown();
       return;
     }
 
     this.selectedLanguage = languageCode;
+    this.closeDropdown();
     this.saveLanguage();
   }
 
