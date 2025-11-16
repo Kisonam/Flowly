@@ -555,23 +555,24 @@ button[title="Restore"]::before { content: "🔄"; }
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #8b5cf6, #667eea);
-  color: white;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  background: var(--primary);
+  color: var(--text-inverse);
+  box-shadow: var(--button-shadow);
 
   &:hover {
+    background: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+    box-shadow: var(--shadow-md);
   }
 }
 
 .btn-secondary {
-  background: white;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 
   &:hover {
-    background: #f9fafb;
+    background: var(--bg-secondary);
   }
 }
 

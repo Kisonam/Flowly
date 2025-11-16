@@ -301,21 +301,21 @@
     font-weight: 600;
 
     &.overspent {
-      background: #fef2f2;
-      color: #ef4444;
-      border: 1px solid #ef4444;
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1px solid var(--danger);
     }
 
     &.warning {
-      background: #fef3c7;
-      color: #f59e0b;
-      border: 1px solid #f59e0b;
+      background: var(--warning-light);
+      color: var(--warning);
+      border: 1px solid var(--warning);
     }
 
     &.ok {
-      background: #d1fae5;
-      color: #10b981;
-      border: 1px solid #10b981;
+      background: var(--success-light);
+      color: var(--success);
+      border: 1px solid var(--success);
     }
   }
 }
@@ -394,21 +394,22 @@
   }
 
   &.btn-primary {
-    background: #10b981;
-    color: white;
+    background: var(--primary);
+    color: var(--text-inverse);
+    box-shadow: var(--button-shadow);
 
     &:hover {
-      background: #059669;
+      background: var(--primary-hover);
     }
   }
 
   &.btn-secondary {
-    background: white;
-    color: #374151;
-    border: 1px solid #e5e7eb;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 
     &:hover {
-      background: #f3f4f6;
+      background: var(--bg-secondary);
     }
   }
 }

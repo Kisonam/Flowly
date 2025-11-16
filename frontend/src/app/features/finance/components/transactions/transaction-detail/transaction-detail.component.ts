@@ -6,6 +6,7 @@ import { Transaction } from '../../../models/finance.models';
 import { LinkService } from '../../../../../shared/services/link.service';
 import { Link, LinkEntityType, EntityPreview } from '../../../../../shared/models/link.models';
 import { Subject, takeUntil } from 'rxjs';
+import { ThemeService } from '../../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-transaction-detail',
@@ -19,6 +20,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private financeService = inject(FinanceService);
   private linkService = inject(LinkService);
+  private themeService = inject(ThemeService);
   private destroy$ = new Subject<void>();
 
   transaction: Transaction | null = null;
@@ -109,7 +111,9 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   }
 
   getTransactionColor(type: string): string {
-    return type === 'Income' ? '#10b981' : '#ef4444';
+    const successColor = this.themeService.getCssVarValue('--success', '#10b981');
+    const dangerColor = this.themeService.getCssVarValue('--danger', '#ef4444');
+    return type === 'Income' ? successColor : dangerColor;
   }
 
   getTransactionIcon(type: string): string {

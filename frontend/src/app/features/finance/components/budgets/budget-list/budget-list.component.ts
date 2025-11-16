@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { ThemeService } from '../../../../../core/services/theme.service';
 
 import { FinanceService } from '../../../services/finance.service';
 import { Budget, BudgetFilter, Currency } from '../../../models/finance.models';
@@ -15,6 +16,10 @@ import { Budget, BudgetFilter, Currency } from '../../../models/finance.models';
   styleUrls: ['./budget-list.component.scss']
 })
 export class BudgetListComponent implements OnInit, OnDestroy {
+  private financeService = inject(FinanceService);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
+  private themeService = inject(ThemeService);
   private destroy$ = new Subject<void>();
 
   budgets: Budget[] = [];
@@ -29,11 +34,7 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   // Filter form
   filterForm: FormGroup;
 
-  constructor(
-    private financeService: FinanceService,
-    private router: Router,
-    private fb: FormBuilder
-  ) {
+  constructor() {
     this.filterForm = this.fb.group({
       search: [''], // Search by title
       status: ['active'], // 'all', 'active', 'archived'
@@ -220,9 +221,26 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   }
 
   getProgressColor(budget: Budget): string {
-    if (budget.isExceeded) return '#ef4444'; // Red
-    if (budget.progressPercentage >= 80) return '#f59e0b'; // Orange/Yellow
-    return '#10b981'; // Green
+    const dangerColor = this.themeService.getCssVarValue('--danger', '#ef4444');
+    const warningColor = this.themeService.getCssVarValue('--warning', '#f59e0b');
+    const successColor = this.themeService.getCssVarValue('--success', '#10b981');
+
+    if (budget.isExceeded) return dangerColor;
+    if (budget.progressPercentage >= 80) return warningColor;
+    return successColor;
+  }
+
+  getCategoryColor(category: any): string {
+    // In low-stimulus mode, always use theme variable
+    const currentTheme = this.themeService.getCurrentTheme();
+    if (currentTheme === 'low-stimulus') {
+      return this.themeService.getCssVarValue('--secondary-light', '#d1d5db');
+    }
+    // In normal mode, use category color or fallback
+    if (category?.color) {
+      return category.color;
+    }
+    return this.themeService.getCssVarValue('--secondary-light', '#d1d5db');
   }
 
   formatCurrency(amount: number, currencyCode: string): string {

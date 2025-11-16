@@ -1,1 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Import theme files
+@use 'assets/styles/themes/normal.scss';
+@use 'assets/styles/themes/low-stimulus.scss';
+
+// Import utilities
+@use 'assets/styles/utilities';
+
+// Global styles
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  transition: var(--transition-base);
+}
+
+// Global link styles
+a {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: var(--transition-fast);
+
+  &:hover {
+    color: var(--text-link-hover);
+  }
+}
+
+// Global heading styles
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+// Global paragraph styles
+p {
+  color: var(--text-primary);
+  line-height: 1.6;
+}

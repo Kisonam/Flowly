@@ -22,15 +22,15 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border: none;
   border-radius: 8px;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--transition-base);
 
   &:hover {
-    background: #e5e7eb;
+    background: var(--bg-tertiary);
   }
 
   span {
@@ -42,14 +42,14 @@
 .error-state {
   text-align: center;
   padding: 3rem;
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .spinner {
-  border: 3px solid #f3f4f6;
-  border-top-color: #8b5cf6;
+  border: 3px solid var(--border-color-light);
+  border-top-color: var(--primary);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -67,15 +67,16 @@
 }
 
 .detail-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
 .main-card {
   .card-header {
-    color: white;
+    background: var(--primary);
+    color: var(--text-inverse);
     padding: 2rem;
     text-align: center;
 
@@ -164,10 +165,11 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 16px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1f2937;
+  background: var(--secondary-light);
+  color: var(--text-primary);
 
   &.large {
     padding: 0.75rem 1.25rem;
@@ -250,10 +252,11 @@
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 16px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: white;
+  background: var(--secondary);
+  color: var(--text-inverse);
 
   &.large {
     padding: 0.75rem 1.25rem;
@@ -313,14 +316,14 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: #10b981;
-  color: white;
+  background: var(--success);
+  color: var(--text-inverse);
   border-radius: 8px;
   font-weight: 600;
   font-size: 1rem;
 
   &.archived {
-    background: #6b7280;
+    background: var(--secondary);
   }
 }
 
@@ -511,20 +514,21 @@
   }
 
   &.btn-primary {
-    background: #8b5cf6;
-    color: white;
+    background: var(--primary);
+    color: var(--text-inverse);
+    box-shadow: var(--button-shadow);
 
     &:hover {
-      background: #7c3aed;
+      background: var(--primary-hover);
     }
   }
 
   &.btn-secondary {
-    background: #f3f4f6;
-    color: #1f2937;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 
     &:hover {
-      background: #e5e7eb;
+      background: var(--bg-tertiary);
     }
   }
 }

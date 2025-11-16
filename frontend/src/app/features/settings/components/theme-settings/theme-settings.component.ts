@@ -1,7 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../auth/services/auth.service';
-import { ThemeMode } from '../../../auth/models/user.model';
+import { ThemeMode as BackendThemeMode } from '../../../auth/models/user.model';
+import { ThemeService, ThemeMode } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-theme-settings',
@@ -12,24 +13,25 @@ import { ThemeMode } from '../../../auth/models/user.model';
 })
 export class ThemeSettingsComponent implements OnInit {
   private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
 
-  selectedTheme: ThemeMode = ThemeMode.Normal;
+  selectedTheme: ThemeMode = 'normal';
   isLoading = false;
   message = '';
   error = '';
 
   readonly themes = [
     {
-      id: ThemeMode.Normal,
+      id: 'normal' as ThemeMode,
       name: 'Звичайна',
-      description: 'Класична світла тема',
+      description: 'Класична світла тема з яскравими кольорами та анімаціями',
       preview: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
     },
     {
-      id: ThemeMode.LowStimulus,
+      id: 'low-stimulus' as ThemeMode,
       name: 'Низька стимуляція',
-      description: 'Тема з низькою стимуляцією для комфортної роботи',
-      preview: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+      description: 'Приглушені кольори, без анімацій та тіней',
+      preview: 'linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%)'
     }
   ];
 
@@ -38,10 +40,9 @@ export class ThemeSettingsComponent implements OnInit {
   }
 
   private loadCurrentTheme(): void {
-    this.authService.currentUser$.subscribe(user => {
-      if (user?.preferredTheme) {
-        this.selectedTheme = user.preferredTheme;
-      }
+    // Subscribe to theme service
+    this.themeService.currentTheme$.subscribe(theme => {
+      this.selectedTheme = theme;
     });
   }
 
@@ -50,37 +51,9 @@ export class ThemeSettingsComponent implements OnInit {
       return;
     }
 
-    this.selectedTheme = themeId;
-    this.saveTheme();
+    this.themeService.setTheme(themeId);
   }
 
-  private saveTheme(): void {
-    this.isLoading = true;
-    this.error = '';
-    this.message = '';
-
-    const currentUser = this.authService.getCurrentUserValue();
-    if (!currentUser) {
-      this.error = 'Користувач не знайдений';
-      this.isLoading = false;
-      return;
-    }
-
-    this.authService.updateProfile({
-      displayName: currentUser.displayName,
-      preferredTheme: this.selectedTheme
-    }).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.message = 'Тему успішно змінено';
-        setTimeout(() => this.message = '', 3000);
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.error = error.message || 'Не вдалося змінити тему';
-      }
-    });
-  }
 
   getSelectedThemePreview(): string {
     const theme = this.themes.find(t => t.id === this.selectedTheme);

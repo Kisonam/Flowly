@@ -1,5 +1,5 @@
 .finance-dashboard {
-  padding: 2rem;
+  padding: var(--spacing-xl);
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -7,17 +7,18 @@
 .dashboard-title {
   font-size: 2rem;
   font-weight: 600;
-  color: #1a202c;
-  margin-bottom: 2rem;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xl);
 }
 
 // Filters Section
 .filters-section {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  background: var(--card-bg);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid var(--card-border);
 }
 
 .filters-form {
@@ -30,8 +31,8 @@
   label {
     display: block;
     font-weight: 500;
-    color: #4a5568;
-    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
     font-size: 0.875rem;
   }
 }
@@ -39,16 +40,18 @@
 .filter-input,
 .filter-select {
   width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
   font-size: 1rem;
-  transition: all 0.2s;
+  transition: var(--transition-fast);
+  background: var(--input-bg);
+  color: var(--text-primary);
 
   &:focus {
     outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--input-focus-border) 25%, transparent);
   }
 }
 
@@ -56,15 +59,17 @@
 .loading-state,
 .error-state {
   text-align: center;
-  padding: 3rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-xl);
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
 }
 
 .spinner {
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #4299e1;
+  border: 4px solid var(--border-color-light);
+  border-top: 4px solid var(--primary);
   border-radius: 50%;
   width: 48px;
   height: 48px;
@@ -73,8 +78,8 @@
 }
 
 .spinner-small {
-  border: 3px solid #e2e8f0;
-  border-top: 3px solid #4299e1;
+  border: 3px solid var(--border-color-light);
+  border-top: 3px solid var(--primary);
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -88,7 +93,7 @@
 }
 
 .error-state {
-  color: #e53e3e;
+  color: var(--danger);
   font-weight: 500;
 }
 
@@ -96,29 +101,31 @@
 .dashboard-content {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--spacing-xl);
 }
 
 // Summary Cards
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: var(--spacing-lg);
 }
 
+
 .summary-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
   display: flex;
   align-items: center;
-  gap: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  gap: var(--spacing-md);
+  transition: var(--transition-base);
+  border: 1px solid var(--card-border);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg);
   }
 
   .card-icon {
@@ -132,8 +139,8 @@
     h3 {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #718096;
-      margin: 0 0 0.5rem 0;
+      color: var(--text-secondary);
+      margin: 0 0 var(--spacing-xs) 0;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -142,32 +149,32 @@
       font-size: 1.75rem;
       font-weight: 700;
       margin: 0 0 0.25rem 0;
-      color: #2d3748;
+      color: var(--text-primary);
     }
 
     .subtitle {
       font-size: 0.75rem;
-      color: #a0aec0;
+      color: var(--text-tertiary);
     }
   }
 
   &.income {
-    border-left: 4px solid #48bb78;
+    border-left: 4px solid var(--success);
   }
 
   &.expense {
-    border-left: 4px solid #f56565;
+    border-left: 4px solid var(--danger);
   }
 
   &.balance {
-    border-left: 4px solid #4299e1;
+    border-left: 4px solid var(--info);
 
     &.positive .amount {
-      color: #48bb78;
+      color: var(--success);
     }
 
     &.negative .amount {
-      color: #f56565;
+      color: var(--danger);
     }
   }
 }
@@ -176,29 +183,38 @@
 .charts-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem; /* Add space before next section */
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
 }
 
 .chart-wrapper {
   min-height: 350px;
-  height: auto; /* Allow wrapper to grow with content */
-  position: relative; /* Establish positioning context */
+  height: auto;
+  position: relative;
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  padding: var(--spacing-md);
 
-  // Remove default padding/styling from chart components as they have their own
   app-income-expense-chart,
   app-category-breakdown-chart {
     display: block;
     width: 100%;
-    height: auto; /* Allow components to define their own height */
-    position: relative; /* Establish positioning context for child elements */
+    height: auto;
+    position: relative;
   }
 }
 
 // Budget Progress Section - separate from charts
 .budget-progress-section {
   width: 100%;
-  margin-bottom: 2rem; /* Space before category tables */
+  margin-bottom: var(--spacing-xl);
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  padding: var(--spacing-md);
 
   app-budget-progress-chart {
     display: block;
@@ -211,25 +227,26 @@
 .category-breakdown {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-  margin-top: 0; /* Remove top margin, space is from charts-section margin-bottom */
-  clear: both; /* Ensure this section starts below floating elements */
-  position: relative; /* Establish positioning context */
-  z-index: 1; /* Same level as other elements */
+  gap: var(--spacing-xl);
+  margin-top: 0;
+  clear: both;
+  position: relative;
+  z-index: 1;
 }
 
 .category-table-wrapper {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: relative; /* Establish positioning context */
+  background: var(--card-bg);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  position: relative;
+  border: 1px solid var(--card-border);
 
   h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #2d3748;
-    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-md) 0;
   }
 }
 
@@ -239,14 +256,14 @@
 
   thead {
     tr {
-      border-bottom: 2px solid #e2e8f0;
+      border-bottom: 2px solid var(--border-color);
     }
 
     th {
-      padding: 0.75rem;
+      padding: var(--spacing-sm);
       text-align: left;
       font-weight: 600;
-      color: #4a5568;
+      color: var(--text-secondary);
       font-size: 0.875rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -259,11 +276,11 @@
 
   tbody {
     tr {
-      border-bottom: 1px solid #f7fafc;
-      transition: background-color 0.2s;
+      border-bottom: 1px solid var(--border-color);
+      transition: var(--transition-fast);
 
       &:hover {
-        background-color: #f7fafc;
+        background-color: var(--bg-hover);
       }
 
       &:last-child {
@@ -272,8 +289,8 @@
     }
 
     td {
-      padding: 0.75rem;
-      color: #2d3748;
+      padding: var(--spacing-sm);
+      color: var(--text-primary);
 
       &.align-right {
         text-align: right;
@@ -285,60 +302,62 @@
 
 // Recent Transactions
 .recent-transactions {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--card-border);
 
   h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #2d3748;
-    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-md) 0;
   }
 }
 
 .loading-transactions,
 .empty-transactions {
   text-align: center;
-  padding: 2rem;
-  color: #a0aec0;
+  padding: var(--spacing-lg);
+  color: var(--text-tertiary);
 }
 
 .transactions-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--spacing-sm);
 }
+
 
 .transaction-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
   border-left: 4px solid transparent;
-  background-color: #f7fafc;
-  transition: all 0.2s;
+  background-color: var(--bg-secondary);
+  transition: var(--transition-fast);
 
   &:hover {
-    background-color: #edf2f7;
+    background-color: var(--bg-hover);
     transform: translateX(4px);
   }
 
   &.income {
-    border-left-color: #48bb78;
+    border-left-color: var(--success);
 
     .amount {
-      color: #48bb78;
+      color: var(--success);
     }
   }
 
   &.expense {
-    border-left-color: #f56565;
+    border-left-color: var(--danger);
 
     .amount {
-      color: #f56565;
+      color: var(--danger);
     }
   }
 
@@ -354,13 +373,13 @@
     gap: 0.25rem;
 
     strong {
-      color: #2d3748;
+      color: var(--text-primary);
       font-size: 1rem;
     }
 
     .transaction-category {
       font-size: 0.75rem;
-      color: #718096;
+      color: var(--text-secondary);
     }
   }
 
@@ -377,7 +396,7 @@
 
     .date {
       font-size: 0.75rem;
-      color: #a0aec0;
+      color: var(--text-tertiary);
     }
   }
 }

@@ -4,13 +4,13 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+  background: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 }
 
 // Navbar
 .navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--navbar-bg) !important;
+  box-shadow: var(--shadow);
 
   .brand-logo {
     font-size: 1.5rem;
@@ -21,7 +21,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--bg-hover);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,18 +34,18 @@
     }
 
     span {
-      color: white;
+      color: var(--text-inverse);
       font-weight: 600;
       font-size: 1.2rem;
     }
   }
 
   .btn-link {
-    color: white;
+    color: var(--text-link);
     text-decoration: none;
 
     &:hover {
-      color: rgba(255, 255, 255, 0.8);
+      color: var(--text-link-hover);
     }
   }
 }
@@ -53,19 +53,19 @@
 // Hero Section
 .hero-section {
   padding: 4rem 0;
-  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  background: var(--bg-secondary);
 
   .welcome-message {
     h1 {
       font-weight: 700;
-      color: #212529;
-      margin-bottom: 1rem;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
     }
 
     .lead {
       font-size: 1.25rem;
-      color: #6c757d;
-      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
     }
   }
 
@@ -83,29 +83,30 @@
 .section-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #212529;
+  color: var(--text-primary);
 }
 
 .action-card {
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  transition: var(--transition-base);
   height: 100%;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
   }
 
   .card-icon {
     font-size: 3rem;
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-md);
     width: 80px;
     height: 80px;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto var(--spacing-lg);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -113,61 +114,63 @@
   }
 
   .notes-icon {
-    background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+    background: var(--primary-light);
   }
 
   .tasks-icon {
-    background: linear-gradient(135deg, #f09433 0%, #e6683c 100%);
-    background: linear-gradient(135deg, #11998e20 0%, #38ef7d20 100%);
+    background: var(--success-light);
   }
 
   .finance-icon {
-    background: linear-gradient(135deg, #fdbb2d20 0%, #22c1c320 100%);
+    background: var(--warning-light);
   }
 
   h3 {
     font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: #212529;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
   }
 
   p {
-    color: #6c757d;
-    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary);
     border: none;
-    border-radius: 0.5rem;
-    padding: 0.75rem 2rem;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md) var(--spacing-xl);
     font-weight: 600;
+    box-shadow: var(--button-shadow);
+    transition: var(--transition-base);
 
     &:hover {
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      background: var(--primary-hover);
+      box-shadow: var(--shadow-md);
     }
   }
 }
 
 // Stats Section
 .stats-section {
-  background: white;
+  background: var(--bg-primary);
 
   .stat-item {
-    padding: 2rem 0;
+    padding: var(--spacing-xl) 0;
 
     .stat-number {
       font-size: 3rem;
       font-weight: 700;
-      color: #667eea;
-      margin-bottom: 0.5rem;
+      color: var(--primary);
+      margin-bottom: var(--spacing-sm);
     }
 
     .stat-label {
       font-size: 1.1rem;
-      color: #6c757d;
+      color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
@@ -176,7 +179,7 @@
 
 // Footer
 .footer {
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   margin-top: auto;
 }
 

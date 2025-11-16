@@ -2,3 +2,4 @@
 .env
 frontend/src/environments/environment.prod.ts
 frontend/src/environments/environment.prod.ts
+docs/

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, of, switchMap, takeUntil, tap } from 'rxjs';
+import { ThemeService } from '../../../../../core/services/theme.service';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
 import { LinkSelectorComponent } from '../../../../../shared/components/link-selector/link-selector.component';
@@ -29,6 +30,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private financeService = inject(FinanceService);
   private tagsService = inject(TagsService);
+  private themeService = inject(ThemeService);
   private destroy$ = new Subject<void>();
 
   isEdit = false;
@@ -488,7 +490,9 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   }
 
   getTransactionColor(type: TransactionType): string {
-    return type === 'Income' ? '#10b981' : '#ef4444';
+    const successColor = this.themeService.getCssVarValue('--success', '#10b981');
+    const dangerColor = this.themeService.getCssVarValue('--danger', '#ef4444');
+    return type === 'Income' ? successColor : dangerColor;
   }
 
   formatPreviewAmount(): string {

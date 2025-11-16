@@ -22,15 +22,15 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border: none;
   border-radius: 8px;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--transition-base);
 
   &:hover {
-    background: #e5e7eb;
+    background: var(--bg-tertiary);
   }
 
   span {
@@ -42,14 +42,14 @@
 .error-state {
   text-align: center;
   padding: 3rem;
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .spinner {
-  border: 3px solid #f3f4f6;
-  border-top-color: #10b981;
+  border: 3px solid var(--border-color-light);
+  border-top-color: var(--primary);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -67,17 +67,17 @@
 }
 
 .detail-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .main-card {
   overflow: hidden;
 
   .card-header {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
+    background: var(--primary);
+    color: var(--text-inverse);
     padding: 2rem;
     display: flex;
     justify-content: space-between;
@@ -284,24 +284,24 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 1.25rem;
-      background: #10b981;
-      color: white;
+      background: var(--success);
+      color: var(--text-inverse);
       border-radius: 8px;
       font-weight: 600;
       font-size: 1rem;
 
       &.archived {
-        background: #6b7280;
+        background: var(--secondary);
       }
 
       &.completed {
-        background: #059669;
+        background: var(--success);
       }
     }
 
     .timestamp {
       font-size: 1rem;
-      color: #1f2937;
+      color: var(--text-primary);
       font-weight: 500;
     }
   }
@@ -340,29 +340,31 @@
   }
 
   &.btn-primary {
-    background: #10b981;
-    color: white;
+    background: var(--primary);
+    color: var(--text-inverse);
+    box-shadow: var(--button-shadow);
 
     &:hover {
-      background: #059669;
+      background: var(--primary-hover);
     }
   }
 
   &.btn-secondary {
-    background: #f3f4f6;
-    color: #1f2937;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 
     &:hover {
-      background: #e5e7eb;
+      background: var(--bg-tertiary);
     }
   }
 
   &.btn-danger {
-    background: #ef4444;
-    color: white;
+    background: var(--danger);
+    color: var(--text-inverse);
 
     &:hover {
-      background: #dc2626;
+      background: var(--danger);
+      filter: brightness(0.9);
     }
   }
 }

@@ -163,7 +163,7 @@
           *ngFor="let tag of tags"
           class="tag-chip"
           [class.selected]="isTagSelected(tag.id)"
-          [style.background]="isTagSelected(tag.id) ? (tag.color || '#8b5cf6') : '#e5e7eb'"
+          [style.background]="isTagSelected(tag.id) ? getTagColor(tag) : getCategoryColor({})"
           [style.color]="isTagSelected(tag.id) ? 'white' : '#374151'"
           (click)="toggleTag(tag.id)">
           {{ tag.name }}
@@ -250,7 +250,7 @@
               <span
                 class="category-badge"
                 *ngIf="tx.category"
-                [style.background]="tx.category.color || '#e5e7eb'">
+                [style.background]="getCategoryColor(tx.category)">
                 <span *ngIf="tx.category.icon">{{ tx.category.icon }}</span>
                 {{ tx.category.name }}
               </span>
@@ -299,7 +299,7 @@
               <span
                 *ngFor="let tag of tx.tags || []"
                 class="tag-chip small"
-                [style.background]="tag.color || '#8b5cf6'"
+                [style.background]="getTagColor(tag)"
                 [style.color]="'white'">
                 {{ tag.name }}
               </span>

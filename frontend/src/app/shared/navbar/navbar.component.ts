@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../features/auth/services/auth.service';
-import { User, ThemeMode as BackendThemeMode } from '../../features/auth/models/user.model';
+import { User } from '../../features/auth/models/user.model';
+import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 
 type Language = 'uk' | 'en' | 'pl';
-type ThemeMode = 'normal' | 'low-stimulus';
 
 interface LanguageOption {
   code: Language;
@@ -25,6 +25,7 @@ export class NavbarComponent implements OnInit {
 
   private router = inject(Router);
   private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
 
   activeModule: string = 'overview';
   currentUser: User | null = null;
@@ -50,11 +51,11 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+    });
 
-      // Load theme from user profile
-      if (user?.preferredTheme) {
-        this.currentTheme = user.preferredTheme === 'Normal' ? 'normal' : 'low-stimulus';
-      }
+    // Subscribe to theme changes
+    this.themeService.currentTheme$.subscribe(theme => {
+      this.currentTheme = theme;
     });
 
     // Load saved language from localStorage
@@ -65,28 +66,7 @@ export class NavbarComponent implements OnInit {
   }
 
   toggleTheme(): void {
-    if (!this.currentUser) return;
-
-    const newTheme: ThemeMode = this.currentTheme === 'normal' ? 'low-stimulus' : 'normal';
-    this.currentTheme = newTheme;
-
-    // Update user profile with new theme
-    const backendTheme = newTheme === 'normal' ? BackendThemeMode.Normal : BackendThemeMode.LowStimulus;
-
-    this.authService.updateProfile({
-      displayName: this.currentUser.displayName,
-      preferredTheme: backendTheme
-    }).subscribe({
-      next: () => {
-        console.log('Theme changed to:', newTheme);
-        // TODO: Apply theme changes to the UI
-      },
-      error: (err) => {
-        console.error('Failed to update theme:', err);
-        // Revert on error
-        this.currentTheme = newTheme === 'normal' ? 'low-stimulus' : 'normal';
-      }
-    });
+    this.themeService.toggleTheme();
   }
 
   setActiveModule(moduleId: string): void {

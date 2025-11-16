@@ -1,6 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, OnDestroy, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, OnDestroy, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -18,7 +20,7 @@ export interface IncomeExpenseData {
   templateUrl: './income-expense-chart.component.html',
   styleUrl: './income-expense-chart.component.scss'
 })
-export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, OnDestroy {
+export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, OnDestroy, OnInit {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   @Input() data: IncomeExpenseData[] = [];
@@ -30,11 +32,22 @@ export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, On
   @Input() responsive = true;
   @Input() incomeLabel = 'Дохід';
   @Input() expenseLabel = 'Витрати';
-  @Input() incomeColor = 'rgba(72, 187, 120, 0.6)';
-  @Input() expenseColor = 'rgba(245, 101, 101, 0.6)';
+  @Input() incomeColor = '';
+  @Input() expenseColor = '';
 
   private chart?: Chart;
   private viewInitialized = false;
+  private themeService = inject(ThemeService);
+  private themeSubscription?: Subscription;
+
+  ngOnInit(): void {
+    this.themeSubscription = this.themeService.currentTheme$.subscribe(() => {
+      if (this.chart) {
+        this.applyDatasetColors();
+        this.chart.update();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     this.viewInitialized = true;
@@ -49,6 +62,7 @@ export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, On
 
   ngOnDestroy(): void {
     this.destroyChart();
+    this.themeSubscription?.unsubscribe();
   }
 
   private createChart(): void {
@@ -63,6 +77,9 @@ export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, On
     const incomeData = this.data.map(d => d.income);
     const expenseData = this.data.map(d => d.expense);
 
+    const incomeColors = this.getIncomeColors();
+    const expenseColors = this.getExpenseColors();
+
     const config: ChartConfiguration = {
       type: this.chartType as ChartType,
       data: {
@@ -71,8 +88,8 @@ export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, On
           {
             label: this.incomeLabel,
             data: incomeData,
-            backgroundColor: this.incomeColor,
-            borderColor: this.incomeColor.replace('0.6', '1'),
+            backgroundColor: incomeColors.fill,
+            borderColor: incomeColors.border,
             borderWidth: 2,
             tension: this.chartType === 'line' ? 0.4 : undefined,
             fill: this.chartType === 'line'
@@ -80,8 +97,8 @@ export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, On
           {
             label: this.expenseLabel,
             data: expenseData,
-            backgroundColor: this.expenseColor,
-            borderColor: this.expenseColor.replace('0.6', '1'),
+            backgroundColor: expenseColors.fill,
+            borderColor: expenseColors.border,
             borderWidth: 2,
             tension: this.chartType === 'line' ? 0.4 : undefined,
             fill: this.chartType === 'line'
@@ -154,6 +171,7 @@ export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, On
     this.chart.data.labels = labels;
     this.chart.data.datasets[0].data = incomeData;
     this.chart.data.datasets[1].data = expenseData;
+    this.applyDatasetColors();
     this.chart.update();
   }
 
@@ -162,5 +180,41 @@ export class IncomeExpenseChartComponent implements OnChanges, AfterViewInit, On
       this.chart.destroy();
       this.chart = undefined;
     }
+  }
+
+  private applyDatasetColors(): void {
+    if (!this.chart) return;
+    const incomeColors = this.getIncomeColors();
+    const expenseColors = this.getExpenseColors();
+
+    if (this.chart.data.datasets[0]) {
+      this.chart.data.datasets[0].backgroundColor = incomeColors.fill;
+      this.chart.data.datasets[0].borderColor = incomeColors.border;
+    }
+
+    if (this.chart.data.datasets[1]) {
+      this.chart.data.datasets[1].backgroundColor = expenseColors.fill;
+      this.chart.data.datasets[1].borderColor = expenseColors.border;
+    }
+  }
+
+  private getIncomeColors() {
+    const border = this.incomeColor || this.getCssVar('--success', '#48bb78');
+    const fill = this.getCssVar('--success-light', '#c6f6d5');
+    return { border, fill };
+  }
+
+  private getExpenseColors() {
+    const border = this.expenseColor || this.getCssVar('--danger', '#f56565');
+    const fill = this.getCssVar('--danger-light', '#fed7d7');
+    return { border, fill };
+  }
+
+  private getCssVar(name: string, fallback: string): string {
+    if (typeof window === 'undefined') {
+      return fallback;
+    }
+    const value = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return value?.trim() || fallback;
   }
 }

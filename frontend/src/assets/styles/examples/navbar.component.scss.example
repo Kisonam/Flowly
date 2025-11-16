@@ -1,6 +1,8 @@
-// Navbar Component Styles
-// =====================
+// Navbar Component Styles - АДАПТОВАНО ДЛЯ СИСТЕМИ ТЕМ
+// =====================================================
+// Цей файл показує, як navbar.component.scss виглядатиме після міграції
 
+// Navbar Header
 .navbar {
   background: var(--navbar-bg);
   border-bottom: 1px solid var(--navbar-border);
@@ -18,7 +20,7 @@
   }
 }
 
-// Left Section - тільки логотип та назва
+// Left Section
 .navbar-left {
   display: flex;
   align-items: center;
@@ -56,7 +58,7 @@
   }
 }
 
-// Right Section - всі кнопки справа
+// Right Section
 .navbar-right {
   display: flex;
   align-items: center;
@@ -87,7 +89,6 @@
     &.active {
       background: var(--primary-light);
       color: var(--primary);
-      border: 2px solid var(--primary);
 
       svg {
         stroke: var(--primary);
@@ -552,15 +553,6 @@
         font-size: 0.8125rem;
       }
     }
-  }
-}
-
-// Accessibility
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }
 

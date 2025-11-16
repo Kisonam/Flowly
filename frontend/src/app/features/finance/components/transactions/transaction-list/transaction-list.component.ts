@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy, inject, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { ThemeService } from '../../../../../core/services/theme.service';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
 import {
@@ -11,7 +13,6 @@ import {
   TransactionFilter,
   PaginatedResult
 } from '../../../models/finance.models';
-import { Subject, debounceTime, takeUntil } from 'rxjs';
 
 interface SortOption {
   key: 'date' | 'amount' | 'createdAt';
@@ -30,6 +31,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   private tagsService = inject(TagsService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -325,11 +327,23 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
   // Helpers
   getTransactionColor(type: TransactionType): string {
-    return type === 'Income' ? '#10b981' : '#ef4444';
+    const successColor = this.themeService.getCssVarValue('--success', '#10b981');
+    const dangerColor = this.themeService.getCssVarValue('--danger', '#ef4444');
+    return type === 'Income' ? successColor : dangerColor;
   }
 
   getTransactionIcon(type: TransactionType): string {
     return type === 'Income' ? '↑' : '↓';
+  }
+
+  getTagColor(tag: { color?: string | null }): string {
+    if (tag.color) return tag.color;
+    return this.themeService.getCssVarValue('--primary', '#8b5cf6');
+  }
+
+  getCategoryColor(category: { color?: string | null }): string {
+    if (category.color) return category.color;
+    return this.themeService.getCssVarValue('--bg-secondary', '#e5e7eb');
   }
 
   formatAmount(amount: number, currencyCode: string): string {

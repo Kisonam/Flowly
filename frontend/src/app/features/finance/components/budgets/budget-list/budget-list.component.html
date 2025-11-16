@@ -148,7 +148,7 @@
 
       <!-- Category -->
       <div class="budget-category" *ngIf="budget.category">
-        <span class="category-badge" [style.background]="budget.category.color || '#10b981'">
+        <span class="category-badge" [style.background]="getCategoryColor(budget.category)">
           <span *ngIf="budget.category.icon">{{ budget.category.icon }}</span>
           {{ budget.category.name }}
         </span>

@@ -397,21 +397,22 @@
     transition: all 0.2s;
 
     &.btn-primary {
-      background: #4299e1;
-      color: white;
+      background: var(--primary);
+      color: var(--text-inverse);
+      box-shadow: var(--button-shadow);
 
       &:hover {
-        background: #3182ce;
-        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+        background: var(--primary-hover);
+        box-shadow: var(--shadow-md);
       }
     }
 
     &.btn-secondary {
-      background: #e2e8f0;
-      color: #4a5568;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
 
       &:hover {
-        background: #cbd5e0;
+        background: var(--bg-tertiary);
       }
     }
   }
