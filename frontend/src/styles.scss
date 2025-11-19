@@ -44,3 +44,63 @@ p {
   color: var(--text-primary);
   line-height: 1.6;
 }
+
+// ============================================
+// Accessibility Styles
+// ============================================
+
+// Visible focus indicators for keyboard navigation
+*:focus-visible {
+  outline: 3px solid var(--accent-primary, #0066cc);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+// Remove default focus outline for mouse users
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Skip to content link
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent-primary, #0066cc);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  z-index: 10000;
+  border-radius: 0 0 4px 0;
+  transition: top 0.2s;
+
+  &:focus {
+    top: 0;
+    outline: 3px solid white;
+    outline-offset: -3px;
+  }
+}
+
+// Screen reader only content
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Ensure buttons and interactive elements have visible focus
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--accent-primary, #0066cc);
+  outline-offset: 2px;
+}

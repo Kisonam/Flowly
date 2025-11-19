@@ -22,20 +22,12 @@
     <!-- Existing Tags -->
     <div class="tags-list" *ngIf="tags().length > 0">
       <div *ngFor="let tag of tags()" class="tag-item">
-        <button
-          type="button"
-          class="tag-chip"
-          [class.selected]="isSelected(tag.id)"
-          [style.--tag-color]="tag.color || '#6b7280'"
-          (click)="toggleTag(tag.id)">
+        <button type="button" class="tag-chip" [class.selected]="isSelected(tag.id)"
+          [style.--tag-color]="tag.color || '#6b7280'" (click)="toggleTag(tag.id)">
           <i class="bi" [class.bi-check-square-fill]="isSelected(tag.id)" [class.bi-square]="!isSelected(tag.id)"></i>
           <span class="tag-name">{{ tag.name }}</span>
         </button>
-        <button
-          type="button"
-          class="btn-edit"
-          (click)="openEditForm(tag)"
-          title="Edit tag">
+        <button type="button" class="btn-edit" (click)="openEditForm(tag)" title="Edit tag">
           <i class="bi bi-pencil"></i>
         </button>
       </div>
@@ -57,47 +49,25 @@
       <div class="form-body">
         <div class="form-group">
           <label for="create-tag-name">Name</label>
-          <input
-            id="create-tag-name"
-            type="text"
-            [(ngModel)]="createFormData.name"
-            placeholder="e.g., Important, Work, Personal"
-            maxlength="50"
-            (keyup.enter)="createTag()"
-            (keyup.escape)="cancelCreate()"
-          />
+          <input id="create-tag-name" type="text" [(ngModel)]="createFormData.name"
+            placeholder="e.g., Important, Work, Personal" maxlength="50" (keyup.enter)="createTag()"
+            (keyup.escape)="cancelCreate()" />
         </div>
 
         <div class="form-group">
           <label>Color</label>
           <div class="color-palette">
-            <button
-              *ngFor="let color of predefinedColors"
-              type="button"
-              class="color-option"
-              [class.selected]="createFormData.color === color"
-              [style.background]="color"
-              (click)="selectColor(color, true)"
-              [title]="color">
+            <button *ngFor="let color of predefinedColors" type="button" class="color-option"
+              [class.selected]="createFormData.color === color" [style.background]="color"
+              (click)="selectColor(color, true)" [title]="color">
             </button>
           </div>
           <div class="custom-color-input">
             <label for="create-custom-color">Custom Color</label>
             <div class="color-input-wrapper">
-              <input
-                id="create-custom-color"
-                type="color"
-                [(ngModel)]="createFormData.color"
-                class="color-picker"
-              />
-              <input
-                type="text"
-                [(ngModel)]="createFormData.color"
-                placeholder="#8b5cf6"
-                maxlength="7"
-                class="color-hex-input"
-                (keyup.enter)="createTag()"
-              />
+              <input id="create-custom-color" type="color" [(ngModel)]="createFormData.color" class="color-picker" />
+              <input type="text" [(ngModel)]="createFormData.color" placeholder="#8b5cf6" maxlength="7"
+                class="color-hex-input" (keyup.enter)="createTag()" />
             </div>
           </div>
         </div>
@@ -115,11 +85,7 @@
     </div>
 
     <!-- Create Button -->
-    <button
-      *ngIf="!showCreateForm()"
-      type="button"
-      class="btn-create-tag"
-      (click)="openCreateForm()">
+    <button *ngIf="!showCreateForm()" type="button" class="btn-create-tag" (click)="openCreateForm()">
       <i class="bi bi-plus-lg"></i>
       Create New Tag
     </button>
@@ -127,67 +93,44 @@
 
   <!-- Edit Modal -->
   <div *ngIf="showEditForm()" class="modal-overlay" (click)="cancelEdit()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content" appFocusTrap role="dialog" aria-labelledby="edit-tag-title" aria-modal="true"
+      (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h4>Edit Tag</h4>
-        <button type="button" class="btn-close" (click)="cancelEdit()">✕</button>
+        <h4 id="edit-tag-title">Edit Tag</h4>
+        <button type="button" class="btn-close" aria-label="Close dialog" (click)="cancelEdit()">✕</button>
       </div>
 
       <div class="modal-body">
         <div class="form-group">
           <label for="edit-tag-name">Name</label>
-          <input
-            id="edit-tag-name"
-            type="text"
-            [(ngModel)]="editFormData.name"
-            placeholder="Tag name"
-            maxlength="50"
-            (keyup.enter)="updateTag()"
-            (keyup.escape)="cancelEdit()"
-          />
+          <input id="edit-tag-name" type="text" [(ngModel)]="editFormData.name" placeholder="Tag name" maxlength="50"
+            (keyup.enter)="updateTag()" (keyup.escape)="cancelEdit()" />
         </div>
 
         <div class="form-group">
           <label>Color</label>
-          <div class="color-palette">
-            <button
-              *ngFor="let color of predefinedColors"
-              type="button"
-              class="color-option"
-              [class.selected]="editFormData.color === color"
-              [style.background]="color"
-              (click)="selectColor(color, false)"
-              [title]="color">
+          <div class="color-palette" role="group" aria-label="Predefined colors">
+            <button *ngFor="let color of predefinedColors" type="button" class="color-option"
+              [class.selected]="editFormData.color === color" [style.background]="color"
+              [attr.aria-label]="'Select color ' + color" [attr.aria-pressed]="editFormData.color === color"
+              (click)="selectColor(color, false)" [title]="color">
             </button>
           </div>
           <div class="custom-color-input">
             <label for="edit-custom-color">Custom Color</label>
             <div class="color-input-wrapper">
-              <input
-                id="edit-custom-color"
-                type="color"
-                [(ngModel)]="editFormData.color"
-                class="color-picker"
-              />
-              <input
-                type="text"
-                [(ngModel)]="editFormData.color"
-                placeholder="#8b5cf6"
-                maxlength="7"
-                class="color-hex-input"
-                (keyup.enter)="updateTag()"
-              />
+              <input id="edit-custom-color" type="color" [(ngModel)]="editFormData.color" class="color-picker"
+                aria-label="Pick custom color" />
+              <input type="text" [(ngModel)]="editFormData.color" placeholder="#8b5cf6" maxlength="7"
+                class="color-hex-input" aria-label="Custom color hex value" (keyup.enter)="updateTag()" />
             </div>
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-danger"
-          (click)="deleteTag(editingTag()!)">
-          <i class="bi bi-trash"></i>
+        <button type="button" class="btn btn-danger" (click)="deleteTag(editingTag()!)">
+          <i class="bi bi-trash" aria-hidden="true"></i>
           Delete
         </button>
         <div class="footer-right">
@@ -195,7 +138,7 @@
             Cancel
           </button>
           <button type="button" class="btn btn-primary" (click)="updateTag()">
-            <i class="bi bi-check-lg"></i>
+            <i class="bi bi-check-lg" aria-hidden="true"></i>
             Save
           </button>
         </div>

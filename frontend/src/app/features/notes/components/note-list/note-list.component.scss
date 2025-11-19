@@ -236,17 +236,44 @@
 // ============================================
 
 .notes-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
   margin-bottom: 2rem;
+  align-content: flex-start;
 
+  // Швидкі анімації
+  &.cdk-drop-list-dragging .note-card:not(.cdk-drag-placeholder) {
+    transition: transform 80ms ease-out;
+  }
+
+  // Grid view - фіксовані розміри для правильного CDK
+  &:not(.view-list) {
+    .note-card {
+      flex: 0 0 auto;
+      width: calc(33.333% - 1rem);
+      min-width: 280px;
+
+      @media (max-width: 1400px) {
+        width: calc(50% - 0.75rem);
+      }
+
+      @media (max-width: 768px) {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  }
+
+  // List view - вертикальна колонка
   &.view-list {
-    grid-template-columns: 1fr;
+    flex-direction: column;
 
     .note-card {
       display: flex;
       align-items: center;
+      flex: 1 1 auto;
+      max-width: 100%;
 
       .note-header {
         flex: 0 0 300px;
@@ -273,13 +300,71 @@
   border: 1px solid #e5e7eb;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
   position: relative;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-color: #8b5cf6;
+  }
+
+  // CDK Drag - миттєві анімації
+  &.cdk-drag {
+    cursor: grab;
+    transition: none;
+
+    &.cdk-drag-disabled {
+      cursor: pointer; // Звичайний курсор в grid view
+    }
+  }
+
+  &.cdk-drag-preview {
+    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.5);
+    opacity: 0.9;
+    transform: rotate(3deg) scale(1.05);
+    cursor: grabbing;
+    border: 2px solid #8b5cf6;
+    background: white;
+    z-index: 9999 !important;
+    position: relative;
+  }
+
+  &.cdk-drag-animating {
+    transition: transform 80ms ease-out;
+  }
+
+  &.cdk-drag-placeholder {
+    opacity: 0;
+  }
+}
+
+.note-placeholder {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+  border: 3px dashed #8b5cf6;
+  border-radius: 16px;
+  min-height: 200px;
+  transition: all 100ms cubic-bezier(0.2, 0, 0, 1);
+  position: relative;
+  animation: pulse-note 1.2s ease-in-out infinite;
+
+  &::before {
+    content: '📍';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 2rem;
+  }
+}
+
+@keyframes pulse-note {
+  0%, 100% {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+  }
+  50% {
+    border-color: #a78bfa;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.08));
   }
 }
 
@@ -644,5 +729,21 @@ button[title="Restore"]::before { content: "🔄"; }
   .pagination {
     width: 100%;
     justify-content: center;
+  }
+}
+
+// ============================================
+// CDK Drag & Drop Global Fixes
+// ============================================
+
+// Переконуємось що preview завжди зверху
+:host ::ng-deep {
+  .cdk-drag-preview {
+    z-index: 9999 !important;
+  }
+
+  .cdk-drop-list {
+    position: relative;
+    z-index: 1;
   }
 }

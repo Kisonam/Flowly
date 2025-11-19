@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, inject, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { User } from '../../features/auth/models/user.model';
@@ -41,7 +41,7 @@ export class NavbarComponent implements OnInit {
   ];
 
   readonly modules = [
-    { id: 'overview', icon: 'target', label: 'Огляд', route: '/home' },
+    { id: 'overview', icon: 'target', label: 'Огляд', route: '/dashboard' },
     { id: 'notes', icon: 'file-text', label: 'Нотатки', route: '/notes' },
     { id: 'tasks', icon: 'check-square', label: 'Завдання', route: '/tasks' },
     { id: 'finance', icon: 'dollar-sign', label: 'Фінанси', route: '/finance' },
@@ -131,5 +131,18 @@ export class NavbarComponent implements OnInit {
 
   get selectedLanguage(): LanguageOption {
     return this.languages.find(l => l.code === this.currentLanguage) || this.languages[0];
+  }
+
+  /**
+   * Handle Escape key to close dropdowns
+   */
+  @HostListener('document:keydown.escape')
+  handleEscapeKey(): void {
+    if (this.showUserMenu) {
+      this.closeUserMenu();
+    }
+    if (this.showLanguageMenu) {
+      this.closeLanguageMenu();
+    }
   }
 }

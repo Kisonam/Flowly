@@ -1,0 +1,153 @@
+:host {
+  display: block;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  height: 100%;
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #111827;
+  }
+}
+
+.note-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.note-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.note-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+  gap: 0.75rem;
+
+  &:hover {
+    .note-title {
+      color: #8b5cf6;
+    }
+  }
+}
+
+.note-content {
+  flex: 1;
+}
+
+.note-title {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s;
+}
+
+.note-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8125rem;
+}
+
+.note-date {
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+.note-updated {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.bi-chevron-right {
+  color: #9ca3af;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #9ca3af;
+
+  p {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+  }
+
+  small {
+    font-size: 0.75rem;
+  }
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  &.btn-outline-primary {
+    background: white;
+    color: #667eea;
+    border: 1px solid #667eea;
+
+    &:hover {
+      background: #667eea;
+      color: white;
+    }
+  }
+}
+
+// Theme support
+:host-context(.theme-low-stimulus) {
+  .note-link:hover .note-title {
+    color: #6b7280;
+  }
+
+  .btn.btn-outline-primary {
+    color: #6b7280;
+    border-color: #6b7280;
+
+    &:hover {
+      background: #6b7280;
+      color: white;
+    }
+  }
+}

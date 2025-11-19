@@ -1,0 +1,74 @@
+@if (stats) {
+  <div class="activity-stats-grid">
+    <!-- Active Tasks Block -->
+    <div class="stat-block tasks">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.activeTasksCount }}</h3>
+        <p class="stat-label">Активні завдання</p>
+      </div>
+    </div>
+
+    <!-- Notes Block -->
+    <div class="stat-block notes">
+      <div class="stat-icon">📝</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.notesCount }}</h3>
+        <p class="stat-label">Нотатки</p>
+      </div>
+    </div>
+
+    <!-- Transactions Block -->
+    <div class="stat-block transactions">
+      <div class="stat-icon">💰</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.transactionsCount }}</h3>
+        <p class="stat-label">Транзакції (місяць)</p>
+      </div>
+    </div>
+
+    <!-- Productivity Block -->
+    <div class="stat-block productivity" [style.--productivity-color]="getProductivityColor()">
+      <div class="stat-icon">{{ getProductivityIcon() }}</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.productivityScore }}%</h3>
+        <p class="stat-label">Продуктивність</p>
+        <span class="productivity-level">{{ stats.productivityLevel }}</span>
+      </div>
+
+      <!-- Productivity Breakdown Tooltip -->
+      <div class="productivity-breakdown">
+        <div class="breakdown-item">
+          <span class="breakdown-label">Завершення завдань:</span>
+          <span class="breakdown-value">{{ stats.productivityBreakdown.taskCompletionRate | number:'1.0-0' }}%</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-label">Активність нотаток:</span>
+          <span class="breakdown-value">{{ stats.productivityBreakdown.notesActivityScore | number:'1.0-0' }}%</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-label">Фінансовий облік:</span>
+          <span class="breakdown-value">{{ stats.productivityBreakdown.financialTrackingScore | number:'1.0-0' }}%</span>
+        </div>
+        <hr>
+        <div class="breakdown-item">
+          <span class="breakdown-label">Створено завдань:</span>
+          <span class="breakdown-value">{{ stats.productivityBreakdown.tasksCreatedThisMonth }}</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-label">Виконано завдань:</span>
+          <span class="breakdown-value">{{ stats.productivityBreakdown.tasksCompletedThisMonth }}</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-label">Створено нотаток:</span>
+          <span class="breakdown-value">{{ stats.productivityBreakdown.notesCreatedThisMonth }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Завантаження статистики...</p>
+  </div>
+}

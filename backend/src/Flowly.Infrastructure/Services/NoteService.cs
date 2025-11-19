@@ -153,10 +153,10 @@ public class NoteService : INoteService
             note.UpdatedAt = DateTime.UtcNow;
         }
 
-        // Update group if provided
-        if (dto.GroupId != null)
+        // Update group if provided (including null to ungroup)
+        if (dto.GroupId.HasValue)
         {
-            note.NoteGroupId = dto.GroupId;
+            note.NoteGroupId = dto.GroupId.Value == Guid.Empty ? null : dto.GroupId;
             note.UpdatedAt = DateTime.UtcNow;
         }
 

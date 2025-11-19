@@ -1,16 +1,18 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { NotesService } from '../../services/notes.service';
 import { NoteGroupsService } from '../../services/note-groups.service';
 import { Note } from '../../models/note.models';
 import { NoteGroup } from '../../models/note-group.models';
+import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 
 @Component({
   selector: 'app-notes-board',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DragDropModule, FocusTrapDirective],
   templateUrl: './notes-board.component.html',
   styleUrl: './notes-board.component.scss'
 })
@@ -26,10 +28,6 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
 
   isLoading = false;
   errorMessage = '';
-
-  // Drag state
-  draggedNote: Note | null = null;
-  draggedGroup: NoteGroup | null = null;
 
   // Modal state
   showGroupModal = false;
@@ -141,72 +139,116 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Drag & Drop for columns
-  onGroupDragStart(group: NoteGroup): void {
-    this.draggedGroup = group;
-  }
+  // CDK Drag & Drop for groups (columns)
+  onGroupsDrop(event: CdkDragDrop<NoteGroup[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
 
-  onGroupDragOver(event: DragEvent, overGroup: NoteGroup): void {
-    event.preventDefault();
-    if (!this.draggedGroup || this.draggedGroup.id === overGroup.id) return;
-  }
+    moveItemInArray(this.groups, event.previousIndex, event.currentIndex);
 
-  onGroupDrop(event: DragEvent, targetGroup: NoteGroup): void {
-    event.preventDefault();
-    if (!this.draggedGroup || this.draggedGroup.id === targetGroup.id) return;
-
-    const fromIdx = this.groups.findIndex(g => g.id === this.draggedGroup!.id);
-    const toIdx = this.groups.findIndex(g => g.id === targetGroup.id);
-    if (fromIdx === -1 || toIdx === -1) return;
-
-    const moved = this.groups.splice(fromIdx, 1)[0];
-    this.groups.splice(toIdx, 0, moved);
-
-    this.reorderGroups();
-    this.draggedGroup = null;
-  }
-
-  reorderGroups(): void {
+    // Update order on backend
     const updates = this.groups.map((g, idx) =>
       this.groupsService.updateGroup(g.id, { order: idx })
     );
+
     forkJoin(updates).pipe(takeUntil(this.destroy$)).subscribe({
-      error: (err) => console.error('Failed to reorder groups:', err)
+      next: () => console.log('✅ Groups reordered'),
+      error: (err) => {
+        console.error('Failed to reorder groups:', err);
+        // Revert on error
+        moveItemInArray(this.groups, event.currentIndex, event.previousIndex);
+        alert(err.message || 'Failed to reorder groups');
+      }
     });
   }
 
-  // Drag & Drop for notes
-  onNoteDragStart(note: Note): void {
-    this.draggedNote = note;
-  }
+  // CDK Drag & Drop for notes
+  onNoteDrop(event: CdkDragDrop<Note[]>, targetGroupId: string | null): void {
+    const note: Note | undefined = event.item.data as Note;
+    if (!note) return;
 
-  onNoteDragOver(event: DragEvent): void {
-    event.preventDefault();
-  }
+    const oldGroupId = note.groupId || null;
 
-  onNoteDrop(event: DragEvent, targetGroupId: string | null): void {
-    event.preventDefault();
-    if (!this.draggedNote) return;
-
-    const oldGroupId = this.draggedNote.groupId || null;
+    // If dropped in same group, just reorder
     if (oldGroupId === targetGroupId) {
-      this.draggedNote = null;
+      if (event.previousIndex === event.currentIndex) return;
+
+      const notes = targetGroupId ? this.notesMap.get(targetGroupId) || [] : this.ungroupedNotes;
+      moveItemInArray(notes, event.previousIndex, event.currentIndex);
+
+      if (targetGroupId) {
+        this.notesMap.set(targetGroupId, notes);
+      } else {
+        this.ungroupedNotes = [...notes]; // Update ungrouped reference
+      }
       return;
     }
 
-    this.notesService.updateNote(this.draggedNote.id, { groupId: targetGroupId || undefined })
+    // Move note to different group
+    const sourceNotes = oldGroupId ? this.notesMap.get(oldGroupId) || [] : [...this.ungroupedNotes];
+    const targetNotes = targetGroupId ? this.notesMap.get(targetGroupId) || [] : [...this.ungroupedNotes];
+
+    // Optimistic UI update
+    transferArrayItem(sourceNotes, targetNotes, event.previousIndex, event.currentIndex);
+
+    // Update note's groupId locally
+    note.groupId = targetGroupId || undefined;
+
+    // Update maps/arrays
+    if (oldGroupId) {
+      this.notesMap.set(oldGroupId, sourceNotes);
+    } else {
+      this.ungroupedNotes = sourceNotes;
+    }
+
+    if (targetGroupId) {
+      this.notesMap.set(targetGroupId, targetNotes);
+    } else {
+      this.ungroupedNotes = targetNotes;
+    }
+
+    // Update on backend
+    const updatePayload = targetGroupId
+      ? { groupId: targetGroupId }
+      : { groupId: '00000000-0000-0000-0000-000000000000' };
+
+    this.notesService.updateNote(note.id, updatePayload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.draggedNote = null;
-          this.loadBoard();
-        },
+        next: () => console.log('✅ Note moved'),
         error: (error) => {
           console.error('Failed to move note:', error);
+
+          // Revert note's groupId
+          note.groupId = oldGroupId || undefined;
+
+          // Revert arrays
+          transferArrayItem(targetNotes, sourceNotes, event.currentIndex, event.previousIndex);
+
+          if (oldGroupId) {
+            this.notesMap.set(oldGroupId, sourceNotes);
+          } else {
+            this.ungroupedNotes = sourceNotes;
+          }
+
+          if (targetGroupId) {
+            this.notesMap.set(targetGroupId, targetNotes);
+          } else {
+            this.ungroupedNotes = targetNotes;
+          }
+
           alert(error.message || 'Failed to move note');
-          this.draggedNote = null;
         }
       });
+  }
+
+  // Helper methods for CDK
+  getDropListIds(): string[] {
+    const groupIds = this.groups.map(g => `group-${g.id}`);
+    return ['group-ungrouped', ...groupIds];
+  }
+
+  getListId(groupId: string | null): string {
+    return groupId ? `group-${groupId}` : 'group-ungrouped';
   }
 
   openNote(noteId: string): void {
@@ -226,6 +268,16 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       return text.substring(0, maxLength) + '...';
     }
     return text;
+  }
+
+  /**
+   * Handle Escape key to close modal
+   */
+  @HostListener('document:keydown.escape')
+  handleEscapeKey(): void {
+    if (this.showGroupModal) {
+      this.closeGroupModal();
+    }
   }
 }
 

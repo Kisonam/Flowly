@@ -1,0 +1,38 @@
+<div class="chart-card">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>📝 Останні нотатки</h3>
+    <a routerLink="/notes" class="btn btn-sm btn-outline-primary">Всі</a>
+  </div>
+  <div>
+    @if (notes && notes.length > 0) {
+      <ul class="note-list">
+        @for (note of notes; track note.id) {
+          <li class="note-item">
+            <a [routerLink]="['/notes', note.id]" class="note-link">
+              <div class="note-content">
+                <h6 class="note-title">{{ note.title }}</h6>
+                <div class="note-meta">
+                  <span class="note-date">
+                    <i class="bi bi-clock"></i>
+                    {{ formatDate(note.createdAt) }}
+                  </span>
+                  @if (note.updatedAt !== note.createdAt) {
+                    <span class="note-updated text-muted">
+                      Updated {{ formatDate(note.updatedAt) }}
+                    </span>
+                  }
+                </div>
+              </div>
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        }
+      </ul>
+    } @else {
+      <div class="empty-state">
+        <p>Немає нотаток</p>
+        <small>Почніть створювати нотатки</small>
+      </div>
+    }
+  </div>
+</div>

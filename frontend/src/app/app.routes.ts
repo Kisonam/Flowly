@@ -23,7 +23,7 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: HomeComponent,
+    loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => m.dashboardRoutes),
     canActivate: [authGuard]
   },
   {

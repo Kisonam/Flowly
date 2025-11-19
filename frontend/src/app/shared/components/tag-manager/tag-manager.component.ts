@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, inject, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, OnInit, signal, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Tag } from '../../../features/notes/models/note.models';
 import { TagsService, CreateTagRequest, UpdateTagRequest } from '../../services/tags.service';
 import { Subject, takeUntil } from 'rxjs';
+import { FocusTrapDirective } from '../../directives/focus-trap.directive';
 
 /**
  * Tag Manager Component
@@ -14,7 +15,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-tag-manager',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FocusTrapDirective],
   templateUrl: './tag-manager.component.html',
   styleUrls: ['./tag-manager.component.scss']
 })
@@ -236,6 +237,18 @@ export class TagManagerComponent implements OnInit {
       this.createFormData.color = color;
     } else {
       this.editFormData.color = color;
+    }
+  }
+
+  /**
+   * Handle Escape key to close modals
+   */
+  @HostListener('document:keydown.escape')
+  handleEscapeKey(): void {
+    if (this.showEditForm()) {
+      this.cancelEdit();
+    } else if (this.showCreateForm()) {
+      this.cancelCreate();
     }
   }
 }

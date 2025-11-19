@@ -1,0 +1,90 @@
+@if (stats) {
+  <!-- Finance Summary Cards -->
+  <div class="finance-summary">
+    <div class="summary-card">
+      <p>Дохід</p>
+      <h2>₴{{ stats.totalIncome | number:'1.0-0' }}</h2>
+      <div class="trend-badge positive">
+        <span>↗</span> +{{ stats.averageDailyIncome | number:'1.0-0' }}/день
+      </div>
+    </div>
+    <div class="summary-card">
+      <p>Витрати</p>
+      <h2>₴{{ stats.totalExpense | number:'1.0-0' }}</h2>
+      <div class="trend-badge negative">
+        <span>↗</span> +{{ stats.averageDailyExpense | number:'1.0-0' }}/день
+      </div>
+    </div>
+    <div class="summary-card featured">
+      <p>Баланс</p>
+      <h2>₴{{ stats.netAmount | number:'1.0-0' }}</h2>
+      <div class="trend-badge">
+        <span>{{ stats.netAmount >= 0 ? '↗' : '↘' }}</span> {{ stats.netAmount >= 0 ? '+' : '' }}{{ (stats.netAmount / stats.totalIncome * 100) | number:'1.1-1' }}%
+      </div>
+    </div>
+  </div>
+
+  <!-- Finance Chart -->
+  <div class="finance-chart">
+    <h3>Фінансова статистика</h3>
+
+    <div class="chart-legend">
+      <div class="legend-item">
+        <div class="legend-color income"></div>
+        <span>Дохід</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color expense"></div>
+        <span>Витрати</span>
+      </div>
+    </div>
+
+    <!-- Top Categories -->
+    <div class="categories-grid">
+      <div class="category-section">
+        <h4>Топ витрат</h4>
+        <div class="category-list">
+          @for (cat of topExpenseCategories; track cat.categoryName) {
+            <div class="category-item">
+              <div class="category-header">
+                <span>{{ cat.categoryName }}</span>
+                <span class="amount">₴{{ cat.totalAmount | number:'1.0-0' }}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill expense" [style.width.%]="cat.percentage"></div>
+              </div>
+            </div>
+          }
+          @empty {
+            <p class="empty-text">Немає витрат</p>
+          }
+        </div>
+      </div>
+
+      <div class="category-section">
+        <h4>Топ доходів</h4>
+        <div class="category-list">
+          @for (cat of topIncomeCategories; track cat.categoryName) {
+            <div class="category-item">
+              <div class="category-header">
+                <span>{{ cat.categoryName }}</span>
+                <span class="amount">₴{{ cat.totalAmount | number:'1.0-0' }}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill income" [style.width.%]="cat.percentage"></div>
+              </div>
+            </div>
+          }
+          @empty {
+            <p class="empty-text">Немає доходів</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Завантаження...</p>
+  </div>
+}

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { NotesService } from '../../services/notes.service';
 import { TagsService } from '../../../../shared/services/tags.service';
@@ -10,7 +11,7 @@ import { Note, NoteFilter, PaginatedResult } from '../../models/note.models';
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DragDropModule],
   templateUrl: './note-list.component.html',
   styleUrls: ['./note-list.component.scss']
 })
@@ -39,7 +40,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
   errorMessage = '';
   viewMode: 'grid' | 'list' = 'grid';
   showFilters = false;
-  private dragSourceId: string | null = null;
 
   // Tags for filter (loaded from backend)
   availableTags: { id: string; name: string; color?: string }[] = [];
@@ -99,7 +99,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this.paginatedResult = result;
-          this.notes = this.applySavedOrder(result.items);
+          this.notes = result.items;
           this.isLoading = false;
         },
         error: (error) => {
@@ -111,67 +111,12 @@ export class NoteListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Drag & Drop ordering (client-side, per page)
+   * CDK Drag & Drop ordering (client-side only, not persisted)
    */
-  onDragStart(noteId: string): void {
-    this.dragSourceId = noteId;
-  }
+  onNoteDrop(event: CdkDragDrop<Note[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
 
-  onDragOver(event: DragEvent, overNoteId: string): void {
-    event.preventDefault();
-    event.dataTransfer?.dropEffect && (event.dataTransfer.dropEffect = 'move');
-  }
-
-  onDrop(event: DragEvent, dropNoteId: string): void {
-    event.preventDefault();
-    if (!this.dragSourceId || this.dragSourceId === dropNoteId) return;
-
-    const fromIndex = this.notes.findIndex(n => n.id === this.dragSourceId);
-    const toIndex = this.notes.findIndex(n => n.id === dropNoteId);
-    if (fromIndex === -1 || toIndex === -1) return;
-
-    const moved = this.notes.splice(fromIndex, 1)[0];
-    this.notes.splice(toIndex, 0, moved);
-
-    this.saveOrder();
-    this.dragSourceId = null;
-  }
-
-  private getOrderStorageKey(): string {
-    const base = this.filter.isArchived ? 'archived' : 'active';
-    // Keyed by page to keep it simple
-    return `notes_order_${base}_p${this.filter.page}_s${this.filter.pageSize}`;
-  }
-
-  private saveOrder(): void {
-    const key = this.getOrderStorageKey();
-    const order = this.notes.map(n => n.id);
-    localStorage.setItem(key, JSON.stringify(order));
-  }
-
-  private applySavedOrder(items: Note[]): Note[] {
-    const key = this.getOrderStorageKey();
-    const json = localStorage.getItem(key);
-    if (!json) return items;
-    try {
-      const order: string[] = JSON.parse(json);
-      const map = new Map(items.map(i => [i.id, i] as const));
-      const ordered: Note[] = [];
-      for (const id of order) {
-        const item = map.get(id);
-        if (item) {
-          ordered.push(item);
-          map.delete(id);
-        }
-      }
-      // Append any new items not in saved order
-      for (const rest of map.values()) {
-        ordered.push(rest);
-      }
-      return ordered;
-    } catch {
-      return items;
-    }
+    moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
   }
 
   /**

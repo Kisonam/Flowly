@@ -4,11 +4,7 @@
   <!-- Header -->
   <div class="editor-header">
     <div class="header-left">
-      <button
-        type="button"
-        class="btn-back"
-        (click)="onCancel()"
-        title="Back to notes">
+      <button type="button" class="btn-back" (click)="onCancel()" title="Back to notes">
         Back
       </button>
       <h1 class="editor-title">
@@ -18,51 +14,29 @@
 
     <div class="header-actions">
       <!-- View Mode Toggles -->
-      <div class="view-toggles">
-        <button
-          type="button"
-          class="btn-toggle"
-          [class.active]="!isPreviewMode && !isSplitView"
-          (click)="isPreviewMode = false; isSplitView = false"
-          title="Editor only">
-          ✍️ Editor
-        </button>
-        <button
-          type="button"
-          class="btn-toggle"
-          [class.active]="isSplitView"
-          (click)="toggleSplitView()"
-          title="Split view">
-          ↔️ Split
-        </button>
-        <button
-          type="button"
-          class="btn-toggle"
-          [class.active]="isPreviewMode"
-          (click)="togglePreview()"
-          title="Preview only">
-          👁️ Preview
-        </button>
-      </div>
+      <button type="button" class="btn-secondary" [class.active]="isPreviewMode && !isSplitView"
+        aria-label="Preview mode" (click)="togglePreview()" title="Preview only">
+        👁️ Preview
+      </button>
+      <button type="button" class="btn-secondary" [class.active]="isSplitView" aria-label="Split view mode"
+        (click)="toggleSplitView()" title="Split view">
+        ↔️ Split
+      </button>
+      <button type="button" class="btn-secondary" [class.active]="!isPreviewMode && !isSplitView"
+        aria-label="Editor mode" (click)="isPreviewMode = false; isSplitView = false" title="Editor only">
+        ✍️ Editor
+      </button>
 
       <!-- Save Status -->
-      <div class="save-status" *ngIf="lastSavedTime">
+      <div class="save-status" *ngIf="lastSavedTime" role="status" aria-live="polite">
         ✅ <span class="save-time">Saved {{ lastSavedTime | date: 'short' }}</span>
       </div>
 
       <!-- Actions -->
-      <button
-        type="button"
-        class="btn-secondary"
-        (click)="onCancel()"
-        [disabled]="isSaving">
+      <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSaving">
         Cancel
       </button>
-      <button
-        type="button"
-        class="btn-primary"
-        (click)="onSubmit()"
-        [disabled]="noteForm.invalid || isSaving">
+      <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="noteForm.invalid || isSaving">
         <span *ngIf="!isSaving">{{ isEditMode ? 'Update' : 'Create' }}</span>
         <span *ngIf="isSaving">⏳ Saving...</span>
       </button>
@@ -87,10 +61,7 @@
     <aside class="editor-sidebar">
       <!-- Tags Section -->
       <div class="sidebar-section">
-        <app-tag-manager
-          [title]="'Tags'"
-          [selectedIds]="selectedTagIds"
-          (selectedIdsChange)="onTagsChanged($event)"
+        <app-tag-manager [title]="'Tags'" [selectedIds]="selectedTagIds" (selectedIdsChange)="onTagsChanged($event)"
           (tagsUpdated)="loadAvailableTags()">
         </app-tag-manager>
       </div>
@@ -104,13 +75,8 @@
         <div *ngIf="!noteId" class="info-message">
           💡 Збережіть нотатку, щоб додати посилання
         </div>
-        <app-link-selector
-          *ngIf="noteId"
-          [entityType]="LinkEntityType.Note"
-          [entityId]="noteId"
-          [title]="''"
-          (linkCreated)="onLinkCreated($event)"
-          (linkDeleted)="onLinkDeleted($event)">
+        <app-link-selector *ngIf="noteId" [entityType]="LinkEntityType.Note" [entityId]="noteId" [title]="''"
+          (linkCreated)="onLinkCreated($event)" (linkDeleted)="onLinkDeleted($event)">
         </app-link-selector>
       </div>
 
@@ -121,24 +87,15 @@
           Images
         </h3>
 
-        <div
-          class="drop-zone"
-          [class.dragging]="isDragging"
-          (dragover)="onDragOver($event)"
-          (dragleave)="onDragLeave($event)"
-          (drop)="onDrop($event)">
+        <div class="drop-zone" [class.dragging]="isDragging" (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
           <i class="bi bi-cloud-upload drop-icon"></i>
           <p class="drop-text">Drag & drop images here</p>
           <p class="drop-subtext">or</p>
           <label class="btn-upload">
             <i class="bi bi-upload"></i>
             Browse Files
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              (change)="onFileSelected($event)"
-              style="display: none;">
+            <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" style="display: none;">
           </label>
         </div>
 
@@ -156,11 +113,7 @@
     <div class="editor-main">
       <!-- Title Input -->
       <div class="form-group">
-        <input
-          type="text"
-          class="form-control title-input"
-          formControlName="title"
-          placeholder="Note title..."
+        <input type="text" class="form-control title-input" formControlName="title" placeholder="Note title..."
           [class.invalid]="titleControl?.invalid && titleControl?.touched">
         <div class="error-message" *ngIf="titleControl?.invalid && titleControl?.touched">
           <span *ngIf="titleControl?.errors?.['required']">Title is required</span>
@@ -172,10 +125,7 @@
       <div class="editor-preview-container" [class.split-view]="isSplitView">
         <!-- Markdown Editor -->
         <div class="markdown-editor" *ngIf="!isPreviewMode">
-          <textarea
-            class="form-control markdown-textarea"
-            formControlName="markdown"
-            placeholder="Write your note in Markdown...
+          <textarea class="form-control markdown-textarea" formControlName="markdown" placeholder="Write your note in Markdown...
 
 **Bold text**
 *Italic text*
@@ -188,8 +138,7 @@
 ```
 code block
 ```
-"
-            [class.invalid]="markdownControl?.invalid && markdownControl?.touched">
+" [class.invalid]="markdownControl?.invalid && markdownControl?.touched">
           </textarea>
           <div class="error-message" *ngIf="markdownControl?.invalid && markdownControl?.touched">
             <span *ngIf="markdownControl?.errors?.['required']">Content is required</span>
@@ -199,9 +148,7 @@ code block
         <!-- Markdown Preview -->
         <div class="markdown-preview" *ngIf="isPreviewMode || isSplitView">
           <div class="preview-label">Preview</div>
-          <div
-            class="preview-content markdown-body"
-            [innerHTML]="markdownPreview">
+          <div class="preview-content markdown-body" [innerHTML]="markdownPreview">
           </div>
         </div>
       </div>

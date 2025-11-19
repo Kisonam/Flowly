@@ -37,6 +37,9 @@ public static class ApplicationServicesConfiguration
         // Export Service
         services.AddScoped<IExportService, ExportService>();
 
+        // Dashboard Service
+        services.AddScoped<IDashboardService, DashboardService>();
+
         return services;
     }
 }

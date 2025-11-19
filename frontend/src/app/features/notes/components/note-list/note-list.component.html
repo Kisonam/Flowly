@@ -9,26 +9,15 @@
     </div>
 
     <div class="header-actions">
-      <button
-        class="btn btn-secondary"
-        (click)="router.navigate(['/notes/board'])"
-        title="Board view"
-      >
+      <button class="btn btn-secondary" (click)="router.navigate(['/notes/board'])" title="Board view">
         Board View
       </button>
 
-      <button
-        class="btn btn-secondary"
-        (click)="toggleViewMode()"
-        title="Toggle view mode"
-      >
+      <button class="btn btn-secondary" (click)="toggleViewMode()" title="Toggle view mode">
         {{ viewMode === 'list' ? 'Grid View' : 'List View' }}
       </button>
 
-      <button
-        class="btn btn-primary"
-        (click)="createNote()"
-      >
+      <button class="btn btn-primary" (click)="createNote()">
         ➕ Quick Create
       </button>
     </div>
@@ -38,38 +27,24 @@
   <div class="filters-bar">
     <div class="search-box">
       <span class="search-icon" aria-hidden="true">🔎</span>
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Search notes..."
-        [ngModel]="filter.search"
-        (ngModelChange)="onSearchChange($event)"
-      >
-      <button
-        class="btn-clear"
-        *ngIf="filter.search"
-        (click)="filter.search = ''; onSearchChange('')"
-      >
+      <input type="text" class="form-control" placeholder="Search notes..." aria-label="Search notes"
+        [ngModel]="filter.search" (ngModelChange)="onSearchChange($event)" />
+      <button class="btn-clear" *ngIf="filter.search" (click)="filter.search = ''; onSearchChange('')">
         ✖
       </button>
     </div>
 
-    <button
-      class="btn btn-outline-secondary"
-      (click)="toggleFilters()"
-      [class.active]="showFilters"
-    >
+
+    <button class="btn btn-outline-secondary" (click)="toggleFilters()" [class.active]="showFilters"
+      aria-label="Toggle filters" [attr.aria-expanded]="showFilters">
       Filters
       <span class="badge" *ngIf="filter.tagIds && filter.tagIds.length > 0">
         {{ filter.tagIds.length }}
       </span>
     </button>
 
-    <button
-      class="btn btn-link"
-      *ngIf="filter.search || (filter.tagIds && filter.tagIds.length > 0)"
-      (click)="clearFilters()"
-    >
+    <button class="btn btn-link" *ngIf="filter.search || (filter.tagIds && filter.tagIds.length > 0)"
+      (click)="clearFilters()">
       Clear all
     </button>
   </div>
@@ -79,13 +54,8 @@
     <div class="filter-section">
       <label class="filter-label">Filter by Tags</label>
       <div class="tags-filter">
-        <button
-          *ngFor="let tag of availableTags"
-          class="tag-chip"
-          [class.selected]="isTagSelected(tag.id)"
-          [style.--tag-color]="tag.color"
-          (click)="toggleTagFilter(tag.id)"
-        >
+        <button *ngFor="let tag of availableTags" class="tag-chip" [class.selected]="isTagSelected(tag.id)"
+          [style.--tag-color]="tag.color" (click)="toggleTagFilter(tag.id)">
           <span *ngIf="isTagSelected(tag.id)" aria-hidden="true">✓</span>
           {{ tag.name }}
         </button>
@@ -121,52 +91,30 @@
     </button>
   </div>
 
-  <!-- Notes Grid/List -->
-  <div class="notes-container" *ngIf="!isLoading && notes.length > 0" [class.view-list]="viewMode === 'list'">
-    <div
-      *ngFor="let note of notes"
-      class="note-card"
-      draggable="true"
-      (dragstart)="onDragStart(note.id)"
-      (dragover)="onDragOver($event, note.id)"
-      (drop)="onDrop($event, note.id)"
-      (click)="viewNote(note.id)"
-    >
+  <!-- Notes Grid/List with CDK Drag & Drop (only in list view) -->
+  <div class="notes-container" *ngIf="!isLoading && notes.length > 0" [class.view-list]="viewMode === 'list'"
+    cdkDropList [cdkDropListData]="notes" [cdkDropListDisabled]="viewMode !== 'list'"
+    (cdkDropListDropped)="onNoteDrop($event)">
+    <div *ngFor="let note of notes; let i = index" class="note-card" cdkDrag [cdkDragDisabled]="viewMode !== 'list'"
+      (click)="viewNote(note.id)">
+      <div class="note-placeholder" *cdkDragPlaceholder></div>
       <!-- Note Header -->
       <div class="note-header">
         <h3 class="note-title">{{ note.title }}</h3>
         <div class="note-actions">
-          <button
-            class="btn-icon"
-            (click)="editNote(note.id, $event)"
-            title="Edit"
-          >
+          <button class="btn-icon" (click)="editNote(note.id, $event)" title="Edit">
             ✏️ Edit
           </button>
 
-          <button
-            class="btn-icon"
-            (click)="exportNote(note.id, $event)"
-            title="Export"
-          >
+          <button class="btn-icon" (click)="exportNote(note.id, $event)" title="Export">
             ⬇️ Export
           </button>
 
-          <button
-            class="btn-icon"
-            *ngIf="!note.isArchived"
-            (click)="archiveNote(note.id, $event)"
-            title="Archive"
-          >
+          <button class="btn-icon" *ngIf="!note.isArchived" (click)="archiveNote(note.id, $event)" title="Archive">
             🗄️ Archive
           </button>
 
-          <button
-            class="btn-icon"
-            *ngIf="note.isArchived"
-            (click)="restoreNote(note.id, $event)"
-            title="Restore"
-          >
+          <button class="btn-icon" *ngIf="note.isArchived" (click)="restoreNote(note.id, $event)" title="Restore">
             🔄 Restore
           </button>
         </div>
@@ -180,11 +128,8 @@
       <!-- Note Footer -->
       <div class="note-footer">
         <div class="note-tags">
-          <span
-            *ngFor="let tag of note.tags.slice(0, 3)"
-            class="tag-badge"
-            [style.--tag-color]="tag.color || '#6b7280'"
-          >
+          <span *ngFor="let tag of note.tags.slice(0, 3)" class="tag-badge"
+            [style.--tag-color]="tag.color || '#6b7280'">
             {{ tag.name }}
           </span>
           <span class="tag-badge more" *ngIf="note.tags.length > 3">
@@ -211,41 +156,27 @@
     </div>
 
     <div class="pagination">
-      <button
-        class="btn btn-pagination"
-        [disabled]="!paginatedResult.hasPreviousPage"
-        (click)="goToPage(paginatedResult.page - 1)"
-      >
+      <button class="btn btn-pagination" [disabled]="!paginatedResult.hasPreviousPage"
+        (click)="goToPage(paginatedResult.page - 1)">
         ← Previous
       </button>
 
       <div class="pagination-numbers">
-        <button
-          *ngFor="let page of getPaginationArray()"
-          class="btn btn-page"
-          [class.active]="page === paginatedResult.page"
-          (click)="goToPage(page)"
-        >
+        <button *ngFor="let page of getPaginationArray()" class="btn btn-page"
+          [class.active]="page === paginatedResult.page" (click)="goToPage(page)">
           {{ page }}
         </button>
       </div>
 
-      <button
-        class="btn btn-pagination"
-        [disabled]="!paginatedResult.hasNextPage"
-        (click)="goToPage(paginatedResult.page + 1)"
-      >
+      <button class="btn btn-pagination" [disabled]="!paginatedResult.hasNextPage"
+        (click)="goToPage(paginatedResult.page + 1)">
         Next →
       </button>
     </div>
 
     <div class="page-size-selector">
       <label>Show:</label>
-      <select
-        class="form-select form-select-sm"
-        [ngModel]="filter.pageSize"
-        (ngModelChange)="changePageSize($event)"
-      >
+      <select class="form-select form-select-sm" [ngModel]="filter.pageSize" (ngModelChange)="changePageSize($event)">
         <option [value]="12">12</option>
         <option [value]="24">24</option>
         <option [value]="48">48</option>

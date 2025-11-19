@@ -24,85 +24,77 @@
     <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadBoard()">Retry</button>
   </div>
 
-  <!-- Board -->
-  <div class="board-columns" *ngIf="!isLoading && !errorMessage">
-    <!-- Ungrouped column -->
-    <div class="column" 
-         (dragover)="onNoteDragOver($event)" 
-         (drop)="onNoteDrop($event, null)">
-      <div class="column-header">
-        <h3 class="column-title">No Group</h3>
-        <span class="column-count">{{ ungroupedNotes.length }}</span>
-      </div>
-      <div class="column-content">
-        <div *ngFor="let note of ungroupedNotes" 
-             class="card" 
-             draggable="true"
-             (dragstart)="onNoteDragStart(note)"
-             (click)="openNote(note.id)">
-          <h4 class="card-title">{{ note.title }}</h4>
-          <p class="card-preview">{{ getPreview(note.markdown) }}</p>
-          <div class="card-tags">
-            <span *ngFor="let tag of note.tags.slice(0, 2)" 
-                  class="tag-badge"
-                  [style.--tag-color]="tag.color || '#6b7280'">
-              {{ tag.name }}
-            </span>
-            <span class="tag-badge more" *ngIf="note.tags.length > 2">
-              +{{ note.tags.length - 2 }}
-            </span>
+  <!-- Board with CDK Drag & Drop -->
+  <div class="board-wrapper" *ngIf="!isLoading && !errorMessage" cdkDropList cdkDropListOrientation="horizontal"
+    [cdkDropListData]="groups" (cdkDropListDropped)="onGroupsDrop($event)">
+    <div class="board-columns" cdkDropListGroup>
+      <!-- Ungrouped column -->
+      <div class="column">
+        <div class="column-header">
+          <h3 class="column-title">No Group</h3>
+          <span class="column-count">{{ ungroupedNotes.length }}</span>
+        </div>
+        <div class="column-content" cdkDropList [id]="getListId(null)" [cdkDropListData]="ungroupedNotes"
+          [cdkDropListConnectedTo]="getDropListIds()" (cdkDropListDropped)="onNoteDrop($event, null)">
+          <div *ngFor="let note of ungroupedNotes" class="card" cdkDrag [cdkDragData]="note"
+            (click)="openNote(note.id)">
+            <div class="card-placeholder" *cdkDragPlaceholder></div>
+            <h4 class="card-title">{{ note.title }}</h4>
+            <p class="card-preview">{{ getPreview(note.markdown) }}</p>
+            <div class="card-tags">
+              <span *ngFor="let tag of note.tags.slice(0, 2)" class="tag-badge"
+                [style.--tag-color]="tag.color || '#6b7280'">
+                {{ tag.name }}
+              </span>
+              <span class="tag-badge more" *ngIf="note.tags.length > 2">
+                +{{ note.tags.length - 2 }}
+              </span>
+            </div>
+          </div>
+          <div class="empty-state" *ngIf="ungroupedNotes.length === 0">
+            <p>No ungrouped notes</p>
           </div>
         </div>
-        <div class="empty-state" *ngIf="ungroupedNotes.length === 0">
-          <p>No ungrouped notes</p>
-        </div>
       </div>
-    </div>
 
-    <!-- Group columns -->
-    <div *ngFor="let group of groups" 
-         class="column" 
-         draggable="true"
-         (dragstart)="onGroupDragStart(group)"
-         (dragover)="onGroupDragOver($event, group)"
-         (drop)="onGroupDrop($event, group)">
-      <div class="column-header" [style.border-color]="group.color">
-        <div class="column-left">
-          <h3 class="column-title">{{ group.title }}</h3>
-          <span class="column-count">{{ getNotesForGroup(group.id).length }}</span>
-        </div>
-        <div class="column-actions">
-          <button class="btn-icon" (click)="openGroupModal(group)" title="Edit">
-            <i class="bi bi-pencil"></i>
-          </button>
-          <button class="btn-icon" (click)="deleteGroup(group.id)" title="Delete">
-            <i class="bi bi-trash"></i>
-          </button>
-        </div>
-      </div>
-      <div class="column-content" 
-           (dragover)="onNoteDragOver($event)" 
-           (drop)="onNoteDrop($event, group.id)">
-        <div *ngFor="let note of getNotesForGroup(group.id)" 
-             class="card" 
-             draggable="true"
-             (dragstart)="onNoteDragStart(note)"
-             (click)="openNote(note.id)">
-          <h4 class="card-title">{{ note.title }}</h4>
-          <p class="card-preview">{{ getPreview(note.markdown) }}</p>
-          <div class="card-tags">
-            <span *ngFor="let tag of note.tags.slice(0, 2)" 
-                  class="tag-badge"
-                  [style.--tag-color]="tag.color || '#6b7280'">
-              {{ tag.name }}
-            </span>
-            <span class="tag-badge more" *ngIf="note.tags.length > 2">
-              +{{ note.tags.length - 2 }}
-            </span>
+      <!-- Group columns -->
+      <div *ngFor="let group of groups" class="column" cdkDrag>
+        <div class="column-header" [style.border-color]="group.color">
+          <div class="column-left">
+            <span class="drag-handle">⋮⋮</span>
+            <h3 class="column-title">{{ group.title }}</h3>
+            <span class="column-count">{{ getNotesForGroup(group.id).length }}</span>
+          </div>
+          <div class="column-actions">
+            <button class="btn-icon" (click)="openGroupModal(group)" title="Edit">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn-icon" (click)="deleteGroup(group.id)" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
         </div>
-        <div class="empty-state" *ngIf="getNotesForGroup(group.id).length === 0">
-          <p>Drop notes here</p>
+        <div class="column-content" cdkDropList [id]="getListId(group.id)"
+          [cdkDropListData]="getNotesForGroup(group.id)" [cdkDropListConnectedTo]="getDropListIds()"
+          (cdkDropListDropped)="onNoteDrop($event, group.id)">
+          <div *ngFor="let note of getNotesForGroup(group.id)" class="card" cdkDrag [cdkDragData]="note"
+            (click)="openNote(note.id)">
+            <div class="card-placeholder" *cdkDragPlaceholder></div>
+            <h4 class="card-title">{{ note.title }}</h4>
+            <p class="card-preview">{{ getPreview(note.markdown) }}</p>
+            <div class="card-tags">
+              <span *ngFor="let tag of note.tags.slice(0, 2)" class="tag-badge"
+                [style.--tag-color]="tag.color || '#6b7280'">
+                {{ tag.name }}
+              </span>
+              <span class="tag-badge more" *ngIf="note.tags.length > 2">
+                +{{ note.tags.length - 2 }}
+              </span>
+            </div>
+          </div>
+          <div class="empty-state" *ngIf="getNotesForGroup(group.id).length === 0">
+            <p>Drop notes here</p>
+          </div>
         </div>
       </div>
     </div>
@@ -111,26 +103,27 @@
 
 <!-- Group Modal -->
 <div class="modal-overlay" *ngIf="showGroupModal" (click)="closeGroupModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
+  <div class="modal-content" appFocusTrap role="dialog" aria-labelledby="group-modal-title" aria-modal="true"
+    (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>{{ editingGroup ? 'Edit Group' : 'New Group' }}</h2>
-      <button class="btn-close" (click)="closeGroupModal()">
-        <i class="bi bi-x"></i>
+      <h2 id="group-modal-title">{{ editingGroup ? 'Edit Group' : 'New Group' }}</h2>
+      <button class="btn-close" aria-label="Close dialog" (click)="closeGroupModal()">
+        <i class="bi bi-x" aria-hidden="true"></i>
       </button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label>Group Title</label>
-        <input type="text" class="form-control" [(ngModel)]="groupForm.title" placeholder="e.g., Work Notes" />
+        <label for="group-title-input">Group Title</label>
+        <input id="group-title-input" type="text" class="form-control" [(ngModel)]="groupForm.title"
+          placeholder="e.g., Work Notes" />
       </div>
       <div class="form-group">
         <label>Color</label>
-        <div class="color-picker">
-          <button *ngFor="let color of predefinedColors" 
-                  class="color-btn" 
-                  [class.selected]="groupForm.color === color"
-                  [style.background-color]="color"
-                  (click)="groupForm.color = color"></button>
+        <div class="color-picker" role="group" aria-label="Group color selection">
+          <button *ngFor="let color of predefinedColors" type="button" class="color-btn"
+            [class.selected]="groupForm.color === color" [style.background-color]="color"
+            [attr.aria-label]="'Select color ' + color" [attr.aria-pressed]="groupForm.color === color"
+            (click)="groupForm.color = color"></button>
         </div>
       </div>
     </div>

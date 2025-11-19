@@ -8,13 +8,8 @@
     <!-- Right Section: All Buttons -->
     <div class="navbar-right">
       <!-- Theme Button -->
-      <button
-        class="icon-btn theme-btn"
-        [class.active]="currentTheme === 'low-stimulus'"
-        aria-label="Toggle Theme"
-        (click)="toggleTheme()"
-        [title]="currentTheme === 'normal' ? 'Перейти на Low Stimulus' : 'Перейти на Normal'"
-      >
+      <button class="icon-btn theme-btn" [class.active]="currentTheme === 'low-stimulus'" aria-label="Toggle Theme"
+        (click)="toggleTheme()" [title]="currentTheme === 'normal' ? 'Перейти на Low Stimulus' : 'Перейти на Normal'">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="7" height="9" rx="1"></rect>
           <rect x="14" y="3" width="7" height="5" rx="1"></rect>
@@ -25,12 +20,10 @@
 
       <!-- Language Button -->
       <div class="language-menu-container">
-        <button
-          class="icon-btn lang-btn"
-          aria-label="Language"
-          (click)="toggleLanguageMenu()"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="icon-btn lang-btn" aria-label="Select language" aria-haspopup="true"
+          [attr.aria-expanded]="showLanguageMenu" (click)="toggleLanguageMenu()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            aria-hidden="true">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="2" y1="12" x2="22" y2="12"></line>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
@@ -38,34 +31,23 @@
         </button>
 
         <!-- Language Dropdown -->
-        <div class="language-dropdown" *ngIf="showLanguageMenu">
+        <div class="language-dropdown" *ngIf="showLanguageMenu" role="menu" aria-label="Language selection">
           <div class="dropdown-header">
             <span class="dropdown-title">Виберіть мову</span>
           </div>
 
           <div class="dropdown-divider"></div>
 
-          <button
-            *ngFor="let lang of languages"
-            class="dropdown-item language-item"
+          <button *ngFor="let lang of languages" class="dropdown-item language-item" role="menuitem"
             [class.active]="currentLanguage === lang.code"
-            (click)="selectLanguage(lang.code)"
-          >
-            <span class="language-flag">{{ lang.flag }}</span>
+            [attr.aria-current]="currentLanguage === lang.code ? 'true' : null" (click)="selectLanguage(lang.code)">
+            <span class="language-flag" aria-hidden="true">{{ lang.flag }}</span>
             <div class="language-info">
               <span class="language-native">{{ lang.nativeName }}</span>
               <span class="language-name">{{ lang.name }}</span>
             </div>
-            <svg
-              *ngIf="currentLanguage === lang.code"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              class="check-icon"
-            >
+            <svg *ngIf="currentLanguage === lang.code" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" class="check-icon" aria-hidden="true">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           </button>
@@ -74,24 +56,17 @@
 
       <!-- User Avatar with Dropdown -->
       <div class="user-menu-container">
-        <button
-          class="user-avatar"
-          aria-label="User Profile"
-          (click)="toggleUserMenu()"
-        >
-          <img
-            *ngIf="currentUser?.avatarUrl"
-            [src]="currentUser!.avatarUrl"
-            [alt]="currentUser!.displayName"
-            class="avatar-image"
-          />
-          <span *ngIf="!currentUser?.avatarUrl" class="avatar-initials">
+        <button class="user-avatar" aria-label="User menu" aria-haspopup="true" [attr.aria-expanded]="showUserMenu"
+          (click)="toggleUserMenu()">
+          <img *ngIf="currentUser?.avatarUrl" [src]="currentUser!.avatarUrl" [alt]="currentUser!.displayName"
+            class="avatar-image" />
+          <span *ngIf="!currentUser?.avatarUrl" class="avatar-initials" aria-hidden="true">
             {{ userInitials }}
           </span>
         </button>
 
         <!-- Dropdown Menu -->
-        <div class="user-dropdown" *ngIf="showUserMenu" (click)="closeUserMenu()">
+        <div class="user-dropdown" *ngIf="showUserMenu" role="menu" aria-label="User menu" (click)="closeUserMenu()">
           <div class="dropdown-header">
             <div class="user-info">
               <p class="user-name">{{ currentUser?.displayName }}</p>
@@ -101,18 +76,21 @@
 
           <div class="dropdown-divider"></div>
 
-          <button class="dropdown-item" (click)="navigateToSettings()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="dropdown-item" role="menuitem" (click)="navigateToSettings()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
               <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 1v6m0 6v6m5.2-13.2 4.3 4.3m-4.3 5.7 4.3 4.3M1 12h6m6 0h6M4.9 4.9l4.3 4.3m5.7 5.7 4.3 4.3"></path>
+              <path d="M12 1v6m0 6v6m5.2-13.2 4.3 4.3m-4.3 5.7 4.3 4.3M1 12h6m6 0h6M4.9 4.9l4.3 4.3m5.7 5.7 4.3 4.3">
+              </path>
             </svg>
             <span>Налаштування</span>
           </button>
 
           <div class="dropdown-divider"></div>
 
-          <button class="dropdown-item logout" (click)="logout()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="dropdown-item logout" role="menuitem" (click)="logout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
               <polyline points="16 17 21 12 16 7"></polyline>
               <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -125,48 +103,27 @@
   </div>
 
   <!-- Backdrop for closing menu -->
-  <div
-    class="menu-backdrop"
-    *ngIf="showUserMenu || showLanguageMenu"
-    (click)="showUserMenu ? closeUserMenu() : closeLanguageMenu()"
-  ></div>
+  <div class="menu-backdrop" *ngIf="showUserMenu || showLanguageMenu"
+    (click)="showUserMenu ? closeUserMenu() : closeLanguageMenu()"></div>
 </header>
 
 <!-- Navigation Tabs -->
-<nav class="tabs-container">
-  <div class="tabs">
-    <button
-      *ngFor="let module of modules"
-      class="tab"
-      [class.active]="activeModule === module.id"
-      [attr.data-active]="activeModule === module.id"
-      (click)="setActiveModule(module.id)"
-    >
+<nav class="tabs-container" aria-label="Main navigation">
+  <div class="tabs" role="tablist">
+    <button *ngFor="let module of modules" class="tab" role="tab" [class.active]="activeModule === module.id"
+      [attr.data-active]="activeModule === module.id" [attr.aria-selected]="activeModule === module.id"
+      [attr.aria-label]="module.label" (click)="setActiveModule(module.id)">
       <!-- Tab Icon -->
       <span class="tab-icon">
-        <svg
-          *ngIf="module.icon === 'target'"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg *ngIf="module.icon === 'target'" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10"></circle>
           <circle cx="12" cy="12" r="6"></circle>
           <circle cx="12" cy="12" r="2"></circle>
         </svg>
 
-        <svg
-          *ngIf="module.icon === 'file-text'"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg *ngIf="module.icon === 'file-text'" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
           <polyline points="14 2 14 8 20 8"></polyline>
           <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -174,41 +131,20 @@
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
 
-        <svg
-          *ngIf="module.icon === 'check-square'"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg *ngIf="module.icon === 'check-square'" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
           <polyline points="9 11 12 14 22 4"></polyline>
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
         </svg>
 
-        <svg
-          *ngIf="module.icon === 'dollar-sign'"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg *ngIf="module.icon === 'dollar-sign'" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
           <line x1="12" y1="1" x2="12" y2="23"></line>
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
         </svg>
 
-        <svg
-          *ngIf="module.icon === 'archive'"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg *ngIf="module.icon === 'archive'" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
           <polyline points="21 8 21 21 3 21 3 8"></polyline>
           <rect x="1" y="3" width="22" height="5"></rect>
           <line x1="10" y1="12" x2="14" y2="12"></line>

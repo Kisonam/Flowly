@@ -31,6 +31,12 @@
   padding: 4rem 0;
 }
 
+.board-wrapper {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
 .board-columns {
   display: flex;
   gap: 1.25rem;
@@ -46,14 +52,23 @@
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s;
-
-  &[draggable="true"] {
-    cursor: move;
-  }
+  transition: all 0.3s ease;
+  cursor: move;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  // CDK Drag animations - дуже швидкі
+  &.cdk-drag-preview {
+    box-shadow: 0 12px 32px rgba(139, 92, 246, 0.3);
+    opacity: 0.9;
+    transform: rotate(3deg);
+    border: 2px solid #8b5cf6;
+  }
+
+  &.cdk-drag-animating {
+    transition: transform 120ms cubic-bezier(0.2, 0, 0, 1);
   }
 }
 
@@ -68,6 +83,17 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .drag-handle {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    cursor: grab;
+    user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 
   .column-title {
@@ -99,6 +125,17 @@
   flex-direction: column;
   gap: 0.75rem;
   min-height: 100px;
+  transition: background-color 0.2s ease;
+
+  // Highlight drop zone
+  &.cdk-drop-list-dragging {
+    background: rgba(139, 92, 246, 0.05);
+  }
+
+  &.cdk-drop-list-receiving {
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: 8px;
+  }
 }
 
 .card {
@@ -107,20 +144,32 @@
   border-radius: 8px;
   padding: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
   }
 
-  &[draggable="true"] {
+  // CDK Drag animations - швидкі та наглядні
+  &.cdk-drag {
     cursor: grab;
+  }
 
-    &:active {
-      cursor: grabbing;
-      opacity: 0.5;
-    }
+  &.cdk-drag-preview {
+    box-shadow: 0 12px 36px rgba(139, 92, 246, 0.4);
+    opacity: 0.9;
+    transform: rotate(4deg) scale(1.03);
+    cursor: grabbing;
+    border: 2px solid #8b5cf6;
+  }
+
+  &.cdk-drag-animating {
+    transition: transform 120ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  &.cdk-drag-placeholder {
+    opacity: 0;
   }
 
   .card-title {
@@ -141,6 +190,37 @@
     display: flex;
     gap: 0.375rem;
     flex-wrap: wrap;
+  }
+}
+
+// Placeholder для перетягуваної картки - яскравий та наглядний
+.card-placeholder {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+  border: 3px dashed #8b5cf6;
+  border-radius: 8px;
+  min-height: 80px;
+  transition: all 100ms cubic-bezier(0.2, 0, 0, 1);
+  position: relative;
+  animation: pulse-card 1.2s ease-in-out infinite;
+
+  &::before {
+    content: '📍';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 1.5rem;
+  }
+}
+
+@keyframes pulse-card {
+  0%, 100% {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+  }
+  50% {
+    border-color: #a78bfa;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.08));
   }
 }
 
@@ -282,5 +362,34 @@
 
   &:hover {
     background: #f3f4f6;
+  }
+}
+
+// ============================================
+// CDK Drag & Drop Global Animations
+// ============================================
+
+// Smooth list reordering - дуже швидко
+.cdk-drop-list {
+  &.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {
+    transition: transform 100ms cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+
+// Column drag animations
+.cdk-drag-preview.column {
+  .column-content {
+    max-height: 200px;
+    overflow: hidden;
+  }
+}
+
+// Animate empty state when dragging
+.empty-state {
+  transition: all 0.3s ease;
+
+  .cdk-drop-list-dragging & {
+    border-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.05);
   }
 }

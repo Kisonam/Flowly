@@ -2,13 +2,16 @@
   <!-- Header -->
   <div class="editor-header">
     <div class="header-left">
-  <button type="button" class="btn-back" (click)="onCancel()" title="Back to tasks">Back</button>
+      <button type="button" class="btn-back" (click)="onCancel()" title="Back to tasks">Back</button>
       <h1 class="editor-title">{{ isEdit ? 'Edit Task' : 'New Task' }}</h1>
     </div>
     <div class="header-actions">
-      <button type="button" class="btn-secondary" (click)="togglePreview()" [class.active]="isPreviewMode && !isSplitView">👁️ Preview</button>
-      <button type="button" class="btn-secondary" (click)="toggleSplitView()" [class.active]="isSplitView">↔️ Split</button>
-      <button type="button" class="btn-secondary" (click)="isPreviewMode=false; isSplitView=false" [class.active]="!isPreviewMode && !isSplitView">✍️ Editor</button>
+      <button type="button" class="btn-secondary" (click)="togglePreview()" aria-label="Preview mode"
+        [class.active]="isPreviewMode && !isSplitView">👁️ Preview</button>
+      <button type="button" class="btn-secondary" (click)="toggleSplitView()" aria-label="Split view mode"
+        [class.active]="isSplitView">↔️ Split</button>
+      <button type="button" class="btn-secondary" (click)="isPreviewMode=false; isSplitView=false"
+        aria-label="Editor mode" [class.active]="!isPreviewMode && !isSplitView">✍️ Editor</button>
       <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="saving">Cancel</button>
       <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="saving || form.invalid">
         <span *ngIf="!saving">{{ isEdit ? 'Update' : 'Create' }}</span>
@@ -23,11 +26,16 @@
       <div class="sidebar-section">
         <h3 class="sidebar-title">Meta</h3>
         <label class="form-field">Status
-          <select formControlName="status"><option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option></select>
+          <select formControlName="status">
+            <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+          </select>
         </label>
         <label class="form-field">Priority
-          <select formControlName="priority"><option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</option></select>
-          <span class="priority-badge" *ngIf="form.controls['priority'].value" [attr.data-priority]="form.controls['priority'].value.toLowerCase()">
+          <select formControlName="priority">
+            <option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</option>
+          </select>
+          <span class="priority-badge" *ngIf="form.controls['priority'].value"
+            [attr.data-priority]="form.controls['priority'].value.toLowerCase()">
             {{ form.controls['priority'].value }}
           </span>
         </label>
@@ -45,10 +53,7 @@
 
       <!-- Tags Section -->
       <div class="sidebar-section">
-        <app-tag-manager
-          [title]="'Tags'"
-          [selectedIds]="selectedTagIds"
-          (selectedIdsChange)="onTagsChanged($event)"
+        <app-tag-manager [title]="'Tags'" [selectedIds]="selectedTagIds" (selectedIdsChange)="onTagsChanged($event)"
           (tagsUpdated)="loadAvailableTags()">
         </app-tag-manager>
       </div>
@@ -79,13 +84,8 @@
         <div *ngIf="!taskId" class="info-message">
           💡 Збережіть задачу, щоб додати посилання
         </div>
-        <app-link-selector
-          *ngIf="taskId"
-          [entityType]="LinkEntityType.Task"
-          [entityId]="taskId"
-          [title]="''"
-          (linkCreated)="onLinkCreated($event)"
-          (linkDeleted)="onLinkDeleted($event)">
+        <app-link-selector *ngIf="taskId" [entityType]="LinkEntityType.Task" [entityId]="taskId" [title]="''"
+          (linkCreated)="onLinkCreated($event)" (linkDeleted)="onLinkDeleted($event)">
         </app-link-selector>
       </div>
     </aside>
@@ -98,7 +98,8 @@
       </div>
       <div class="editor-preview-container" [class.split-view]="isSplitView">
         <div class="markdown-editor" *ngIf="!isPreviewMode">
-          <textarea formControlName="description" class="markdown-textarea" placeholder="Write task description in Markdown..."></textarea>
+          <textarea formControlName="description" class="markdown-textarea"
+            placeholder="Write task description in Markdown..."></textarea>
         </div>
         <div class="markdown-preview" *ngIf="isPreviewMode || isSplitView">
           <div class="preview-label">Preview</div>
