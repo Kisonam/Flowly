@@ -2,13 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FinanceService } from '../../../services/finance.service';
 import { Budget, Category, Currency, CreateBudgetRequest, UpdateBudgetRequest } from '../../../models/finance.models';
 
 @Component({
   selector: 'app-budget-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './budget-editor.component.html',
   styleUrl: './budget-editor.component.scss'
 })
@@ -17,6 +18,7 @@ export class BudgetEditorComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private financeService = inject(FinanceService);
+  private translate = inject(TranslateService);
 
   budgetForm!: FormGroup;
   budgetId: string | null = null;
@@ -79,7 +81,7 @@ export class BudgetEditorComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to load categories:', error);
-        this.errorMessage = 'Failed to load categories. Please refresh the page.';
+        this.errorMessage = this.translate.instant('FINANCE.BUDGETS.ERRORS.LOAD_FAILED');
         this.loadingCategories = false;
       }
     });
@@ -117,7 +119,7 @@ export class BudgetEditorComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Failed to load budget:', error);
-        this.errorMessage = 'Failed to load budget. Please try again.';
+        this.errorMessage = this.translate.instant('FINANCE.BUDGETS.ERRORS.LOAD_FAILED');
         this.isLoading = false;
       }
     });
@@ -188,7 +190,7 @@ export class BudgetEditorComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to create budget:', error);
-        this.errorMessage = error.error?.message || 'Failed to create budget. Please try again.';
+        this.errorMessage = error.error?.message || this.translate.instant('FINANCE.CATEGORIES.ERRORS.CREATE_FAILED');
         this.isSaving = false;
       }
     });
@@ -213,7 +215,7 @@ export class BudgetEditorComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to update budget:', error);
-        this.errorMessage = error.error?.message || 'Failed to update budget. Please try again.';
+        this.errorMessage = error.error?.message || this.translate.instant('FINANCE.CATEGORIES.ERRORS.UPDATE_FAILED');
         this.isSaving = false;
       }
     });
@@ -253,16 +255,16 @@ export class BudgetEditorComponent implements OnInit {
     if (!control || !control.errors) return '';
 
     if (control.errors['required']) {
-      return 'This field is required';
+      return this.translate.instant('FINANCE.EDITOR.ERRORS.REQUIRED');
     }
     if (control.errors['min']) {
-      return `Minimum value is ${control.errors['min'].min}`;
+      return this.translate.instant('FINANCE.EDITOR.ERRORS.MIN_VALUE', { min: control.errors['min'].min });
     }
-    if (control.errors['maxLength']) {
-      return `Maximum length is ${control.errors['maxLength'].requiredLength} characters`;
+    if (control.errors['maxlength']) {
+      return this.translate.instant('FINANCE.EDITOR.ERRORS.MAX_LENGTH', { length: control.errors['maxlength'].requiredLength });
     }
 
-    return 'Invalid value';
+    return this.translate.instant('FINANCE.EDITOR.ERRORS.INVALID');
   }
 
   hasDateRangeError(): boolean {

@@ -1,13 +1,13 @@
 <div class="category-manager-container">
   <!-- Header -->
   <div class="module-header">
-    <h2>📂 Categories</h2>
+    <h2>📂 {{ 'FINANCE.CATEGORIES.TITLE' | translate }}</h2>
     <div class="header-actions">
       <button class="btn btn-secondary" routerLink="/finance/transactions">
-        <span>💰</span> Transactions
+        <span>💰</span> {{ 'FINANCE.CATEGORIES.TRANSACTIONS_BUTTON' | translate }}
       </button>
       <button class="btn btn-primary" (click)="openCreateForm()">
-        <span>+</span> Add Category
+        <span>+</span> {{ 'FINANCE.CATEGORIES.ADD_BUTTON' | translate }}
       </button>
     </div>
   </div>
@@ -15,7 +15,7 @@
   <!-- Loading -->
   <div *ngIf="loading" class="loading">
     <div class="spinner"></div>
-    <p>Loading categories...</p>
+    <p>{{ 'FINANCE.CATEGORIES.LOADING' | translate }}</p>
   </div>
 
   <!-- Error -->
@@ -25,10 +25,7 @@
 
   <!-- Categories Grid -->
   <div *ngIf="!loading && !showForm" class="categories-grid">
-    <div
-      *ngFor="let category of categories"
-      class="category-card"
-      [class.predefined]="isPredefinedCategory(category)">
+    <div *ngFor="let category of categories" class="category-card" [class.predefined]="isPredefinedCategory(category)">
       <!-- Header with icon and color -->
       <div class="category-header" [style.background]="category.color || '#10b981'">
         <span class="category-icon">{{ category.icon || '📁' }}</span>
@@ -38,16 +35,18 @@
       <div class="category-body">
         <h3 class="category-name">{{ category.name }}</h3>
         <span *ngIf="isPredefinedCategory(category)" class="predefined-badge">
-          🔒 System
+          🔒 {{ 'FINANCE.CATEGORIES.BADGE_SYSTEM' | translate }}
         </span>
       </div>
 
       <!-- Actions -->
       <div class="category-actions" *ngIf="!isPredefinedCategory(category)">
-        <button class="btn-icon edit" (click)="openEditForm(category)" title="Edit">
+        <button class="btn-icon edit" (click)="openEditForm(category)"
+          [title]="'FINANCE.CATEGORIES.FORM.TITLE_EDIT' | translate">
           ✏️
         </button>
-        <button class="btn-icon delete" (click)="deleteCategory(category)" title="Delete">
+        <button class="btn-icon delete" (click)="deleteCategory(category)"
+          [title]="'FINANCE.CATEGORIES.ERRORS.DELETE_CONFIRM' | translate:{name: category.name}">
           🗑️
         </button>
       </div>
@@ -56,10 +55,10 @@
     <!-- Empty state -->
     <div *ngIf="categories.length === 0" class="empty-state">
       <div class="empty-icon">📂</div>
-      <h3>No categories yet</h3>
-      <p>Create your first category to organize transactions</p>
+      <h3>{{ 'FINANCE.CATEGORIES.EMPTY.TITLE' | translate }}</h3>
+      <p>{{ 'FINANCE.CATEGORIES.EMPTY.DESC' | translate }}</p>
       <button class="btn btn-primary" (click)="openCreateForm()">
-        Add Category
+        {{ 'FINANCE.CATEGORIES.EMPTY.BUTTON' | translate }}
       </button>
     </div>
   </div>
@@ -69,7 +68,8 @@
     <div class="form-card">
       <!-- Form Header -->
       <div class="form-header">
-        <h3>{{ editMode ? 'Edit Category' : 'Create Category' }}</h3>
+        <h3>{{ (editMode ? 'FINANCE.CATEGORIES.FORM.TITLE_EDIT' : 'FINANCE.CATEGORIES.FORM.TITLE_CREATE') | translate }}
+        </h3>
         <button class="btn-close" (click)="closeForm()" title="Close">✕</button>
       </div>
 
@@ -77,15 +77,11 @@
       <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
         <!-- Name -->
         <div class="form-group">
-          <label for="name">Category Name <span class="required">*</span></label>
-          <input
-            type="text"
-            id="name"
-            formControlName="name"
-            placeholder="e.g., Groceries"
-            class="input-field"
-            [class.error]="categoryForm.get('name')?.touched && categoryForm.get('name')?.invalid"
-          />
+          <label for="name">{{ 'FINANCE.CATEGORIES.FORM.NAME_LABEL' | translate }} <span
+              class="required">*</span></label>
+          <input type="text" id="name" formControlName="name"
+            [placeholder]="'FINANCE.CATEGORIES.FORM.NAME_PLACEHOLDER' | translate" class="input-field"
+            [class.error]="categoryForm.get('name')?.touched && categoryForm.get('name')?.invalid" />
           <div class="error-text" *ngIf="getFieldError('name')">
             {{ getFieldError('name') }}
           </div>
@@ -93,14 +89,10 @@
 
         <!-- Icon Selector -->
         <div class="form-group">
-          <label>Icon</label>
+          <label>{{ 'FINANCE.CATEGORIES.FORM.ICON_LABEL' | translate }}</label>
           <div class="icon-grid">
-            <button
-              *ngFor="let icon of ICON_OPTIONS"
-              type="button"
-              class="icon-option"
-              [class.selected]="selectedIcon === icon"
-              (click)="selectIcon(icon)">
+            <button *ngFor="let icon of ICON_OPTIONS" type="button" class="icon-option"
+              [class.selected]="selectedIcon === icon" (click)="selectIcon(icon)">
               {{ icon }}
             </button>
           </div>
@@ -108,15 +100,10 @@
 
         <!-- Color Selector -->
         <div class="form-group">
-          <label>Color</label>
+          <label>{{ 'FINANCE.CATEGORIES.FORM.COLOR_LABEL' | translate }}</label>
           <div class="color-grid">
-            <button
-              *ngFor="let color of COLOR_OPTIONS"
-              type="button"
-              class="color-option"
-              [class.selected]="selectedColor === color"
-              [style.background]="color"
-              (click)="selectColor(color)">
+            <button *ngFor="let color of COLOR_OPTIONS" type="button" class="color-option"
+              [class.selected]="selectedColor === color" [style.background]="color" (click)="selectColor(color)">
               <span *ngIf="selectedColor === color">✓</span>
             </button>
           </div>
@@ -124,14 +111,15 @@
 
         <!-- Preview -->
         <div class="preview-section">
-          <label>Preview</label>
+          <label>{{ 'FINANCE.CATEGORIES.FORM.PREVIEW_LABEL' | translate }}</label>
           <div class="category-preview">
             <div class="preview-card">
               <div class="preview-header" [style.background]="selectedColor">
                 <span class="preview-icon">{{ selectedIcon }}</span>
               </div>
               <div class="preview-body">
-                <p class="preview-name">{{ categoryForm.get('name')?.value || 'Category Name' }}</p>
+                <p class="preview-name">{{ categoryForm.get('name')?.value ||
+                  ('FINANCE.CATEGORIES.FORM.PREVIEW_NAME_DEFAULT' | translate) }}</p>
               </div>
             </div>
           </div>
@@ -140,13 +128,10 @@
         <!-- Actions -->
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" (click)="closeForm()">
-            Cancel
+            {{ 'FINANCE.CATEGORIES.FORM.CANCEL' | translate }}
           </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="categoryForm.invalid">
-            {{ editMode ? 'Update' : 'Create' }}
+          <button type="submit" class="btn btn-primary" [disabled]="categoryForm.invalid">
+            {{ (editMode ? 'FINANCE.CATEGORIES.FORM.UPDATE' : 'FINANCE.CATEGORIES.FORM.CREATE') | translate }}
           </button>
         </div>
       </form>

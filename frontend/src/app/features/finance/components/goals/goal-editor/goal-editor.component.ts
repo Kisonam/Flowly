@@ -2,13 +2,14 @@ import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FinancialGoal, CreateGoalRequest, UpdateGoalRequest, Currency } from '../../../models/finance.models';
 import { FinanceService } from '../../../services/finance.service';
 
 @Component({
   selector: 'app-goal-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './goal-editor.component.html',
   styleUrl: './goal-editor.component.scss'
 })
@@ -21,6 +22,7 @@ export class GoalEditorComponent implements OnInit {
   private financeService = inject(FinanceService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
 
   goalForm!: FormGroup;
   isEditMode = false;
@@ -178,7 +180,7 @@ export class GoalEditorComponent implements OnInit {
         error: (err) => {
           console.error('Failed to update goal:', err);
           this.saving = false;
-          alert('Помилка при оновленні цілі: ' + (err.error?.message || err.message));
+          alert(this.translate.instant('FINANCE.GOALS.ERRORS.UPDATE_FAILED'));
         }
       });
     } else {
@@ -206,7 +208,7 @@ export class GoalEditorComponent implements OnInit {
         error: (err) => {
           console.error('Failed to create goal:', err);
           this.saving = false;
-          alert('Помилка при створенні цілі: ' + (err.error?.message || err.message));
+          alert(this.translate.instant('FINANCE.GOALS.ERRORS.CREATE_FAILED'));
         }
       });
     }
@@ -226,11 +228,17 @@ export class GoalEditorComponent implements OnInit {
     const control = this.goalForm.get(controlName);
     if (!control || !control.errors || !control.touched) return null;
 
-    if (control.errors['required']) return `${controlName} обов'язкове`;
-    if (control.errors['min']) return `Мінімальне значення: ${control.errors['min'].min}`;
-    if (control.errors['maxLength']) return `Максимум ${control.errors['maxLength'].requiredLength} символів`;
-
-    return null;
+    if (control.errors['required']) return this.translate.instant('FINANCE.GOALS.EDITOR.ERRORS.REQUIRED');
+    if (control.errors['min']) return this.translate.instant('FINANCE.GOALS.EDITOR.ERRORS.MIN_VALUE', { min: control.errors['min'].min });
+    if (control.errors['maxlength']) return this.translate.instant('FINANCE.EDITOR.ERRORS.MAX_LENGTH', { max: control.errors['maxlength'].requiredLength }); // Reusing generic editor error if available or create new.
+    // I don't have MAX_LENGTH in GOALS.EDITOR.ERRORS. I'll use generic INVALID or add it.
+    // I added FINANCE.EDITOR.ERRORS.MAX_LENGTH in budget editor task. I can reuse it if it's in FINANCE.EDITOR.
+    // Let's check en.json. Yes, FINANCE.EDITOR.ERRORS.MAX_LENGTH exists.
+    // Wait, FINANCE.EDITOR is for Transaction Editor? No, it's generic FINANCE.EDITOR.
+    // Actually, I added FINANCE.EDITOR.ERRORS.MAX_LENGTH in budget editor task.
+    // Let's use FINANCE.EDITOR.ERRORS.MAX_LENGTH.
+    
+    return this.translate.instant('FINANCE.GOALS.EDITOR.ERRORS.INVALID');
   }
 
   get minDate(): string {

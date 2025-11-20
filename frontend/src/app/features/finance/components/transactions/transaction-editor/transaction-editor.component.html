@@ -3,16 +3,16 @@
   <div class="editor-header">
     <div class="header-left">
       <button class="btn-back" (click)="onCancel()">
-        ← Back
+        ← {{ 'FINANCE.EDITOR.BACK' | translate }}
       </button>
-      <h2>{{ isEdit ? 'Edit Transaction' : 'New Transaction' }}</h2>
+      <h2>{{ (isEdit ? 'FINANCE.EDITOR.TITLE_EDIT' : 'FINANCE.EDITOR.TITLE_NEW') | translate }}</h2>
     </div>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading transaction...</p>
+    <p>{{ 'FINANCE.EDITOR.LOADING' | translate }}</p>
   </div>
 
   <!-- Error Message -->
@@ -27,22 +27,19 @@
 
       <!-- Main Card -->
       <div class="form-card">
-        <h3>Transaction Details</h3>
+        <h3>{{ 'FINANCE.TRANSACTIONS.TITLE' | translate }}</h3>
 
         <!-- Type Toggle -->
         <div class="form-group type-toggle-group">
-          <label class="form-label">Type *</label>
+          <label class="form-label">{{ 'FINANCE.EDITOR.TYPE' | translate }} *</label>
           <div class="type-toggle">
-            <button
-              *ngFor="let typeOption of transactionTypes"
-              type="button"
-              class="type-btn"
+            <button *ngFor="let typeOption of transactionTypes" type="button" class="type-btn"
               [class.active]="form.get('type')?.value === typeOption.value"
               [style.background]="form.get('type')?.value === typeOption.value ? getTransactionColor(typeOption.value) : 'white'"
               [style.color]="form.get('type')?.value === typeOption.value ? 'white' : '#374151'"
               (click)="form.patchValue({ type: typeOption.value })">
               <span class="type-icon">{{ typeOption.icon }}</span>
-              {{ typeOption.label }}
+              {{ typeOption.label | translate }}
             </button>
           </div>
         </div>
@@ -50,18 +47,11 @@
         <!-- Amount & Currency Row -->
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="amount">Amount *</label>
+            <label class="form-label" for="amount">{{ 'FINANCE.EDITOR.AMOUNT' | translate }} *</label>
             <div class="amount-input-group">
-              <input
-                id="amount"
-                type="number"
-                step="0.01"
-                min="0.01"
-                formControlName="amount"
+              <input id="amount" type="number" step="0.01" min="0.01" formControlName="amount"
                 class="input-field amount-input"
-                [class.error]="form.get('amount')?.touched && form.get('amount')?.invalid"
-                placeholder="0.00"
-              />
+                [class.error]="form.get('amount')?.touched && form.get('amount')?.invalid" placeholder="0.00" />
               <span class="currency-symbol">{{ getCurrencySymbol(form.get('currencyCode')?.value) }}</span>
             </div>
             <span class="error-message" *ngIf="form.get('amount')?.touched && form.get('amount')?.invalid">
@@ -70,11 +60,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="currencyCode">Currency *</label>
-            <select
-              id="currencyCode"
-              formControlName="currencyCode"
-              class="select-field"
+            <label class="form-label" for="currencyCode">{{ 'FINANCE.EDITOR.CURRENCY' | translate }} *</label>
+            <select id="currencyCode" formControlName="currencyCode" class="select-field"
               [class.error]="form.get('currencyCode')?.touched && form.get('currencyCode')?.invalid">
               <option *ngFor="let curr of currencies" [value]="curr.code">
                 {{ curr.code }} ({{ curr.symbol }}) - {{ curr.name }}
@@ -88,26 +75,18 @@
 
         <!-- Preview Amount -->
         <div class="amount-preview">
-          <span class="preview-label">Preview:</span>
-          <span
-            class="preview-amount"
-            [style.color]="getTransactionColor(form.get('type')?.value)">
+          <span class="preview-label">{{ 'FINANCE.EDITOR.PREVIEW' | translate }}</span>
+          <span class="preview-amount" [style.color]="getTransactionColor(form.get('type')?.value)">
             {{ formatPreviewAmount() }}
           </span>
         </div>
 
         <!-- Title -->
         <div class="form-group">
-          <label class="form-label" for="title">Title *</label>
-          <input
-            id="title"
-            type="text"
-            formControlName="title"
-            class="input-field"
+          <label class="form-label" for="title">{{ 'FINANCE.EDITOR.TITLE_LABEL' | translate }} *</label>
+          <input id="title" type="text" formControlName="title" class="input-field"
             [class.error]="form.get('title')?.touched && form.get('title')?.invalid"
-            placeholder="e.g., Salary, Groceries, Coffee"
-            maxlength="200"
-          />
+            [placeholder]="'FINANCE.EDITOR.TITLE_PLACEHOLDER' | translate" maxlength="200" />
           <span class="error-message" *ngIf="form.get('title')?.touched && form.get('title')?.invalid">
             {{ getFieldError('title') }}
           </span>
@@ -116,26 +95,18 @@
         <!-- Date & Category Row -->
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="date">Date *</label>
-            <input
-              id="date"
-              type="date"
-              formControlName="date"
-              class="input-field"
-              [class.error]="form.get('date')?.touched && form.get('date')?.invalid"
-            />
+            <label class="form-label" for="date">{{ 'FINANCE.EDITOR.DATE' | translate }} *</label>
+            <input id="date" type="date" formControlName="date" class="input-field"
+              [class.error]="form.get('date')?.touched && form.get('date')?.invalid" />
             <span class="error-message" *ngIf="form.get('date')?.touched && form.get('date')?.invalid">
               {{ getFieldError('date') }}
             </span>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="categoryId">Category</label>
-            <select
-              id="categoryId"
-              formControlName="categoryId"
-              class="select-field">
-              <option value="">Uncategorized</option>
+            <label class="form-label" for="categoryId">{{ 'FINANCE.EDITOR.CATEGORY' | translate }}</label>
+            <select id="categoryId" formControlName="categoryId" class="select-field">
+              <option value="">{{ 'FINANCE.EDITOR.UNCATEGORIZED' | translate }}</option>
               <option *ngFor="let cat of categories" [value]="cat.id">
                 <span *ngIf="cat.icon">{{ cat.icon }}</span> {{ cat.name }}
               </option>
@@ -144,66 +115,64 @@
 
           <div class="form-group">
             <label class="form-label" for="budgetId">
-              Budget
-              <span class="optional">(optional)</span>
+              {{ 'FINANCE.EDITOR.BUDGET' | translate }}
+              <span class="optional">{{ 'FINANCE.EDITOR.BUDGET_OPTIONAL' | translate }}</span>
             </label>
-            <select
-              id="budgetId"
-              formControlName="budgetId"
-              class="select-field">
-              <option value="">No Budget</option>
+            <select id="budgetId" formControlName="budgetId" class="select-field">
+              <option value="">{{ 'FINANCE.EDITOR.BUDGET_NO' | translate }}</option>
               <option *ngFor="let budget of filteredBudgets" [value]="budget.id">
                 {{ budget.title }} ({{ budget.currencyCode }})
               </option>
             </select>
             <small class="form-hint" *ngIf="form.get('type')?.value === 'Expense' && filteredBudgets.length > 0">
-              Link this expense to subtract from budget
+              {{ 'FINANCE.EDITOR.BUDGET_HINT_EXPENSE' | translate }}
             </small>
             <small class="form-hint" *ngIf="form.get('type')?.value === 'Income' && filteredBudgets.length > 0">
-              Link this income to add to budget (refill)
+              {{ 'FINANCE.EDITOR.BUDGET_HINT_INCOME' | translate }}
             </small>
             <small class="form-hint warning" *ngIf="filteredBudgets.length === 0 && form.get('currencyCode')?.value">
-              ⚠️ No budgets available for {{ form.get('currencyCode')?.value }}
+              {{ 'FINANCE.EDITOR.BUDGET_WARNING_NONE' | translate:{currency: form.get('currencyCode')?.value} }}
             </small>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="goalId">
-              Financial Goal
-              <span class="optional">(optional)</span>
+              {{ 'FINANCE.EDITOR.GOAL' | translate }}
+              <span class="optional">{{ 'FINANCE.EDITOR.GOAL_OPTIONAL' | translate }}</span>
             </label>
-            <select
-              id="goalId"
-              formControlName="goalId"
-              class="select-field">
-              <option value="">No Goal</option>
+            <select id="goalId" formControlName="goalId" class="select-field">
+              <option value="">{{ 'FINANCE.EDITOR.GOAL_NO' | translate }}</option>
               <option *ngFor="let goal of filteredGoals" [value]="goal.id">
                 {{ goal.title }} ({{ goal.currencyCode }})
               </option>
             </select>
             <small class="form-hint" *ngIf="form.get('type')?.value === 'Income' && filteredGoals.length > 0">
-              Link this income to contribute to goal (+). Completed goals are hidden.
+              {{ 'FINANCE.EDITOR.GOAL_HINT_INCOME' | translate }}
             </small>
-            <small class="form-hint" *ngIf="form.get('type')?.value === 'Expense' && filteredGoals.length > 0 && !form.get('goalId')?.value">
-              Link this expense to withdraw from goal (-)
+            <small class="form-hint"
+              *ngIf="form.get('type')?.value === 'Expense' && filteredGoals.length > 0 && !form.get('goalId')?.value">
+              {{ 'FINANCE.EDITOR.GOAL_HINT_EXPENSE' | translate }}
             </small>
-            <small
-              class="form-hint"
-              [class.warning]="!isGoalFundsSufficient()"
+            <small class="form-hint" [class.warning]="!isGoalFundsSufficient()"
               [class.error]="isGoalFundsSufficient() === false"
               *ngIf="form.get('type')?.value === 'Expense' && form.get('goalId')?.value && getSelectedGoalAvailableAmount() !== null">
               <span *ngIf="isGoalFundsSufficient()">
-                💰 Available in goal: {{ getSelectedGoalAvailableAmount()! | number:'1.2-2' }} {{ form.get('currencyCode')?.value }}
+                {{ 'FINANCE.EDITOR.GOAL_AVAILABLE' | translate:{amount: (getSelectedGoalAvailableAmount()! |
+                number:'1.2-2'), currency: form.get('currencyCode')?.value} }}
               </span>
               <span *ngIf="!isGoalFundsSufficient()">
-                ⚠️ Insufficient funds! Available: {{ getSelectedGoalAvailableAmount()! | number:'1.2-2' }} {{ form.get('currencyCode')?.value }}, Required: {{ form.get('amount')?.value | number:'1.2-2' }} {{ form.get('currencyCode')?.value }}
+                {{ 'FINANCE.EDITOR.GOAL_INSUFFICIENT' | translate:{available: (getSelectedGoalAvailableAmount()! |
+                number:'1.2-2'), required: (form.get('amount')?.value | number:'1.2-2'), currency:
+                form.get('currencyCode')?.value} }}
               </span>
             </small>
-            <small class="form-hint warning" *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value && form.get('type')?.value === 'Income'">
-              ⚠️ No available goals for {{ form.get('currencyCode')?.value }} (all completed or none exist)
+            <small class="form-hint warning"
+              *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value && form.get('type')?.value === 'Income'">
+              {{ 'FINANCE.EDITOR.GOAL_WARNING_NONE_INCOME' | translate:{currency: form.get('currencyCode')?.value} }}
             </small>
-            <small class="form-hint warning" *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value && form.get('type')?.value === 'Expense'">
-              ⚠️ No goals available for {{ form.get('currencyCode')?.value }}
+            <small class="form-hint warning"
+              *ngIf="filteredGoals.length === 0 && form.get('currencyCode')?.value && form.get('type')?.value === 'Expense'">
+              {{ 'FINANCE.EDITOR.GOAL_WARNING_NONE_EXPENSE' | translate:{currency: form.get('currencyCode')?.value} }}
             </small>
           </div>
         </div>
@@ -211,17 +180,12 @@
         <!-- Description -->
         <div class="form-group">
           <label class="form-label" for="description">
-            Description
-            <span class="optional">(optional)</span>
+            {{ 'FINANCE.EDITOR.DESCRIPTION' | translate }}
+            <span class="optional">{{ 'FINANCE.EDITOR.DESCRIPTION_OPTIONAL' | translate }}</span>
           </label>
-          <textarea
-            id="description"
-            formControlName="description"
-            class="textarea-field"
+          <textarea id="description" formControlName="description" class="textarea-field"
             [class.error]="form.get('description')?.touched && form.get('description')?.invalid"
-            placeholder="Add additional details..."
-            rows="4"
-            maxlength="1000">
+            [placeholder]="'FINANCE.EDITOR.DESCRIPTION_PLACEHOLDER' | translate" rows="4" maxlength="1000">
           </textarea>
           <div class="char-counter">
             {{ form.get('description')?.value?.length || 0 }} / 1000
@@ -230,11 +194,8 @@
 
         <!-- Tags -->
         <div class="form-group">
-          <app-tag-manager
-            [title]="'Tags'"
-            [selectedIds]="selectedTagIds"
-            (selectedIdsChange)="onTagsChanged($event)"
-            (tagsUpdated)="loadTags()">
+          <app-tag-manager [title]="'FINANCE.EDITOR.TAGS' | translate" [selectedIds]="selectedTagIds"
+            (selectedIdsChange)="onTagsChanged($event)" (tagsUpdated)="loadTags()">
           </app-tag-manager>
         </div>
 
@@ -242,39 +203,28 @@
         <div class="form-group">
           <label class="form-label">
             <i class="bi bi-link-45deg"></i>
-            Посилання
+            {{ 'FINANCE.EDITOR.LINKS' | translate }}
           </label>
           <div *ngIf="!transactionId" class="info-message">
-            💡 Збережіть транзакцію, щоб додати посилання
+            {{ 'FINANCE.EDITOR.LINKS_INFO' | translate }}
           </div>
-          <app-link-selector
-            *ngIf="transactionId"
-            [entityType]="LinkEntityType.Transaction"
-            [entityId]="transactionId"
-            [title]="''"
-            (linkCreated)="onLinkCreated($event)"
-            (linkDeleted)="onLinkDeleted($event)">
+          <app-link-selector *ngIf="transactionId" [entityType]="LinkEntityType.Transaction" [entityId]="transactionId"
+            [title]="''" (linkCreated)="onLinkCreated($event)" (linkDeleted)="onLinkDeleted($event)">
           </app-link-selector>
         </div>
       </div>
 
       <!-- Actions -->
       <div class="form-actions">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="onCancel()"
-          [disabled]="saving">
-          Cancel
+        <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="saving">
+          {{ 'FINANCE.EDITOR.CANCEL' | translate }}
         </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
+        <button type="submit" class="btn btn-primary"
           [disabled]="saving || form.invalid || isGoalFundsSufficient() === false">
-          <span *ngIf="!saving">{{ isEdit ? '💾 Save Changes' : '✅ Create Transaction' }}</span>
+          <span *ngIf="!saving">{{ (isEdit ? 'FINANCE.EDITOR.SAVE' : 'FINANCE.EDITOR.CREATE') | translate }}</span>
           <span *ngIf="saving">
             <span class="spinner-small"></span>
-            Saving...
+            {{ 'FINANCE.EDITOR.SAVING' | translate }}
           </span>
         </button>
       </div>

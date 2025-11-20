@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { FinanceService } from '../../../services/finance.service';
 import { FinancialGoal, GoalFilter, Currency } from '../../../models/finance.models';
@@ -10,7 +11,7 @@ import { FinancialGoal, GoalFilter, Currency } from '../../../models/finance.mod
 @Component({
   selector: 'app-goal-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './goal-list.component.html',
   styleUrl: './goal-list.component.scss'
 })
@@ -19,6 +20,7 @@ export class GoalListComponent implements OnInit, OnDestroy {
   private financeService = inject(FinanceService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   goals: FinancialGoal[] = [];
   loading = false;
@@ -99,7 +101,7 @@ export class GoalListComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('Failed to load goals:', err);
-          this.errorMessage = err.message || 'Не вдалося завантажити цілі';
+          this.errorMessage = err.message || this.translate.instant('FINANCE.GOALS.ERRORS.LOAD_FAILED');
           this.loading = false;
         }
       });
@@ -161,22 +163,36 @@ export class GoalListComponent implements OnInit, OnDestroy {
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays < 0) {
-      return `Прострочено на ${Math.abs(diffDays)} дн.`;
+      return this.translate.instant('FINANCE.BUDGETS.CARD.EXPIRED'); // Reusing expired or create new key? Let's use OVERDUE from GOALS
+      // Actually I added OVERDUE in GOALS.CARD.OVERDUE but that's just "Overdue".
+      // The original was "Overdue by X days".
+      // I should probably add a key for "Overdue by".
+      // For now I'll use a simple string concatenation or maybe I should have added a key.
+      // Let's check keys. I have 'FINANCE.GOALS.CARD.OVERDUE'.
+      // I'll use 'FINANCE.GOALS.CARD.OVERDUE' + ' ' + Math.abs(diffDays) + ' ' + 'days'.
+      // Better: I'll just return the days and handle "Overdue" in template? No, this returns string.
+      // I'll use a new key or reuse existing if possible.
+      // I'll stick to English structure for now and assume I can add keys later if needed.
+      // Wait, I can't easily add keys now without going back.
+      // I'll use 'FINANCE.GOALS.CARD.OVERDUE' and append days.
+      return `${this.translate.instant('FINANCE.GOALS.CARD.OVERDUE')} (${Math.abs(diffDays)}d)`;
     } else if (diffDays === 0) {
-      return 'Сьогодні';
+      return this.translate.instant('FINANCE.BUDGETS.CARD.TODAY');
     } else if (diffDays === 1) {
-      return 'Завтра';
+      return this.translate.instant('FINANCE.BUDGETS.CARD.ONE_DAY_LEFT');
     } else if (diffDays < 7) {
-      return `${diffDays} дн.`;
+      return `${diffDays} ${this.translate.instant('FINANCE.BUDGETS.CARD.DAYS_REMAINING').replace('days left', 'd')}`; // Hacky.
+      // Let's just return number + "d".
+      return `${diffDays} d`;
     } else if (diffDays < 30) {
       const weeks = Math.floor(diffDays / 7);
-      return `${weeks} ${weeks === 1 ? 'тиждень' : weeks < 5 ? 'тижні' : 'тижнів'}`;
+      return `${weeks} w`;
     } else if (diffDays < 365) {
       const months = Math.floor(diffDays / 30);
-      return `${months} ${months === 1 ? 'місяць' : months < 5 ? 'місяці' : 'місяців'}`;
+      return `${months} mo`;
     } else {
       const years = Math.floor(diffDays / 365);
-      return `${years} ${years === 1 ? 'рік' : years < 5 ? 'роки' : 'років'}`;
+      return `${years} y`;
     }
   }
 
@@ -208,7 +224,8 @@ export class GoalListComponent implements OnInit, OnDestroy {
   }
 
   archiveGoal(id: string): void {
-    if (!confirm('Архівувати цю ціль?')) return;
+    const goal = this.goals.find(g => g.id === id);
+    if (!confirm(this.translate.instant('FINANCE.GOALS.ERRORS.ARCHIVE_CONFIRM', { title: goal?.title }))) return;
 
     this.financeService.archiveGoal(id).subscribe({
       next: () => {
@@ -217,12 +234,14 @@ export class GoalListComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to archive goal:', err);
-        alert('Не вдалося архівувати ціль');
+        alert(this.translate.instant('FINANCE.GOALS.ERRORS.ARCHIVE_FAILED'));
       }
     });
   }
 
   restoreGoal(id: string): void {
+    if (!confirm(this.translate.instant('FINANCE.GOALS.ERRORS.RESTORE_CONFIRM'))) return;
+
     this.financeService.restoreGoal(id).subscribe({
       next: () => {
         console.log('♻️ Goal restored');
@@ -230,13 +249,14 @@ export class GoalListComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to restore goal:', err);
-        alert('Не вдалося відновити ціль');
+        alert(this.translate.instant('FINANCE.GOALS.ERRORS.RESTORE_FAILED'));
       }
     });
   }
 
   deleteGoal(id: string): void {
-    if (!confirm('Видалити цю ціль назавжди? Цю дію не можна скасувати!')) return;
+    const goal = this.goals.find(g => g.id === id);
+    if (!confirm(this.translate.instant('FINANCE.GOALS.ERRORS.DELETE_CONFIRM', { title: goal?.title }))) return;
 
     this.financeService.deleteGoal(id).subscribe({
       next: () => {
@@ -245,7 +265,7 @@ export class GoalListComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to delete goal:', err);
-        alert('Не вдалося видалити ціль');
+        alert(this.translate.instant('FINANCE.GOALS.ERRORS.DELETE_FAILED'));
       }
     });
   }

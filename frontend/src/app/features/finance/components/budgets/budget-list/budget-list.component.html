@@ -1,16 +1,16 @@
 <div class="budget-list-container">
   <!-- Header -->
   <div class="module-header">
-    <h2>💼 Budgets</h2>
+    <h2>💼 {{ 'FINANCE.BUDGETS.TITLE' | translate }}</h2>
     <div class="header-actions">
       <button class="btn btn-secondary" routerLink="/finance/transactions">
-        <span>💰</span> Transactions
+        <span>💰</span> {{ 'FINANCE.BUDGETS.TRANSACTIONS_BUTTON' | translate }}
       </button>
       <button class="btn btn-secondary" routerLink="/finance/categories">
-        <span>📂</span> Categories
+        <span>📂</span> {{ 'FINANCE.BUDGETS.CATEGORIES_BUTTON' | translate }}
       </button>
       <button class="btn btn-primary" routerLink="/finance/budgets/new">
-        <span>+</span> New Budget
+        <span>+</span> {{ 'FINANCE.BUDGETS.NEW_BUTTON' | translate }}
       </button>
     </div>
   </div>
@@ -19,23 +19,21 @@
   <div class="filters-card" [formGroup]="filterForm">
     <!-- Filter Results Counter -->
     <div *ngIf="!loading && budgets.length > 0" class="filter-results">
-      Showing {{ filteredBudgets.length }} of {{ budgets.length }} budgets
+      {{ 'FINANCE.BUDGETS.FILTERS.SHOWING' | translate:{count: filteredBudgets.length, total: budgets.length} }}
     </div>
 
     <!-- First Row: Search and Status -->
     <div class="filters-row">
       <div class="filter-group">
-        <label>Search</label>
-        <input
-          type="text"
-          formControlName="search"
-          placeholder="Search by title, description, or category..."
-          class="filter-input"
-        />
-      </div>      <div class="filter-group">
-        <label>Currency</label>
+        <label>{{ 'FINANCE.BUDGETS.FILTERS.SEARCH_LABEL' | translate }}</label>
+        <input type="text" formControlName="search"
+          [placeholder]="'FINANCE.BUDGETS.FILTERS.SEARCH_PLACEHOLDER' | translate" class="filter-input" />
+      </div>
+      <div class="filter-group">
+        <label>{{ 'FINANCE.BUDGETS.FILTERS.CURRENCY_LABEL' | translate }}</label>
         <select formControlName="currencyCode" class="filter-select" [disabled]="loadingCurrencies">
-          <option value="">{{ loadingCurrencies ? 'Loading...' : 'All Currencies' }}</option>
+          <option value="">{{ loadingCurrencies ? ('FINANCE.BUDGETS.FILTERS.CURRENCY_LOADING' | translate) :
+            ('FINANCE.BUDGETS.FILTERS.CURRENCY_ALL' | translate) }}</option>
           <option *ngFor="let currency of currencies" [value]="currency.code">
             {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
           </option>
@@ -46,48 +44,29 @@
     <!-- Second Row: Amount and Date Range -->
     <div class="filters-row">
       <div class="filter-group">
-        <label>Min Amount</label>
-        <input
-          type="number"
-          formControlName="minAmount"
-          placeholder="0"
-          class="filter-input"
-          step="0.01"
-        />
+        <label>{{ 'FINANCE.BUDGETS.FILTERS.MIN_AMOUNT' | translate }}</label>
+        <input type="number" formControlName="minAmount" placeholder="0" class="filter-input" step="0.01" />
       </div>
 
       <div class="filter-group">
-        <label>Max Amount</label>
-        <input
-          type="number"
-          formControlName="maxAmount"
-          placeholder="No limit"
-          class="filter-input"
-          step="0.01"
-        />
+        <label>{{ 'FINANCE.BUDGETS.FILTERS.MAX_AMOUNT' | translate }}</label>
+        <input type="number" formControlName="maxAmount" [placeholder]="'FINANCE.BUDGETS.FILTERS.NO_LIMIT' | translate"
+          class="filter-input" step="0.01" />
       </div>
 
       <div class="filter-group">
-        <label>Period Start</label>
-        <input
-          type="date"
-          formControlName="periodStart"
-          class="filter-input"
-        />
+        <label>{{ 'FINANCE.BUDGETS.FILTERS.PERIOD_START' | translate }}</label>
+        <input type="date" formControlName="periodStart" class="filter-input" />
       </div>
 
       <div class="filter-group">
-        <label>Period End</label>
-        <input
-          type="date"
-          formControlName="periodEnd"
-          class="filter-input"
-        />
+        <label>{{ 'FINANCE.BUDGETS.FILTERS.PERIOD_END' | translate }}</label>
+        <input type="date" formControlName="periodEnd" class="filter-input" />
       </div>
 
       <div class="filter-group filter-actions">
         <button class="btn btn-secondary" (click)="clearFilters()">
-          Clear Filters
+          {{ 'FINANCE.BUDGETS.FILTERS.CLEAR' | translate }}
         </button>
       </div>
     </div>
@@ -96,41 +75,38 @@
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading budgets...</p>
+    <p>{{ 'FINANCE.BUDGETS.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
   <div *ngIf="!loading && errorMessage" class="error-state">
     <p class="error-message">{{ errorMessage }}</p>
-    <button class="btn btn-secondary" (click)="fetchBudgets()">Retry</button>
+    <button class="btn btn-secondary" (click)="fetchBudgets()">{{ 'FINANCE.BUDGETS.ERRORS.RETRY' | translate }}</button>
   </div>
 
   <!-- Empty State -->
   <div *ngIf="!loading && !errorMessage && budgets.length === 0" class="empty-state">
     <div class="empty-icon">💼</div>
-    <h3>No budgets found</h3>
-    <p>Create your first budget to start tracking your spending</p>
+    <h3>{{ 'FINANCE.BUDGETS.EMPTY.TITLE' | translate }}</h3>
+    <p>{{ 'FINANCE.BUDGETS.EMPTY.DESC' | translate }}</p>
     <button class="btn btn-primary" routerLink="/finance/budgets/new">
-      <span>+</span> Create Budget
+      <span>+</span> {{ 'FINANCE.BUDGETS.EMPTY.BUTTON' | translate }}
     </button>
   </div>
 
   <!-- No Results After Filtering -->
   <div *ngIf="!loading && !errorMessage && budgets.length > 0 && filteredBudgets.length === 0" class="empty-state">
     <div class="empty-icon">🔍</div>
-    <h3>No budgets match your filters</h3>
-    <p>Try adjusting your search criteria</p>
+    <h3>{{ 'FINANCE.BUDGETS.NO_RESULTS.TITLE' | translate }}</h3>
+    <p>{{ 'FINANCE.BUDGETS.NO_RESULTS.DESC' | translate }}</p>
     <button class="btn btn-secondary" (click)="clearFilters()">
-      Clear Filters
+      {{ 'FINANCE.BUDGETS.NO_RESULTS.BUTTON' | translate }}
     </button>
   </div>
 
   <!-- Budget List -->
   <div *ngIf="!loading && !errorMessage && filteredBudgets.length > 0" class="budgets-grid">
-    <div
-      *ngFor="let budget of filteredBudgets"
-      class="budget-card"
-      [class.overspent]="isOverspent(budget)"
+    <div *ngFor="let budget of filteredBudgets" class="budget-card" [class.overspent]="isOverspent(budget)"
       (click)="viewBudget(budget)">
 
       <!-- Header -->
@@ -167,9 +143,7 @@
         </div>
 
         <div class="progress-bar">
-          <div
-            class="progress-fill"
-            [style.width.%]="getProgressPercentage(budget)"
+          <div class="progress-fill" [style.width.%]="getProgressPercentage(budget)"
             [style.background]="getProgressColor(budget)">
           </div>
         </div>
@@ -179,7 +153,8 @@
             {{ getProgressPercentage(budget) }}%
           </span>
           <span class="remaining">
-            {{ formatCurrency(budget.remainingAmount, budget.currencyCode) }} remaining
+            {{ formatCurrency(budget.remainingAmount, budget.currencyCode) }} {{ 'FINANCE.BUDGETS.CARD.REMAINING' |
+            translate }}
           </span>
         </div>
       </div>
@@ -187,13 +162,13 @@
       <!-- Status Badge -->
       <div class="budget-status">
         <span *ngIf="isOverspent(budget)" class="status-badge overspent">
-          ⚠️ Over Budget
+          {{ 'FINANCE.BUDGETS.CARD.OVER_BUDGET' | translate }}
         </span>
         <span *ngIf="!isOverspent(budget) && getProgressPercentage(budget) >= 80" class="status-badge warning">
-          ⚡ Near Limit
+          {{ 'FINANCE.BUDGETS.CARD.NEAR_LIMIT' | translate }}
         </span>
         <span *ngIf="getProgressPercentage(budget) < 80" class="status-badge ok">
-          ✅ On Track
+          {{ 'FINANCE.BUDGETS.CARD.ON_TRACK' | translate }}
         </span>
       </div>
 
@@ -204,24 +179,16 @@
 
       <!-- Actions -->
       <div class="budget-actions" (click)="$event.stopPropagation()">
-        <button
-          *ngIf="budget.isArchived"
-          class="btn-icon restore"
-          (click)="restoreBudget(budget)"
-          title="Restore">
+        <button *ngIf="budget.isArchived" class="btn-icon restore" (click)="restoreBudget(budget)"
+          [title]="'FINANCE.BUDGETS.DETAIL.RESTORE' | translate">
           ♻️
         </button>
-        <button
-          *ngIf="!budget.isArchived"
-          class="btn-icon edit"
-          [routerLink]="['/finance/budgets', budget.id, 'edit']"
-          title="Edit">
+        <button *ngIf="!budget.isArchived" class="btn-icon edit" [routerLink]="['/finance/budgets', budget.id, 'edit']"
+          [title]="'FINANCE.BUDGETS.DETAIL.EDIT' | translate">
           ✏️
         </button>
-        <button
-          class="btn-icon delete"
-          (click)="deleteBudget(budget)"
-          [title]="budget.isArchived ? 'Delete Permanently' : 'Archive'">
+        <button class="btn-icon delete" (click)="deleteBudget(budget)"
+          [title]="(budget.isArchived ? 'FINANCE.BUDGETS.DETAIL.DELETE' : 'FINANCE.BUDGETS.DETAIL.ARCHIVE') | translate">
           {{ budget.isArchived ? '🗑️' : '📦' }}
         </button>
       </div>

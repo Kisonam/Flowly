@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, of, switchMap, takeUntil, tap } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
@@ -20,7 +21,7 @@ import {
 @Component({
   selector: 'app-transaction-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LinkSelectorComponent, TagManagerComponent],
+  imports: [CommonModule, ReactiveFormsModule, LinkSelectorComponent, TagManagerComponent, TranslateModule],
   templateUrl: './transaction-editor.component.html',
   styleUrls: ['./transaction-editor.component.scss']
 })
@@ -31,6 +32,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   private financeService = inject(FinanceService);
   private tagsService = inject(TagsService);
   private themeService = inject(ThemeService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   isEdit = false;
@@ -56,8 +58,8 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
 
   // Options
   readonly transactionTypes: { value: TransactionType; label: string; icon: string }[] = [
-    { value: 'Income', label: 'Income', icon: '↑' },
-    { value: 'Expense', label: 'Expense', icon: '↓' }
+    { value: 'Income', label: 'FINANCE.DASHBOARD.INCOME', icon: '↑' },
+    { value: 'Expense', label: 'FINANCE.DASHBOARD.EXPENSE', icon: '↓' }
   ];
 
   // Form
@@ -336,13 +338,15 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
           if (selectedGoal.currentAmount < amount) {
             const available = selectedGoal.currentAmount.toFixed(2);
             const required = amount.toFixed(2);
-            alert(
-              `⚠️ Insufficient funds in goal "${selectedGoal.title}"!\n\n` +
-              `Available: ${available} ${selectedGoal.currencyCode}\n` +
-              `Required: ${required} ${formValue.currencyCode}\n\n` +
-              `Please reduce the transaction amount or add more funds to the goal first.`
-            );
-            this.error = `Insufficient funds in goal. Available: ${available} ${selectedGoal.currencyCode}`;
+            alert(this.translate.instant('FINANCE.EDITOR.GOAL_INSUFFICIENT', {
+              available: available,
+              required: required,
+              currency: selectedGoal.currencyCode
+            }));
+            this.error = this.translate.instant('FINANCE.EDITOR.ERRORS.INSUFFICIENT_FUNDS', {
+              available: available,
+              currency: selectedGoal.currencyCode
+            });
             return;
           }
         }
@@ -444,6 +448,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   onDelete(): void {
     if (!this.isEdit || !this.transactionId) return;
 
+    // TODO: Use translation for confirm
     if (!confirm('Are you sure you want to archive this transaction?')) return;
 
     this.financeService.archiveTransaction(this.transactionId)
@@ -476,12 +481,12 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     if (!control || !control.touched || !control.errors) return '';
 
     const errors = control.errors;
-    if (errors['required']) return 'This field is required';
-    if (errors['min']) return `Minimum value is ${errors['min'].min}`;
-    if (errors['max']) return `Maximum value is ${errors['max'].max}`;
-    if (errors['maxlength']) return `Maximum length is ${errors['maxlength'].requiredLength} characters`;
+    if (errors['required']) return this.translate.instant('FINANCE.EDITOR.ERRORS.REQUIRED');
+    if (errors['min']) return this.translate.instant('FINANCE.EDITOR.ERRORS.MIN', { min: errors['min'].min });
+    if (errors['max']) return this.translate.instant('FINANCE.EDITOR.ERRORS.MAX', { max: errors['max'].max });
+    if (errors['maxlength']) return this.translate.instant('FINANCE.EDITOR.ERRORS.MAX_LENGTH', { length: errors['maxlength'].requiredLength });
 
-    return 'Invalid value';
+    return this.translate.instant('FINANCE.EDITOR.ERRORS.INVALID');
   }
 
   getCurrencySymbol(code: string): string {

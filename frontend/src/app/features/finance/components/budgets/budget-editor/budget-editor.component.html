@@ -1,13 +1,14 @@
 <div class="budget-editor-container">
   <!-- Header -->
   <div class="editor-header">
-    <h2>{{ isEditMode ? 'Edit Budget' : 'Create Budget' }}</h2>
+    <h2>{{ (isEditMode ? 'FINANCE.BUDGETS.EDITOR.TITLE_EDIT' : 'FINANCE.BUDGETS.EDITOR.TITLE_CREATE') | translate }}
+    </h2>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading budget...</p>
+    <p>{{ 'FINANCE.BUDGETS.EDITOR.LOADING' | translate }}</p>
   </div>
 
   <!-- Error Message -->
@@ -21,21 +22,16 @@
 
     <!-- Basic Information Section -->
     <div class="form-section">
-      <h3 class="section-title">Basic Information</h3>
+      <h3 class="section-title">{{ 'FINANCE.BUDGETS.EDITOR.SECTION_BASIC' | translate }}</h3>
 
       <div class="form-row">
         <div class="form-group full-width">
           <label for="title">
-            Title <span class="required">*</span>
+            {{ 'FINANCE.BUDGETS.EDITOR.TITLE_LABEL' | translate }} <span class="required">*</span>
           </label>
-          <input
-            type="text"
-            id="title"
-            formControlName="title"
-            placeholder="Enter budget title"
-            maxlength="100"
-            [class.invalid]="hasError('title')"
-          />
+          <input type="text" id="title" formControlName="title"
+            [placeholder]="'FINANCE.BUDGETS.EDITOR.TITLE_PLACEHOLDER' | translate" maxlength="100"
+            [class.invalid]="hasError('title')" />
           <span *ngIf="hasError('title')" class="error-message">
             {{ getErrorMessage('title') }}
           </span>
@@ -44,15 +40,11 @@
 
       <div class="form-row">
         <div class="form-group full-width">
-          <label for="description">Description (optional)</label>
-          <textarea
-            id="description"
-            formControlName="description"
-            placeholder="Enter budget description"
-            rows="3"
-            maxlength="500"
-            [class.invalid]="hasError('description')"
-          ></textarea>
+          <label for="description">{{ 'FINANCE.BUDGETS.EDITOR.DESCRIPTION_LABEL' | translate }} {{
+            'FINANCE.BUDGETS.EDITOR.DESCRIPTION_OPTIONAL' | translate }}</label>
+          <textarea id="description" formControlName="description"
+            [placeholder]="'FINANCE.BUDGETS.EDITOR.DESCRIPTION_PLACEHOLDER' | translate" rows="3" maxlength="500"
+            [class.invalid]="hasError('description')"></textarea>
           <span *ngIf="hasError('description')" class="error-message">
             {{ getErrorMessage('description') }}
           </span>
@@ -62,22 +54,15 @@
 
     <!-- Budget Details Section -->
     <div class="form-section">
-      <h3 class="section-title">Budget Details</h3>
+      <h3 class="section-title">{{ 'FINANCE.BUDGETS.EDITOR.SECTION_DETAILS' | translate }}</h3>
 
       <div class="form-row two-columns">
         <div class="form-group">
           <label for="limit">
-            Limit Amount <span class="required">*</span>
+            {{ 'FINANCE.BUDGETS.EDITOR.LIMIT_LABEL' | translate }} <span class="required">*</span>
           </label>
-          <input
-            type="number"
-            id="limit"
-            formControlName="limit"
-            placeholder="0.00"
-            step="0.01"
-            min="0.01"
-            [class.invalid]="hasError('limit')"
-          />
+          <input type="number" id="limit" formControlName="limit" placeholder="0.00" step="0.01" min="0.01"
+            [class.invalid]="hasError('limit')" />
           <span *ngIf="hasError('limit')" class="error-message">
             {{ getErrorMessage('limit') }}
           </span>
@@ -85,13 +70,9 @@
 
         <div class="form-group">
           <label for="currencyCode">
-            Currency <span class="required">*</span>
+            {{ 'FINANCE.BUDGETS.EDITOR.CURRENCY_LABEL' | translate }} <span class="required">*</span>
           </label>
-          <select
-            id="currencyCode"
-            formControlName="currencyCode"
-            [class.invalid]="hasError('currencyCode')"
-          >
+          <select id="currencyCode" formControlName="currencyCode" [class.invalid]="hasError('currencyCode')">
             <option *ngFor="let currency of currencies" [value]="currency.code">
               {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
             </option>
@@ -104,22 +85,16 @@
 
       <div class="form-row">
         <div class="form-group full-width">
-          <label for="categoryId">Category (optional)</label>
-          <select
-            id="categoryId"
-            formControlName="categoryId"
-            [class.invalid]="hasError('categoryId')"
-          >
-            <option value="">All Categories</option>
+          <label for="categoryId">{{ 'FINANCE.BUDGETS.EDITOR.CATEGORY_LABEL' | translate }} {{
+            'FINANCE.BUDGETS.EDITOR.CATEGORY_OPTIONAL' | translate }}</label>
+          <select id="categoryId" formControlName="categoryId" [class.invalid]="hasError('categoryId')">
+            <option value="">{{ 'FINANCE.BUDGETS.EDITOR.CATEGORY_ALL' | translate }}</option>
             <option *ngFor="let category of categories" [value]="category.id">
               {{ getCategoryIcon(category.id) }} {{ category.name }}
             </option>
           </select>
           <div *ngIf="budgetForm.value.categoryId" class="category-preview">
-            <span
-              class="category-badge"
-              [style.background]="getCategoryColor(budgetForm.value.categoryId)"
-            >
+            <span class="category-badge" [style.background]="getCategoryColor(budgetForm.value.categoryId)">
               {{ getCategoryIcon(budgetForm.value.categoryId) }}
               {{ getCategoryName(budgetForm.value.categoryId) }}
             </span>
@@ -133,19 +108,15 @@
 
     <!-- Period Section -->
     <div class="form-section">
-      <h3 class="section-title">Budget Period</h3>
+      <h3 class="section-title">{{ 'FINANCE.BUDGETS.EDITOR.SECTION_PERIOD' | translate }}</h3>
 
       <div class="form-row two-columns">
         <div class="form-group">
           <label for="periodStart">
-            Start Date <span class="required">*</span>
+            {{ 'FINANCE.BUDGETS.EDITOR.START_DATE' | translate }} <span class="required">*</span>
           </label>
-          <input
-            type="date"
-            id="periodStart"
-            formControlName="periodStart"
-            [class.invalid]="hasError('periodStart') || hasDateRangeError()"
-          />
+          <input type="date" id="periodStart" formControlName="periodStart"
+            [class.invalid]="hasError('periodStart') || hasDateRangeError()" />
           <span *ngIf="hasError('periodStart')" class="error-message">
             {{ getErrorMessage('periodStart') }}
           </span>
@@ -153,14 +124,10 @@
 
         <div class="form-group">
           <label for="periodEnd">
-            End Date <span class="required">*</span>
+            {{ 'FINANCE.BUDGETS.EDITOR.END_DATE' | translate }} <span class="required">*</span>
           </label>
-          <input
-            type="date"
-            id="periodEnd"
-            formControlName="periodEnd"
-            [class.invalid]="hasError('periodEnd') || hasDateRangeError()"
-          />
+          <input type="date" id="periodEnd" formControlName="periodEnd"
+            [class.invalid]="hasError('periodEnd') || hasDateRangeError()" />
           <span *ngIf="hasError('periodEnd')" class="error-message">
             {{ getErrorMessage('periodEnd') }}
           </span>
@@ -169,29 +136,21 @@
 
       <div *ngIf="hasDateRangeError()" class="error-message-box">
         <span class="error-icon">⚠️</span>
-        <span>End date must be after start date</span>
+        <span>{{ 'FINANCE.BUDGETS.EDITOR.ERROR_DATE_RANGE' | translate }}</span>
       </div>
     </div>
 
     <!-- Form Actions -->
     <div class="form-actions">
-      <button
-        type="button"
-        class="btn btn-secondary"
-        (click)="onCancel()"
-        [disabled]="isSaving"
-      >
-        Cancel
+      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSaving">
+        {{ 'FINANCE.BUDGETS.EDITOR.CANCEL' | translate }}
       </button>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="budgetForm.invalid || isSaving"
-      >
-        <span *ngIf="!isSaving">{{ isEditMode ? 'Update Budget' : 'Create Budget' }}</span>
+      <button type="submit" class="btn btn-primary" [disabled]="budgetForm.invalid || isSaving">
+        <span *ngIf="!isSaving">{{ (isEditMode ? 'FINANCE.BUDGETS.EDITOR.UPDATE' : 'FINANCE.BUDGETS.EDITOR.CREATE') |
+          translate }}</span>
         <span *ngIf="isSaving">
           <span class="spinner-small"></span>
-          Saving...
+          {{ 'FINANCE.BUDGETS.EDITOR.SAVING' | translate }}
         </span>
       </button>
     </div>

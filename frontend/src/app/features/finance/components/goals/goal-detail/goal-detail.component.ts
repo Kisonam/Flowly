@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FinanceService } from '../../../services/finance.service';
 import { FinancialGoal, Transaction } from '../../../models/finance.models';
 import { Subject, takeUntil } from 'rxjs';
@@ -8,7 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-goal-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './goal-detail.component.html',
   styleUrls: ['./goal-detail.component.scss']
 })
@@ -16,6 +17,7 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private financeService = inject(FinanceService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   goal: FinancialGoal | null = null;

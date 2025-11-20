@@ -1,7 +1,7 @@
 <div class="goal-list">
   <div class="list-header">
-    <h1>🎯 Фінансові цілі</h1>
-    <button class="btn btn-primary" (click)="createGoal()">➕ Створити ціль</button>
+    <h1>🎯 {{ 'FINANCE.GOALS.TITLE' | translate }}</h1>
+    <button class="btn btn-primary" (click)="createGoal()">➕ {{ 'FINANCE.GOALS.NEW_BUTTON' | translate }}</button>
   </div>
 
   <!-- Filters -->
@@ -9,49 +9,47 @@
     <form [formGroup]="filterForm" class="filters-form">
       <div class="filter-row">
         <div class="filter-group search-group">
-          <label>Пошук</label>
-          <input
-            type="text"
-            formControlName="search"
-            placeholder="Пошук по назві або опису..."
-            class="filter-input"
-          />
+          <label>{{ 'FINANCE.GOALS.FILTERS.SEARCH_LABEL' | translate }}</label>
+          <input type="text" formControlName="search"
+            [placeholder]="'FINANCE.GOALS.FILTERS.SEARCH_PLACEHOLDER' | translate" class="filter-input" />
         </div>
 
         <div class="filter-group">
-          <label>Статус</label>
+          <label>{{ 'FINANCE.GOALS.FILTERS.STATUS_LABEL' | translate }}</label>
           <select formControlName="status" class="filter-select">
-            <option value="active">Активні</option>
-            <option value="completed">Завершені</option>
-            <option value="all">Всі цілі</option>
-            <option value="archived">Архівовані</option>
+            <option value="active">{{ 'FINANCE.GOALS.FILTERS.STATUS_ACTIVE' | translate }}</option>
+            <option value="completed">{{ 'FINANCE.GOALS.FILTERS.STATUS_COMPLETED' | translate }}</option>
+            <option value="all">{{ 'FINANCE.GOALS.FILTERS.STATUS_ALL' | translate }}</option>
+            <option value="archived">{{ 'FINANCE.GOALS.FILTERS.STATUS_ARCHIVED' | translate }}</option>
           </select>
         </div>
 
         <div class="filter-group">
-          <label>Валюта</label>
+          <label>{{ 'FINANCE.GOALS.FILTERS.CURRENCY_LABEL' | translate }}</label>
           <select formControlName="currencyCode" class="filter-select" [disabled]="loadingCurrencies">
-            <option value="">{{ loadingCurrencies ? 'Завантаження...' : 'Всі валюти' }}</option>
+            <option value="">{{ (loadingCurrencies ? 'FINANCE.GOALS.FILTERS.CURRENCY_LOADING' :
+              'FINANCE.GOALS.FILTERS.CURRENCY_ALL') | translate }}</option>
             <option *ngFor="let currency of currencies" [value]="currency.code">
               {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
             </option>
           </select>
         </div>
 
-        <button type="button" class="btn btn-secondary" (click)="clearFilters()">🔄 Очистити</button>
+        <button type="button" class="btn btn-secondary" (click)="clearFilters()">🔄 {{ 'FINANCE.GOALS.FILTERS.CLEAR' |
+          translate }}</button>
       </div>
     </form>
 
     <!-- Results counter -->
     <div class="results-counter" *ngIf="!loading">
-      <span>{{ filteredGoals.length }} з {{ goals.length }} цілей</span>
+      <span>{{ 'FINANCE.GOALS.FILTERS.SHOWING' | translate:{count: filteredGoals.length, total: goals.length} }}</span>
     </div>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Завантаження цілей...</p>
+    <p>{{ 'FINANCE.GOALS.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
@@ -62,35 +60,38 @@
   <!-- Empty State -->
   <div *ngIf="!loading && empty" class="empty-state">
     <div class="empty-icon">🎯</div>
-    <h3>Немає цілей</h3>
-    <p>Створіть свою першу фінансову ціль</p>
-    <button class="btn btn-primary" (click)="createGoal()">➕ Створити ціль</button>
+    <h3>{{ 'FINANCE.GOALS.EMPTY.TITLE' | translate }}</h3>
+    <p>{{ 'FINANCE.GOALS.EMPTY.DESC' | translate }}</p>
+    <button class="btn btn-primary" (click)="createGoal()">➕ {{ 'FINANCE.GOALS.EMPTY.BUTTON' | translate }}</button>
   </div>
 
   <!-- No Results State -->
   <div *ngIf="!loading && !empty && filteredGoals.length === 0" class="empty-state">
     <div class="empty-icon">🔍</div>
-    <h3>Нічого не знайдено</h3>
-    <p>Спробуйте змінити фільтри</p>
+    <h3>{{ 'FINANCE.GOALS.NO_RESULTS.TITLE' | translate }}</h3>
+    <p>{{ 'FINANCE.GOALS.NO_RESULTS.DESC' | translate }}</p>
   </div>
 
   <!-- Goals Grid -->
   <div *ngIf="!loading && filteredGoals.length > 0" class="goals-grid">
-    <div *ngFor="let goal of filteredGoals" class="goal-card"
-         [class.completed]="goal.isCompleted"
-         [class.archived]="goal.isArchived"
-         (click)="viewGoal(goal.id)">
+    <div *ngFor="let goal of filteredGoals" class="goal-card" [class.completed]="goal.isCompleted"
+      [class.archived]="goal.isArchived" (click)="viewGoal(goal.id)">
 
       <!-- Card Header -->
       <div class="card-header">
         <h3 class="goal-title">{{ goal.title }}</h3>
         <div class="goal-actions">
-          <button class="btn-icon" (click)="editGoal(goal.id); $event.stopPropagation()" title="Редагувати">✏️</button>
+          <button class="btn-icon" (click)="editGoal(goal.id); $event.stopPropagation()"
+            [title]="'FINANCE.GOALS.CARD.EDIT' | translate">✏️</button>
 
-          <button *ngIf="!goal.isArchived" class="btn-icon" (click)="archiveGoal(goal.id); $event.stopPropagation()" title="Архівувати">📦</button>
-          <button *ngIf="goal.isArchived" class="btn-icon" (click)="restoreGoal(goal.id); $event.stopPropagation()" title="Відновити">♻️</button>
+          <button *ngIf="!goal.isArchived" class="btn-icon" (click)="archiveGoal(goal.id); $event.stopPropagation()"
+            [title]="'FINANCE.GOALS.CARD.ARCHIVE' | translate">📦</button>
+          <button *ngIf="goal.isArchived" class="btn-icon" (click)="restoreGoal(goal.id); $event.stopPropagation()"
+            [title]="'FINANCE.GOALS.CARD.RESTORE' | translate">♻️</button>
 
-          <button *ngIf="goal.isArchived" class="btn-icon danger" (click)="deleteGoal(goal.id); $event.stopPropagation()" title="Видалити назавжди">🗑️</button>
+          <button *ngIf="goal.isArchived" class="btn-icon danger"
+            (click)="deleteGoal(goal.id); $event.stopPropagation()"
+            [title]="'FINANCE.GOALS.CARD.DELETE' | translate">🗑️</button>
         </div>
       </div>
 
@@ -99,10 +100,12 @@
 
       <!-- Status Badges -->
       <div class="status-badges">
-        <span *ngIf="goal.isCompleted" class="badge completed">✅ Досягнуто</span>
-        <span *ngIf="goal.isArchived" class="badge archived">📦 Архів</span>
-        <span *ngIf="goal.isOverdue && !goal.isCompleted" class="badge overdue">⏰ Прострочено</span>
-        <span *ngIf="goal.isDeadlineApproaching && !goal.isCompleted && !goal.isOverdue" class="badge approaching">⚠️ Дедлайн наближається</span>
+        <span *ngIf="goal.isCompleted" class="badge completed">✅ {{ 'FINANCE.GOALS.CARD.COMPLETED' | translate }}</span>
+        <span *ngIf="goal.isArchived" class="badge archived">📦 {{ 'FINANCE.GOALS.CARD.ARCHIVED' | translate }}</span>
+        <span *ngIf="goal.isOverdue && !goal.isCompleted" class="badge overdue">⏰ {{ 'FINANCE.GOALS.CARD.OVERDUE' |
+          translate }}</span>
+        <span *ngIf="goal.isDeadlineApproaching && !goal.isCompleted && !goal.isOverdue" class="badge approaching">⚠️ {{
+          'FINANCE.GOALS.CARD.APPROACHING' | translate }}</span>
       </div>
 
       <!-- Progress Section -->
@@ -116,12 +119,10 @@
 
         <!-- Progress Bar -->
         <div class="progress-bar">
-          <div class="progress-fill"
-               [style.width.%]="goal.progressPercentage"
-               [class.completed]="goal.isCompleted"
-               [class.high]="goal.progressPercentage >= 75 && !goal.isCompleted"
-               [class.medium]="goal.progressPercentage >= 50 && goal.progressPercentage < 75"
-               [class.low]="goal.progressPercentage < 50">
+          <div class="progress-fill" [style.width.%]="goal.progressPercentage" [class.completed]="goal.isCompleted"
+            [class.high]="goal.progressPercentage >= 75 && !goal.isCompleted"
+            [class.medium]="goal.progressPercentage >= 50 && goal.progressPercentage < 75"
+            [class.low]="goal.progressPercentage < 50">
           </div>
         </div>
 
@@ -137,13 +138,15 @@
         <!-- Completion Info -->
         <div class="completion-info" *ngIf="goal.completedAt">
           <span class="completion-icon">🎉</span>
-          <span class="completion-text">Досягнуто {{ goal.completedAt | date:'dd/MM/yyyy' }}</span>
+          <span class="completion-text">{{ 'FINANCE.GOALS.CARD.COMPLETED_AT' | translate }} {{ goal.completedAt |
+            date:'dd/MM/yyyy' }}</span>
         </div>
       </div>
 
       <!-- Archived Timestamp -->
       <div class="archived-info" *ngIf="goal.isArchived">
-        <span class="archived-text">📦 Архівовано {{ goal.createdAt | date:'dd/MM/yyyy' }}</span>
+        <span class="archived-text">📦 {{ 'FINANCE.GOALS.CARD.ARCHIVED_AT' | translate }} {{ goal.createdAt |
+          date:'dd/MM/yyyy' }}</span>
       </div>
     </div>
   </div>

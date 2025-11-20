@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FinanceService } from '../../../services/finance.service';
 import { Budget, Transaction } from '../../../models/finance.models';
 import { Subject, takeUntil } from 'rxjs';
@@ -8,7 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-budget-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './budget-detail.component.html',
   styleUrls: ['./budget-detail.component.scss']
 })
@@ -16,6 +17,7 @@ export class BudgetDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private financeService = inject(FinanceService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   budget: Budget | null = null;
@@ -51,7 +53,7 @@ export class BudgetDetailComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to load budget', err);
-          this.errorMessage = err.message || 'Failed to load budget';
+          this.errorMessage = err.message || this.translate.instant('FINANCE.BUDGETS.ERRORS.LOAD_FAILED');
           this.loading = false;
         }
       });
@@ -121,8 +123,11 @@ export class BudgetDetailComponent implements OnInit, OnDestroy {
   deleteBudget(): void {
     if (!this.budget) return;
 
-    const action = this.budget.isArchived ? 'delete permanently' : 'archive';
-    if (!confirm(`Are you sure you want to ${action} budget "${this.budget.title}"?`)) return;
+    const confirmMessage = this.budget.isArchived
+      ? this.translate.instant('FINANCE.BUDGETS.ERRORS.DELETE_CONFIRM')
+      : this.translate.instant('FINANCE.BUDGETS.ERRORS.ARCHIVE_CONFIRM');
+
+    if (!confirm(confirmMessage)) return;
 
     const request = this.budget.isArchived
       ? this.financeService.deleteBudget(this.budget.id)
@@ -137,13 +142,15 @@ export class BudgetDetailComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to delete/archive budget', err);
-          alert('Failed to process budget: ' + err.message);
+          alert(this.translate.instant('FINANCE.BUDGETS.ERRORS.DELETE_FAILED') + ': ' + err.message);
         }
       });
   }
 
   restoreBudget(): void {
     if (!this.budget) return;
+
+    if (!confirm(this.translate.instant('FINANCE.BUDGETS.ERRORS.RESTORE_CONFIRM'))) return;
 
     this.financeService.restoreBudget(this.budget.id)
       .pipe(takeUntil(this.destroy$))
@@ -154,7 +161,7 @@ export class BudgetDetailComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to restore budget', err);
-          alert('Failed to restore budget: ' + err.message);
+          alert(this.translate.instant('FINANCE.BUDGETS.ERRORS.RESTORE_FAILED') + ': ' + err.message);
         }
       });
   }

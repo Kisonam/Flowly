@@ -3,19 +3,21 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FinanceService } from '../../../services/finance.service';
 import { Category, CreateCategoryRequest, UpdateCategoryRequest } from '../../../models/finance.models';
 
 @Component({
   selector: 'app-category-manager',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule],
   templateUrl: './category-manager.component.html',
   styleUrls: ['./category-manager.component.scss']
 })
 export class CategoryManagerComponent implements OnInit, OnDestroy {
   private readonly financeService = inject(FinanceService);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
 
   // State
@@ -76,7 +78,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to load categories', err);
-          this.errorMessage = err.message || 'Failed to load categories';
+          this.errorMessage = err.message || this.translate.instant('FINANCE.CATEGORIES.ERRORS.LOAD_FAILED');
           this.loading = false;
         }
       });
@@ -98,7 +100,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
 
   openEditForm(category: Category): void {
     if (this.isPredefinedCategory(category)) {
-      alert('Cannot edit predefined categories');
+      alert(this.translate.instant('FINANCE.CATEGORIES.ERRORS.PREDEFINED_EDIT'));
       return;
     }
 
@@ -161,7 +163,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to create category', err);
-          alert('Failed to create category: ' + (err.error?.message || err.message));
+          alert(this.translate.instant('FINANCE.CATEGORIES.ERRORS.CREATE_FAILED') + ': ' + (err.error?.message || err.message));
         }
       });
   }
@@ -185,18 +187,18 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to update category', err);
-          alert('Failed to update category: ' + (err.error?.message || err.message));
+          alert(this.translate.instant('FINANCE.CATEGORIES.ERRORS.UPDATE_FAILED') + ': ' + (err.error?.message || err.message));
         }
       });
   }
 
   deleteCategory(category: Category): void {
     if (this.isPredefinedCategory(category)) {
-      alert('Cannot delete predefined categories');
+      alert(this.translate.instant('FINANCE.CATEGORIES.ERRORS.PREDEFINED_DELETE'));
       return;
     }
 
-    if (!confirm(`Delete category "${category.name}"? This action cannot be undone.`)) {
+    if (!confirm(this.translate.instant('FINANCE.CATEGORIES.ERRORS.DELETE_CONFIRM', { name: category.name }))) {
       return;
     }
 
@@ -209,7 +211,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to delete category', err);
-          alert('Failed to delete category: ' + (err.error?.message || err.message));
+          alert(this.translate.instant('FINANCE.CATEGORIES.ERRORS.DELETE_FAILED') + ': ' + (err.error?.message || err.message));
         }
       });
   }
@@ -224,10 +226,10 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
     const field = this.categoryForm.get(fieldName);
     if (!field || !field.touched || !field.errors) return '';
 
-    if (field.errors['required']) return `${fieldName} is required`;
+    if (field.errors['required']) return this.translate.instant('FINANCE.CATEGORIES.ERRORS.REQUIRED');
     if (field.errors['maxlength']) {
       const maxLength = field.errors['maxlength'].requiredLength;
-      return `${fieldName} must be at most ${maxLength} characters`;
+      return this.translate.instant('FINANCE.CATEGORIES.ERRORS.MAX_LENGTH', { length: maxLength });
     }
     return '';
   }

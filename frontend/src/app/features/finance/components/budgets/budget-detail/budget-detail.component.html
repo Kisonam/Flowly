@@ -2,21 +2,21 @@
   <!-- Header -->
   <div class="detail-header">
     <button class="btn btn-back" (click)="goBack()">
-      <span>←</span> Back to Budgets
+      <span>←</span> {{ 'FINANCE.BUDGETS.DETAIL.BACK' | translate }}
     </button>
-    <h2>💼 Budget Details</h2>
+    <h2>💼 {{ 'FINANCE.BUDGETS.DETAIL.TITLE' | translate }}</h2>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading budget...</p>
+    <p>{{ 'FINANCE.BUDGETS.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
   <div *ngIf="errorMessage" class="error-state">
     <p>❌ {{ errorMessage }}</p>
-    <button class="btn btn-primary" (click)="goBack()">Back to List</button>
+    <button class="btn btn-primary" (click)="goBack()">{{ 'FINANCE.BUDGETS.DETAIL.BACK_LIST' | translate }}</button>
   </div>
 
   <!-- Budget Detail -->
@@ -37,14 +37,14 @@
       <div class="progress-section">
         <div class="amount-summary">
           <div class="amount-item spent">
-            <label>Spent</label>
+            <label>{{ 'FINANCE.BUDGETS.DETAIL.SPENT' | translate }}</label>
             <div class="amount-value" [style.color]="isOverBudget() ? '#ef4444' : '#1f2937'">
               {{ formatAmount(budget.currentSpent, budget.currencyCode) }}
             </div>
           </div>
           <div class="amount-divider">/</div>
           <div class="amount-item limit">
-            <label>Limit</label>
+            <label>{{ 'FINANCE.BUDGETS.DETAIL.LIMIT' | translate }}</label>
             <div class="amount-value">
               {{ formatAmount(budget.limit, budget.currencyCode) }}
             </div>
@@ -53,9 +53,7 @@
 
         <div class="progress-bar-container">
           <div class="progress-bar">
-            <div
-              class="progress-fill"
-              [style.width.%]="getProgressPercentage()"
+            <div class="progress-fill" [style.width.%]="getProgressPercentage()"
               [style.background]="getProgressColor()">
             </div>
           </div>
@@ -68,14 +66,15 @@
           <div class="remaining-icon">💰</div>
           <div class="remaining-text">
             <strong>{{ formatAmount(getRemainingAmount(), budget.currencyCode) }}</strong>
-            <span>remaining</span>
+            <span>{{ 'FINANCE.BUDGETS.DETAIL.REMAINING' | translate }}</span>
           </div>
         </div>
 
         <div class="overbudget-section" *ngIf="isOverBudget()">
           <div class="overbudget-icon">⚠️</div>
           <div class="overbudget-text">
-            <strong>Over budget by {{ formatAmount(budget.currentSpent - budget.limit, budget.currencyCode) }}</strong>
+            <strong>{{ 'FINANCE.BUDGETS.DETAIL.OVER_BY' | translate:{amount: formatAmount(budget.currentSpent -
+              budget.limit, budget.currencyCode)} }}</strong>
           </div>
         </div>
       </div>
@@ -84,11 +83,9 @@
       <div class="details-section">
         <!-- Category -->
         <div class="detail-item" *ngIf="budget.category">
-          <label>Category</label>
+          <label>{{ 'FINANCE.BUDGETS.DETAIL.CATEGORY' | translate }}</label>
           <div class="category-display">
-            <span
-              class="category-badge"
-              [style.background]="budget.category.color || '#e5e7eb'">
+            <span class="category-badge" [style.background]="budget.category.color || '#e5e7eb'">
               <span *ngIf="budget.category.icon">{{ budget.category.icon }}</span>
               {{ budget.category.name }}
             </span>
@@ -97,15 +94,15 @@
 
         <!-- Period Dates -->
         <div class="detail-item">
-          <label>Period</label>
+          <label>{{ 'FINANCE.BUDGETS.DETAIL.PERIOD' | translate }}</label>
           <div class="date-range">
             <div class="date-box">
-              <span class="date-label">Start</span>
+              <span class="date-label">{{ 'FINANCE.BUDGETS.DETAIL.START' | translate }}</span>
               <span class="date-value">{{ formatDate(budget.periodStart) }}</span>
             </div>
             <div class="date-arrow">→</div>
             <div class="date-box">
-              <span class="date-label">End</span>
+              <span class="date-label">{{ 'FINANCE.BUDGETS.DETAIL.END' | translate }}</span>
               <span class="date-value">{{ formatDate(budget.periodEnd) }}</span>
             </div>
           </div>
@@ -113,30 +110,30 @@
 
         <!-- Days Remaining -->
         <div class="detail-item" *ngIf="budget.daysRemaining !== undefined">
-          <label>Time Left</label>
+          <label>{{ 'FINANCE.BUDGETS.DETAIL.TIME_LEFT' | translate }}</label>
           <div class="days-remaining">
             <span class="days-number">{{ budget.daysRemaining }}</span>
-            <span class="days-label">days remaining</span>
+            <span class="days-label">{{ 'FINANCE.BUDGETS.DETAIL.DAYS_REMAINING' | translate }}</span>
           </div>
         </div>
 
         <!-- Status -->
         <div class="detail-item">
-          <label>Status</label>
+          <label>{{ 'FINANCE.BUDGETS.DETAIL.STATUS' | translate }}</label>
           <div class="status-badges">
             <span class="status-badge exceeded" *ngIf="budget.isExceeded">
-              ⚠️ Exceeded
+              {{ 'FINANCE.BUDGETS.DETAIL.EXCEEDED' | translate }}
             </span>
           </div>
         </div>
 
         <!-- Created/Updated -->
         <div class="detail-item">
-          <label>Created</label>
+          <label>{{ 'FINANCE.BUDGETS.DETAIL.CREATED' | translate }}</label>
           <div class="timestamp">{{ formatDate(budget.createdAt) }}</div>
         </div>
         <div class="detail-item" *ngIf="budget.updatedAt">
-          <label>Last Updated</label>
+          <label>{{ 'FINANCE.BUDGETS.DETAIL.UPDATED' | translate }}</label>
           <div class="timestamp">{{ formatDate(budget.updatedAt) }}</div>
         </div>
       </div>
@@ -144,28 +141,19 @@
 
     <!-- Actions Card -->
     <div class="detail-card actions-card">
-      <h3>Actions</h3>
+      <h3>{{ 'FINANCE.BUDGETS.DETAIL.ACTIONS' | translate }}</h3>
       <div class="action-buttons">
         <button class="btn btn-primary" (click)="editBudget()">
-          <span>✏️</span> Edit Budget
+          <span>✏️</span> {{ 'FINANCE.BUDGETS.DETAIL.EDIT' | translate }}
         </button>
-        <button
-          *ngIf="!budget.isArchived"
-          class="btn btn-secondary"
-          (click)="deleteBudget()">
-          <span>📦</span> Archive
+        <button *ngIf="!budget.isArchived" class="btn btn-secondary" (click)="deleteBudget()">
+          <span>📦</span> {{ 'FINANCE.BUDGETS.DETAIL.ARCHIVE' | translate }}
         </button>
-        <button
-          *ngIf="budget.isArchived"
-          class="btn btn-secondary"
-          (click)="restoreBudget()">
-          <span>↩️</span> Restore
+        <button *ngIf="budget.isArchived" class="btn btn-secondary" (click)="restoreBudget()">
+          <span>↩️</span> {{ 'FINANCE.BUDGETS.DETAIL.RESTORE' | translate }}
         </button>
-        <button
-          *ngIf="budget.isArchived"
-          class="btn btn-danger"
-          (click)="deleteBudget()">
-          <span>🗑️</span> Delete Permanently
+        <button *ngIf="budget.isArchived" class="btn btn-danger" (click)="deleteBudget()">
+          <span>🗑️</span> {{ 'FINANCE.BUDGETS.DETAIL.DELETE' | translate }}
         </button>
       </div>
     </div>
@@ -173,26 +161,25 @@
     <!-- Transactions Card -->
     <div class="detail-card transactions-card">
       <div class="card-header">
-        <h3>💰 Linked Transactions</h3>
-        <span class="transaction-count">{{ transactions.length }} transaction{{ transactions.length !== 1 ? 's' : '' }}</span>
+        <h3>💰 {{ 'FINANCE.BUDGETS.DETAIL.TRANSACTIONS' | translate }}</h3>
+        <span class="transaction-count">{{ 'FINANCE.BUDGETS.DETAIL.TRANSACTIONS_COUNT' | translate:{count:
+          transactions.length, suffix: (transactions.length !== 1 ? 's' : '')} }}</span>
       </div>
 
       <!-- Loading State -->
       <div *ngIf="loadingTransactions" class="loading-state">
         <div class="spinner-small"></div>
-        <p>Loading transactions...</p>
+        <p>{{ 'FINANCE.BUDGETS.DETAIL.TRANSACTIONS_LOADING' | translate }}</p>
       </div>
 
       <!-- Empty State -->
       <div *ngIf="!loadingTransactions && transactions.length === 0" class="empty-state">
-        <p>📭 No transactions linked to this budget yet</p>
+        <p>{{ 'FINANCE.BUDGETS.DETAIL.TRANSACTIONS_EMPTY' | translate }}</p>
       </div>
 
       <!-- Transactions List -->
       <div *ngIf="!loadingTransactions && transactions.length > 0" class="transactions-list">
-        <div
-          *ngFor="let transaction of transactions"
-          class="transaction-item"
+        <div *ngFor="let transaction of transactions" class="transaction-item"
           (click)="viewTransaction(transaction.id)">
           <div class="transaction-icon" [style.color]="getTransactionTypeColor(transaction.type)">
             {{ getTransactionTypeIcon(transaction.type) }}

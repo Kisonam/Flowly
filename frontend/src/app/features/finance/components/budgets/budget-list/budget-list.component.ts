@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../../../core/services/theme.service';
 
 import { FinanceService } from '../../../services/finance.service';
@@ -11,7 +12,7 @@ import { Budget, BudgetFilter, Currency } from '../../../models/finance.models';
 @Component({
   selector: 'app-budget-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './budget-list.component.html',
   styleUrls: ['./budget-list.component.scss']
 })
@@ -20,6 +21,7 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private themeService = inject(ThemeService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   budgets: Budget[] = [];
@@ -104,7 +106,7 @@ export class BudgetListComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to fetch budgets', err);
-          this.errorMessage = err.message || 'Failed to fetch budgets';
+          this.errorMessage = err.message || this.translate.instant('FINANCE.BUDGETS.ERRORS.LOAD_FAILED');
           this.loading = false;
         }
       });
@@ -175,8 +177,11 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   }
 
   deleteBudget(budget: Budget): void {
-    const action = budget.isArchived ? 'delete permanently' : 'archive';
-    if (!confirm(`Are you sure you want to ${action} budget "${budget.title}"?`)) return;
+    const confirmMessage = budget.isArchived
+      ? this.translate.instant('FINANCE.BUDGETS.ERRORS.DELETE_CONFIRM')
+      : this.translate.instant('FINANCE.BUDGETS.ERRORS.ARCHIVE_CONFIRM');
+
+    if (!confirm(confirmMessage)) return;
 
     const request = budget.isArchived
       ? this.financeService.deleteBudget(budget.id)
@@ -191,12 +196,14 @@ export class BudgetListComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to delete/archive budget', err);
-          alert('Failed to process budget: ' + err.message);
+          alert(this.translate.instant('FINANCE.BUDGETS.ERRORS.DELETE_FAILED') + ': ' + err.message);
         }
       });
   }
 
   restoreBudget(budget: Budget): void {
+    if (!confirm(this.translate.instant('FINANCE.BUDGETS.ERRORS.RESTORE_CONFIRM'))) return;
+
     this.financeService.restoreBudget(budget.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -206,7 +213,7 @@ export class BudgetListComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to restore budget', err);
-          alert('Failed to restore budget: ' + err.message);
+          alert(this.translate.instant('FINANCE.BUDGETS.ERRORS.RESTORE_FAILED') + ': ' + err.message);
         }
       });
   }
@@ -255,10 +262,10 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   }
 
   getDaysRemaining(budget: Budget): string {
-    if (budget.daysRemaining < 0) return 'Expired';
-    if (budget.daysRemaining === 0) return 'Today';
-    if (budget.daysRemaining === 1) return '1 day left';
-    return `${budget.daysRemaining} days left`;
+    if (budget.daysRemaining < 0) return this.translate.instant('FINANCE.BUDGETS.CARD.EXPIRED');
+    if (budget.daysRemaining === 0) return this.translate.instant('FINANCE.BUDGETS.CARD.TODAY');
+    if (budget.daysRemaining === 1) return this.translate.instant('FINANCE.BUDGETS.CARD.ONE_DAY_LEFT');
+    return `${budget.daysRemaining} ${this.translate.instant('FINANCE.BUDGETS.CARD.DAYS_REMAINING')}`;
   }
 
   formatDate(date: string | Date | undefined): string {
