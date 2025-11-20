@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, inject, OnInit, signal, computed } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { Link, LinkEntityType, EntityPreview } from '../../models/link.models';
 import { LinkService } from '../../services/link.service';
@@ -25,7 +26,7 @@ import { debounceTime, distinctUntilChanged, Subject, switchMap, catchError, of 
 @Component({
   selector: 'app-link-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './link-selector.component.html',
   styleUrls: ['./link-selector.component.scss']
 })
@@ -34,6 +35,7 @@ export class LinkSelectorComponent implements OnInit {
   private notesService = inject(NotesService);
   private tasksService = inject(TasksService);
   private transactionsService = inject(TransactionsService);
+  private translate = inject(TranslateService);
 
   // Inputs
   @Input({ required: true }) entityType!: LinkEntityType;
@@ -214,7 +216,7 @@ export class LinkSelectorComponent implements OnInit {
           this.closeAddDialog();
         },
         error: (err) => {
-          alert(err.message);
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_CREATE'));
         }
       });
   }
@@ -223,7 +225,7 @@ export class LinkSelectorComponent implements OnInit {
    * Delete a link
    */
   deleteLink(link: Link): void {
-    if (!confirm('Are you sure you want to remove this link?')) {
+    if (!confirm(this.translate.instant('COMMON.CONFIRM.REMOVE_LINK'))) {
       return;
     }
 
@@ -234,7 +236,7 @@ export class LinkSelectorComponent implements OnInit {
           this.linkDeleted.emit(link.id);
         },
         error: (err) => {
-          alert(err.message);
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_DELETE'));
         }
       });
   }

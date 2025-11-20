@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { FinanceService } from '../../services/finance.service';
@@ -22,7 +23,8 @@ import {
     ReactiveFormsModule,
     IncomeExpenseChartComponent,
     CategoryBreakdownChartComponent,
-    BudgetProgressChartComponent
+    BudgetProgressChartComponent,
+    TranslateModule
   ],
   templateUrl: './finance-dashboard.component.html',
   styleUrl: './finance-dashboard.component.scss'

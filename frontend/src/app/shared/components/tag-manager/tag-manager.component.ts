@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, inject, OnInit, signal, HostListener } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { Tag } from '../../../features/notes/models/note.models';
 import { TagsService, CreateTagRequest, UpdateTagRequest } from '../../services/tags.service';
@@ -15,12 +16,13 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
 @Component({
   selector: 'app-tag-manager',
   standalone: true,
-  imports: [CommonModule, FormsModule, FocusTrapDirective],
+  imports: [CommonModule, FormsModule, FocusTrapDirective, TranslateModule],
   templateUrl: './tag-manager.component.html',
   styleUrls: ['./tag-manager.component.scss']
 })
 export class TagManagerComponent implements OnInit {
   private tagsService = inject(TagsService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   @Input() title = 'Tags';
@@ -129,7 +131,7 @@ export class TagManagerComponent implements OnInit {
   createTag(): void {
     const name = this.createFormData.name.trim();
     if (!name) {
-      alert('Tag name is required');
+      alert(this.translate.instant('COMMON.ERRORS.REQUIRED'));
       return;
     }
 
@@ -151,7 +153,7 @@ export class TagManagerComponent implements OnInit {
         },
         error: (err) => {
           console.error('❌ Failed to create tag', err);
-          alert('Failed to create tag: ' + (err.message || 'Unknown error'));
+          alert(this.translate.instant('COMMON.ERRORS.FAILED_TO_CREATE') + ': ' + (err.message || 'Unknown error'));
         }
       });
   }
@@ -181,7 +183,7 @@ export class TagManagerComponent implements OnInit {
 
     const name = this.editFormData.name.trim();
     if (!name) {
-      alert('Tag name is required');
+      alert(this.translate.instant('COMMON.ERRORS.REQUIRED'));
       return;
     }
 
@@ -201,14 +203,14 @@ export class TagManagerComponent implements OnInit {
         },
         error: (err) => {
           console.error('❌ Failed to update tag', err);
-          alert('Failed to update tag: ' + (err.message || 'Unknown error'));
+          alert(this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE') + ': ' + (err.message || 'Unknown error'));
         }
       });
   }
 
   // Delete
   deleteTag(tag: Tag): void {
-    if (!confirm(`Delete tag "${tag.name}"? This will remove it from all items.`)) {
+    if (!confirm(this.translate.instant('COMMON.CONFIRM.DELETE_TAG', { name: tag.name }))) {
       return;
     }
 
@@ -227,7 +229,7 @@ export class TagManagerComponent implements OnInit {
         },
         error: (err) => {
           console.error('❌ Failed to delete tag', err);
-          alert('Failed to delete tag: ' + (err.message || 'Unknown error'));
+          alert(this.translate.instant('COMMON.ERRORS.FAILED_TO_DELETE') + ': ' + (err.message || 'Unknown error'));
         }
       });
   }

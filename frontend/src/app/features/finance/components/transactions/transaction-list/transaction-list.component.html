@@ -1,28 +1,30 @@
 <div class="transaction-list-container">
   <!-- Header -->
   <div class="module-header">
-    <h2>💰 Finance</h2>
+    <h2>💰 {{ 'FINANCE.TRANSACTIONS.TITLE' | translate }}</h2>
     <div class="header-actions">
-      <button class="btn btn-icon" (click)="toggleFilters()" [title]="showFilters ? 'Hide Filters' : 'Show Filters'">
+      <button class="btn btn-icon" (click)="toggleFilters()"
+        [title]="(showFilters ? 'FINANCE.TRANSACTIONS.FILTERS.HIDE' : 'FINANCE.TRANSACTIONS.FILTERS.SHOW') | translate">
         <span>{{ showFilters ? '🔼' : '🔽' }}</span>
         <span class="filter-badge" *ngIf="!showFilters && getActiveFiltersCount() > 0">
           {{ getActiveFiltersCount() }}
         </span>
       </button>
       <button class="btn btn-secondary" routerLink="/finance/categories">
-        <span>📂</span> Categories
+        <span>📂</span> {{ 'FINANCE.TRANSACTIONS.CREATE_CATEGORY' | translate }}
       </button>
       <button class="btn btn-secondary" routerLink="/finance/budgets">
-        <span>💼</span> Budgets
+        <span>💼</span> {{ 'FINANCE.TRANSACTIONS.CREATE_BUDGET' | translate }}
       </button>
       <button class="btn btn-secondary" routerLink="/finance/goals">
-        <span>🎯</span> Goals
+        <span>🎯</span> {{ 'FINANCE.TRANSACTIONS.CREATE_GOAL' | translate }}
       </button>
       <button class="btn btn-secondary" routerLink="/finance/dashboard">
-        <span>📊</span> Dashboard
+        <span>📊</span> {{ 'FINANCE.DASHBOARD.TITLE' | translate }}
       </button>
       <div class="quick-actions-wrapper">
-        <button class="btn btn-primary btn-circle" (click)="toggleQuickActions()" title="Quick Actions">
+        <button class="btn btn-primary btn-circle" (click)="toggleQuickActions()"
+          [title]="'FINANCE.TRANSACTIONS.QUICK_ACTIONS' | translate">
           <span class="plus-icon">+</span>
         </button>
 
@@ -30,33 +32,33 @@
         <div class="quick-actions-menu" *ngIf="showQuickActions">
           <div class="quick-actions-overlay" (click)="closeQuickActions()"></div>
           <div class="quick-actions-content">
-            <h4>Create New</h4>
+            <h4>{{ 'FINANCE.TRANSACTIONS.CREATE_NEW' | translate }}</h4>
             <button class="quick-action-item" routerLink="/finance/transactions/new" (click)="closeQuickActions()">
               <span class="action-icon">💰</span>
               <div class="action-text">
-                <strong>Transaction</strong>
-                <small>Add income or expense</small>
+                <strong>{{ 'FINANCE.TRANSACTIONS.CREATE_TRANSACTION' | translate }}</strong>
+                <small>{{ 'FINANCE.TRANSACTIONS.CREATE_SUBTITLE_TRANSACTION' | translate }}</small>
               </div>
             </button>
             <button class="quick-action-item" routerLink="/finance/categories" (click)="closeQuickActions()">
               <span class="action-icon">📂</span>
               <div class="action-text">
-                <strong>Category</strong>
-                <small>Organize transactions</small>
+                <strong>{{ 'FINANCE.TRANSACTIONS.CREATE_CATEGORY' | translate }}</strong>
+                <small>{{ 'FINANCE.TRANSACTIONS.CREATE_SUBTITLE_CATEGORY' | translate }}</small>
               </div>
             </button>
             <button class="quick-action-item" routerLink="/finance/budgets/new" (click)="closeQuickActions()">
               <span class="action-icon">💼</span>
               <div class="action-text">
-                <strong>Budget</strong>
-                <small>Set spending limits</small>
+                <strong>{{ 'FINANCE.TRANSACTIONS.CREATE_BUDGET' | translate }}</strong>
+                <small>{{ 'FINANCE.TRANSACTIONS.CREATE_SUBTITLE_BUDGET' | translate }}</small>
               </div>
             </button>
             <button class="quick-action-item" routerLink="/finance/goals/new" (click)="closeQuickActions()">
               <span class="action-icon">🎯</span>
               <div class="action-text">
-                <strong>Goal</strong>
-                <small>Track savings goals</small>
+                <strong>{{ 'FINANCE.TRANSACTIONS.CREATE_GOAL' | translate }}</strong>
+                <small>{{ 'FINANCE.TRANSACTIONS.CREATE_SUBTITLE_GOAL' | translate }}</small>
               </div>
             </button>
           </div>
@@ -70,31 +72,27 @@
     <div class="filters-row">
       <!-- Search -->
       <div class="filter-group">
-        <label>Search</label>
-        <input
-          type="text"
-          placeholder="Search transactions..."
-          formControlName="search"
-          class="input-field"
-        />
+        <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.SEARCH_PLACEHOLDER' | translate }}</label>
+        <input type="text" [placeholder]="'FINANCE.TRANSACTIONS.FILTERS.SEARCH_PLACEHOLDER' | translate"
+          formControlName="search" class="input-field" />
       </div>
 
       <!-- Type -->
       <div class="filter-group">
-        <label>Type</label>
+        <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.TYPE_LABEL' | translate }}</label>
         <select formControlName="type" class="select-field">
-          <option value="">All Types</option>
+          <option value="">{{ 'FINANCE.TRANSACTIONS.FILTERS.ALL_TYPES' | translate }}</option>
           <option *ngFor="let type of transactionTypes" [value]="type.value">
-            {{ type.label }}
+            {{ type.label | translate }}
           </option>
         </select>
       </div>
 
       <!-- Category -->
       <div class="filter-group">
-        <label>Category</label>
+        <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.CATEGORY_LABEL' | translate }}</label>
         <select formControlName="categoryId" class="select-field">
-          <option value="">All Categories</option>
+          <option value="">{{ 'FINANCE.TRANSACTIONS.FILTERS.ALL_CATEGORIES' | translate }}</option>
           <option *ngFor="let cat of categories" [value]="cat.id">
             {{ cat.name }}
           </option>
@@ -103,9 +101,9 @@
 
       <!-- Currency -->
       <div class="filter-group">
-        <label>Currency</label>
+        <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.CURRENCY_LABEL' | translate }}</label>
         <select formControlName="currencyCode" class="select-field">
-          <option value="">All Currencies</option>
+          <option value="">{{ 'FINANCE.TRANSACTIONS.FILTERS.ALL_CURRENCIES' | translate }}</option>
           <option *ngFor="let curr of currencies" [value]="curr.code">
             {{ curr.code }} ({{ curr.symbol }}) - {{ curr.name }}
           </option>
@@ -116,56 +114,38 @@
     <div class="filters-row">
       <!-- Date Range -->
       <div class="filter-group">
-        <label>From</label>
-        <input
-          type="date"
-          formControlName="dateFrom"
-          class="input-field"
-        />
+        <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.FROM_LABEL' | translate }}</label>
+        <input type="date" formControlName="dateFrom" class="input-field" />
       </div>
 
       <div class="filter-group">
-        <label>To</label>
-        <input
-          type="date"
-          formControlName="dateTo"
-          class="input-field"
-        />
+        <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.TO_LABEL' | translate }}</label>
+        <input type="date" formControlName="dateTo" class="input-field" />
       </div>
 
       <!-- Archived -->
       <div class="filter-group checkbox-group">
         <label class="checkbox-label">
-          <input
-            type="checkbox"
-            formControlName="isArchived"
-          />
-          <span>Show Archived</span>
+          <input type="checkbox" formControlName="isArchived" />
+          <span>{{ 'FINANCE.TRANSACTIONS.FILTERS.SHOW_ARCHIVED' | translate }}</span>
         </label>
       </div>
 
       <!-- Clear Button -->
       <div class="filter-group">
-        <button
-          class="btn btn-secondary btn-clear"
-          type="button"
-          (click)="clearFilters()">
-          Clear Filters
+        <button class="btn btn-secondary btn-clear" type="button" (click)="clearFilters()">
+          {{ 'FINANCE.TRANSACTIONS.FILTERS.CLEAR' | translate }}
         </button>
       </div>
     </div>
 
     <!-- Tags -->
     <div class="tags-row" *ngIf="tags.length > 0">
-      <label>Tags:</label>
+      <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.TAGS_LABEL' | translate }}</label>
       <div class="tags-list">
-        <span
-          *ngFor="let tag of tags"
-          class="tag-chip"
-          [class.selected]="isTagSelected(tag.id)"
+        <span *ngFor="let tag of tags" class="tag-chip" [class.selected]="isTagSelected(tag.id)"
           [style.background]="isTagSelected(tag.id) ? getTagColor(tag) : getCategoryColor({})"
-          [style.color]="isTagSelected(tag.id) ? 'white' : '#374151'"
-          (click)="toggleTag(tag.id)">
+          [style.color]="isTagSelected(tag.id) ? 'white' : '#374151'" (click)="toggleTag(tag.id)">
           {{ tag.name }}
         </span>
       </div>
@@ -176,12 +156,9 @@
   <div class="stats-bar">
     <div class="sort-controls">
       <label>Sort by:</label>
-      <button
-        *ngFor="let opt of sortOptions"
-        class="btn-sort"
-        [class.active]="currentSort?.key === opt.key"
+      <button *ngFor="let opt of sortOptions" class="btn-sort" [class.active]="currentSort?.key === opt.key"
         (click)="setSort(opt)">
-        {{ opt.label }}
+        {{ opt.label | translate }}
         <span *ngIf="currentSort?.key === opt.key" class="sort-arrow">
           {{ sortDirection === 'asc' ? '↑' : '↓' }}
         </span>
@@ -195,7 +172,7 @@
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading transactions...</p>
+    <p>{{ 'FINANCE.DASHBOARD.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
@@ -209,30 +186,24 @@
     <table>
       <thead>
         <tr>
-          <th>Type</th>
-          <th>Title</th>
-          <th>Category</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Tags</th>
-          <th>Actions</th>
+          <th>{{ 'FINANCE.TRANSACTIONS.TABLE.TYPE' | translate }}</th>
+          <th>{{ 'FINANCE.TRANSACTIONS.TABLE.TITLE' | translate }}</th>
+          <th>{{ 'FINANCE.TRANSACTIONS.TABLE.CATEGORY' | translate }}</th>
+          <th>{{ 'FINANCE.TRANSACTIONS.TABLE.AMOUNT' | translate }}</th>
+          <th>{{ 'FINANCE.TRANSACTIONS.TABLE.DATE' | translate }}</th>
+          <th>{{ 'FINANCE.TRANSACTIONS.TABLE.TAGS' | translate }}</th>
+          <th>{{ 'FINANCE.TRANSACTIONS.TABLE.ACTIONS' | translate }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let tx of transactions"
-          class="transaction-row"
-          [class.archived]="tx.isArchived"
+        <tr *ngFor="let tx of transactions" class="transaction-row" [class.archived]="tx.isArchived"
           (click)="viewTransaction(tx)">
 
           <!-- Type Indicator -->
           <td class="type-cell">
-            <div
-              class="type-badge"
-              [style.background]="getTransactionColor(tx.type)"
-              [style.color]="'white'">
+            <div class="type-badge" [style.background]="getTransactionColor(tx.type)" [style.color]="'white'">
               <span class="type-icon">{{ getTransactionIcon(tx.type) }}</span>
-              {{ tx.type }}
+              {{ 'FINANCE.DASHBOARD.' + (tx.type | uppercase) | translate }}
             </div>
           </td>
 
@@ -247,30 +218,23 @@
           <!-- Category -->
           <td class="category-cell">
             <div class="category-container">
-              <span
-                class="category-badge"
-                *ngIf="tx.category"
-                [style.background]="getCategoryColor(tx.category)">
+              <span class="category-badge" *ngIf="tx.category" [style.background]="getCategoryColor(tx.category)">
                 <span *ngIf="tx.category.icon">{{ tx.category.icon }}</span>
                 {{ tx.category.name }}
               </span>
               <span class="category-badge uncategorized" *ngIf="!tx.category">
-                Uncategorized
+                {{ 'FINANCE.TRANSACTIONS.TABLE.UNCATEGORIZED' | translate }}
               </span>
 
               <!-- Budget Badge -->
-              <span
-                class="linked-badge budget-badge"
-                *ngIf="tx.budget"
-                [title]="'Budget: ' + tx.budget.title">
+              <span class="linked-badge budget-badge" *ngIf="tx.budget"
+                [title]="('FINANCE.TRANSACTIONS.CREATE_BUDGET' | translate) + ': ' + tx.budget.title">
                 💼 {{ tx.budget.title }}
               </span>
 
               <!-- Goal Badge -->
-              <span
-                class="linked-badge goal-badge"
-                *ngIf="tx.goal"
-                [title]="'Goal: ' + tx.goal.title">
+              <span class="linked-badge goal-badge" *ngIf="tx.goal"
+                [title]="('FINANCE.TRANSACTIONS.CREATE_GOAL' | translate) + ': ' + tx.goal.title">
                 🎯 {{ tx.goal.title }}
               </span>
             </div>
@@ -278,9 +242,7 @@
 
           <!-- Amount -->
           <td class="amount-cell">
-            <div
-              class="amount"
-              [style.color]="getTransactionColor(tx.type)">
+            <div class="amount" [style.color]="getTransactionColor(tx.type)">
               <strong>{{ formatAmount(tx.amount, tx.currencyCode) }}</strong>
             </div>
           </td>
@@ -289,17 +251,15 @@
           <td class="date-cell">
             <div class="date-info">
               <div class="transaction-date">{{ formatDate(tx.date) }}</div>
-              <div class="created-date">Created: {{ formatDate(tx.createdAt) }}</div>
+              <div class="created-date">{{ 'FINANCE.TRANSACTIONS.TABLE.CREATED' | translate }} {{
+                formatDate(tx.createdAt) }}</div>
             </div>
           </td>
 
           <!-- Tags -->
           <td class="tags-cell">
             <div class="tags-container">
-              <span
-                *ngFor="let tag of tx.tags || []"
-                class="tag-chip small"
-                [style.background]="getTagColor(tag)"
+              <span *ngFor="let tag of tx.tags || []" class="tag-chip small" [style.background]="getTagColor(tag)"
                 [style.color]="'white'">
                 {{ tag.name }}
               </span>
@@ -310,24 +270,13 @@
           <!-- Actions -->
           <td class="actions-cell" (click)="$event.stopPropagation()">
             <div class="action-buttons">
-              <button
-                class="btn-icon edit"
-                [routerLink]="['/finance/transactions', tx.id, 'edit']"
-                title="Edit">
+              <button class="btn-icon edit" [routerLink]="['/finance/transactions', tx.id, 'edit']" title="Edit">
                 ✏️
               </button>
-              <button
-                *ngIf="!tx.isArchived"
-                class="btn-icon archive"
-                (click)="archiveTransaction(tx)"
-                title="Archive">
+              <button *ngIf="!tx.isArchived" class="btn-icon archive" (click)="archiveTransaction(tx)" title="Archive">
                 📦
               </button>
-              <button
-                *ngIf="tx.isArchived"
-                class="btn-icon restore"
-                (click)="restoreTransaction(tx)"
-                title="Restore">
+              <button *ngIf="tx.isArchived" class="btn-icon restore" (click)="restoreTransaction(tx)" title="Restore">
                 ↩️
               </button>
             </div>
@@ -339,10 +288,10 @@
           <td colspan="7">
             <div class="empty-state">
               <div class="empty-icon">💸</div>
-              <h3>No transactions found</h3>
-              <p>Try adjusting your filters or create a new transaction</p>
+              <h3>{{ 'FINANCE.TRANSACTIONS.TABLE.EMPTY_TITLE' | translate }}</h3>
+              <p>{{ 'FINANCE.TRANSACTIONS.TABLE.EMPTY_SUBTITLE' | translate }}</p>
               <button class="btn btn-primary" routerLink="/finance/transactions/new">
-                Add Transaction
+                {{ 'FINANCE.TRANSACTIONS.TABLE.ADD_BUTTON' | translate }}
               </button>
             </div>
           </td>
@@ -353,34 +302,25 @@
 
   <!-- Pagination -->
   <div *ngIf="!loading && !empty && totalPages > 1" class="pagination">
-    <button
-      class="btn-page"
-      (click)="prevPage()"
-      [disabled]="page <= 1">
-      ← Previous
+    <button class="btn-page" (click)="prevPage()" [disabled]="page <= 1">
+      ← {{ 'FINANCE.TRANSACTIONS.PAGINATION.PREVIOUS' | translate }}
     </button>
 
     <div class="page-numbers">
-      <button
-        *ngFor="let pageNum of getPageNumbers()"
-        class="btn-page-number"
-        [class.active]="page === pageNum"
+      <button *ngFor="let pageNum of getPageNumbers()" class="btn-page-number" [class.active]="page === pageNum"
         (click)="goToPage(pageNum)">
         {{ pageNum }}
       </button>
     </div>
 
-    <button
-      class="btn-page"
-      (click)="nextPage()"
-      [disabled]="page >= totalPages">
-      Next →
+    <button class="btn-page" (click)="nextPage()" [disabled]="page >= totalPages">
+      {{ 'FINANCE.TRANSACTIONS.PAGINATION.NEXT' | translate }} →
     </button>
 
     <div class="page-info">
-      Page <strong>{{ page }}</strong> of <strong>{{ totalPages }}</strong>
+      {{ 'FINANCE.TRANSACTIONS.PAGINATION.PAGE_OF' | translate:{current: page, total: totalPages} }}
       <span class="separator">•</span>
-      Showing <strong>{{ transactions.length }}</strong> of <strong>{{ totalCount }}</strong>
+      {{ 'FINANCE.TRANSACTIONS.PAGINATION.SHOWING' | translate:{count: transactions.length, total: totalCount} }}
     </div>
   </div>
 </div>

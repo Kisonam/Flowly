@@ -1,21 +1,21 @@
 <div class="finance-dashboard">
-  <h1 class="dashboard-title">📊 Фінансовий дашборд</h1>
+  <h1 class="dashboard-title">{{ 'FINANCE.DASHBOARD.TITLE' | translate }}</h1>
 
   <!-- Filters -->
   <div class="filters-section">
     <form [formGroup]="filterForm" class="filters-form">
       <div class="filter-group">
-        <label>Період від</label>
+        <label>{{ 'FINANCE.DASHBOARD.FILTERS.PERIOD_FROM' | translate }}</label>
         <input type="date" formControlName="periodStart" class="filter-input" />
       </div>
 
       <div class="filter-group">
-        <label>Період до</label>
+        <label>{{ 'FINANCE.DASHBOARD.FILTERS.PERIOD_TO' | translate }}</label>
         <input type="date" formControlName="periodEnd" class="filter-input" />
       </div>
 
       <div class="filter-group">
-        <label>Валюта</label>
+        <label>{{ 'FINANCE.DASHBOARD.FILTERS.CURRENCY' | translate }}</label>
         <select formControlName="currencyCode" class="filter-select">
           <option *ngFor="let currency of currencies" [value]="currency.code">
             {{ currency.symbol }} {{ currency.code }}
@@ -28,7 +28,7 @@
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Завантаження статистики...</p>
+    <p>{{ 'FINANCE.DASHBOARD.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
@@ -44,27 +44,30 @@
       <div class="summary-card income">
         <div class="card-icon">📈</div>
         <div class="card-content">
-          <h3>Доходи</h3>
+          <h3>{{ 'FINANCE.DASHBOARD.INCOME' | translate }}</h3>
           <p class="amount">{{ stats.totalIncome | number:'1.2-2' }} {{ stats.currencyCode }}</p>
-          <span class="subtitle">Середньо: {{ stats.averageIncome | number:'1.2-2' }}/день</span>
+          <span class="subtitle">{{ 'FINANCE.DASHBOARD.AVERAGE_DAY' | translate:{amount: (stats.averageIncome |
+            number:'1.2-2')} }}</span>
         </div>
       </div>
 
       <div class="summary-card expense">
         <div class="card-icon">📉</div>
         <div class="card-content">
-          <h3>Витрати</h3>
+          <h3>{{ 'FINANCE.DASHBOARD.EXPENSE' | translate }}</h3>
           <p class="amount">{{ stats.totalExpense | number:'1.2-2' }} {{ stats.currencyCode }}</p>
-          <span class="subtitle">Середньо: {{ stats.averageExpense | number:'1.2-2' }}/день</span>
+          <span class="subtitle">{{ 'FINANCE.DASHBOARD.AVERAGE_DAY' | translate:{amount: (stats.averageExpense |
+            number:'1.2-2')} }}</span>
         </div>
       </div>
 
       <div class="summary-card balance" [class.positive]="stats.balance >= 0" [class.negative]="stats.balance < 0">
         <div class="card-icon">💰</div>
         <div class="card-content">
-          <h3>Баланс</h3>
+          <h3>{{ 'FINANCE.DASHBOARD.BALANCE' | translate }}</h3>
           <p class="amount">{{ stats.balance | number:'1.2-2' }} {{ stats.currencyCode }}</p>
-          <span class="subtitle">{{ stats.transactionCount }} транзакцій</span>
+          <span class="subtitle">{{ 'FINANCE.DASHBOARD.TRANSACTIONS_COUNT' | translate:{count: stats.transactionCount}
+            }}</span>
         </div>
       </div>
     </div>
@@ -73,59 +76,43 @@
     <div class="charts-section">
       <!-- Income vs Expense Chart -->
       <div class="chart-wrapper">
-        <app-income-expense-chart
-          [data]="incomeExpenseData"
-          [chartType]="'bar'"
-          [title]="'Доходи vs Витрати'"
-          [height]="'350px'"
-        ></app-income-expense-chart>
+        <app-income-expense-chart [data]="incomeExpenseData" [chartType]="'bar'"
+          [title]="'FINANCE.DASHBOARD.INCOME_VS_EXPENSE' | translate" [height]="'350px'"></app-income-expense-chart>
       </div>
 
       <!-- Expense Breakdown Chart -->
       <div class="chart-wrapper">
-        <app-category-breakdown-chart
-          [data]="expenseCategoryData"
-          [chartType]="'doughnut'"
-          [title]="'Витрати по категоріях'"
-          [height]="'350px'"
-          [legendPosition]="'right'"
-        ></app-category-breakdown-chart>
+        <app-category-breakdown-chart [data]="expenseCategoryData" [chartType]="'doughnut'"
+          [title]="'FINANCE.DASHBOARD.EXPENSE_BY_CATEGORY' | translate" [height]="'350px'"
+          [legendPosition]="'right'"></app-category-breakdown-chart>
       </div>
 
       <!-- Income Breakdown Chart -->
       <div class="chart-wrapper" *ngIf="incomeCategoryData.length > 0">
-        <app-category-breakdown-chart
-          [data]="incomeCategoryData"
-          [chartType]="'doughnut'"
-          [title]="'Доходи по категоріях'"
-          [height]="'350px'"
-          [legendPosition]="'right'"
-        ></app-category-breakdown-chart>
+        <app-category-breakdown-chart [data]="incomeCategoryData" [chartType]="'doughnut'"
+          [title]="'FINANCE.DASHBOARD.INCOME_BY_CATEGORY' | translate" [height]="'350px'"
+          [legendPosition]="'right'"></app-category-breakdown-chart>
       </div>
     </div>
 
     <!-- Budget Progress Section -->
     <div class="budget-progress-section" *ngIf="budgetProgressData.length > 0">
-      <app-budget-progress-chart
-        [data]="budgetProgressData"
-        [title]="'Прогрес бюджетів'"
-        [height]="'400px'"
-        [showPercentage]="true"
-      ></app-budget-progress-chart>
+      <app-budget-progress-chart [data]="budgetProgressData" [title]="'FINANCE.DASHBOARD.BUDGET_PROGRESS' | translate"
+        [height]="'400px'" [showPercentage]="true"></app-budget-progress-chart>
     </div>
 
     <!-- Category Breakdown Tables -->
     <div class="category-breakdown">
       <!-- Expense Categories -->
       <div class="category-table-wrapper" *ngIf="stats.expenseByCategory && stats.expenseByCategory.length > 0">
-        <h3>📉 Витрати по категоріях</h3>
+        <h3>📉 {{ 'FINANCE.DASHBOARD.EXPENSE_BY_CATEGORY' | translate }}</h3>
         <table class="category-table">
           <thead>
             <tr>
-              <th>Категорія</th>
-              <th class="align-right">Сума</th>
-              <th class="align-right">Транзакції</th>
-              <th class="align-right">%</th>
+              <th>{{ 'FINANCE.DASHBOARD.TABLE.CATEGORY' | translate }}</th>
+              <th class="align-right">{{ 'FINANCE.DASHBOARD.TABLE.AMOUNT' | translate }}</th>
+              <th class="align-right">{{ 'FINANCE.DASHBOARD.TABLE.TRANSACTIONS' | translate }}</th>
+              <th class="align-right">{{ 'FINANCE.DASHBOARD.TABLE.PERCENTAGE' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -141,14 +128,14 @@
 
       <!-- Income Categories -->
       <div class="category-table-wrapper" *ngIf="stats.incomeByCategory && stats.incomeByCategory.length > 0">
-        <h3>📈 Доходи по категоріях</h3>
+        <h3>📈 {{ 'FINANCE.DASHBOARD.INCOME_BY_CATEGORY' | translate }}</h3>
         <table class="category-table">
           <thead>
             <tr>
-              <th>Категорія</th>
-              <th class="align-right">Сума</th>
-              <th class="align-right">Транзакції</th>
-              <th class="align-right">%</th>
+              <th>{{ 'FINANCE.DASHBOARD.TABLE.CATEGORY' | translate }}</th>
+              <th class="align-right">{{ 'FINANCE.DASHBOARD.TABLE.AMOUNT' | translate }}</th>
+              <th class="align-right">{{ 'FINANCE.DASHBOARD.TABLE.TRANSACTIONS' | translate }}</th>
+              <th class="align-right">{{ 'FINANCE.DASHBOARD.TABLE.PERCENTAGE' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -165,26 +152,29 @@
 
     <!-- Recent Transactions -->
     <div class="recent-transactions">
-      <h3>🕒 Останні транзакції</h3>
+      <h3>🕒 {{ 'FINANCE.DASHBOARD.RECENT_TRANSACTIONS' | translate }}</h3>
 
       <div *ngIf="loadingTransactions" class="loading-transactions">
         <div class="spinner-small"></div>
-        <p>Завантаження...</p>
+        <p>{{ 'FINANCE.DASHBOARD.LOADING' | translate }}</p>
       </div>
 
       <div *ngIf="!loadingTransactions && recentTransactions.length === 0" class="empty-transactions">
-        <p>📭 Немає транзакцій</p>
+        <p>📭 {{ 'FINANCE.DASHBOARD.NO_TRANSACTIONS' | translate }}</p>
       </div>
 
       <div *ngIf="!loadingTransactions && recentTransactions.length > 0" class="transactions-list">
-        <div *ngFor="let transaction of recentTransactions" class="transaction-item" [class]="getTransactionTypeClass(transaction.type)">
+        <div *ngFor="let transaction of recentTransactions" class="transaction-item"
+          [class]="getTransactionTypeClass(transaction.type)">
           <div class="transaction-icon">{{ getTransactionTypeIcon(transaction.type) }}</div>
           <div class="transaction-details">
             <strong>{{ transaction.title }}</strong>
-            <span class="transaction-category">{{ transaction.category?.name || 'Без категорії' }}</span>
+            <span class="transaction-category">{{ transaction.category?.name ||
+              ('FINANCE.TRANSACTIONS.TABLE.UNCATEGORIZED' | translate) }}</span>
           </div>
           <div class="transaction-amount">
-            <span class="amount">{{ transaction.type === 'Income' ? '+' : '-' }}{{ transaction.amount | number:'1.2-2' }} {{ transaction.currencyCode }}</span>
+            <span class="amount">{{ transaction.type === 'Income' ? '+' : '-' }}{{ transaction.amount | number:'1.2-2'
+              }} {{ transaction.currencyCode }}</span>
             <span class="date">{{ transaction.date | date:'dd/MM/yyyy' }}</span>
           </div>
         </div>

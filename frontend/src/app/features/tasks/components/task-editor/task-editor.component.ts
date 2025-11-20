@@ -10,11 +10,12 @@ import { LinkSelectorComponent } from '../../../../shared/components/link-select
 import { Link, LinkEntityType } from '../../../../shared/models/link.models';
 import { TagManagerComponent } from '../../../../shared/components/tag-manager/tag-manager.component';
 import { TagsService } from '../../../../shared/services/tags.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-task-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, LinkSelectorComponent, TagManagerComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, LinkSelectorComponent, TagManagerComponent, TranslateModule],
   templateUrl: './task-editor.component.html',
   styleUrls: ['./task-editor.component.scss']
 })

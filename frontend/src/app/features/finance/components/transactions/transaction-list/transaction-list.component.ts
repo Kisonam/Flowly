@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
@@ -22,7 +23,7 @@ interface SortOption {
 @Component({
   selector: 'app-transaction-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule],
   templateUrl: './transaction-list.component.html',
   styleUrls: ['./transaction-list.component.scss']
 })
@@ -32,6 +33,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private themeService = inject(ThemeService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -55,17 +57,17 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
   // Transaction types
   transactionTypes: { value: TransactionType; label: string; color: string }[] = [
-    { value: 'Income', label: 'Income', color: '#10b981' },
-    { value: 'Expense', label: 'Expense', color: '#ef4444' }
+    { value: 'Income', label: 'FINANCE.DASHBOARD.INCOME', color: '#10b981' },
+    { value: 'Expense', label: 'FINANCE.DASHBOARD.EXPENSE', color: '#ef4444' }
   ];
 
   // Sorting
   sortOptions: SortOption[] = [
-    { key: 'date', label: 'Date' },
-    { key: 'amount', label: 'Amount' },
-    { key: 'createdAt', label: 'Created' }
+    { key: 'date', label: 'FINANCE.TRANSACTIONS.TABLE.DATE' },
+    { key: 'amount', label: 'FINANCE.TRANSACTIONS.TABLE.AMOUNT' },
+    { key: 'createdAt', label: 'FINANCE.TRANSACTIONS.TABLE.CREATED' }
   ];
-  currentSort: SortOption | null = { key: 'createdAt', label: 'Created' }; // Default sort by creation date
+  currentSort: SortOption | null = { key: 'createdAt', label: 'FINANCE.TRANSACTIONS.TABLE.CREATED' }; // Default sort by creation date
   sortDirection: 'asc' | 'desc' = 'desc';
 
   // Filter form
@@ -281,7 +283,8 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   }
 
   archiveTransaction(transaction: Transaction): void {
-    if (!confirm(`Archive transaction "${transaction.title}"?`)) return;
+    // TODO: Use a proper dialog service instead of confirm/alert
+    if (!confirm(this.translate.instant('FINANCE.TRANSACTIONS.ARCHIVE_CONFIRM', { title: transaction.title }))) return;
 
     this.financeService.archiveTransaction(transaction.id)
       .pipe(takeUntil(this.destroy$))
@@ -292,7 +295,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to archive transaction', err);
-          alert('Failed to archive transaction: ' + err.message);
+          alert(this.translate.instant('FINANCE.TRANSACTIONS.ARCHIVE_ERROR', { message: err.message }));
         }
       });
   }
@@ -307,7 +310,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to restore transaction', err);
-          alert('Failed to restore transaction: ' + err.message);
+          alert(this.translate.instant('FINANCE.TRANSACTIONS.RESTORE_ERROR', { message: err.message }));
         }
       });
   }

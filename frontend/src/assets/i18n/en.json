@@ -1,0 +1,278 @@
+{
+    "COMMON": {
+        "CONFIRM": {
+            "DELETE": "Are you sure you want to delete?",
+            "ARCHIVE": "Are you sure you want to archive?",
+            "RESTORE": "Are you sure you want to restore?",
+            "ACTION": "Are you sure?",
+            "DELETE_TAG": "Delete tag \"{{name}}\"? This will remove it from all items.",
+            "DELETE_CATEGORY": "Delete category \"{{name}}\"? This action cannot be undone.",
+            "ARCHIVE_TRANSACTION": "Archive transaction \"{{title}}\"?",
+            "ARCHIVE_TASK": "Archive task \"{{title}}\"?",
+            "REMOVE_LINK": "Are you sure you want to remove this link?",
+            "LOGOUT": "Are you sure you want to logout?"
+        },
+        "ERRORS": {
+            "UNKNOWN": "Unknown error",
+            "REQUIRED": "Required",
+            "FAILED_TO_LOAD": "Failed to load",
+            "FAILED_TO_SAVE": "Failed to save",
+            "FAILED_TO_DELETE": "Failed to delete",
+            "FAILED_TO_UPDATE": "Failed to update",
+            "FAILED_TO_CREATE": "Failed to create",
+            "FAILED_TO_ARCHIVE": "Failed to archive",
+            "FAILED_TO_RESTORE": "Failed to restore",
+            "FAILED_TO_EXPORT": "Failed to export"
+        }
+    },
+    "APP": {
+        "TITLE": "Flowly",
+        "THEME_TOGGLE": "Toggle Theme",
+        "LANGUAGE_SELECT": "Select language",
+        "USER_MENU": "User menu",
+        "SETTINGS": "Settings",
+        "LOGOUT": "Logout"
+    },
+    "NAV": {
+        "OVERVIEW": "Overview",
+        "NOTES": "Notes",
+        "TASKS": "Tasks",
+        "FINANCE": "Finance",
+        "ARCHIVE": "Archive",
+        "SETTINGS": "Settings"
+    },
+    "FINANCE": {
+        "DASHBOARD": {
+            "TITLE": "Financial Dashboard",
+            "INCOME": "Income",
+            "EXPENSE": "Expenses",
+            "BALANCE": "Balance",
+            "AVERAGE_DAY": "Average: {{amount}}/day",
+            "TRANSACTIONS_COUNT": "{{count}} transactions",
+            "INCOME_VS_EXPENSE": "Income vs Expenses",
+            "EXPENSE_BY_CATEGORY": "Expenses by Category",
+            "INCOME_BY_CATEGORY": "Income by Category",
+            "BUDGET_PROGRESS": "Budget Progress",
+            "RECENT_TRANSACTIONS": "Recent Transactions",
+            "NO_TRANSACTIONS": "No transactions",
+            "LOADING": "Loading statistics...",
+            "FILTERS": {
+                "PERIOD_FROM": "Period from",
+                "PERIOD_TO": "Period to",
+                "CURRENCY": "Currency"
+            },
+            "TABLE": {
+                "CATEGORY": "Category",
+                "AMOUNT": "Amount",
+                "TRANSACTIONS": "Transactions",
+                "PERCENTAGE": "%"
+            }
+        },
+        "TRANSACTIONS": {
+            "TITLE": "Transactions",
+            "CREATE_NEW": "Create New",
+            "CREATE_TRANSACTION": "Transaction",
+            "CREATE_CATEGORY": "Category",
+            "CREATE_BUDGET": "Budget",
+            "CREATE_GOAL": "Goal",
+            "CREATE_SUBTITLE_TRANSACTION": "Add income or expense",
+            "CREATE_SUBTITLE_CATEGORY": "Organize transactions",
+            "CREATE_SUBTITLE_BUDGET": "Set spending limits",
+            "CREATE_SUBTITLE_GOAL": "Track savings goals",
+            "FILTERS": {
+                "SHOW": "Show Filters",
+                "HIDE": "Hide Filters",
+                "SEARCH_PLACEHOLDER": "Search transactions...",
+                "TYPE_LABEL": "Type",
+                "ALL_TYPES": "All Types",
+                "CATEGORY_LABEL": "Category",
+                "ALL_CATEGORIES": "All Categories",
+                "CURRENCY_LABEL": "Currency",
+                "ALL_CURRENCIES": "All Currencies",
+                "FROM_LABEL": "From",
+                "TO_LABEL": "To",
+                "SHOW_ARCHIVED": "Show Archived",
+                "CLEAR": "Clear Filters",
+                "TAGS_LABEL": "Tags:"
+            },
+            "TABLE": {
+                "TYPE": "Type",
+                "TITLE": "Title",
+                "CATEGORY": "Category",
+                "AMOUNT": "Amount",
+                "DATE": "Date",
+                "TAGS": "Tags",
+                "ACTIONS": "Actions",
+                "UNCATEGORIZED": "Uncategorized",
+                "CREATED": "Created:",
+                "EMPTY_TITLE": "No transactions found",
+                "EMPTY_SUBTITLE": "Try adjusting your filters or create a new transaction",
+                "ADD_BUTTON": "Add Transaction"
+            },
+            "PAGINATION": {
+                "PREVIOUS": "Previous",
+                "NEXT": "Next",
+                "PAGE_OF": "Page {{current}} of {{total}}",
+                "SHOWING": "Showing {{count}} of {{total}}"
+            },
+            "QUICK_ACTIONS": "Quick Actions"
+        }
+    },
+    "AUTH": {
+        "LOGIN": {
+            "TITLE": "Welcome Back",
+            "SUBTITLE": "Sign in to continue to Flowly",
+            "EMAIL_LABEL": "Email address",
+            "EMAIL_PLACEHOLDER": "your.email@example.com",
+            "PASSWORD_LABEL": "Password",
+            "PASSWORD_PLACEHOLDER": "Enter your password",
+            "REMEMBER_ME": "Remember me",
+            "SIGN_IN_BUTTON": "Sign In",
+            "SIGNING_IN": "Signing in...",
+            "OR": "OR",
+            "SIGN_IN_WITH_GOOGLE": "Sign in with Google",
+            "NO_ACCOUNT": "Don't have an account?",
+            "SIGN_UP_LINK": "Sign up",
+            "ERRORS": {
+                "REQUIRED_EMAIL": "Email is required",
+                "INVALID_EMAIL": "Please enter a valid email",
+                "REQUIRED_PASSWORD": "Password is required",
+                "MIN_LENGTH_PASSWORD": "Password must be at least 8 characters"
+            }
+        },
+        "REGISTER": {
+            "TITLE": "Create Account",
+            "SUBTITLE": "Join Flowly to organize your routine",
+            "DISPLAY_NAME_LABEL": "Display Name",
+            "DISPLAY_NAME_PLACEHOLDER": "John Doe",
+            "EMAIL_LABEL": "Email address",
+            "EMAIL_PLACEHOLDER": "your.email@example.com",
+            "PASSWORD_LABEL": "Password",
+            "PASSWORD_PLACEHOLDER": "Create a strong password",
+            "CONFIRM_PASSWORD_LABEL": "Confirm Password",
+            "CONFIRM_PASSWORD_PLACEHOLDER": "Re-enter your password",
+            "CREATE_ACCOUNT_BUTTON": "Create Account",
+            "CREATING_ACCOUNT": "Creating account...",
+            "OR": "OR",
+            "SIGN_UP_WITH_GOOGLE": "Sign up with Google",
+            "ALREADY_HAVE_ACCOUNT": "Already have an account?",
+            "SIGN_IN_LINK": "Sign in",
+            "ERRORS": {
+                "REQUIRED_NAME": "Display name is required",
+                "MIN_LENGTH_NAME": "Name must be at least 2 characters",
+                "MAX_LENGTH_NAME": "Name must not exceed 100 characters",
+                "REQUIRED_EMAIL": "Email is required",
+                "INVALID_EMAIL": "Please enter a valid email",
+                "REQUIRED_PASSWORD": "Password is required",
+                "MIN_LENGTH_PASSWORD": "Password must be at least 8 characters",
+                "REQUIRED_CONFIRM_PASSWORD": "Please confirm your password",
+                "PASSWORD_MISMATCH": "Passwords do not match"
+            },
+            "PASSWORD_REQUIREMENTS": {
+                "TITLE": "Password must contain:",
+                "UPPERCASE": "One uppercase letter",
+                "LOWERCASE": "One lowercase letter",
+                "NUMBER": "One number",
+                "SPECIAL_CHAR": "One special character (!@#$%^&*...)"
+            }
+        }
+    },
+    "NOTES": {
+        "EDITOR": {
+            "TITLE_NEW": "New Note",
+            "TITLE_EDIT": "Edit Note",
+            "BACK_BUTTON": "Back",
+            "PREVIEW_MODE": "Preview",
+            "SPLIT_MODE": "Split",
+            "EDITOR_MODE": "Editor",
+            "SAVED": "Saved",
+            "SAVING": "Saving...",
+            "CANCEL": "Cancel",
+            "CREATE": "Create",
+            "UPDATE": "Update",
+            "LOADING": "Loading note...",
+            "TAGS_TITLE": "Tags",
+            "LINKS_TITLE": "Links",
+            "LINKS_INFO": "Save the note to add links",
+            "IMAGES_TITLE": "Images",
+            "DROP_TEXT": "Drag & drop images here",
+            "DROP_SUBTEXT": "or",
+            "BROWSE_FILES": "Browse Files",
+            "TITLE_PLACEHOLDER": "Note title...",
+            "MARKDOWN_PLACEHOLDER": "Write your note in Markdown...\n\n**Bold text**\n*Italic text*\n[Link](url)\n![Image](url)\n- List item\n1. Numbered item\n> Quote\n`code`\n```\ncode block\n```",
+            "PREVIEW_LABEL": "Preview",
+            "ERRORS": {
+                "TITLE_REQUIRED": "Title is required",
+                "TITLE_MAX_LENGTH": "Title is too long (max 200 characters)",
+                "CONTENT_REQUIRED": "Content is required",
+                "LOAD_FAILED": "Failed to load note",
+                "CREATE_FAILED": "Failed to create note",
+                "UPDATE_FAILED": "Failed to update note",
+                "UPLOAD_FAILED": "Failed to upload image",
+                "INVALID_FILE_TYPE": "Please select image files only",
+                "SAVE_FIRST": "Please save the note first before uploading images"
+            },
+            "CONFIRM_CANCEL": "Discard changes and return to notes list?"
+        }
+    },
+    "TASKS": {
+        "EDITOR": {
+            "TITLE_NEW": "New Task",
+            "TITLE_EDIT": "Edit Task",
+            "BACK_BUTTON": "Back",
+            "PREVIEW_MODE": "Preview",
+            "SPLIT_MODE": "Split",
+            "EDITOR_MODE": "Editor",
+            "CANCEL": "Cancel",
+            "CREATE": "Create",
+            "UPDATE": "Update",
+            "SAVING": "Saving...",
+            "META_TITLE": "Meta",
+            "STATUS_LABEL": "Status",
+            "PRIORITY_LABEL": "Priority",
+            "DUE_DATE_LABEL": "Due",
+            "DUE_TIME_LABEL": "Time (optional)",
+            "COLOR_LABEL": "Color",
+            "IN_GROUP": "In group:",
+            "TAGS_TITLE": "Tags",
+            "SUBTASKS_TITLE": "Subtasks",
+            "SUBTASK_PLACEHOLDER": "Subtask title",
+            "ADD_SUBTASK": "+ Add subtask",
+            "NO_SUBTASKS": "No subtasks yet",
+            "RECURRENCE_TITLE": "Recurrence",
+            "ENABLE_RECURRENCE": "Enable",
+            "LINKS_TITLE": "Links",
+            "LINKS_INFO": "Save the task to add links",
+            "TITLE_PLACEHOLDER": "Task title...",
+            "DESCRIPTION_PLACEHOLDER": "Write task description in Markdown...",
+            "PREVIEW_LABEL": "Preview",
+            "ERRORS": {
+                "TITLE_REQUIRED": "Title required",
+                "LOAD_FAILED": "Failed to load task",
+                "CREATE_FAILED": "Failed to create task",
+                "SAVE_FAILED": "Failed to save task"
+            },
+            "STATUS": {
+                "TODO": "Todo",
+                "IN_PROGRESS": "In Progress",
+                "DONE": "Done"
+            },
+            "PRIORITY": {
+                "NONE": "None",
+                "LOW": "Low",
+                "MEDIUM": "Medium",
+                "HIGH": "High"
+            },
+            "RECURRENCE": {
+                "NONE": "None",
+                "DAILY": "Daily",
+                "WEEKLY": "Weekly",
+                "MONTHLY": "Monthly"
+            }
+        },
+        "BOARD": {
+            "CONFIRM_DELETE_THEME": "Delete \"{{title}}\"?",
+            "CONFIRM_DELETE_THEME_WITH_TASKS": "Delete \"{{title}}\"? {{count}} task(s) will be moved to Unassigned."
+        }
+    }
+}

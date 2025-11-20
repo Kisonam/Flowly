@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
@@ -17,7 +18,7 @@ interface ThemeColumn {
 @Component({
   selector: 'app-task-board',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule, RouterModule],
+  imports: [CommonModule, FormsModule, DragDropModule, RouterModule, TranslateModule],
   templateUrl: './task-board.component.html',
   styleUrls: ['./task-board.component.scss']
 })
@@ -25,6 +26,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
   private tasksService = inject(TasksService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   // Columns: themes + Unassigned
@@ -180,7 +182,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
           const sourceArr = this.tasksByColumn.get(prevThemeId) ?? [];
           sourceArr.splice(event.previousIndex, 0, task);
           this.tasksByColumn.set(prevThemeId, sourceArr);
-          alert(err.message || 'Failed to reorder tasks');
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
         }
       });
   }
@@ -210,7 +212,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to create theme', err);
-          alert(err.message || 'Failed to create theme');
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_CREATE'));
         }
       });
   }
@@ -307,7 +309,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
           // Revert
           this.columns.splice(event.currentIndex, 1);
           this.columns.splice(event.previousIndex, 0, movedColumn);
-          alert(err.message || 'Failed to reorder themes');
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
         }
       });
   }
@@ -320,8 +322,8 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
 
     const tasksInColumn = this.tasksByColumn.get(themeId) || [];
     const confirmMessage = tasksInColumn.length > 0
-      ? `Delete "${column.title}"? ${tasksInColumn.length} task(s) will be moved to Unassigned.`
-      : `Delete "${column.title}"?`;
+      ? this.translate.instant('TASKS.BOARD.CONFIRM_DELETE_THEME_WITH_TASKS', { title: column.title, count: tasksInColumn.length })
+      : this.translate.instant('TASKS.BOARD.CONFIRM_DELETE_THEME', { title: column.title });
 
     if (!confirm(confirmMessage)) return;
 
@@ -349,7 +351,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
           this.tasksByColumn.set(themeId, tasksInColumn);
           const revertedUnassigned = unassignedTasks;
           this.tasksByColumn.set(null, revertedUnassigned);
-          alert(err.message || 'Failed to delete theme');
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_DELETE'));
         }
       });
   }
@@ -372,14 +374,14 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Failed to update task status', err);
           task.status = oldStatus; // Revert
-          alert(err.message || 'Failed to update task');
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
         }
       });
   }
 
   archiveTask(event: Event, task: Task): void {
     event.stopPropagation();
-    if (!confirm(`Archive "${task.title}"?`)) return;
+    if (!confirm(this.translate.instant('COMMON.CONFIRM.ARCHIVE_TASK', { title: task.title }))) return;
 
     // Find which column contains this task (check all columns including null for Unassigned)
     let foundColumnId: string | null | undefined = undefined;
@@ -418,7 +420,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
             tasks.splice(idx, 0, task);
             this.tasksByColumn.set(foundColumnId, tasks);
           }
-          alert(err.message || 'Failed to update task');
+          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
         }
       });
   }

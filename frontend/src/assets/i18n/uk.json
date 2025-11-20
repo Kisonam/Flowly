@@ -1,0 +1,276 @@
+{
+    "COMMON": {
+        "CONFIRM": {
+            "DELETE": "Ви впевнені, що хочете видалити?",
+            "ARCHIVE": "Ви впевнені, що хочете архівувати?",
+            "RESTORE": "Ви впевнені, що хочете відновити?",
+            "ACTION": "Ви впевнені?",
+            "DELETE_TAG": "Видалити тег \"{{name}}\"? Це видалить його з усіх елементів.",
+            "DELETE_CATEGORY": "Видалити категорію \"{{name}}\"? Цю дію не можна скасувати.",
+            "ARCHIVE_TRANSACTION": "Архівувати транзакцію \"{{title}}\"?",
+            "ARCHIVE_TASK": "Архівувати задачу \"{{title}}\"?",
+            "REMOVE_LINK": "Ви впевнені, що хочете видалити це посилання?",
+            "LOGOUT": "Ви впевнені, що хочете вийти?"
+        },
+        "ERRORS": {
+            "UNKNOWN": "Невідома помилка",
+            "REQUIRED": "Обов'язково",
+            "FAILED_TO_LOAD": "Не вдалося завантажити",
+            "FAILED_TO_SAVE": "Не вдалося зберегти",
+            "FAILED_TO_DELETE": "Не вдалося видалити",
+            "FAILED_TO_UPDATE": "Не вдалося оновити",
+            "FAILED_TO_CREATE": "Не вдалося створити",
+            "FAILED_TO_ARCHIVE": "Не вдалося архівувати",
+            "FAILED_TO_RESTORE": "Не вдалося відновити",
+            "FAILED_TO_EXPORT": "Не вдалося експортувати"
+        }
+    },
+    "APP_TITLE": "Flowly",
+    "THEME_TOGGLE": "Перемкнути тему",
+    "LANGUAGE_SELECT": "Вибрати мову",
+    "USER_MENU": "Меню користувача",
+    "SETTINGS": "Налаштування",
+    "LOGOUT": "Вийти",
+    "NAV": {
+        "OVERVIEW": "Огляд",
+        "NOTES": "Нотатки",
+        "TASKS": "Завдання",
+        "FINANCE": "Фінанси",
+        "ARCHIVE": "Архів",
+        "SETTINGS": "Налаштування"
+    },
+    "FINANCE": {
+        "DASHBOARD": {
+            "TITLE": "Фінансовий дашборд",
+            "INCOME": "Доходи",
+            "EXPENSE": "Витрати",
+            "BALANCE": "Баланс",
+            "AVERAGE_DAY": "Середньо: {{amount}}/день",
+            "TRANSACTIONS_COUNT": "{{count}} транзакцій",
+            "INCOME_VS_EXPENSE": "Доходи vs Витрати",
+            "EXPENSE_BY_CATEGORY": "Витрати по категоріях",
+            "INCOME_BY_CATEGORY": "Доходи по категоріях",
+            "BUDGET_PROGRESS": "Прогрес бюджетів",
+            "RECENT_TRANSACTIONS": "Останні транзакції",
+            "NO_TRANSACTIONS": "Немає транзакцій",
+            "LOADING": "Завантаження статистики...",
+            "FILTERS": {
+                "PERIOD_FROM": "Період від",
+                "PERIOD_TO": "Період до",
+                "CURRENCY": "Валюта"
+            },
+            "TABLE": {
+                "CATEGORY": "Категорія",
+                "AMOUNT": "Сума",
+                "TRANSACTIONS": "Транзакції",
+                "PERCENTAGE": "%"
+            }
+        },
+        "TRANSACTIONS": {
+            "TITLE": "Транзакції",
+            "CREATE_NEW": "Створити",
+            "CREATE_TRANSACTION": "Транзакція",
+            "CREATE_CATEGORY": "Категорія",
+            "CREATE_BUDGET": "Бюджет",
+            "CREATE_GOAL": "Ціль",
+            "CREATE_SUBTITLE_TRANSACTION": "Додати дохід або витрату",
+            "CREATE_SUBTITLE_CATEGORY": "Організувати транзакції",
+            "CREATE_SUBTITLE_BUDGET": "Встановити ліміти витрат",
+            "CREATE_SUBTITLE_GOAL": "Відстежувати цілі заощаджень",
+            "FILTERS": {
+                "SHOW": "Показати фільтри",
+                "HIDE": "Приховати фільтри",
+                "SEARCH_PLACEHOLDER": "Пошук транзакцій...",
+                "TYPE_LABEL": "Тип",
+                "ALL_TYPES": "Всі типи",
+                "CATEGORY_LABEL": "Категорія",
+                "ALL_CATEGORIES": "Всі категорії",
+                "CURRENCY_LABEL": "Валюта",
+                "ALL_CURRENCIES": "Всі валюти",
+                "FROM_LABEL": "Від",
+                "TO_LABEL": "До",
+                "SHOW_ARCHIVED": "Показати архівні",
+                "CLEAR": "Очистити",
+                "TAGS_LABEL": "Теги:"
+            },
+            "TABLE": {
+                "TYPE": "Тип",
+                "TITLE": "Назва",
+                "CATEGORY": "Категорія",
+                "AMOUNT": "Сума",
+                "DATE": "Дата",
+                "TAGS": "Теги",
+                "ACTIONS": "Дії",
+                "UNCATEGORIZED": "Без категорії",
+                "CREATED": "Створено:",
+                "EMPTY_TITLE": "Транзакцій не знайдено",
+                "EMPTY_SUBTITLE": "Спробуйте змінити фільтри або створіть нову транзакцію",
+                "ADD_BUTTON": "Додати транзакцію"
+            },
+            "PAGINATION": {
+                "PREVIOUS": "Назад",
+                "NEXT": "Далі",
+                "PAGE_OF": "Сторінка {{current}} з {{total}}",
+                "SHOWING": "Показано {{count}} з {{total}}"
+            },
+            "QUICK_ACTIONS": "Швидкі дії"
+        }
+    },
+    "AUTH": {
+        "LOGIN": {
+            "TITLE": "З поверненням",
+            "SUBTITLE": "Увійдіть, щоб продовжити роботу з Flowly",
+            "EMAIL_LABEL": "Електронна пошта",
+            "EMAIL_PLACEHOLDER": "vash.email@example.com",
+            "PASSWORD_LABEL": "Пароль",
+            "PASSWORD_PLACEHOLDER": "Введіть ваш пароль",
+            "REMEMBER_ME": "Запам'ятати мене",
+            "SIGN_IN_BUTTON": "Увійти",
+            "SIGNING_IN": "Вхід...",
+            "OR": "АБО",
+            "SIGN_IN_WITH_GOOGLE": "Увійти через Google",
+            "NO_ACCOUNT": "Немає облікового запису?",
+            "SIGN_UP_LINK": "Зареєструватися",
+            "ERRORS": {
+                "REQUIRED_EMAIL": "Електронна пошта обов'язкова",
+                "INVALID_EMAIL": "Будь ласка, введіть дійсну електронну пошту",
+                "REQUIRED_PASSWORD": "Пароль обов'язковий",
+                "MIN_LENGTH_PASSWORD": "Пароль повинен містити щонайменше 8 символів"
+            }
+        },
+        "REGISTER": {
+            "TITLE": "Створити акаунт",
+            "SUBTITLE": "Приєднуйтесь до Flowly, щоб організувати свою рутину",
+            "DISPLAY_NAME_LABEL": "Ім'я відображення",
+            "DISPLAY_NAME_PLACEHOLDER": "Іван Петренко",
+            "EMAIL_LABEL": "Електронна пошта",
+            "EMAIL_PLACEHOLDER": "vash.email@example.com",
+            "PASSWORD_LABEL": "Пароль",
+            "PASSWORD_PLACEHOLDER": "Створіть надійний пароль",
+            "CONFIRM_PASSWORD_LABEL": "Підтвердити пароль",
+            "CONFIRM_PASSWORD_PLACEHOLDER": "Введіть пароль ще раз",
+            "CREATE_ACCOUNT_BUTTON": "Створити акаунт",
+            "CREATING_ACCOUNT": "Створення акаунту...",
+            "OR": "АБО",
+            "SIGN_UP_WITH_GOOGLE": "Зареєструватися через Google",
+            "ALREADY_HAVE_ACCOUNT": "Вже маєте акаунт?",
+            "SIGN_IN_LINK": "Увійти",
+            "ERRORS": {
+                "REQUIRED_NAME": "Ім'я обов'язкове",
+                "MIN_LENGTH_NAME": "Ім'я повинно містити щонайменше 2 символи",
+                "MAX_LENGTH_NAME": "Ім'я не повинно перевищувати 100 символів",
+                "REQUIRED_EMAIL": "Електронна пошта обов'язкова",
+                "INVALID_EMAIL": "Будь ласка, введіть дійсну електронну пошту",
+                "REQUIRED_PASSWORD": "Пароль обов'язковий",
+                "MIN_LENGTH_PASSWORD": "Пароль повинен містити щонайменше 8 символів",
+                "REQUIRED_CONFIRM_PASSWORD": "Будь ласка, підтвердіть ваш пароль",
+                "PASSWORD_MISMATCH": "Паролі не співпадають"
+            },
+            "PASSWORD_REQUIREMENTS": {
+                "TITLE": "Пароль повинен містити:",
+                "UPPERCASE": "Одну велику літеру",
+                "LOWERCASE": "Одну маленьку літеру",
+                "NUMBER": "Одну цифру",
+                "SPECIAL_CHAR": "Один спеціальний символ (!@#$%^&*...)"
+            }
+        }
+    },
+    "NOTES": {
+        "EDITOR": {
+            "TITLE_NEW": "Нова нотатка",
+            "TITLE_EDIT": "Редагувати нотатку",
+            "BACK_BUTTON": "Назад",
+            "PREVIEW_MODE": "Перегляд",
+            "SPLIT_MODE": "Розділити",
+            "EDITOR_MODE": "Редактор",
+            "SAVED": "Збережено",
+            "SAVING": "Збереження...",
+            "CANCEL": "Скасувати",
+            "CREATE": "Створити",
+            "UPDATE": "Оновити",
+            "LOADING": "Завантаження нотатки...",
+            "TAGS_TITLE": "Теги",
+            "LINKS_TITLE": "Посилання",
+            "LINKS_INFO": "Збережіть нотатку, щоб додати посилання",
+            "IMAGES_TITLE": "Зображення",
+            "DROP_TEXT": "Перетягніть зображення сюди",
+            "DROP_SUBTEXT": "або",
+            "BROWSE_FILES": "Вибрати файли",
+            "TITLE_PLACEHOLDER": "Заголовок нотатки...",
+            "MARKDOWN_PLACEHOLDER": "Пишіть вашу нотатку в Markdown...\n\n**Жирний текст**\n*Курсив*\n[Посилання](url)\n![Зображення](url)\n- Елемент списку\n1. Нумерований елемент\n> Цитата\n`код`\n{блок коду\n```",
+            "PREVIEW_LABEL": "Попередній перегляд",
+            "ERRORS": {
+                "TITLE_REQUIRED": "Заголовок обов'язковий",
+                "TITLE_MAX_LENGTH": "Заголовок занадто довгий (макс. 200 символів)",
+                "CONTENT_REQUIRED": "Вміст обов'язковий",
+                "LOAD_FAILED": "Не вдалося завантажити нотатку",
+                "CREATE_FAILED": "Не вдалося створити нотатку",
+                "UPDATE_FAILED": "Не вдалося оновити нотатку",
+                "UPLOAD_FAILED": "Не вдалося завантажити зображення",
+                "IMAGES_ONLY": "Будь ласка, виберіть тільки файли зображень",
+                "SAVE_FIRST": "Будь ласка, збережіть нотатку перед завантаженням зображень"
+            },
+            "CONFIRM_CANCEL": "Скасувати зміни та повернутися до списку нотаток?"
+        }
+    },
+    "TASKS": {
+        "EDITOR": {
+            "TITLE_NEW": "Нова задача",
+            "TITLE_EDIT": "Редагувати задача",
+            "BACK_BUTTON": "Назад",
+            "PREVIEW_MODE": "Перегляд",
+            "SPLIT_MODE": "Розділити",
+            "EDITOR_MODE": "Редактор",
+            "CANCEL": "Скасувати",
+            "CREATE": "Створити",
+            "UPDATE": "Оновити",
+            "SAVING": "Збереження...",
+            "META_TITLE": "Метадані",
+            "STATUS_LABEL": "Статус",
+            "PRIORITY_LABEL": "Пріоритет",
+            "DUE_DATE_LABEL": "Термін",
+            "DUE_TIME_LABEL": "Час (необов'язково)",
+            "COLOR_LABEL": "Колір",
+            "IN_GROUP": "В групі:",
+            "TAGS_TITLE": "Теги",
+            "SUBTASKS_TITLE": "Підзадачі",
+            "SUBTASK_PLACEHOLDER": "Назва підзадачі",
+            "ADD_SUBTASK": "+ Додати підзадачу",
+            "NO_SUBTASKS": "Ще немає підзадач",
+            "RECURRENCE_TITLE": "Повторення",
+            "ENABLE_RECURRENCE": "Увімкнути",
+            "LINKS_TITLE": "Посилання",
+            "LINKS_INFO": "Збережіть задачу, щоб додати посилання",
+            "TITLE_PLACEHOLDER": "Назва задачі...",
+            "DESCRIPTION_PLACEHOLDER": "Опис задачі в Markdown...",
+            "PREVIEW_LABEL": "Попередній перегляд",
+            "ERRORS": {
+                "TITLE_REQUIRED": "Назва обов'язкова",
+                "LOAD_FAILED": "Не вдалося завантажити задачу",
+                "CREATE_FAILED": "Не вдалося створити задачу",
+                "SAVE_FAILED": "Не вдалося зберегти задачу"
+            },
+            "STATUS": {
+                "TODO": "До виконання",
+                "IN_PROGRESS": "В процесі",
+                "DONE": "Виконано"
+            },
+            "PRIORITY": {
+                "NONE": "Немає",
+                "LOW": "Низький",
+                "MEDIUM": "Середній",
+                "HIGH": "Високий"
+            },
+            "RECURRENCE": {
+                "NONE": "Немає",
+                "DAILY": "Щодня",
+                "WEEKLY": "Щотижня",
+                "MONTHLY": "Щомісяця"
+            }
+        },
+        "BOARD": {
+            "CONFIRM_DELETE_THEME": "Видалити \"{{title}}\"?",
+            "CONFIRM_DELETE_THEME_WITH_TASKS": "Видалити \"{{title}}\"? {{count}} задач(і) будуть переміщені в Непризначені."
+        }
+    }
+}

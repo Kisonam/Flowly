@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -11,13 +12,14 @@ import { Note, NoteFilter, PaginatedResult } from '../../models/note.models';
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule],
+  imports: [CommonModule, FormsModule, DragDropModule, TranslateModule],
   templateUrl: './note-list.component.html',
   styleUrls: ['./note-list.component.scss']
 })
 export class NoteListComponent implements OnInit, OnDestroy {
   private notesService = inject(NotesService);
   private tagsService = inject(TagsService);
+  private translate = inject(TranslateService);
   router = inject(Router);
   private destroy$ = new Subject<void>();
   private searchSubject$ = new Subject<string>();
@@ -230,7 +232,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
   archiveNote(noteId: string, event: Event): void {
     event.stopPropagation();
 
-    if (!confirm('Are you sure you want to archive this note?')) {
+    if (!confirm(this.translate.instant('COMMON.CONFIRM.ARCHIVE'))) {
       return;
     }
 
@@ -242,7 +244,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to archive note:', error);
-          alert(error.message || 'Failed to archive note');
+          alert(error.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_ARCHIVE'));
         }
       });
   }
@@ -261,7 +263,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to restore note:', error);
-          alert(error.message || 'Failed to restore note');
+          alert(error.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_RESTORE'));
         }
       });
   }
@@ -277,7 +279,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (error) => {
           console.error('Failed to export note:', error);
-          alert(error.message || 'Failed to export note');
+          alert(error.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_EXPORT'));
         }
       });
   }

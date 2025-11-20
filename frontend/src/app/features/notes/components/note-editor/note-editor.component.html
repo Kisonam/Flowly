@@ -4,41 +4,44 @@
   <!-- Header -->
   <div class="editor-header">
     <div class="header-left">
-      <button type="button" class="btn-back" (click)="onCancel()" title="Back to notes">
-        Back
+      <button type="button" class="btn-back" (click)="onCancel()" [title]="'NOTES.EDITOR.BACK_BUTTON' | translate">
+        {{ 'NOTES.EDITOR.BACK_BUTTON' | translate }}
       </button>
       <h1 class="editor-title">
-        {{ isEditMode ? 'Edit Note' : 'New Note' }}
+        {{ (isEditMode ? 'NOTES.EDITOR.TITLE_EDIT' : 'NOTES.EDITOR.TITLE_NEW') | translate }}
       </h1>
     </div>
 
     <div class="header-actions">
       <!-- View Mode Toggles -->
       <button type="button" class="btn-secondary" [class.active]="isPreviewMode && !isSplitView"
-        aria-label="Preview mode" (click)="togglePreview()" title="Preview only">
-        👁️ Preview
+        [attr.aria-label]="'NOTES.EDITOR.PREVIEW_MODE' | translate" (click)="togglePreview()"
+        [title]="'NOTES.EDITOR.PREVIEW_MODE' | translate">
+        👁️ {{ 'NOTES.EDITOR.PREVIEW_MODE' | translate }}
       </button>
-      <button type="button" class="btn-secondary" [class.active]="isSplitView" aria-label="Split view mode"
-        (click)="toggleSplitView()" title="Split view">
-        ↔️ Split
+      <button type="button" class="btn-secondary" [class.active]="isSplitView"
+        [attr.aria-label]="'NOTES.EDITOR.SPLIT_MODE' | translate" (click)="toggleSplitView()"
+        [title]="'NOTES.EDITOR.SPLIT_MODE' | translate">
+        ↔️ {{ 'NOTES.EDITOR.SPLIT_MODE' | translate }}
       </button>
       <button type="button" class="btn-secondary" [class.active]="!isPreviewMode && !isSplitView"
-        aria-label="Editor mode" (click)="isPreviewMode = false; isSplitView = false" title="Editor only">
-        ✍️ Editor
+        [attr.aria-label]="'NOTES.EDITOR.EDITOR_MODE' | translate" (click)="isPreviewMode = false; isSplitView = false"
+        [title]="'NOTES.EDITOR.EDITOR_MODE' | translate">
+        ✍️ {{ 'NOTES.EDITOR.EDITOR_MODE' | translate }}
       </button>
 
       <!-- Save Status -->
       <div class="save-status" *ngIf="lastSavedTime" role="status" aria-live="polite">
-        ✅ <span class="save-time">Saved {{ lastSavedTime | date: 'short' }}</span>
+        ✅ <span class="save-time">{{ 'NOTES.EDITOR.SAVED' | translate }} {{ lastSavedTime | date: 'short' }}</span>
       </div>
 
       <!-- Actions -->
       <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSaving">
-        Cancel
+        {{ 'NOTES.EDITOR.CANCEL' | translate }}
       </button>
       <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="noteForm.invalid || isSaving">
-        <span *ngIf="!isSaving">{{ isEditMode ? 'Update' : 'Create' }}</span>
-        <span *ngIf="isSaving">⏳ Saving...</span>
+        <span *ngIf="!isSaving">{{ (isEditMode ? 'NOTES.EDITOR.UPDATE' : 'NOTES.EDITOR.CREATE') | translate }}</span>
+        <span *ngIf="isSaving">⏳ {{ 'NOTES.EDITOR.SAVING' | translate }}</span>
       </button>
     </div>
   </div>
@@ -52,7 +55,7 @@
   <!-- Loading State -->
   <div class="loading-state" *ngIf="isLoading">
     <div class="spinner"></div>
-    <p>Loading note...</p>
+    <p>{{ 'NOTES.EDITOR.LOADING' | translate }}</p>
   </div>
 
   <!-- Editor Content -->
@@ -61,8 +64,8 @@
     <aside class="editor-sidebar">
       <!-- Tags Section -->
       <div class="sidebar-section">
-        <app-tag-manager [title]="'Tags'" [selectedIds]="selectedTagIds" (selectedIdsChange)="onTagsChanged($event)"
-          (tagsUpdated)="loadAvailableTags()">
+        <app-tag-manager [title]="'NOTES.EDITOR.TAGS_TITLE' | translate" [selectedIds]="selectedTagIds"
+          (selectedIdsChange)="onTagsChanged($event)" (tagsUpdated)="loadAvailableTags()">
         </app-tag-manager>
       </div>
 
@@ -70,10 +73,10 @@
       <div class="sidebar-section">
         <h3 class="sidebar-title">
           <i class="bi bi-link-45deg"></i>
-          Посилання
+          {{ 'NOTES.EDITOR.LINKS_TITLE' | translate }}
         </h3>
         <div *ngIf="!noteId" class="info-message">
-          💡 Збережіть нотатку, щоб додати посилання
+          💡 {{ 'NOTES.EDITOR.LINKS_INFO' | translate }}
         </div>
         <app-link-selector *ngIf="noteId" [entityType]="LinkEntityType.Note" [entityId]="noteId" [title]="''"
           (linkCreated)="onLinkCreated($event)" (linkDeleted)="onLinkDeleted($event)">
@@ -84,17 +87,17 @@
       <div class="sidebar-section">
         <h3 class="sidebar-title">
           <i class="bi bi-image"></i>
-          Images
+          {{ 'NOTES.EDITOR.IMAGES_TITLE' | translate }}
         </h3>
 
         <div class="drop-zone" [class.dragging]="isDragging" (dragover)="onDragOver($event)"
           (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
           <i class="bi bi-cloud-upload drop-icon"></i>
-          <p class="drop-text">Drag & drop images here</p>
-          <p class="drop-subtext">or</p>
+          <p class="drop-text">{{ 'NOTES.EDITOR.DROP_TEXT' | translate }}</p>
+          <p class="drop-subtext">{{ 'NOTES.EDITOR.DROP_SUBTEXT' | translate }}</p>
           <label class="btn-upload">
             <i class="bi bi-upload"></i>
-            Browse Files
+            {{ 'NOTES.EDITOR.BROWSE_FILES' | translate }}
             <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" style="display: none;">
           </label>
         </div>
@@ -113,11 +116,13 @@
     <div class="editor-main">
       <!-- Title Input -->
       <div class="form-group">
-        <input type="text" class="form-control title-input" formControlName="title" placeholder="Note title..."
+        <input type="text" class="form-control title-input" formControlName="title"
+          [placeholder]="'NOTES.EDITOR.TITLE_PLACEHOLDER' | translate"
           [class.invalid]="titleControl?.invalid && titleControl?.touched">
         <div class="error-message" *ngIf="titleControl?.invalid && titleControl?.touched">
-          <span *ngIf="titleControl?.errors?.['required']">Title is required</span>
-          <span *ngIf="titleControl?.errors?.['maxlength']">Title is too long (max 200 characters)</span>
+          <span *ngIf="titleControl?.errors?.['required']">{{ 'NOTES.EDITOR.ERRORS.TITLE_REQUIRED' | translate }}</span>
+          <span *ngIf="titleControl?.errors?.['maxlength']">{{ 'NOTES.EDITOR.ERRORS.TITLE_MAX_LENGTH' | translate
+            }}</span>
         </div>
       </div>
 
@@ -125,29 +130,19 @@
       <div class="editor-preview-container" [class.split-view]="isSplitView">
         <!-- Markdown Editor -->
         <div class="markdown-editor" *ngIf="!isPreviewMode">
-          <textarea class="form-control markdown-textarea" formControlName="markdown" placeholder="Write your note in Markdown...
-
-**Bold text**
-*Italic text*
-[Link](url)
-![Image](url)
-- List item
-1. Numbered item
-> Quote
-`code`
-```
-code block
-```
-" [class.invalid]="markdownControl?.invalid && markdownControl?.touched">
+          <textarea class="form-control markdown-textarea" formControlName="markdown"
+            [placeholder]="'NOTES.EDITOR.MARKDOWN_PLACEHOLDER' | translate"
+            [class.invalid]="markdownControl?.invalid && markdownControl?.touched">
           </textarea>
           <div class="error-message" *ngIf="markdownControl?.invalid && markdownControl?.touched">
-            <span *ngIf="markdownControl?.errors?.['required']">Content is required</span>
+            <span *ngIf="markdownControl?.errors?.['required']">{{ 'NOTES.EDITOR.ERRORS.CONTENT_REQUIRED' | translate
+              }}</span>
           </div>
         </div>
 
         <!-- Markdown Preview -->
         <div class="markdown-preview" *ngIf="isPreviewMode || isSplitView">
-          <div class="preview-label">Preview</div>
+          <div class="preview-label">{{ 'NOTES.EDITOR.PREVIEW_LABEL' | translate }}</div>
           <div class="preview-content markdown-body" [innerHTML]="markdownPreview">
           </div>
         </div>

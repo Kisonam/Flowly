@@ -1,0 +1,277 @@
+{
+    "COMMON": {
+        "CONFIRM": {
+            "DELETE": "Czy na pewno chcesz usunąć?",
+            "ARCHIVE": "Czy na pewno chcesz zarchiwizować?",
+            "RESTORE": "Czy na pewno chcesz przywrócić?",
+            "ACTION": "Czy na pewno?",
+            "DELETE_TAG": "Usunąć tag \"{{name}}\"? To usunie go ze wszystkich elementów.",
+            "DELETE_CATEGORY": "Usunąć kategorię \"{{name}}\"? Tej operacji nie można cofnąć.",
+            "ARCHIVE_TRANSACTION": "Zarchiwizować transakcję \"{{title}}\"?",
+            "ARCHIVE_TASK": "Zarchiwizować zadanie \"{{title}}\"?",
+            "REMOVE_LINK": "Czy na pewno chcesz usunąć ten link?",
+            "LOGOUT": "Czy na pewno chcesz się wylogować?"
+        },
+        "ERRORS": {
+            "UNKNOWN": "Nieznany błąd",
+            "REQUIRED": "Wymagane",
+            "FAILED_TO_LOAD": "Nie udało się załadować",
+            "FAILED_TO_SAVE": "Nie udało się zapisać",
+            "FAILED_TO_DELETE": "Nie udało się usunąć",
+            "FAILED_TO_UPDATE": "Nie udało się zaktualizować",
+            "FAILED_TO_CREATE": "Nie udało się utworzyć",
+            "FAILED_TO_ARCHIVE": "Nie udało się zarchiwizować",
+            "FAILED_TO_RESTORE": "Nie udało się przywrócić",
+            "FAILED_TO_EXPORT": "Nie udało się wyeksportować"
+        }
+    },
+    "APP_TITLE": "Flowly",
+    "THEME_TOGGLE": "Przełącz motyw",
+    "LANGUAGE_SELECT": "Wybierz język",
+    "USER_MENU": "Menu użytkownika",
+    "SETTINGS": "Ustawienia",
+    "LOGOUT": "Wyloguj",
+    "NAV": {
+        "OVERVIEW": "Przegląd",
+        "NOTES": "Notatki",
+        "TASKS": "Zadania",
+        "FINANCE": "Finanse",
+        "ARCHIVE": "Archiwum",
+        "SETTINGS": "Ustawienia"
+    },
+    "FINANCE": {
+        "DASHBOARD": {
+            "TITLE": "Pulpit Finansowy",
+            "INCOME": "Przychody",
+            "EXPENSE": "Wydatki",
+            "BALANCE": "Bilans",
+            "AVERAGE_DAY": "Średnio: {{amount}}/dzień",
+            "TRANSACTIONS_COUNT": "{{count}} transakcji",
+            "INCOME_VS_EXPENSE": "Przychody vs Wydatki",
+            "EXPENSE_BY_CATEGORY": "Wydatki wg Kategorii",
+            "INCOME_BY_CATEGORY": "Przychody wg Kategorii",
+            "BUDGET_PROGRESS": "Realizacja Budżetu",
+            "RECENT_TRANSACTIONS": "Ostatnie Transakcje",
+            "NO_TRANSACTIONS": "Brak transakcji",
+            "LOADING": "Ładowanie statystyk...",
+            "FILTERS": {
+                "PERIOD_FROM": "Okres od",
+                "PERIOD_TO": "Okres do",
+                "CURRENCY": "Waluta"
+            },
+            "TABLE": {
+                "CATEGORY": "Kategoria",
+                "AMOUNT": "Kwota",
+                "TRANSACTIONS": "Transakcje",
+                "PERCENTAGE": "%"
+            }
+        },
+        "TRANSACTIONS": {
+            "TITLE": "Transakcje",
+            "CREATE_NEW": "Utwórz",
+            "CREATE_TRANSACTION": "Transakcja",
+            "CREATE_CATEGORY": "Kategoria",
+            "CREATE_BUDGET": "Budżet",
+            "CREATE_GOAL": "Cel",
+            "CREATE_SUBTITLE_TRANSACTION": "Dodaj przychód lub wydatek",
+            "CREATE_SUBTITLE_CATEGORY": "Organizuj transakcje",
+            "CREATE_SUBTITLE_BUDGET": "Ustaw limity wydatków",
+            "CREATE_SUBTITLE_GOAL": "Śledź cele oszczędnościowe",
+            "FILTERS": {
+                "SHOW": "Pokaż filtry",
+                "HIDE": "Ukryj filtry",
+                "SEARCH_PLACEHOLDER": "Szukaj transakcji...",
+                "TYPE_LABEL": "Typ",
+                "ALL_TYPES": "Wszystkie typy",
+                "CATEGORY_LABEL": "Kategoria",
+                "ALL_CATEGORIES": "Wszystkie kategorie",
+                "CURRENCY_LABEL": "Waluta",
+                "ALL_CURRENCIES": "Wszystkie waluty",
+                "FROM_LABEL": "Od",
+                "TO_LABEL": "Do",
+                "SHOW_ARCHIVED": "Pokaż zarchiwizowane",
+                "CLEAR": "Wyczyść",
+                "TAGS_LABEL": "Tagi:"
+            },
+            "TABLE": {
+                "TYPE": "Typ",
+                "TITLE": "Tytuł",
+                "CATEGORY": "Kategoria",
+                "AMOUNT": "Kwota",
+                "DATE": "Data",
+                "TAGS": "Tagi",
+                "ACTIONS": "Akcje",
+                "UNCATEGORIZED": "Bez kategorii",
+                "CREATED": "Utworzono:",
+                "EMPTY_TITLE": "Nie znaleziono transakcji",
+                "EMPTY_SUBTITLE": "Spróbuj zmienić filtry lub utwórz nową transakcję",
+                "ADD_BUTTON": "Dodaj transakcję"
+            },
+            "PAGINATION": {
+                "PREVIOUS": "Poprzednia",
+                "NEXT": "Następna",
+                "PAGE_OF": "Strona {{current}} z {{total}}",
+                "SHOWING": "Pokazano {{count}} z {{total}}"
+            },
+            "QUICK_ACTIONS": "Szybkie akcje"
+        }
+    },
+    "AUTH": {
+        "LOGIN": {
+            "TITLE": "Witaj z powrotem",
+            "SUBTITLE": "Zaloguj się, aby kontynuować w Flowly",
+            "EMAIL_LABEL": "Adres email",
+            "EMAIL_PLACEHOLDER": "twoj.email@example.com",
+            "PASSWORD_LABEL": "Hasło",
+            "PASSWORD_PLACEHOLDER": "Wpisz swoje hasło",
+            "REMEMBER_ME": "Zapamiętaj mnie",
+            "SIGN_IN_BUTTON": "Zaloguj się",
+            "SIGNING_IN": "Logowanie...",
+            "OR": "LUB",
+            "SIGN_IN_WITH_GOOGLE": "Zaloguj się przez Google",
+            "NO_ACCOUNT": "Nie masz konta?",
+            "SIGN_UP_LINK": "Zarejestruj się",
+            "ERRORS": {
+                "REQUIRED_EMAIL": "Email jest wymagany",
+                "INVALID_EMAIL": "Proszę podać poprawny adres email",
+                "REQUIRED_PASSWORD": "Hasło jest wymagane",
+                "MIN_LENGTH_PASSWORD": "Hasło musi mieć co najmniej 8 znaków"
+            }
+        },
+        "REGISTER": {
+            "TITLE": "Utwórz konto",
+            "SUBTITLE": "Dołącz do Flowly, aby zorganizować swoją rutynę",
+            "DISPLAY_NAME_LABEL": "Nazwa wyświetlana",
+            "DISPLAY_NAME_PLACEHOLDER": "Jan Kowalski",
+            "EMAIL_LABEL": "Adres email",
+            "EMAIL_PLACEHOLDER": "twoj.email@example.com",
+            "PASSWORD_LABEL": "Hasło",
+            "PASSWORD_PLACEHOLDER": "Utwórz silne hasło",
+            "CONFIRM_PASSWORD_LABEL": "Potwierdź hasło",
+            "CONFIRM_PASSWORD_PLACEHOLDER": "Wpisz ponownie hasło",
+            "CREATE_ACCOUNT_BUTTON": "Utwórz konto",
+            "CREATING_ACCOUNT": "Tworzenie konta...",
+            "OR": "LUB",
+            "SIGN_UP_WITH_GOOGLE": "Zarejestruj się przez Google",
+            "ALREADY_HAVE_ACCOUNT": "Masz już konto?",
+            "SIGN_IN_LINK": "Zaloguj się",
+            "ERRORS": {
+                "REQUIRED_NAME": "Nazwa jest wymagana",
+                "MIN_LENGTH_NAME": "Nazwa musi mieć co najmniej 2 znaki",
+                "MAX_LENGTH_NAME": "Nazwa nie może przekraczać 100 znaków",
+                "REQUIRED_EMAIL": "Email jest wymagany",
+                "INVALID_EMAIL": "Proszę podać poprawny adres email",
+                "REQUIRED_PASSWORD": "Hasło jest wymagane",
+                "MIN_LENGTH_PASSWORD": "Hasło musi mieć co najmniej 8 znaków",
+                "REQUIRED_CONFIRM_PASSWORD": "Proszę potwierdzić hasło",
+                "PASSWORD_MISMATCH": "Hasła nie pasują do siebie"
+            },
+            "PASSWORD_REQUIREMENTS": {
+                "TITLE": "Hasło musi zawierać:",
+                "UPPERCASE": "Jedną wielką literę",
+                "LOWERCASE": "Jedną małą literę",
+                "NUMBER": "Jedną cyfrę",
+                "SPECIAL_CHAR": "Jeden znak specjalny (!@#$%^&*...)"
+            }
+        }
+    },
+    "NOTES": {
+        "EDITOR": {
+            "TITLE_NEW": "Nowa notatka",
+            "TITLE_EDIT": "Edytuj notatkę",
+            "BACK_BUTTON": "Wstecz",
+            "PREVIEW_MODE": "Podgląd",
+            "SPLIT_MODE": "Podziel",
+            "EDITOR_MODE": "Edytor",
+            "SAVED": "Zapisano",
+            "SAVING": "Zapisywanie...",
+            "CANCEL": "Anuluj",
+            "CREATE": "Utwórz",
+            "UPDATE": "Aktualizuj",
+            "LOADING": "Ładowanie notatki...",
+            "TAGS_TITLE": "Tagi",
+            "LINKS_TITLE": "Linki",
+            "LINKS_INFO": "Zapisz notatkę, aby dodać linki",
+            "IMAGES_TITLE": "Obrazy",
+            "DROP_TEXT": "Przeciągnij i upuść obrazy tutaj",
+            "DROP_SUBTEXT": "lub",
+            "BROWSE_FILES": "Przeglądaj pliki",
+            "TITLE_PLACEHOLDER": "Tytuł notatki...",
+            "MARKDOWN_PLACEHOLDER": "Napisz swoją notatkę w Markdown...\n\n**Pogrubiony tekst**\n*Kursywa*\n[Link](url)\n![Obraz](url)\n- Element listy\n1. Numerowany element\n> Cytat\n`kod`\nblok kodu",
+            "PREVIEW_LABEL": "Podgląd",
+            "ERRORS": {
+                "TITLE_REQUIRED": "Tytuł jest wymagany",
+                "TITLE_MAX_LENGTH": "Tytuł jest zbyt długi (maks. 200 znaków)",
+                "CONTENT_REQUIRED": "Treść jest wymagana",
+                "LOAD_FAILED": "Nie udało się załadować notatki",
+                "CREATE_FAILED": "Nie udało się utworzyć notatki",
+                "UPDATE_FAILED": "Nie udało się zaktualizować notatki",
+                "UPLOAD_FAILED": "Nie udało się przesłać obrazu",
+                "INVALID_FILE_TYPE": "Proszę wybrać tylko pliki obrazów",
+                "SAVE_FIRST": "Proszę zapisać notatkę przed przesłaniem obrazów",
+                "IMAGES_ONLY": "Proszę wybierać tylko pliki obrazów"
+            },
+            "CONFIRM_CANCEL": "Odrzucić zmiany i wrócić do listy notatek?"
+        }
+    },
+    "TASKS": {
+        "EDITOR": {
+            "TITLE_NEW": "Nowe zadanie",
+            "TITLE_EDIT": "Edytuj zadanie",
+            "BACK_BUTTON": "Wstecz",
+            "PREVIEW_MODE": "Podgląd",
+            "SPLIT_MODE": "Podziel",
+            "EDITOR_MODE": "Edytor",
+            "CANCEL": "Anuluj",
+            "CREATE": "Utwórz",
+            "UPDATE": "Aktualizuj",
+            "SAVING": "Zapisywanie...",
+            "META_TITLE": "Metadane",
+            "STATUS_LABEL": "Status",
+            "PRIORITY_LABEL": "Priorytet",
+            "DUE_DATE_LABEL": "Termin",
+            "DUE_TIME_LABEL": "Czas (opcjonalnie)",
+            "COLOR_LABEL": "Kolor",
+            "IN_GROUP": "W grupie:",
+            "TAGS_TITLE": "Tagi",
+            "SUBTASKS_TITLE": "Podzadania",
+            "SUBTASK_PLACEHOLDER": "Tytuł podzadania",
+            "ADD_SUBTASK": "+ Dodaj podzadanie",
+            "NO_SUBTASKS": "Brak podzadań",
+            "RECURRENCE_TITLE": "Powtarzanie",
+            "ENABLE_RECURRENCE": "Włącz",
+            "LINKS_TITLE": "Linki",
+            "LINKS_INFO": "Zapisz zadanie, aby dodać linki",
+            "TITLE_PLACEHOLDER": "Tytuł zadania...",
+            "DESCRIPTION_PLACEHOLDER": "Opis zadania w Markdown...",
+            "PREVIEW_LABEL": "Podgląd",
+            "ERRORS": {
+                "TITLE_REQUIRED": "Tytuł jest wymagany",
+                "LOAD_FAILED": "Nie udało się załadować zadania",
+                "CREATE_FAILED": "Nie udało się utworzyć zadania",
+                "SAVE_FAILED": "Nie udało się zapisać zadania"
+            },
+            "STATUS": {
+                "TODO": "Do zrobienia",
+                "IN_PROGRESS": "W trakcie",
+                "DONE": "Zrobione"
+            },
+            "PRIORITY": {
+                "NONE": "Brak",
+                "LOW": "Niski",
+                "MEDIUM": "Średni",
+                "HIGH": "Wysoki"
+            },
+            "RECURRENCE": {
+                "NONE": "Brak",
+                "DAILY": "Codziennie",
+                "WEEKLY": "Co tydzień",
+                "MONTHLY": "Co miesiąc"
+            }
+        },
+        "BOARD": {
+            "CONFIRM_DELETE_THEME": "Usunąć \"{{title}}\"?",
+            "CONFIRM_DELETE_THEME_WITH_TASKS": "Usunąć \"{{title}}\"? {{count}} zadań zostanie przeniesionych do Nieprzypisanych."
+        }
+    }
+}

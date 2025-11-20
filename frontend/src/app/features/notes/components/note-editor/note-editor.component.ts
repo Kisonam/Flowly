@@ -12,6 +12,7 @@ import { LinkSelectorComponent } from '../../../../shared/components/link-select
 import { Note, CreateNoteRequest, UpdateNoteRequest, Tag } from '../../models/note.models';
 import { TagsService } from '../../../../shared/services/tags.service';
 import { Link, LinkEntityType } from '../../../../shared/models/link.models';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface NoteDraft {
   title: string;
@@ -23,7 +24,7 @@ interface NoteDraft {
 @Component({
   selector: 'app-note-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TagManagerComponent, LinkSelectorComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TagManagerComponent, LinkSelectorComponent, TranslateModule],
   templateUrl: './note-editor.component.html',
   styleUrls: ['./note-editor.component.scss']
 })
@@ -33,6 +34,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   private tagsService = inject(TagsService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   noteForm!: FormGroup;
@@ -254,7 +256,8 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   }
 
   onCancel(): void {
-    if (confirm('Discard changes and return to notes list?')) {
+    const message = this.translate.instant('NOTES.EDITOR.CONFIRM_CANCEL');
+    if (confirm(message)) {
       this.router.navigate(['/notes']);
     }
   }
@@ -341,7 +344,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
     );
 
     if (imageFiles.length === 0) {
-      alert('Please select image files only');
+      alert(this.translate.instant('NOTES.EDITOR.ERRORS.IMAGES_ONLY'));
       return;
     }
 
@@ -351,7 +354,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
 
   private uploadFile(file: File): void {
     if (!this.noteId && !this.isEditMode) {
-      alert('Please save the note first before uploading images');
+      alert(this.translate.instant('NOTES.EDITOR.ERRORS.SAVE_FIRST'));
       return;
     }
 
@@ -374,7 +377,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error uploading file:', error);
           this.uploadProgress = null;
-          alert('Failed to upload image');
+          alert(this.translate.instant('NOTES.EDITOR.ERRORS.UPLOAD_FAILED'));
         }
       });
   }

@@ -2,14 +2,14 @@
   <div class="navbar-content">
     <!-- Left Section: Logo & Title -->
     <div class="navbar-left">
-      <h1 class="app-title">Flowly</h1>
+      <h1 class="app-title">{{ 'APP.TITLE' | translate }}</h1>
     </div>
 
     <!-- Right Section: All Buttons -->
     <div class="navbar-right">
       <!-- Theme Button -->
-      <button class="icon-btn theme-btn" [class.active]="currentTheme === 'low-stimulus'" aria-label="Toggle Theme"
-        (click)="toggleTheme()" [title]="currentTheme === 'normal' ? 'Перейти на Low Stimulus' : 'Перейти на Normal'">
+      <button class="icon-btn theme-btn" [class.active]="currentTheme === 'low-stimulus'"
+        [attr.aria-label]="'NAV.THEME_TOGGLE' | translate" (click)="toggleTheme()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="7" height="9" rx="1"></rect>
           <rect x="14" y="3" width="7" height="5" rx="1"></rect>
@@ -20,7 +20,7 @@
 
       <!-- Language Button -->
       <div class="language-menu-container">
-        <button class="icon-btn lang-btn" aria-label="Select language" aria-haspopup="true"
+        <button class="icon-btn lang-btn" [attr.aria-label]="'NAV.LANGUAGE_SELECT' | translate" aria-haspopup="true"
           [attr.aria-expanded]="showLanguageMenu" (click)="toggleLanguageMenu()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             aria-hidden="true">
@@ -33,7 +33,7 @@
         <!-- Language Dropdown -->
         <div class="language-dropdown" *ngIf="showLanguageMenu" role="menu" aria-label="Language selection">
           <div class="dropdown-header">
-            <span class="dropdown-title">Виберіть мову</span>
+            <span class="dropdown-title">{{ 'NAV.LANGUAGE_SELECT' | translate }}</span>
           </div>
 
           <div class="dropdown-divider"></div>
@@ -56,8 +56,8 @@
 
       <!-- User Avatar with Dropdown -->
       <div class="user-menu-container">
-        <button class="user-avatar" aria-label="User menu" aria-haspopup="true" [attr.aria-expanded]="showUserMenu"
-          (click)="toggleUserMenu()">
+        <button class="user-avatar" [attr.aria-label]="'NAV.USER_MENU' | translate" aria-haspopup="true"
+          [attr.aria-expanded]="showUserMenu" (click)="toggleUserMenu()">
           <img *ngIf="currentUser?.avatarUrl" [src]="currentUser!.avatarUrl" [alt]="currentUser!.displayName"
             class="avatar-image" />
           <span *ngIf="!currentUser?.avatarUrl" class="avatar-initials" aria-hidden="true">
@@ -83,7 +83,7 @@
               <path d="M12 1v6m0 6v6m5.2-13.2 4.3 4.3m-4.3 5.7 4.3 4.3M1 12h6m6 0h6M4.9 4.9l4.3 4.3m5.7 5.7 4.3 4.3">
               </path>
             </svg>
-            <span>Налаштування</span>
+            <span>{{ 'NAV.SETTINGS' | translate }}</span>
           </button>
 
           <div class="dropdown-divider"></div>
@@ -95,7 +95,7 @@
               <polyline points="16 17 21 12 16 7"></polyline>
               <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
-            <span>Вийти</span>
+            <span>{{ 'APP.LOGOUT' | translate }}</span>
           </button>
         </div>
       </div>
@@ -152,7 +152,7 @@
       </span>
 
       <!-- Tab Label -->
-      <span class="tab-label">{{ module.label }}</span>
+      <span class="tab-label">{{ 'NAV.' + module.id.toUpperCase() | translate }}</span>
     </button>
   </div>
 </nav>

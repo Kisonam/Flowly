@@ -1,21 +1,28 @@
+<!-- frontend/src/app/features/tasks/components/task-editor/task-editor.component.html -->
+
 <div class="task-editor-layout" [formGroup]="form">
   <!-- Header -->
   <div class="editor-header">
     <div class="header-left">
-      <button type="button" class="btn-back" (click)="onCancel()" title="Back to tasks">Back</button>
-      <h1 class="editor-title">{{ isEdit ? 'Edit Task' : 'New Task' }}</h1>
+      <button type="button" class="btn-back" (click)="onCancel()" [title]="'TASKS.EDITOR.BACK_BUTTON' | translate">{{
+        'TASKS.EDITOR.BACK_BUTTON' | translate }}</button>
+      <h1 class="editor-title">{{ (isEdit ? 'TASKS.EDITOR.TITLE_EDIT' : 'TASKS.EDITOR.TITLE_NEW') | translate }}</h1>
     </div>
     <div class="header-actions">
-      <button type="button" class="btn-secondary" (click)="togglePreview()" aria-label="Preview mode"
-        [class.active]="isPreviewMode && !isSplitView">👁️ Preview</button>
-      <button type="button" class="btn-secondary" (click)="toggleSplitView()" aria-label="Split view mode"
-        [class.active]="isSplitView">↔️ Split</button>
+      <button type="button" class="btn-secondary" (click)="togglePreview()"
+        [attr.aria-label]="'TASKS.EDITOR.PREVIEW_MODE' | translate" [class.active]="isPreviewMode && !isSplitView">👁️
+        {{ 'TASKS.EDITOR.PREVIEW_MODE' | translate }}</button>
+      <button type="button" class="btn-secondary" (click)="toggleSplitView()"
+        [attr.aria-label]="'TASKS.EDITOR.SPLIT_MODE' | translate" [class.active]="isSplitView">↔️ {{
+        'TASKS.EDITOR.SPLIT_MODE' | translate }}</button>
       <button type="button" class="btn-secondary" (click)="isPreviewMode=false; isSplitView=false"
-        aria-label="Editor mode" [class.active]="!isPreviewMode && !isSplitView">✍️ Editor</button>
-      <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="saving">Cancel</button>
+        [attr.aria-label]="'TASKS.EDITOR.EDITOR_MODE' | translate" [class.active]="!isPreviewMode && !isSplitView">✍️ {{
+        'TASKS.EDITOR.EDITOR_MODE' | translate }}</button>
+      <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="saving">{{ 'TASKS.EDITOR.CANCEL' |
+        translate }}</button>
       <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="saving || form.invalid">
-        <span *ngIf="!saving">{{ isEdit ? 'Update' : 'Create' }}</span>
-        <span *ngIf="saving">⏳ Saving...</span>
+        <span *ngIf="!saving">{{ (isEdit ? 'TASKS.EDITOR.UPDATE' : 'TASKS.EDITOR.CREATE') | translate }}</span>
+        <span *ngIf="saving">⏳ {{ 'TASKS.EDITOR.SAVING' | translate }}</span>
       </button>
     </div>
   </div>
@@ -24,65 +31,71 @@
     <!-- Sidebar -->
     <aside class="editor-sidebar">
       <div class="sidebar-section">
-        <h3 class="sidebar-title">Meta</h3>
-        <label class="form-field">Status
+        <h3 class="sidebar-title">{{ 'TASKS.EDITOR.META_TITLE' | translate }}</h3>
+        <label class="form-field">{{ 'TASKS.EDITOR.STATUS_LABEL' | translate }}
           <select formControlName="status">
-            <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+            <option *ngFor="let s of statusOptions" [value]="s">{{ ('TASKS.EDITOR.STATUS.' + (s === 'InProgress' ?
+              'IN_PROGRESS' : s | uppercase)) | translate }}</option>
           </select>
         </label>
-        <label class="form-field">Priority
+        <label class="form-field">{{ 'TASKS.EDITOR.PRIORITY_LABEL' | translate }}
           <select formControlName="priority">
-            <option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</option>
+            <option *ngFor="let p of priorityOptions" [value]="p">{{ ('TASKS.EDITOR.PRIORITY.' + (p | uppercase)) |
+              translate }}</option>
           </select>
           <span class="priority-badge" *ngIf="form.controls['priority'].value"
             [attr.data-priority]="form.controls['priority'].value.toLowerCase()">
-            {{ form.controls['priority'].value }}
+            {{ ('TASKS.EDITOR.PRIORITY.' + (form.controls['priority'].value | uppercase)) | translate }}
           </span>
         </label>
-        <label class="form-field">Due
+        <label class="form-field">{{ 'TASKS.EDITOR.DUE_DATE_LABEL' | translate }}
           <input type="date" formControlName="dueDate" />
         </label>
-        <label class="form-field">Time (optional)
+        <label class="form-field">{{ 'TASKS.EDITOR.DUE_TIME_LABEL' | translate }}
           <input type="time" formControlName="dueTime" />
         </label>
-        <label class="form-field">Color
+        <label class="form-field">{{ 'TASKS.EDITOR.COLOR_LABEL' | translate }}
           <input type="color" formControlName="color" />
         </label>
-        <div class="theme-display" *ngIf="initialThemeId">In group: <code>{{ initialThemeId }}</code></div>
+        <div class="theme-display" *ngIf="initialThemeId">{{ 'TASKS.EDITOR.IN_GROUP' | translate }}
+          <code>{{ initialThemeId }}</code></div>
       </div>
 
       <!-- Tags Section -->
       <div class="sidebar-section">
-        <app-tag-manager [title]="'Tags'" [selectedIds]="selectedTagIds" (selectedIdsChange)="onTagsChanged($event)"
-          (tagsUpdated)="loadAvailableTags()">
+        <app-tag-manager [title]="'TASKS.EDITOR.TAGS_TITLE' | translate" [selectedIds]="selectedTagIds"
+          (selectedIdsChange)="onTagsChanged($event)" (tagsUpdated)="loadAvailableTags()">
         </app-tag-manager>
       </div>
 
       <div class="sidebar-section" formArrayName="subtasks">
-        <h3 class="sidebar-title">Subtasks</h3>
+        <h3 class="sidebar-title">{{ 'TASKS.EDITOR.SUBTASKS_TITLE' | translate }}</h3>
         <div class="subtask-item" *ngFor="let s of subtasks.controls; let i = index" [formGroupName]="i">
-          <input type="text" formControlName="title" placeholder="Subtask title" />
+          <input type="text" formControlName="title" [placeholder]="'TASKS.EDITOR.SUBTASK_PLACEHOLDER' | translate" />
           <button type="button" class="icon-btn" (click)="removeSubtaskField(i)" title="Remove">🗑️</button>
         </div>
-        <button type="button" class="btn-secondary w-100" (click)="addSubtaskField()">+ Add subtask</button>
-        <div class="empty" *ngIf="subtasks.length === 0">No subtasks yet</div>
+        <button type="button" class="btn-secondary w-100" (click)="addSubtaskField()">{{ 'TASKS.EDITOR.ADD_SUBTASK' |
+          translate }}</button>
+        <div class="empty" *ngIf="subtasks.length === 0">{{ 'TASKS.EDITOR.NO_SUBTASKS' | translate }}</div>
       </div>
 
       <div class="sidebar-section recurrence">
-        <h3 class="sidebar-title">Recurrence</h3>
-        <label class="checkbox-inline"><input type="checkbox" formControlName="enableRecurrence" /> Enable</label>
+        <h3 class="sidebar-title">{{ 'TASKS.EDITOR.RECURRENCE_TITLE' | translate }}</h3>
+        <label class="checkbox-inline"><input type="checkbox" formControlName="enableRecurrence" /> {{
+          'TASKS.EDITOR.ENABLE_RECURRENCE' | translate }}</label>
         <div class="rule" *ngIf="form.controls['enableRecurrence'].value">
           <select formControlName="recurrenceRule">
-            <option *ngFor="let opt of recurrenceOptions" [value]="opt.key">{{ opt.label }}</option>
+            <option *ngFor="let opt of recurrenceOptions" [value]="opt.key">{{ ('TASKS.EDITOR.RECURRENCE.' + (opt.label
+              | uppercase)) | translate }}</option>
           </select>
         </div>
       </div>
 
       <!-- Links Section -->
       <div class="sidebar-section">
-        <h3 class="sidebar-title">Посилання</h3>
+        <h3 class="sidebar-title">{{ 'TASKS.EDITOR.LINKS_TITLE' | translate }}</h3>
         <div *ngIf="!taskId" class="info-message">
-          💡 Збережіть задачу, щоб додати посилання
+          💡 {{ 'TASKS.EDITOR.LINKS_INFO' | translate }}
         </div>
         <app-link-selector *ngIf="taskId" [entityType]="LinkEntityType.Task" [entityId]="taskId" [title]="''"
           (linkCreated)="onLinkCreated($event)" (linkDeleted)="onLinkDeleted($event)">
@@ -93,16 +106,18 @@
     <!-- Main editor -->
     <div class="editor-main">
       <div class="form-group">
-        <input type="text" formControlName="title" class="title-input" placeholder="Task title..." />
-        <div class="error" *ngIf="form.controls['title'].touched && form.controls['title'].invalid">Title required</div>
+        <input type="text" formControlName="title" class="title-input"
+          [placeholder]="'TASKS.EDITOR.TITLE_PLACEHOLDER' | translate" />
+        <div class="error" *ngIf="form.controls['title'].touched && form.controls['title'].invalid">{{
+          'TASKS.EDITOR.ERRORS.TITLE_REQUIRED' | translate }}</div>
       </div>
       <div class="editor-preview-container" [class.split-view]="isSplitView">
         <div class="markdown-editor" *ngIf="!isPreviewMode">
           <textarea formControlName="description" class="markdown-textarea"
-            placeholder="Write task description in Markdown..."></textarea>
+            [placeholder]="'TASKS.EDITOR.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
         </div>
         <div class="markdown-preview" *ngIf="isPreviewMode || isSplitView">
-          <div class="preview-label">Preview</div>
+          <div class="preview-label">{{ 'TASKS.EDITOR.PREVIEW_LABEL' | translate }}</div>
           <div class="preview-content markdown-body" [innerHTML]="descriptionPreview"></div>
         </div>
       </div>

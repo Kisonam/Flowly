@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, inject, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { User } from '../../features/auth/models/user.model';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
+import { LocaleService, SupportedLocale } from '../../core/services/locale.service';
 
-type Language = 'uk' | 'en' | 'pl';
+type Language = SupportedLocale;
 
 interface LanguageOption {
   code: Language;
@@ -16,7 +18,7 @@ interface LanguageOption {
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
@@ -26,12 +28,14 @@ export class NavbarComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
+  private localeService = inject(LocaleService);
+  private translate = inject(TranslateService);
 
   activeModule: string = 'overview';
   currentUser: User | null = null;
   showUserMenu = false;
   showLanguageMenu = false;
-  currentLanguage: Language = 'uk';
+  currentLanguage: Language = 'en';
   currentTheme: ThemeMode = 'normal';
 
   readonly languages: LanguageOption[] = [
@@ -41,28 +45,26 @@ export class NavbarComponent implements OnInit {
   ];
 
   readonly modules = [
-    { id: 'overview', icon: 'target', label: 'Огляд', route: '/dashboard' },
-    { id: 'notes', icon: 'file-text', label: 'Нотатки', route: '/notes' },
-    { id: 'tasks', icon: 'check-square', label: 'Завдання', route: '/tasks' },
-    { id: 'finance', icon: 'dollar-sign', label: 'Фінанси', route: '/finance' },
-    { id: 'archive', icon: 'archive', label: 'Архів', route: '/archive' },
+    { id: 'overview', icon: 'target', label: 'Overview', route: '/dashboard' },
+    { id: 'notes', icon: 'file-text', label: 'Notes', route: '/notes' },
+    { id: 'tasks', icon: 'check-square', label: 'Tasks', route: '/tasks' },
+    { id: 'finance', icon: 'dollar-sign', label: 'Finance', route: '/finance' },
+    { id: 'archive', icon: 'archive', label: 'Archive', route: '/archive' },
   ];
 
   ngOnInit(): void {
+    // Load current user
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
 
-    // Subscribe to theme changes
+    // Load current theme
     this.themeService.currentTheme$.subscribe(theme => {
       this.currentTheme = theme;
     });
 
-    // Load saved language from localStorage
-    const savedLang = localStorage.getItem('app-language') as Language;
-    if (savedLang && this.languages.find(l => l.code === savedLang)) {
-      this.currentLanguage = savedLang;
-    }
+    // Load current language
+    this.currentLanguage = this.localeService.getCurrentLocale();
   }
 
   toggleTheme(): void {
@@ -91,12 +93,10 @@ export class NavbarComponent implements OnInit {
   }
 
   selectLanguage(lang: Language): void {
+    this.localeService.setLocale(lang);
     this.currentLanguage = lang;
-    localStorage.setItem('app-language', lang);
     this.closeLanguageMenu();
-
-    // TODO: Implement actual i18n language change
-    console.log('Language changed to:', lang);
+    // No page reload needed - instant switch!
   }
 
   toggleUserMenu(): void {
@@ -116,6 +116,9 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
+    if (!confirm(this.translate.instant('COMMON.CONFIRM.LOGOUT'))) {
+      return;
+    }
     this.closeUserMenu();
     this.authService.logout();
   }
