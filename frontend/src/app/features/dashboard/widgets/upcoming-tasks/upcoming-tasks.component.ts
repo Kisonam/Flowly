@@ -11,7 +11,14 @@ import { UpcomingTask } from '../../models/dashboard.models';
   styleUrls: ['./upcoming-tasks.component.scss']
 })
 export class UpcomingTasksComponent {
-  @Input() tasks: UpcomingTask[] = [];
+  @Input() set tasks(value: UpcomingTask[]) {
+    console.log('📋 UpcomingTasksComponent received tasks:', value);
+    this._tasks = value;
+  }
+  get tasks(): UpcomingTask[] {
+    return this._tasks;
+  }
+  private _tasks: UpcomingTask[] = [];
 
   getPriorityClass(priority: string): string {
     switch (priority) {

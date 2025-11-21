@@ -2,23 +2,26 @@
   <!-- Header -->
   <div class="notes-header">
     <div class="header-left">
-      <h1 class="page-title">My Notes</h1>
+      <h1 class="page-title">{{ 'NOTES.LIST.TITLE' | translate }}</h1>
       <span class="notes-count" *ngIf="paginatedResult">
-        {{ paginatedResult.totalCount }} {{ paginatedResult.totalCount === 1 ? 'note' : 'notes' }}
+        {{ paginatedResult.totalCount }} {{ (paginatedResult.totalCount === 1 ? 'NOTES.LIST.COUNT_ONE' :
+        'NOTES.LIST.COUNT_MANY') | translate }}
       </span>
     </div>
 
     <div class="header-actions">
-      <button class="btn btn-secondary" (click)="router.navigate(['/notes/board'])" title="Board view">
-        Board View
+      <button class="btn btn-secondary" (click)="router.navigate(['/notes/board'])"
+        [title]="'NOTES.LIST.BUTTONS.BOARD_VIEW' | translate">
+        {{ 'NOTES.LIST.BUTTONS.BOARD_VIEW' | translate }}
       </button>
 
-      <button class="btn btn-secondary" (click)="toggleViewMode()" title="Toggle view mode">
-        {{ viewMode === 'list' ? 'Grid View' : 'List View' }}
+      <button class="btn btn-secondary" (click)="toggleViewMode()"
+        [title]="(viewMode === 'list' ? 'NOTES.LIST.BUTTONS.GRID_VIEW' : 'NOTES.LIST.BUTTONS.LIST_VIEW') | translate">
+        {{ (viewMode === 'list' ? 'NOTES.LIST.BUTTONS.GRID_VIEW' : 'NOTES.LIST.BUTTONS.LIST_VIEW') | translate }}
       </button>
 
       <button class="btn btn-primary" (click)="createNote()">
-        ➕ Quick Create
+        ➕ {{ 'NOTES.LIST.BUTTONS.QUICK_CREATE' | translate }}
       </button>
     </div>
   </div>
@@ -27,8 +30,9 @@
   <div class="filters-bar">
     <div class="search-box">
       <span class="search-icon" aria-hidden="true">🔎</span>
-      <input type="text" class="form-control" placeholder="Search notes..." aria-label="Search notes"
-        [ngModel]="filter.search" (ngModelChange)="onSearchChange($event)" />
+      <input type="text" class="form-control" [placeholder]="'NOTES.LIST.SEARCH_PLACEHOLDER' | translate"
+        [attr.aria-label]="'NOTES.LIST.SEARCH_PLACEHOLDER' | translate" [ngModel]="filter.search"
+        (ngModelChange)="onSearchChange($event)" />
       <button class="btn-clear" *ngIf="filter.search" (click)="filter.search = ''; onSearchChange('')">
         ✖
       </button>
@@ -36,8 +40,8 @@
 
 
     <button class="btn btn-outline-secondary" (click)="toggleFilters()" [class.active]="showFilters"
-      aria-label="Toggle filters" [attr.aria-expanded]="showFilters">
-      Filters
+      [attr.aria-label]="'NOTES.LIST.BUTTONS.FILTERS' | translate" [attr.aria-expanded]="showFilters">
+      {{ 'NOTES.LIST.BUTTONS.FILTERS' | translate }}
       <span class="badge" *ngIf="filter.tagIds && filter.tagIds.length > 0">
         {{ filter.tagIds.length }}
       </span>
@@ -45,14 +49,14 @@
 
     <button class="btn btn-link" *ngIf="filter.search || (filter.tagIds && filter.tagIds.length > 0)"
       (click)="clearFilters()">
-      Clear all
+      {{ 'NOTES.LIST.BUTTONS.CLEAR_ALL' | translate }}
     </button>
   </div>
 
   <!-- Expanded Filters -->
   <div class="filters-panel" *ngIf="showFilters">
     <div class="filter-section">
-      <label class="filter-label">Filter by Tags</label>
+      <label class="filter-label">{{ 'NOTES.LIST.FILTERS.BY_TAGS' | translate }}</label>
       <div class="tags-filter">
         <button *ngFor="let tag of availableTags" class="tag-chip" [class.selected]="isTagSelected(tag.id)"
           [style.--tag-color]="tag.color" (click)="toggleTagFilter(tag.id)">
@@ -66,28 +70,28 @@
   <!-- Loading State -->
   <div class="loading-container" *ngIf="isLoading">
     <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">{{ 'NOTES.LIST.LOADING' | translate }}</span>
     </div>
-    <p>Loading notes...</p>
+    <p>{{ 'NOTES.LIST.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
   <div class="alert alert-danger" *ngIf="errorMessage && !isLoading">
     ⚠️ {{ errorMessage }}
     <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadNotes()">
-      Retry
+      {{ 'NOTES.LIST.BUTTONS.RETRY' | translate }}
     </button>
   </div>
 
   <!-- Empty State -->
   <div class="empty-state" *ngIf="!isLoading && notes.length === 0 && !errorMessage">
     <div class="empty-icon">📒</div>
-    <h3>No notes yet</h3>
+    <h3>{{ 'NOTES.LIST.EMPTY.TITLE' | translate }}</h3>
     <p>
-      {{ filter.search ? 'No notes match your search criteria.' : 'Start capturing your thoughts and ideas!' }}
+      {{ (filter.search ? 'NOTES.LIST.EMPTY.SEARCH_NO_MATCH' : 'NOTES.LIST.EMPTY.START_CAPTURING') | translate }}
     </p>
     <button class="btn btn-primary" (click)="createNote()" *ngIf="!filter.search">
-      ➕ Create Your First Note
+      ➕ {{ 'NOTES.LIST.BUTTONS.CREATE_FIRST' | translate }}
     </button>
   </div>
 
@@ -102,20 +106,22 @@
       <div class="note-header">
         <h3 class="note-title">{{ note.title }}</h3>
         <div class="note-actions">
-          <button class="btn-icon" (click)="editNote(note.id, $event)" title="Edit">
-            ✏️ Edit
+          <button class="btn-icon" (click)="editNote(note.id, $event)" [title]="'NOTES.LIST.CARD.EDIT' | translate">
+            ✏️ {{ 'NOTES.LIST.CARD.EDIT' | translate }}
           </button>
 
-          <button class="btn-icon" (click)="exportNote(note.id, $event)" title="Export">
-            ⬇️ Export
+          <button class="btn-icon" (click)="exportNote(note.id, $event)" [title]="'NOTES.LIST.CARD.EXPORT' | translate">
+            ⬇️ {{ 'NOTES.LIST.CARD.EXPORT' | translate }}
           </button>
 
-          <button class="btn-icon" *ngIf="!note.isArchived" (click)="archiveNote(note.id, $event)" title="Archive">
-            🗄️ Archive
+          <button class="btn-icon" *ngIf="!note.isArchived" (click)="archiveNote(note.id, $event)"
+            [title]="'NOTES.LIST.CARD.ARCHIVE' | translate">
+            🗄️ {{ 'NOTES.LIST.CARD.ARCHIVE' | translate }}
           </button>
 
-          <button class="btn-icon" *ngIf="note.isArchived" (click)="restoreNote(note.id, $event)" title="Restore">
-            🔄 Restore
+          <button class="btn-icon" *ngIf="note.isArchived" (click)="restoreNote(note.id, $event)"
+            [title]="'NOTES.LIST.CARD.RESTORE' | translate">
+            🔄 {{ 'NOTES.LIST.CARD.RESTORE' | translate }}
           </button>
         </div>
       </div>
@@ -138,7 +144,7 @@
         </div>
 
         <div class="note-meta">
-          <span class="note-date" title="{{ note.updatedAt | date: 'medium' }}">
+          <span class="note-date" [title]="note.updatedAt | date: 'medium'">
             ⏰ {{ formatDate(note.updatedAt) }}
           </span>
         </div>
@@ -149,16 +155,17 @@
   <!-- Pagination -->
   <div class="pagination-container" *ngIf="!isLoading && paginatedResult && paginatedResult.totalPages > 1">
     <div class="pagination-info">
-      Showing {{ (paginatedResult.page - 1) * paginatedResult.pageSize + 1 }}
-      to
+      {{ 'NOTES.LIST.PAGINATION.SHOWING' | translate }} {{ (paginatedResult.page - 1) * paginatedResult.pageSize + 1 }}
+      {{ 'NOTES.LIST.PAGINATION.TO' | translate }}
       {{ getEndItem() }}
-      of {{ paginatedResult.totalCount }} notes
+      {{ 'NOTES.LIST.PAGINATION.OF' | translate }} {{ paginatedResult.totalCount }} {{ 'NOTES.LIST.COUNT_MANY' |
+      translate }}
     </div>
 
     <div class="pagination">
       <button class="btn btn-pagination" [disabled]="!paginatedResult.hasPreviousPage"
         (click)="goToPage(paginatedResult.page - 1)">
-        ← Previous
+        ← {{ 'NOTES.LIST.PAGINATION.PREVIOUS' | translate }}
       </button>
 
       <div class="pagination-numbers">
@@ -170,12 +177,12 @@
 
       <button class="btn btn-pagination" [disabled]="!paginatedResult.hasNextPage"
         (click)="goToPage(paginatedResult.page + 1)">
-        Next →
+        {{ 'NOTES.LIST.PAGINATION.NEXT' | translate }} →
       </button>
     </div>
 
     <div class="page-size-selector">
-      <label>Show:</label>
+      <label>{{ 'NOTES.LIST.PAGINATION.SHOW' | translate }}</label>
       <select class="form-select form-select-sm" [ngModel]="filter.pageSize" (ngModelChange)="changePageSize($event)">
         <option [value]="12">12</option>
         <option [value]="24">24</option>

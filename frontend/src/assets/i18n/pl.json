@@ -37,7 +37,8 @@
         "TASKS": "Zadania",
         "FINANCE": "Finanse",
         "ARCHIVE": "Archiwum",
-        "SETTINGS": "Ustawienia"
+        "SETTINGS": "Ustawienia",
+        "LANGUAGE_SELECT": "Wybierz język"
     },
     "FINANCE": {
         "DASHBOARD": {
@@ -113,7 +114,42 @@
                 "PAGE_OF": "Strona {{current}} z {{total}}",
                 "SHOWING": "Pokazano {{count}} z {{total}}"
             },
-            "QUICK_ACTIONS": "Szybkie akcje"
+            "QUICK_ACTIONS": "Szybkie akcje",
+            "DETAIL": {
+                "TITLE": "Szczegóły transakcji",
+                "BACK": "Wróć do transakcji",
+                "BACK_LIST": "Wróć do listy",
+                "LOADING": "Ładowanie transakcji...",
+                "TYPE": "Typ",
+                "AMOUNT": "Kwota",
+                "DESCRIPTION": "Opis",
+                "NO_DESCRIPTION": "Brak opisu",
+                "CATEGORY": "Kategoria",
+                "UNCATEGORIZED": "Bez kategorii",
+                "BUDGET_LINK": "Powiązany budżet",
+                "GOAL_LINK": "Powiązany cel",
+                "TAGS": "Tagi",
+                "DATE": "Data transakcji",
+                "CREATED_AT": "Utworzono",
+                "UPDATED_AT": "Zaktualizowano",
+                "STATUS": "Status",
+                "STATUS_ARCHIVED": "Zarchiwizowano",
+                "STATUS_ACTIVE": "Aktywna",
+                "LINKED_ITEMS": "Powiązane elementy",
+                "LINKED_NOTES": "Notatki",
+                "LINKED_TASKS": "Zadania",
+                "LINKED_TRANSACTIONS": "Transakcje",
+                "ACTIONS": "Akcje",
+                "EDIT": "Edytuj transakcję",
+                "ARCHIVE": "Archiwizuj",
+                "RESTORE": "Przywróć",
+                "CONFIRM_ARCHIVE": "Zarchiwizować transakcję \"{{title}}\"?",
+                "CONFIRM_RESTORE": "Przywrócić transakcję \"{{title}}\"?",
+                "ARCHIVE_SUCCESS": "Transakcja zarchiwizowana",
+                "RESTORE_SUCCESS": "Transakcja przywrócona",
+                "ARCHIVE_ERROR": "Nie udało się zarchiwizować transakcji",
+                "RESTORE_ERROR": "Nie udało się przywrócić transakcji"
+            }
         },
         "EDITOR": {
             "TITLE_NEW": "Nowa transakcja",
@@ -235,7 +271,8 @@
                 "NEAR_LIMIT": "⚡ Blisko limitu",
                 "ON_TRACK": "✅ W normie",
                 "REMAINING": "pozostało",
-                "DAYS_REMAINING": "dni pozostało"
+                "DAYS_REMAINING": "dni pozostało",
+                "TODAY": "dzisiaj"
             },
             "EDITOR": {
                 "TITLE_CREATE": "Utwórz budżet",
@@ -464,6 +501,125 @@
         }
     },
     "NOTES": {
+        "LIST": {
+            "TITLE": "Moje notatki",
+            "COUNT_ONE": "notatka",
+            "COUNT_MANY": "notatek",
+            "BUTTONS": {
+                "BOARD_VIEW": "Tablica",
+                "GRID_VIEW": "Siatka",
+                "LIST_VIEW": "Lista",
+                "QUICK_CREATE": "Szybkie tworzenie",
+                "CREATE_FIRST": "Utwórz pierwszą notatkę",
+                "RETRY": "Ponów",
+                "CLEAR_ALL": "Wyczyść wszystko",
+                "FILTERS": "Filtry"
+            },
+            "SEARCH_PLACEHOLDER": "Szukaj notatek...",
+            "FILTERS": {
+                "BY_TAGS": "Filtruj po tagach"
+            },
+            "LOADING": "Ładowanie notatek...",
+            "EMPTY": {
+                "TITLE": "Brak notatek",
+                "SEARCH_NO_MATCH": "Brak notatek pasujących do kryteriów wyszukiwania.",
+                "START_CAPTURING": "Zacznij zapisywać swoje myśli i pomysły!"
+            },
+            "PAGINATION": {
+                "SHOWING": "Pokazano",
+                "TO": "do",
+                "OF": "z",
+                "PREVIOUS": "Poprzednia",
+                "NEXT": "Następna",
+                "SHOW": "Pokaż:"
+            },
+            "CARD": {
+                "EDIT": "Edytuj",
+                "EXPORT": "Eksportuj",
+                "ARCHIVE": "Archiwizuj",
+                "RESTORE": "Przywróć"
+            },
+            "TIME": {
+                "JUST_NOW": "przed chwilą",
+                "MINUTES_AGO": "{{value}} min temu",
+                "HOURS_AGO": "{{value}} godz. temu",
+                "DAYS_AGO": "{{value}} dni temu"
+            }
+        },
+        "BOARD": {
+            "TITLE": "Tablica notatek",
+            "BUTTONS": {
+                "LIST_VIEW": "Lista",
+                "NEW_GROUP": "Nowa grupa"
+            },
+            "LOADING": "Ładowanie tablicy...",
+            "COLUMNS": {
+                "NO_GROUP": "Bez grupy",
+                "EMPTY_UNGROUPED": "Brak niezgrupowanych notatek",
+                "DROP_HERE": "Przeciągnij notatki tutaj"
+            },
+            "ACTIONS": {
+                "EDIT": "Edytuj",
+                "DELETE": "Usuń"
+            },
+            "MODAL": {
+                "TITLE_NEW": "Nowa grupa",
+                "TITLE_EDIT": "Edytuj grupę",
+                "LABEL_TITLE": "Nazwa grupy",
+                "PLACEHOLDER_TITLE": "np. Notatki robocze",
+                "LABEL_COLOR": "Kolor",
+                "CANCEL": "Anuluj",
+                "SAVE": "Zapisz"
+            },
+            "ERRORS": {
+                "LOAD_FAILED": "Nie udało się załadować tablicy",
+                "SAVE_FAILED": "Nie udało się zapisać grupy",
+                "DELETE_FAILED": "Nie udało się usunąć grupy",
+                "REORDER_FAILED": "Nie udało się zmienić kolejności grup",
+                "MOVE_FAILED": "Nie udało się przenieść notatki"
+            },
+            "CONFIRM": {
+                "DELETE_GROUP": "Usunąć tę grupę? Notatki zostaną rozgrupowane."
+            }
+        },
+        "DETAIL": {
+            "BACK": "Wstecz",
+            "ACTIONS": {
+                "EDIT": "Edytuj",
+                "EXPORT": "Eksportuj",
+                "ARCHIVE": "Archiwizuj",
+                "RESTORE": "Przywróć"
+            },
+            "META": {
+                "CREATED": "Utworzono:",
+                "UPDATED": "Zaktualizowano:"
+            },
+            "LINKED": {
+                "TITLE": "Powiązane elementy",
+                "NOTES": "Notatki",
+                "TASKS": "Zadania",
+                "TRANSACTIONS": "Transakcje",
+                "UNTITLED_NOTE": "Notatka bez tytułu",
+                "UNTITLED_TASK": "Zadanie bez tytułu",
+                "TRANSACTION": "Transakcja"
+            },
+            "LOADING": "Ładowanie notatki...",
+            "ERRORS": {
+                "INVALID_ID": "Nieprawidłowe ID notatki",
+                "LOAD_FAILED": "Nie udało się załadować notatki",
+                "ARCHIVE_FAILED": "Nie udało się zarchiwizować notatki",
+                "RESTORE_FAILED": "Nie udało się przywrócić notatki",
+                "EXPORT_FAILED": "Nie udało się wyeksportować notatki"
+            },
+            "CONFIRM": {
+                "ARCHIVE": "Zarchiwizować tę notatkę? Możesz ją później przywrócić.",
+                "RESTORE": "Przywrócić tę notatkę z archiwum?"
+            },
+            "REFS": {
+                "TASK": "Zadanie",
+                "TRANSACTION": "Transakcja"
+            }
+        },
         "EDITOR": {
             "TITLE_NEW": "Nowa notatka",
             "TITLE_EDIT": "Edytuj notatkę",
@@ -503,6 +659,45 @@
         }
     },
     "TASKS": {
+        "LIST": {
+            "TITLE": "Moje zadania",
+            "BUTTONS": {
+                "BOARD_VIEW": "Tablica",
+                "LIST_VIEW": "Lista",
+                "NEW_TASK": "Nowe zadanie",
+                "THEMES": "Motywy"
+            },
+            "SEARCH_PLACEHOLDER": "Szukaj zadań...",
+            "FILTERS": {
+                "ALL_STATUSES": "Wszystkie statusy",
+                "ALL_PRIORITIES": "Wszystkie priorytety",
+                "ALL_THEMES": "Wszystkie motywy",
+                "DUE_TO": "Termin do"
+            },
+            "SORT": {
+                "LABEL": "Sortuj według:",
+                "DUE_DATE": "Termin",
+                "CREATED": "Utworzono",
+                "PRIORITY": "Priorytet",
+                "STATUS": "Status",
+                "ASC": "rosnąco",
+                "DESC": "malejąco"
+            },
+            "META": {
+                "DUE": "Termin:",
+                "PRIORITY": "Priorytet:",
+                "STATUS": "Status:",
+                "THEME": "Motyw:"
+            },
+            "EMPTY": "Nie znaleziono zadań.",
+            "PAGINATION": {
+                "PREV": "Poprzednia",
+                "NEXT": "Następna",
+                "PAGE": "Strona"
+            },
+            "LOADING": "Ładowanie zadań...",
+            "CLEAR": "Wyczyść"
+        },
         "EDITOR": {
             "TITLE_NEW": "Nowe zadanie",
             "TITLE_EDIT": "Edytuj zadanie",
@@ -533,22 +728,22 @@
             "TITLE_PLACEHOLDER": "Tytuł zadania...",
             "DESCRIPTION_PLACEHOLDER": "Opis zadania w Markdown...",
             "PREVIEW_LABEL": "Podgląd",
-            "ERRORS": {
-                "TITLE_REQUIRED": "Tytuł jest wymagany",
-                "LOAD_FAILED": "Nie udało się załadować zadania",
-                "CREATE_FAILED": "Nie udało się utworzyć zadania",
-                "SAVE_FAILED": "Nie udało się zapisać zadania"
-            },
             "STATUS": {
                 "TODO": "Do zrobienia",
-                "IN_PROGRESS": "W trakcie",
-                "DONE": "Zrobione"
+                "INPROGRESS": "W trakcie",
+                "DONE": "Ukończone"
             },
             "PRIORITY": {
                 "NONE": "Brak",
                 "LOW": "Niski",
                 "MEDIUM": "Średni",
                 "HIGH": "Wysoki"
+            },
+            "ERRORS": {
+                "TITLE_REQUIRED": "Tytuł jest wymagany",
+                "LOAD_FAILED": "Nie udało się załadować zadania",
+                "CREATE_FAILED": "Nie udało się utworzyć zadania",
+                "SAVE_FAILED": "Nie udało się zapisać zadania"
             },
             "RECURRENCE": {
                 "NONE": "Brak",
@@ -558,8 +753,183 @@
             }
         },
         "BOARD": {
+            "TITLE": "Zadania",
+            "BUTTONS": {
+                "FILTERS": "Filtry",
+                "NEW_TASK": "+ Nowe zadanie",
+                "NEW_GROUP": "+ Nowa grupa",
+                "CANCEL": "Anuluj"
+            },
+            "FILTERS": {
+                "STATUS": "Status",
+                "PRIORITY": "Priorytet",
+                "SEARCH": "Szukaj",
+                "DUE_ON": "Termin",
+                "ALL": "Wszystkie",
+                "TITLE_PLACEHOLDER": "Tytuł...",
+                "APPLY": "Zastosuj",
+                "RESET": "Resetuj"
+            },
+            "ADD_GROUP": {
+                "TITLE_PLACEHOLDER": "Nazwa grupy",
+                "SAVE": "Zapisz"
+            },
+            "COLUMN": {
+                "UNASSIGNED": "Nieprzypisane",
+                "DELETE_ARIA": "Usuń grupę",
+                "DELETE_TITLE": "Usuń grupę"
+            },
+            "TASK_CARD": {
+                "ARCHIVE": "Archiwizuj",
+                "ARCHIVE_ARIA": "Archiwizuj zadanie",
+                "SUBTASKS_DONE": "{{done}}/{{total}} podzadań wykonanych"
+            },
+            "EMPTY": "Brak zadań",
+            "LOADING": "Ładowanie zadań...",
             "CONFIRM_DELETE_THEME": "Usunąć \"{{title}}\"?",
             "CONFIRM_DELETE_THEME_WITH_TASKS": "Usunąć \"{{title}}\"? {{count}} zadań zostanie przeniesionych do Nieprzypisanych."
+        },
+        "DETAIL": {
+            "TITLE": "Szczegóły zadania",
+            "BACK": "Wróć do zadań",
+            "EDIT": "Edytuj",
+            "STATUS": "Status",
+            "PRIORITY": "Priorytet",
+            "DUE_DATE": "Termin",
+            "THEME": "Temat",
+            "DESCRIPTION": "Opis",
+            "SUBTASKS": "Podzadania ({{count}})",
+            "NO_SUBTASKS": "Brak podzadań. Możesz je dodać w edytorze.",
+            "TAGS": "Tagi",
+            "SELECTED_TAGS": "Wybrano:",
+            "LINKED_ITEMS": "Powiązane elementy",
+            "LINKED_NOTES": "Notatki",
+            "LINKED_TASKS": "Zadania",
+            "LINKED_TRANSACTIONS": "Transakcje",
+            "LAST_UPDATED": "Ostatnia aktualizacja: {{date}}",
+            "LOADING": "Ładowanie zadania...",
+            "ERRORS": {
+                "LOAD_FAILED": "Nie udało się załadować zadania",
+                "UPDATE_SUBTASK": "Nie udało się zaktualizować podzadania",
+                "TOGGLE_TAG": "Nie udało się zmienić tagu",
+                "LOAD_LINKS": "Nie udało się załadować powiązań"
+            }
+        },
+        "STATUS": {
+            "TODO": "Do zrobienia",
+            "INPROGRESS": "W trakcie",
+            "DONE": "Zrobione"
+        },
+        "PRIORITY": {
+            "NONE": "Brak",
+            "LOW": "Niski",
+            "MEDIUM": "Średni",
+            "HIGH": "Wysoki"
+        }
+    },
+    "ARCHIVE": {
+        "TITLE": "Archiwum",
+        "SUBTITLE": "Przeglądaj i przywracaj zarchiwizowane elementy",
+        "FILTERS": {
+            "TYPE_LABEL": "Typ:",
+            "SEARCH_LABEL": "Szukaj:",
+            "SEARCH_PLACEHOLDER": "Szukaj w archiwum...",
+            "TYPES": {
+                "ALL": "Wszystkie typy",
+                "NOTE": "Notatki",
+                "TASK": "Zadania",
+                "TRANSACTION": "Transakcje",
+                "BUDGET": "Budżety",
+                "GOAL": "Cele finansowe"
+            }
+        },
+        "LOADING": "Ładowanie archiwum...",
+        "EMPTY": {
+            "TITLE": "Archiwum jest puste",
+            "DESC": "Zarchiwizowane elementy pojawią się tutaj"
+        },
+        "RESULTS_INFO": "Znaleziono: {{count}} {{suffix}}",
+        "TABLE": {
+            "TYPE": "Typ",
+            "TITLE": "Tytuł",
+            "DETAILS": "Szczegóły",
+            "ARCHIVED_AT": "Zarchiwizowano",
+            "ACTIONS": "Akcje"
+        },
+        "ACTIONS": {
+            "RESTORE": "Przywróć",
+            "DELETE": "Usuń trwale"
+        },
+        "PAGINATION": {
+            "PREVIOUS": "Poprzednia",
+            "NEXT": "Następna",
+            "PAGE_INFO": "Strona {{current}} z {{total}}"
+        },
+        "DETAIL_MODAL": {
+            "TITLE": "Szczegóły zarchiwizowanego elementu",
+            "BASIC_INFO": "Podstawowe informacje",
+            "ADDITIONAL_INFO": "Dodatkowe informacje",
+            "CONTENT": "Treść",
+            "NO_CONTENT": "Brak dodatkowej treści",
+            "LOADING": "Ładowanie szczegółów...",
+            "CLOSE": "Zamknij",
+            "RESTORE": "Przywróć"
+        },
+        "ERRORS": {
+            "LOAD_FAILED": "Nie udało się załadować archiwum",
+            "RESTORE_FAILED": "Nie udało się przywrócić elementu",
+            "DELETE_FAILED": "Nie udało się usunąć elementu",
+            "PARSE_FAILED": "Nie udało się przetworzyć danych",
+            "DETAIL_LOAD_FAILED": "Nie udało się załadować szczegółów",
+            "RETRY": "Spróbuj ponownie"
+        },
+        "CONFIRM": {
+            "RESTORE": "Przywrócić {{type}} \"{{title}}\"?",
+            "DELETE_PERMANENTLY": "⚠️ OSTRZEŻENIE!\n\nZamierzasz TRWALE usunąć {{type}} \"{{title}}\".\n\nTego działania NIE MOŻNA cofnąć!\n\nKontynuować?",
+            "DELETE_FINAL": "Jesteś pewien? To jest trwałe usunięcie!"
+        },
+        "METADATA": {
+            "LABELS": {
+                "Amount": "Kwota",
+                "CurrencyCode": "Waluta",
+                "Type": "Typ",
+                "Limit": "Limit",
+                "TargetAmount": "Kwota docelowa",
+                "CurrentAmount": "Obecna kwota",
+                "Category": "Kategoria",
+                "Status": "Status",
+                "Priority": "Priorytet",
+                "DueDate": "Termin",
+                "CompletedAt": "Ukończono",
+                "CharacterCount": "Liczba znaków",
+                "GroupId": "Grupa",
+                "Description": "Opis"
+            },
+            "VALUES": {
+                "STATUS": {
+                    "Todo": "Do zrobienia",
+                    "InProgress": "W trakcie",
+                    "Done": "Zrobione"
+                },
+                "PRIORITY": {
+                    "None": "Brak",
+                    "Low": "Niski",
+                    "Medium": "Średni",
+                    "High": "Wysoki"
+                },
+                "TYPE": {
+                    "Income": "Przychód",
+                    "Expense": "Wydatek"
+                }
+            }
+        },
+        "CONTENT_TITLES": {
+            "NOTE": "Treść notatki",
+            "TASK": "Opis zadania",
+            "TRANSACTION": "Notatka",
+            "BUDGET": "Opis budżetu",
+            "GOAL": "Opis celu",
+            "DEFAULT": "Treść"
         }
     }
 }

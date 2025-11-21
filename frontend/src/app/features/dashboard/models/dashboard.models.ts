@@ -1,6 +1,7 @@
 export interface DashboardData {
   activityStats: ActivityStats;
   financeStats: FinanceStats;
+  multiCurrencyFinanceStats: MultiCurrencyFinanceStats;
   upcomingTasks: UpcomingTask[];
   recentNotes: RecentNote[];
 }
@@ -76,4 +77,23 @@ export interface RecentNote {
   title: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface MultiCurrencyFinanceStats {
+  periodStart: string;
+  periodEnd: string;
+  totalTransactionCount: number;
+  byCurrency: CurrencyStats[];
+  byMonth: MonthStats[];
+  availableCurrencies: string[];
+}
+
+export interface CurrencyStats {
+  currencyCode: string;
+  totalIncome: number;
+  totalExpense: number;
+  netAmount: number;
+  transactionCount: number;
+  incomeByCategory: CategoryStats[];
+  expenseByCategory: CategoryStats[];
 }

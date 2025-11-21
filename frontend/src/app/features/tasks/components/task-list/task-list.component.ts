@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TasksService } from '../../services/tasks.service';
 import { TagsService } from '../../../../shared/services/tags.service';
 import { Task, TaskTheme, TaskFilter, PaginatedResult, TaskPriority, TasksStatus } from '../../models/task.models';
@@ -15,7 +16,7 @@ interface SortOption {
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss']
 })
@@ -23,6 +24,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private tasksService = inject(TasksService);
   private tagsService = inject(TagsService);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -40,12 +42,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   empty = false;
 
   // Sorting
-  sortOptions: SortOption[] = [
-    { key: 'dueDate', label: 'Due Date' },
-    { key: 'createdAt', label: 'Created' },
-    { key: 'priority', label: 'Priority' },
-    { key: 'status', label: 'Status' }
-  ];
+  sortOptions: SortOption[] = [];
   currentSort: SortOption | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
 
@@ -60,6 +57,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
+    this.initializeSortOptions();
     this.loadAuxData();
     this.setupFilterListeners();
     this.fetchTasks();
@@ -69,6 +67,16 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  initializeSortOptions(): void {
+    this.sortOptions = [
+      { key: 'dueDate', label: this.translate.instant('TASKS.LIST.SORT.DUE_DATE') },
+      { key: 'createdAt', label: this.translate.instant('TASKS.LIST.SORT.CREATED') },
+      { key: 'priority', label: this.translate.instant('TASKS.LIST.SORT.PRIORITY') },
+      { key: 'status', label: this.translate.instant('TASKS.LIST.SORT.STATUS') }
+    ];
+  }
+
 
   loadAuxData(): void {
     // Load themes & tags in parallel

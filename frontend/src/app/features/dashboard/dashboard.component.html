@@ -55,7 +55,10 @@
     <app-activity-stats [stats]="dashboardData.activityStats"></app-activity-stats>
 
     <!-- Finance Summary -->
-    <app-finance-summary [stats]="dashboardData.financeStats"></app-finance-summary>
+    <app-finance-summary
+      [stats]="dashboardData.financeStats"
+      [multiCurrencyStats]="dashboardData.multiCurrencyFinanceStats">
+    </app-finance-summary>
 
     <!-- Bottom Grid -->
     <div class="bottom-charts">

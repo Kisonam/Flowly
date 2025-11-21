@@ -1,13 +1,13 @@
 <div class="board-container">
   <!-- Header -->
   <div class="board-header">
-    <h1>Notes Board</h1>
+    <h1>{{ 'NOTES.BOARD.TITLE' | translate }}</h1>
     <div class="header-actions">
       <button class="btn btn-secondary" (click)="router.navigate(['/notes'])">
-        <i class="bi bi-list"></i> List View
+        <i class="bi bi-list"></i> {{ 'NOTES.BOARD.BUTTONS.LIST_VIEW' | translate }}
       </button>
       <button class="btn btn-primary" (click)="openGroupModal()">
-        <i class="bi bi-plus-lg"></i> New Group
+        <i class="bi bi-plus-lg"></i> {{ 'NOTES.BOARD.BUTTONS.NEW_GROUP' | translate }}
       </button>
     </div>
   </div>
@@ -15,13 +15,14 @@
   <!-- Loading -->
   <div class="loading" *ngIf="isLoading">
     <div class="spinner-border text-primary"></div>
-    <p>Loading board...</p>
+    <p>{{ 'NOTES.BOARD.LOADING' | translate }}</p>
   </div>
 
   <!-- Error -->
   <div class="alert alert-danger" *ngIf="errorMessage && !isLoading">
     {{ errorMessage }}
-    <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadBoard()">Retry</button>
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadBoard()">{{ 'NOTES.LIST.BUTTONS.RETRY' | translate
+      }}</button>
   </div>
 
   <!-- Board with CDK Drag & Drop -->
@@ -31,7 +32,7 @@
       <!-- Ungrouped column -->
       <div class="column">
         <div class="column-header">
-          <h3 class="column-title">No Group</h3>
+          <h3 class="column-title">{{ 'NOTES.BOARD.COLUMNS.NO_GROUP' | translate }}</h3>
           <span class="column-count">{{ ungroupedNotes.length }}</span>
         </div>
         <div class="column-content" cdkDropList [id]="getListId(null)" [cdkDropListData]="ungroupedNotes"
@@ -52,7 +53,7 @@
             </div>
           </div>
           <div class="empty-state" *ngIf="ungroupedNotes.length === 0">
-            <p>No ungrouped notes</p>
+            <p>{{ 'NOTES.BOARD.COLUMNS.EMPTY_UNGROUPED' | translate }}</p>
           </div>
         </div>
       </div>
@@ -66,10 +67,10 @@
             <span class="column-count">{{ getNotesForGroup(group.id).length }}</span>
           </div>
           <div class="column-actions">
-            <button class="btn-icon" (click)="openGroupModal(group)" title="Edit">
+            <button class="btn-icon" (click)="openGroupModal(group)" [title]="'NOTES.BOARD.ACTIONS.EDIT' | translate">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn-icon" (click)="deleteGroup(group.id)" title="Delete">
+            <button class="btn-icon" (click)="deleteGroup(group.id)" [title]="'NOTES.BOARD.ACTIONS.DELETE' | translate">
               <i class="bi bi-trash"></i>
             </button>
           </div>
@@ -93,7 +94,7 @@
             </div>
           </div>
           <div class="empty-state" *ngIf="getNotesForGroup(group.id).length === 0">
-            <p>Drop notes here</p>
+            <p>{{ 'NOTES.BOARD.COLUMNS.DROP_HERE' | translate }}</p>
           </div>
         </div>
       </div>
@@ -106,19 +107,20 @@
   <div class="modal-content" appFocusTrap role="dialog" aria-labelledby="group-modal-title" aria-modal="true"
     (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2 id="group-modal-title">{{ editingGroup ? 'Edit Group' : 'New Group' }}</h2>
+      <h2 id="group-modal-title">{{ (editingGroup ? 'NOTES.BOARD.MODAL.TITLE_EDIT' : 'NOTES.BOARD.MODAL.TITLE_NEW') |
+        translate }}</h2>
       <button class="btn-close" aria-label="Close dialog" (click)="closeGroupModal()">
         <i class="bi bi-x" aria-hidden="true"></i>
       </button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label for="group-title-input">Group Title</label>
+        <label for="group-title-input">{{ 'NOTES.BOARD.MODAL.LABEL_TITLE' | translate }}</label>
         <input id="group-title-input" type="text" class="form-control" [(ngModel)]="groupForm.title"
-          placeholder="e.g., Work Notes" />
+          [placeholder]="'NOTES.BOARD.MODAL.PLACEHOLDER_TITLE' | translate" />
       </div>
       <div class="form-group">
-        <label>Color</label>
+        <label>{{ 'NOTES.BOARD.MODAL.LABEL_COLOR' | translate }}</label>
         <div class="color-picker" role="group" aria-label="Group color selection">
           <button *ngFor="let color of predefinedColors" type="button" class="color-btn"
             [class.selected]="groupForm.color === color" [style.background-color]="color"
@@ -128,8 +130,9 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeGroupModal()">Cancel</button>
-      <button class="btn btn-primary" (click)="saveGroup()">Save</button>
+      <button class="btn btn-secondary" (click)="closeGroupModal()">{{ 'NOTES.BOARD.MODAL.CANCEL' | translate
+        }}</button>
+      <button class="btn btn-primary" (click)="saveGroup()">{{ 'NOTES.BOARD.MODAL.SAVE' | translate }}</button>
     </div>
   </div>
 </div>

@@ -2,21 +2,22 @@
   <!-- Header -->
   <div class="detail-header">
     <button class="btn btn-back" (click)="goBack()">
-      <span>←</span> Back to Transactions
+      <span>←</span> {{ 'FINANCE.TRANSACTIONS.DETAIL.BACK' | translate }}
     </button>
-    <h2>💰 Transaction Details</h2>
+    <h2>💰 {{ 'FINANCE.TRANSACTIONS.DETAIL.TITLE' | translate }}</h2>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading transaction...</p>
+    <p>{{ 'FINANCE.TRANSACTIONS.DETAIL.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
   <div *ngIf="errorMessage" class="error-state">
     <p>❌ {{ errorMessage }}</p>
-    <button class="btn btn-primary" (click)="goBack()">Back to List</button>
+    <button class="btn btn-primary" (click)="goBack()">{{ 'FINANCE.TRANSACTIONS.DETAIL.BACK_LIST' | translate
+      }}</button>
   </div>
 
   <!-- Transaction Detail -->
@@ -41,29 +42,27 @@
             {{ transaction.description }}
           </p>
           <p class="no-description" *ngIf="!transaction.description">
-            <em>No description</em>
+            <em>{{ 'FINANCE.TRANSACTIONS.DETAIL.NO_DESCRIPTION' | translate }}</em>
           </p>
         </div>
 
         <!-- Category -->
         <div class="info-section">
-          <label>Category</label>
+          <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.CATEGORY' | translate }}</label>
           <div class="category-display" *ngIf="transaction.category">
-            <span
-              class="category-badge large"
-              [style.background]="transaction.category.color || '#e5e7eb'">
+            <span class="category-badge large" [style.background]="transaction.category.color || '#e5e7eb'">
               <span *ngIf="transaction.category.icon">{{ transaction.category.icon }}</span>
               {{ transaction.category.name }}
             </span>
           </div>
           <p class="no-category" *ngIf="!transaction.category">
-            <em>Uncategorized</em>
+            <em>{{ 'FINANCE.TRANSACTIONS.DETAIL.UNCATEGORIZED' | translate }}</em>
           </p>
         </div>
 
         <!-- Budget -->
         <div class="info-section" *ngIf="transaction.budget">
-          <label>Linked Budget</label>
+          <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.BUDGET_LINK' | translate }}</label>
           <div class="linked-item budget-link" (click)="navigateToBudget(transaction.budgetId!)">
             <span class="link-icon">💼</span>
             <div class="link-info">
@@ -76,7 +75,7 @@
 
         <!-- Goal -->
         <div class="info-section" *ngIf="transaction.goal">
-          <label>Linked Goal</label>
+          <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.GOAL_LINK' | translate }}</label>
           <div class="linked-item goal-link" (click)="navigateToGoal(transaction.goalId!)">
             <span class="link-icon">🎯</span>
             <div class="link-info">
@@ -89,11 +88,9 @@
 
         <!-- Tags -->
         <div class="info-section" *ngIf="transaction.tags && transaction.tags.length > 0">
-          <label>Tags</label>
+          <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.TAGS' | translate }}</label>
           <div class="tags-display">
-            <span
-              *ngFor="let tag of transaction.tags"
-              class="tag-chip large"
+            <span *ngFor="let tag of transaction.tags" class="tag-chip large"
               [style.background]="tag.color || '#8b5cf6'">
               {{ tag.name }}
             </span>
@@ -104,15 +101,15 @@
         <div class="info-section">
           <div class="dates-grid">
             <div class="date-item">
-              <label>Transaction Date</label>
+              <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.DATE' | translate }}</label>
               <p class="date-value">{{ formatDate(transaction.date) }}</p>
             </div>
             <div class="date-item">
-              <label>Created At</label>
+              <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.CREATED_AT' | translate }}</label>
               <p class="date-value">{{ formatDateTime(transaction.createdAt) }}</p>
             </div>
             <div class="date-item" *ngIf="transaction.updatedAt">
-              <label>Last Updated</label>
+              <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.UPDATED_AT' | translate }}</label>
               <p class="date-value">{{ formatDateTime(transaction.updatedAt) }}</p>
             </div>
           </div>
@@ -120,19 +117,21 @@
 
         <!-- Status -->
         <div class="info-section">
-          <label>Status</label>
+          <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.STATUS' | translate }}</label>
           <div class="status-badge" [class.archived]="transaction.isArchived">
-            {{ transaction.isArchived ? '📦 Archived' : '✅ Active' }}
+            {{ transaction.isArchived ? ('FINANCE.TRANSACTIONS.DETAIL.STATUS_ARCHIVED' | translate) :
+            ('FINANCE.TRANSACTIONS.DETAIL.STATUS_ACTIVE' | translate) }}
           </div>
         </div>
       </div>
     </div>
 
     <!-- Linked Items Card -->
-    <div class="detail-card linked-card" *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
+    <div class="detail-card linked-card"
+      *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
       <h3>
         <i class="bi bi-link-45deg"></i>
-        Зв'язані елементи
+        {{ 'FINANCE.TRANSACTIONS.DETAIL.LINKED_ITEMS' | translate }}
       </h3>
 
       <div class="linked-sections">
@@ -140,14 +139,11 @@
         <div class="linked-section" *ngIf="linkedNotes.length > 0">
           <div class="section-header">
             <i class="bi bi-journal-text"></i>
-            <span>Нотатки</span>
+            <span>{{ 'FINANCE.TRANSACTIONS.DETAIL.LINKED_NOTES' | translate }}</span>
             <span class="badge">{{ linkedNotes.length }}</span>
           </div>
           <div class="link-items">
-            <a
-              *ngFor="let note of linkedNotes"
-              [routerLink]="['/notes', note.id]"
-              class="link-item">
+            <a *ngFor="let note of linkedNotes" [routerLink]="['/notes', note.id]" class="link-item">
               <div class="link-icon note-icon">
                 <i class="bi bi-journal-text"></i>
               </div>
@@ -166,14 +162,11 @@
         <div class="linked-section" *ngIf="linkedTasks.length > 0">
           <div class="section-header">
             <i class="bi bi-check-circle"></i>
-            <span>Задачі</span>
+            <span>{{ 'FINANCE.TRANSACTIONS.DETAIL.LINKED_TASKS' | translate }}</span>
             <span class="badge">{{ linkedTasks.length }}</span>
           </div>
           <div class="link-items">
-            <a
-              *ngFor="let task of linkedTasks"
-              [routerLink]="['/tasks', task.id]"
-              class="link-item">
+            <a *ngFor="let task of linkedTasks" [routerLink]="['/tasks', task.id]" class="link-item">
               <div class="link-icon task-icon">
                 <i class="bi bi-check-circle"></i>
               </div>
@@ -192,14 +185,11 @@
         <div class="linked-section" *ngIf="linkedTransactions.length > 0">
           <div class="section-header">
             <i class="bi bi-currency-dollar"></i>
-            <span>Транзакції</span>
+            <span>{{ 'FINANCE.TRANSACTIONS.DETAIL.LINKED_TRANSACTIONS' | translate }}</span>
             <span class="badge">{{ linkedTransactions.length }}</span>
           </div>
           <div class="link-items">
-            <a
-              *ngFor="let tx of linkedTransactions"
-              [routerLink]="['/finance/transactions', tx.id]"
-              class="link-item">
+            <a *ngFor="let tx of linkedTransactions" [routerLink]="['/finance/transactions', tx.id]" class="link-item">
               <div class="link-icon transaction-icon">
                 <i class="bi bi-currency-dollar"></i>
               </div>
@@ -218,22 +208,16 @@
 
     <!-- Actions Card -->
     <div class="detail-card actions-card">
-      <h3>Actions</h3>
+      <h3>{{ 'FINANCE.TRANSACTIONS.DETAIL.ACTIONS' | translate }}</h3>
       <div class="action-buttons">
         <button class="btn btn-primary" (click)="editTransaction()">
-          <span>✏️</span> Edit Transaction
+          <span>✏️</span> {{ 'FINANCE.TRANSACTIONS.DETAIL.EDIT' | translate }}
         </button>
-        <button
-          *ngIf="!transaction.isArchived"
-          class="btn btn-secondary"
-          (click)="archiveTransaction()">
-          <span>📦</span> Archive
+        <button *ngIf="!transaction.isArchived" class="btn btn-secondary" (click)="archiveTransaction()">
+          <span>📦</span> {{ 'FINANCE.TRANSACTIONS.DETAIL.ARCHIVE' | translate }}
         </button>
-        <button
-          *ngIf="transaction.isArchived"
-          class="btn btn-secondary"
-          (click)="restoreTransaction()">
-          <span>↩️</span> Restore
+        <button *ngIf="transaction.isArchived" class="btn btn-secondary" (click)="restoreTransaction()">
+          <span>↩️</span> {{ 'FINANCE.TRANSACTIONS.DETAIL.RESTORE' | translate }}
         </button>
       </div>
     </div>

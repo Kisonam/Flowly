@@ -35,7 +35,7 @@
         <label class="form-field">{{ 'TASKS.EDITOR.STATUS_LABEL' | translate }}
           <select formControlName="status">
             <option *ngFor="let s of statusOptions" [value]="s">{{ ('TASKS.EDITOR.STATUS.' + (s === 'InProgress' ?
-              'IN_PROGRESS' : s | uppercase)) | translate }}</option>
+              'INPROGRESS' : s | uppercase)) | translate }}</option>
           </select>
         </label>
         <label class="form-field">{{ 'TASKS.EDITOR.PRIORITY_LABEL' | translate }}

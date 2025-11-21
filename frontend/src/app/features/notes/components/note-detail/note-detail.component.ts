@@ -8,11 +8,12 @@ import { Note } from '../../models/note.models';
 import { marked } from 'marked';
 import { LinkService } from '../../../../shared/services/link.service';
 import { Link, LinkEntityType } from '../../../../shared/models/link.models';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-note-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss']
 })
@@ -22,6 +23,7 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
   private notesService = inject(NotesService);
   private linkService = inject(LinkService);
   private sanitizer = inject(DomSanitizer);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   noteId!: string;
@@ -39,7 +41,7 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
-      this.errorMessage = 'Invalid note id';
+      this.errorMessage = this.translate.instant('NOTES.DETAIL.ERRORS.INVALID_ID');
       this.isLoading = false;
       return;
     }
@@ -69,7 +71,7 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
           this.loadLinks();
         },
         error: (err) => {
-          this.errorMessage = err?.message || 'Failed to load note';
+          this.errorMessage = err?.message || this.translate.instant('NOTES.DETAIL.ERRORS.LOAD_FAILED');
           this.isLoading = false;
         }
       });
@@ -130,12 +132,12 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
   }
 
   onArchive(): void {
-    if (!confirm('Archive this note? You can restore it later.')) return;
+    if (!confirm(this.translate.instant('NOTES.DETAIL.CONFIRM.ARCHIVE'))) return;
     this.notesService.deleteNote(this.noteId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.router.navigate(['/notes']),
-        error: (err) => this.errorMessage = err?.message || 'Failed to archive note'
+        error: (err) => this.errorMessage = err?.message || this.translate.instant('NOTES.DETAIL.ERRORS.ARCHIVE_FAILED')
       });
   }
 
@@ -144,17 +146,17 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {},
-        error: (err) => this.errorMessage = err?.message || 'Failed to export note'
+        error: (err) => this.errorMessage = err?.message || this.translate.instant('NOTES.DETAIL.ERRORS.EXPORT_FAILED')
       });
   }
 
   onRestore(): void {
-    if (!confirm('Restore this note from archive?')) return;
+    if (!confirm(this.translate.instant('NOTES.DETAIL.CONFIRM.RESTORE'))) return;
     this.notesService.restoreNote(this.noteId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.router.navigate(['/notes']),
-        error: (err) => this.errorMessage = err?.message || 'Failed to restore note'
+        error: (err) => this.errorMessage = err?.message || this.translate.instant('NOTES.DETAIL.ERRORS.RESTORE_FAILED')
       });
   }
 
@@ -166,7 +168,9 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
   private replaceReferenceTokens(html: string): string {
     const refRegex = /\[\[(task|tx):([A-Za-z0-9\-]{6,})\|?([^\]]*)\]\]/g;
     return html.replace(refRegex, (_match, type: string, id: string, label: string) => {
-      const kind = type === 'task' ? 'Завдання' : 'Транзакція';
+      const kind = type === 'task' 
+        ? this.translate.instant('NOTES.DETAIL.REFS.TASK') 
+        : this.translate.instant('NOTES.DETAIL.REFS.TRANSACTION');
       const text = (label && label.trim().length > 0) ? label.trim() : `${kind} ${id.substring(0, 6)}…`;
       const cls = type === 'task' ? 'ref-pill task' : 'ref-pill tx';
       return `<span class="${cls}" data-id="${id}" data-type="${type}"><i class="bi ${type === 'task' ? 'bi-check2-square' : 'bi-cash-coin'}"></i> ${this.escapeHtml(text)}</span>`;

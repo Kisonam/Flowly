@@ -232,7 +232,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
   archiveNote(noteId: string, event: Event): void {
     event.stopPropagation();
 
-    if (!confirm(this.translate.instant('COMMON.CONFIRM.ARCHIVE'))) {
+    if (!confirm(this.translate.instant('NOTES.DETAIL.CONFIRM.ARCHIVE'))) {
       return;
     }
 
@@ -244,7 +244,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to archive note:', error);
-          alert(error.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_ARCHIVE'));
+          alert(error.message || this.translate.instant('NOTES.DETAIL.ERRORS.ARCHIVE_FAILED'));
         }
       });
   }
@@ -255,6 +255,10 @@ export class NoteListComponent implements OnInit, OnDestroy {
   restoreNote(noteId: string, event: Event): void {
     event.stopPropagation();
 
+    if (!confirm(this.translate.instant('NOTES.DETAIL.CONFIRM.RESTORE'))) {
+      return;
+    }
+
     this.notesService.restoreNote(noteId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -263,7 +267,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to restore note:', error);
-          alert(error.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_RESTORE'));
+          alert(error.message || this.translate.instant('NOTES.DETAIL.ERRORS.RESTORE_FAILED'));
         }
       });
   }
@@ -279,7 +283,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (error) => {
           console.error('Failed to export note:', error);
-          alert(error.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_EXPORT'));
+          alert(error.message || this.translate.instant('NOTES.DETAIL.ERRORS.EXPORT_FAILED'));
         }
       });
   }
@@ -307,17 +311,17 @@ export class NoteListComponent implements OnInit, OnDestroy {
    */
   formatDate(date: Date): string {
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const diff = now.getTime() - new Date(date).getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (minutes < 1) return this.translate.instant('NOTES.LIST.TIME.JUST_NOW');
+    if (minutes < 60) return this.translate.instant('NOTES.LIST.TIME.MINUTES_AGO', { value: minutes });
+    if (hours < 24) return this.translate.instant('NOTES.LIST.TIME.HOURS_AGO', { value: hours });
+    if (days < 7) return this.translate.instant('NOTES.LIST.TIME.DAYS_AGO', { value: days });
 
-    return date.toLocaleDateString();
+    return new Date(date).toLocaleDateString(this.translate.currentLang);
   }
 
   /**

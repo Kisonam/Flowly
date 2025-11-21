@@ -1,87 +1,101 @@
-@if (stats) {
-  <!-- Finance Summary Cards -->
-  <div class="finance-summary">
-    <div class="summary-card">
-      <p>Дохід</p>
-      <h2>₴{{ stats.totalIncome | number:'1.0-0' }}</h2>
-      <div class="trend-badge positive">
-        <span>↗</span> +{{ stats.averageDailyIncome | number:'1.0-0' }}/день
-      </div>
-    </div>
-    <div class="summary-card">
-      <p>Витрати</p>
-      <h2>₴{{ stats.totalExpense | number:'1.0-0' }}</h2>
-      <div class="trend-badge negative">
-        <span>↗</span> +{{ stats.averageDailyExpense | number:'1.0-0' }}/день
-      </div>
-    </div>
-    <div class="summary-card featured">
-      <p>Баланс</p>
-      <h2>₴{{ stats.netAmount | number:'1.0-0' }}</h2>
-      <div class="trend-badge">
-        <span>{{ stats.netAmount >= 0 ? '↗' : '↘' }}</span> {{ stats.netAmount >= 0 ? '+' : '' }}{{ (stats.netAmount / stats.totalIncome * 100) | number:'1.1-1' }}%
-      </div>
+@if (multiCurrencyStats && filteredStats.length > 0) {
+  <!-- Currency Filter -->
+  <div class="currency-filter">
+    <div class="filter-label">Валюти:</div>
+    <div class="currency-chips">
+      @for (currency of availableCurrencies; track currency) {
+        <button
+          class="currency-chip"
+          [class.active]="isCurrencySelected(currency)"
+          (click)="toggleCurrency(currency)">
+          {{ getCurrencySymbol(currency) }} {{ currency }}
+        </button>
+      }
     </div>
   </div>
 
-  <!-- Finance Chart -->
-  <div class="finance-chart">
-    <h3>Фінансова статистика</h3>
-
-    <div class="chart-legend">
-      <div class="legend-item">
-        <div class="legend-color income"></div>
-        <span>Дохід</span>
+  <!-- Finance Summary Cards by Currency -->
+  @for (currencyStats of filteredStats; track currencyStats.currencyCode) {
+    <div class="currency-section">
+      <div class="currency-header">
+        <h3>{{ getCurrencySymbol(currencyStats.currencyCode) }} {{ currencyStats.currencyCode }}</h3>
+        <span class="transaction-count">{{ currencyStats.transactionCount }} транзакцій</span>
       </div>
-      <div class="legend-item">
-        <div class="legend-color expense"></div>
-        <span>Витрати</span>
-      </div>
-    </div>
 
-    <!-- Top Categories -->
-    <div class="categories-grid">
-      <div class="category-section">
-        <h4>Топ витрат</h4>
-        <div class="category-list">
-          @for (cat of topExpenseCategories; track cat.categoryName) {
-            <div class="category-item">
-              <div class="category-header">
-                <span>{{ cat.categoryName }}</span>
-                <span class="amount">₴{{ cat.totalAmount | number:'1.0-0' }}</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill expense" [style.width.%]="cat.percentage"></div>
-              </div>
-            </div>
-          }
-          @empty {
-            <p class="empty-text">Немає витрат</p>
-          }
+      <div class="finance-summary">
+        <div class="summary-card">
+          <p>Дохід</p>
+          <h2>{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ currencyStats.totalIncome | number:'1.0-0' }}</h2>
+        </div>
+        <div class="summary-card">
+          <p>Витрати</p>
+          <h2>{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ currencyStats.totalExpense | number:'1.0-0' }}</h2>
+        </div>
+        <div class="summary-card" [class.featured]="currencyStats.netAmount >= 0" [class.negative]="currencyStats.netAmount < 0">
+          <p>Баланс</p>
+          <h2>{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ currencyStats.netAmount | number:'1.0-0' }}</h2>
         </div>
       </div>
 
-      <div class="category-section">
-        <h4>Топ доходів</h4>
-        <div class="category-list">
-          @for (cat of topIncomeCategories; track cat.categoryName) {
-            <div class="category-item">
-              <div class="category-header">
-                <span>{{ cat.categoryName }}</span>
-                <span class="amount">₴{{ cat.totalAmount | number:'1.0-0' }}</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill income" [style.width.%]="cat.percentage"></div>
-              </div>
+      <!-- Category Statistics for this currency -->
+      <div class="finance-chart">
+        <h4>Статистика по категоріях</h4>
+
+        <div class="chart-legend">
+          <div class="legend-item">
+            <div class="legend-color income"></div>
+            <span>Дохід</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color expense"></div>
+            <span>Витрати</span>
+          </div>
+        </div>
+
+        <div class="categories-grid">
+          <div class="category-section">
+            <h5>Топ витрат</h5>
+            <div class="category-list">
+              @for (cat of currencyStats.expenseByCategory.slice(0, 5); track cat.categoryName) {
+                <div class="category-item">
+                  <div class="category-header">
+                    <span>{{ cat.categoryName }}</span>
+                    <span class="amount">{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ cat.totalAmount | number:'1.0-0' }}</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill expense" [style.width.%]="cat.percentage"></div>
+                  </div>
+                </div>
+              }
+              @empty {
+                <p class="empty-text">Немає витрат</p>
+              }
             </div>
-          }
-          @empty {
-            <p class="empty-text">Немає доходів</p>
-          }
+          </div>
+
+          <div class="category-section">
+            <h5>Топ доходів</h5>
+            <div class="category-list">
+              @for (cat of currencyStats.incomeByCategory.slice(0, 5); track cat.categoryName) {
+                <div class="category-item">
+                  <div class="category-header">
+                    <span>{{ cat.categoryName }}</span>
+                    <span class="amount">{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ cat.totalAmount | number:'1.0-0' }}</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill income" [style.width.%]="cat.percentage"></div>
+                  </div>
+                </div>
+              }
+              @empty {
+                <p class="empty-text">Немає доходів</p>
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  }
 } @else {
   <div class="loading-state">
     <div class="spinner"></div>

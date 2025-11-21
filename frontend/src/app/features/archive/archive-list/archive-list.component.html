@@ -1,8 +1,8 @@
 <div class="archive-container">
   <div class="archive-header">
     <div>
-      <h1><i class="bi bi-archive"></i> Архів</h1>
-      <p class="subtitle">Переглядайте та відновлюйте архівовані елементи</p>
+      <h1><i class="bi bi-archive"></i> {{ 'ARCHIVE.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'ARCHIVE.SUBTITLE' | translate }}</p>
     </div>
   </div>
 
@@ -10,39 +10,29 @@
   <div class="filters-section">
     <div class="filter-group">
       <label for="entityTypeFilter">
-        <i class="bi bi-funnel"></i> Тип:
+        <i class="bi bi-funnel"></i> {{ 'ARCHIVE.FILTERS.TYPE_LABEL' | translate }}
       </label>
-      <select
-        id="entityTypeFilter"
-        [(ngModel)]="selectedEntityType"
-        (change)="onEntityTypeChange()"
-        class="form-select"
-      >
+      <select id="entityTypeFilter" [(ngModel)]="selectedEntityType" (change)="onEntityTypeChange()"
+        class="form-select">
         <option *ngFor="let type of entityTypes" [ngValue]="type.value">
-          {{ type.label }}
+          {{ type.label | translate }}
         </option>
       </select>
     </div>
 
     <div class="filter-group search-group">
       <label for="searchInput">
-        <i class="bi bi-search"></i> Пошук:
+        <i class="bi bi-search"></i> {{ 'ARCHIVE.FILTERS.SEARCH_LABEL' | translate }}
       </label>
-      <input
-        id="searchInput"
-        type="text"
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="onSearchChange()"
-        placeholder="Пошук в архіві..."
-        class="form-control"
-      />
+      <input id="searchInput" type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+        [placeholder]="'ARCHIVE.FILTERS.SEARCH_PLACEHOLDER' | translate" class="form-control" />
     </div>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Завантаження архіву...</p>
+    <p>{{ 'ARCHIVE.LOADING' | translate }}</p>
   </div>
 
   <!-- Error State -->
@@ -50,31 +40,32 @@
     <i class="bi bi-exclamation-triangle"></i>
     <p>{{ errorMessage }}</p>
     <button class="btn btn-primary" (click)="loadArchive()">
-      Спробувати знову
+      {{ 'ARCHIVE.ERRORS.RETRY' | translate }}
     </button>
   </div>
 
   <!-- Empty State -->
   <div *ngIf="!loading && !errorMessage && archivedItems.length === 0" class="empty-state">
     <i class="bi bi-inbox"></i>
-    <h3>Архів порожній</h3>
-    <p>Тут з'являться архівовані елементи</p>
+    <h3>{{ 'ARCHIVE.EMPTY.TITLE' | translate }}</h3>
+    <p>{{ 'ARCHIVE.EMPTY.DESC' | translate }}</p>
   </div>
 
   <!-- Archive Table -->
   <div *ngIf="!loading && !errorMessage && archivedItems.length > 0" class="archive-table-container">
     <div class="results-info">
-      <span>Знайдено: <strong>{{ totalCount }}</strong> {{ totalCount === 1 ? 'елемент' : 'елементів' }}</span>
+      <span>{{ 'ARCHIVE.RESULTS_INFO' | translate: { count: totalCount, suffix: (totalCount === 1 ? 'element' :
+        'elements') } }}</span>
     </div>
 
     <table class="archive-table">
       <thead>
         <tr>
-          <th class="col-type">Тип</th>
-          <th class="col-title">Назва</th>
-          <th class="col-metadata">Детальніше</th>
-          <th class="col-date">Архівовано</th>
-          <th class="col-actions">Дії</th>
+          <th class="col-type">{{ 'ARCHIVE.TABLE.TYPE' | translate }}</th>
+          <th class="col-title">{{ 'ARCHIVE.TABLE.TITLE' | translate }}</th>
+          <th class="col-metadata">{{ 'ARCHIVE.TABLE.DETAILS' | translate }}</th>
+          <th class="col-date">{{ 'ARCHIVE.TABLE.ARCHIVED_AT' | translate }}</th>
+          <th class="col-actions">{{ 'ARCHIVE.TABLE.ACTIONS' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -83,7 +74,7 @@
           <td class="col-type">
             <div class="entity-type-badge" [attr.data-type]="item.entityType">
               <i class="bi" [ngClass]="getEntityTypeIcon(item.entityType)"></i>
-              <span>{{ getEntityTypeName(item.entityType) }}</span>
+              <span>{{ 'ARCHIVE.FILTERS.TYPES.' + getEntityTypeKey(item.entityType) | translate }}</span>
             </div>
           </td>
 
@@ -113,21 +104,15 @@
           <!-- Actions -->
           <td class="col-actions" (click)="$event.stopPropagation()">
             <div class="action-buttons">
-              <button
-                class="btn btn-sm btn-restore"
-                (click)="$event.stopPropagation(); restore(item)"
-                title="Відновити"
-              >
+              <button class="btn btn-sm btn-restore" (click)="$event.stopPropagation(); restore(item)"
+                [title]="'ARCHIVE.ACTIONS.RESTORE' | translate">
                 <i class="bi bi-arrow-counterclockwise"></i>
-                Відновити
+                {{ 'ARCHIVE.ACTIONS.RESTORE' | translate }}
               </button>
-              <button
-                class="btn btn-sm btn-delete"
-                (click)="$event.stopPropagation(); permanentDelete(item)"
-                title="Видалити назавжди"
-              >
+              <button class="btn btn-sm btn-delete" (click)="$event.stopPropagation(); permanentDelete(item)"
+                [title]="'ARCHIVE.ACTIONS.DELETE' | translate">
                 <i class="bi bi-trash"></i>
-                Видалити
+                {{ 'ARCHIVE.ACTIONS.DELETE' | translate }}
               </button>
             </div>
           </td>
@@ -137,25 +122,17 @@
 
     <!-- Pagination -->
     <div class="pagination" *ngIf="totalPages > 1">
-      <button
-        class="btn btn-pagination"
-        [disabled]="currentPage === 1"
-        (click)="previousPage()"
-      >
+      <button class="btn btn-pagination" [disabled]="currentPage === 1" (click)="previousPage()">
         <i class="bi bi-chevron-left"></i>
-        Попередня
+        {{ 'ARCHIVE.PAGINATION.PREVIOUS' | translate }}
       </button>
 
       <span class="page-info">
-        Сторінка {{ currentPage }} з {{ totalPages }}
+        {{ 'ARCHIVE.PAGINATION.PAGE_INFO' | translate: { current: currentPage, total: totalPages } }}
       </span>
 
-      <button
-        class="btn btn-pagination"
-        [disabled]="currentPage === totalPages"
-        (click)="nextPage()"
-      >
-        Наступна
+      <button class="btn btn-pagination" [disabled]="currentPage === totalPages" (click)="nextPage()">
+        {{ 'ARCHIVE.PAGINATION.NEXT' | translate }}
         <i class="bi bi-chevron-right"></i>
       </button>
     </div>
@@ -168,7 +145,7 @@
     <div class="modal-header">
       <h2>
         <i class="bi" [ngClass]="selectedItem ? getEntityTypeIcon(selectedItem.entityType) : ''"></i>
-        Деталі архівованого елемента
+        {{ 'ARCHIVE.DETAIL_MODAL.TITLE' | translate }}
       </h2>
       <button class="btn-close" (click)="closeDetailModal()">
         <i class="bi bi-x-lg"></i>
@@ -178,22 +155,23 @@
     <div class="modal-body" *ngIf="selectedItem">
       <!-- Basic Info -->
       <div class="detail-section">
-        <h3>Основна інформація</h3>
+        <h3>{{ 'ARCHIVE.DETAIL_MODAL.BASIC_INFO' | translate }}</h3>
         <div class="detail-grid">
           <div class="detail-item">
-            <label>Тип:</label>
-            <span>{{ getEntityTypeName(selectedItem.entityType) }}</span>
+            <label>{{ 'ARCHIVE.TABLE.TYPE' | translate }}:</label>
+            <span>{{ 'ARCHIVE.FILTERS.TYPES.' + getEntityTypeKey(selectedItem.entityType) | translate
+              }}</span>
           </div>
           <div class="detail-item">
-            <label>Назва:</label>
+            <label>{{ 'ARCHIVE.TABLE.TITLE' | translate }}:</label>
             <span>{{ selectedItem.title }}</span>
           </div>
           <div class="detail-item" *ngIf="selectedItem.description">
-            <label>Опис:</label>
+            <label>{{ 'ARCHIVE.METADATA.LABELS.Description' | translate }}:</label>
             <span>{{ selectedItem.description }}</span>
           </div>
           <div class="detail-item">
-            <label>Архівовано:</label>
+            <label>{{ 'ARCHIVE.TABLE.ARCHIVED_AT' | translate }}:</label>
             <span>{{ formatDate(selectedItem.archivedAt) }}</span>
           </div>
         </div>
@@ -201,7 +179,7 @@
 
       <!-- Metadata -->
       <div class="detail-section" *ngIf="selectedItem.metadata && Object.keys(selectedItem.metadata).length > 0">
-        <h3>Додаткова інформація</h3>
+        <h3>{{ 'ARCHIVE.DETAIL_MODAL.ADDITIONAL_INFO' | translate }}</h3>
         <div class="detail-grid">
           <div class="detail-item" *ngFor="let meta of Object.entries(selectedItem.metadata)">
             <label>{{ formatMetadataLabel(meta[0]) }}:</label>
@@ -219,7 +197,7 @@
           </div>
           <div *ngIf="!getContentFromPayload()" class="no-content">
             <i class="bi bi-info-circle"></i>
-            <p>Додатковий вміст відсутній</p>
+            <p>{{ 'ARCHIVE.DETAIL_MODAL.NO_CONTENT' | translate }}</p>
           </div>
         </div>
       </div>
@@ -235,17 +213,17 @@
       <!-- Loading state -->
       <div class="detail-loading" *ngIf="!parsedPayload">
         <div class="spinner"></div>
-        <p>Завантаження деталей...</p>
+        <p>{{ 'ARCHIVE.DETAIL_MODAL.LOADING' | translate }}</p>
       </div>
     </div>
 
     <div class="modal-footer">
       <button class="btn btn-secondary" (click)="closeDetailModal()">
-        Закрити
+        {{ 'ARCHIVE.DETAIL_MODAL.CLOSE' | translate }}
       </button>
       <button class="btn btn-primary" (click)="restore(selectedItem!); closeDetailModal()">
         <i class="bi bi-arrow-counterclockwise"></i>
-        Відновити
+        {{ 'ARCHIVE.DETAIL_MODAL.RESTORE' | translate }}
       </button>
     </div>
   </div>

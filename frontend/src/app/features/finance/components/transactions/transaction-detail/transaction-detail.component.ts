@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FinanceService } from '../../../services/finance.service';
 import { Transaction } from '../../../models/finance.models';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LinkService } from '../../../../../shared/services/link.service';
 import { Link, LinkEntityType, EntityPreview } from '../../../../../shared/models/link.models';
 import { Subject, takeUntil } from 'rxjs';
@@ -11,7 +12,7 @@ import { ThemeService } from '../../../../../core/services/theme.service';
 @Component({
   selector: 'app-transaction-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './transaction-detail.component.html',
   styleUrls: ['./transaction-detail.component.scss']
 })
@@ -21,6 +22,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   private financeService = inject(FinanceService);
   private linkService = inject(LinkService);
   private themeService = inject(ThemeService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   transaction: Transaction | null = null;
@@ -60,7 +62,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to load transaction', err);
-          this.errorMessage = err.message || 'Failed to load transaction';
+          this.errorMessage = this.translate.instant('FINANCE.TRANSACTIONS.DETAIL.LOADING_ERROR') || err.message;
           this.loading = false;
         }
       });
@@ -121,14 +123,14 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   }
 
   formatAmount(amount: number, currency: string): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(this.translate.currentLang, {
       style: 'currency',
       currency: currency
     }).format(amount);
   }
 
   formatDate(date: string | Date): string {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString(this.translate.currentLang, {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -136,7 +138,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   }
 
   formatDateTime(date: string | Date): string {
-    return new Date(date).toLocaleString('en-US', {
+    return new Date(date).toLocaleString(this.translate.currentLang, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -153,7 +155,9 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
 
   archiveTransaction(): void {
     if (!this.transaction) return;
-    if (!confirm(`Archive transaction "${this.transaction.title}"?`)) return;
+    
+    const confirmMessage = this.translate.instant('FINANCE.TRANSACTIONS.DETAIL.CONFIRM_ARCHIVE', { title: this.transaction.title });
+    if (!confirm(confirmMessage)) return;
 
     this.financeService.archiveTransaction(this.transaction.id)
       .pipe(takeUntil(this.destroy$))
@@ -164,7 +168,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to archive transaction', err);
-          alert('Failed to archive transaction: ' + err.message);
+          alert(this.translate.instant('FINANCE.TRANSACTIONS.DETAIL.ARCHIVE_ERROR'));
         }
       });
   }
@@ -181,7 +185,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('❌ Failed to restore transaction', err);
-          alert('Failed to restore transaction: ' + err.message);
+          alert(this.translate.instant('FINANCE.TRANSACTIONS.DETAIL.RESTORE_ERROR'));
         }
       });
   }

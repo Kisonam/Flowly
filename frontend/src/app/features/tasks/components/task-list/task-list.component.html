@@ -1,55 +1,56 @@
 <div class="task-list" *ngIf="!loading; else loadingTpl">
   <div class="toolbar">
-    <a class="btn" routerLink="/tasks/board">Board</a>
-    <a class="btn" routerLink="/tasks/list">List</a>
-    <a class="btn btn-primary" routerLink="/tasks/new">New Task</a>
-    <a class="btn" routerLink="/tasks/themes">Themes</a>
+    <a class="btn" routerLink="/tasks/board">{{ 'TASKS.LIST.BUTTONS.BOARD_VIEW' | translate }}</a>
+    <a class="btn" routerLink="/tasks/list">{{ 'TASKS.LIST.BUTTONS.LIST_VIEW' | translate }}</a>
+    <a class="btn btn-primary" routerLink="/tasks/new">{{ 'TASKS.LIST.BUTTONS.NEW_TASK' | translate }}</a>
+    <a class="btn" routerLink="/tasks/themes">{{ 'TASKS.LIST.BUTTONS.THEMES' | translate }}</a>
   </div>
   <div class="filters" [formGroup]="filterForm">
-    <input type="text" placeholder="Search" formControlName="search" />
+    <input type="text" [placeholder]="'TASKS.LIST.SEARCH_PLACEHOLDER' | translate" formControlName="search" />
 
     <select formControlName="status">
-      <option value="">All Statuses</option>
-      <option value="Todo">Todo</option>
-      <option value="InProgress">In Progress</option>
-      <option value="Done">Done</option>
+      <option value="">{{ 'TASKS.LIST.FILTERS.ALL_STATUSES' | translate }}</option>
+      <option value="Todo">{{ 'TASKS.STATUS.TODO' | translate }}</option>
+      <option value="InProgress">{{ 'TASKS.STATUS.INPROGRESS' | translate }}</option>
+      <option value="Done">{{ 'TASKS.STATUS.DONE' | translate }}</option>
     </select>
 
     <select formControlName="priority">
-      <option value="">All Priorities</option>
-      <option value="High">High</option>
-      <option value="Medium">Medium</option>
-      <option value="Low">Low</option>
-      <option value="None">None</option>
+      <option value="">{{ 'TASKS.LIST.FILTERS.ALL_PRIORITIES' | translate }}</option>
+      <option value="High">{{ 'TASKS.PRIORITY.HIGH' | translate }}</option>
+      <option value="Medium">{{ 'TASKS.PRIORITY.MEDIUM' | translate }}</option>
+      <option value="Low">{{ 'TASKS.PRIORITY.LOW' | translate }}</option>
+      <option value="None">{{ 'TASKS.PRIORITY.NONE' | translate }}</option>
     </select>
 
     <select formControlName="themeId">
-      <option value="">All Themes</option>
+      <option value="">{{ 'TASKS.LIST.FILTERS.ALL_THEMES' | translate }}</option>
       <option *ngFor="let t of themes" [value]="t.id">{{ t.title }}</option>
     </select>
 
     <div class="date-range">
-      <label>Due to</label>
+      <label>{{ 'TASKS.LIST.FILTERS.DUE_TO' | translate }}</label>
       <input type="date" formControlName="dueTo" />
     </div>
 
     <div class="tags">
-      <span *ngFor="let tag of tags" class="tag-chip" [style.background]="tag.color || '#e5e7eb'" (click)="toggleTag(tag.id)">
+      <span *ngFor="let tag of tags" class="tag-chip" [style.background]="tag.color || '#e5e7eb'"
+        (click)="toggleTag(tag.id)">
         {{ tag.name }}
       </span>
     </div>
 
-    <button class="btn btn-secondary" type="button" (click)="clearFilters()">Clear</button>
+    <button class="btn btn-secondary" type="button" (click)="clearFilters()">{{ 'TASKS.LIST.CLEAR' | translate
+      }}</button>
   </div>
 
   <div class="sort">
-    <label>Sort by:</label>
-    <button *ngFor="let opt of sortOptions"
-            class="btn btn-link"
-            [class.active]="currentSort?.key === opt.key"
-            (click)="setSort(opt)">
+    <label>{{ 'TASKS.LIST.SORT.LABEL' | translate }}</label>
+    <button *ngFor="let opt of sortOptions" class="btn btn-link" [class.active]="currentSort?.key === opt.key"
+      (click)="setSort(opt)">
       {{ opt.label }}
-      <span *ngIf="currentSort?.key === opt.key">({{ sortDirection }})</span>
+      <span *ngIf="currentSort?.key === opt.key">({{ 'TASKS.LIST.SORT.' + sortDirection.toUpperCase() | translate
+        }})</span>
     </button>
   </div>
 
@@ -60,26 +61,31 @@
         {{ task.title }}
       </div>
       <div class="meta">
-  <span *ngIf="task.dueDate">Due: {{ task.dueDate | date:'dd/MM/yy' }}</span>
-        <span>Priority: {{ task.priority }}</span>
-        <span>Status: {{ task.status }}</span>
-        <span *ngIf="task.theme">Theme: {{ task.theme.title }}</span>
+        <span *ngIf="task.dueDate">{{ 'TASKS.LIST.META.DUE' | translate }} {{ task.dueDate | date:'dd/MM/yy' }}</span>
+        <span>{{ 'TASKS.LIST.META.PRIORITY' | translate }} {{ 'TASKS.PRIORITY.' + task.priority.toUpperCase() |
+          translate }}</span>
+        <span>{{ 'TASKS.LIST.META.STATUS' | translate }} {{ 'TASKS.STATUS.' + task.status.toUpperCase() | translate
+          }}</span>
+        <span *ngIf="task.theme">{{ 'TASKS.LIST.META.THEME' | translate }} {{ task.theme.title }}</span>
       </div>
       <div class="tags">
-        <span class="tag-chip" *ngFor="let tag of task.tags" [style.background]="tag.color || '#e5e7eb'">{{ tag.name }}</span>
+        <span class="tag-chip" *ngFor="let tag of task.tags" [style.background]="tag.color || '#e5e7eb'">{{ tag.name
+          }}</span>
       </div>
     </div>
 
-    <div class="empty" *ngIf="empty">No tasks found.</div>
+    <div class="empty" *ngIf="empty">{{ 'TASKS.LIST.EMPTY' | translate }}</div>
   </div>
 
   <div class="pagination">
-    <button class="btn" (click)="prevPage()" [disabled]="page <= 1">Prev</button>
-    <span>Page {{ page }} / {{ totalPages }}</span>
-    <button class="btn" (click)="nextPage()" [disabled]="page >= totalPages">Next</button>
+    <button class="btn" (click)="prevPage()" [disabled]="page <= 1">{{ 'TASKS.LIST.PAGINATION.PREV' | translate
+      }}</button>
+    <span>{{ 'TASKS.LIST.PAGINATION.PAGE' | translate }} {{ page }} / {{ totalPages }}</span>
+    <button class="btn" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'TASKS.LIST.PAGINATION.NEXT' | translate
+      }}</button>
   </div>
 </div>
 
 <ng-template #loadingTpl>
-  <div class="loading">Loading tasks...</div>
+  <div class="loading">{{ 'TASKS.LIST.LOADING' | translate }}</div>
 </ng-template>

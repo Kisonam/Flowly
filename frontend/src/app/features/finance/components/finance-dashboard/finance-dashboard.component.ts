@@ -55,12 +55,12 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
 
   constructor() {
     const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const firstDayOfYear = new Date(now.getFullYear(), 0, 1); // January 1st
+    const lastDayOfYear = new Date(now.getFullYear(), 11, 31); // December 31st
 
     this.filterForm = this.fb.group({
-      periodStart: [this.formatDateForInput(firstDayOfMonth)],
-      periodEnd: [this.formatDateForInput(lastDayOfMonth)],
+      periodStart: [this.formatDateForInput(firstDayOfYear)],
+      periodEnd: [this.formatDateForInput(lastDayOfYear)],
       currencyCode: ['UAH']
     });
   }
@@ -110,6 +110,17 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (stats) => {
+          // Calculate averages if backend doesn't provide them
+          if (stats.averageIncome == null || stats.averageExpense == null) {
+            const days = this.getDaysBetweenDates(stats.periodStart, stats.periodEnd);
+            if (stats.averageIncome == null) {
+              stats.averageIncome = days > 0 ? stats.totalIncome / days : 0;
+            }
+            if (stats.averageExpense == null) {
+              stats.averageExpense = days > 0 ? stats.totalExpense / days : 0;
+            }
+          }
+          
           this.stats = stats;
           this.loading = false;
 
@@ -118,7 +129,7 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to load stats:', err);
-          this.errorMessage = 'Не вдалося завантажити статистику';
+          this.errorMessage = 'Failed to load stats';
           this.loading = false;
         }
       });
@@ -219,5 +230,13 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
 
   getTransactionTypeClass(type: string): string {
     return type === 'Income' ? 'income' : 'expense';
+  }
+
+  private getDaysBetweenDates(start: string | Date, end: string | Date): number {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
+    return diffDays > 0 ? diffDays : 1; // At least 1 day
   }
 }

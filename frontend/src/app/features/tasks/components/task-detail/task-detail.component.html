@@ -1,147 +1,179 @@
-<div class="task-detail" *ngIf="task; else loadingTpl">
-  <header>
-    <div class="header-content">
-      <h1 class="task-title">{{ task.title }}</h1>
-      <button class="edit-btn" [routerLink]="['/tasks', task.id, 'edit']">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M11.333 2A1.886 1.886 0 0 1 14 4.667l-9 9-3.667.333.334-3.666 9-9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Edit
-      </button>
+<div class="container" *ngIf="task; else loadingTpl">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/tasks" class="btn-back">
+        <i class="bi bi-arrow-left"></i>
+        <span>{{ 'TASKS.DETAIL.BACK' | translate }}</span>
+      </a>
+      <h1>{{ 'TASKS.DETAIL.TITLE' | translate }}</h1>
     </div>
-    <div class="metadata">
-      <div class="meta-item">
-        <span class="meta-label">Status:</span>
-        <span class="status-badge" [attr.data-status]="task.status">{{ task.status }}</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-label">Priority:</span>
-        <span class="priority-badge" [attr.data-priority]="task.priority">{{ task.priority }}</span>
-      </div>
-      <div class="meta-item" *ngIf="task.dueDate">
-        <span class="meta-label">Due Date:</span>
-  <span class="meta-value">{{ task.dueDate | date:'dd/MM/yy' }}</span>
-      </div>
-      <div class="meta-item" *ngIf="task.theme">
-        <span class="meta-label">Theme:</span>
-        <span class="meta-value">{{ task.theme.title }}</span>
-      </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="editTask()">
+        <i class="bi bi-pencil"></i> {{ 'TASKS.DETAIL.EDIT' | translate }}
+      </button>
     </div>
   </header>
 
-  <section class="description" *ngIf="task.description">
-    <h3>Description</h3>
-    <div class="description-text markdown-body" [innerHTML]="descriptionHtml"></div>
-  </section>
-
-  <section class="subtasks">
-    <h3>Subtasks ({{ task.subtasks.length }})</h3>
-    <div class="subtask" *ngFor="let sub of task.subtasks">
-      <label>
-        <input type="checkbox" [checked]="sub.isDone" (change)="toggleSubtask(sub)" />
-        <span [class.done]="sub.isDone">{{ sub.title }}</span>
-      </label>
-    </div>
-    <div *ngIf="task.subtasks.length === 0" class="empty">No subtasks yet. You can add them in the task editor.</div>
-  </section>
-
-  <section class="tags">
-    <h3>Tags</h3>
-    <div class="tag-pool">
-      <span *ngFor="let tag of allTags"
-            class="tag-chip"
-            [class.selected]="hasTag(tag.id)"
-            [style.background]="tag.color || '#e5e7eb'"
-            (click)="toggleTag(tag)">
-        {{ tag.name }}
-      </span>
-    </div>
-    <div *ngIf="task.tags.length" class="selected-tags">
-      <strong>Selected:</strong>
-      <span *ngFor="let tag of task.tags" class="tag-chip mini" [style.background]="tag.color || '#e5e7eb'">{{ tag.name }}</span>
-    </div>
-  </section>
-
-  <section class="links" *ngIf="links.length > 0">
-    <h3 class="linked-title"><i class="bi bi-link-45deg"></i> Linked items</h3>
-    <div class="linked-sections">
-      <!-- Linked Notes -->
-      <div class="linked-section" *ngIf="linkedNotes.length > 0">
-        <h4 class="section-header">
-          <i class="bi bi-journal-text"></i>
-          <span>Notes</span>
-          <span class="badge">{{ linkedNotes.length }}</span>
-        </h4>
-        <div class="link-items">
-          <a *ngFor="let item of linkedNotes"
-             [routerLink]="['/notes', item.id]"
-             class="link-item">
-            <div class="link-icon note-icon">
-              <i class="bi bi-journal-text"></i>
-            </div>
-            <div class="link-content">
-              <div class="link-title">{{ item.title || 'Untitled note' }}</div>
-              <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
-            </div>
-            <i class="bi bi-chevron-right link-arrow"></i>
-          </a>
+  <section class="detail-content">
+    <!-- Main Info Card -->
+    <div class="detail-card main-card">
+      <div class="task-header">
+        <h2 class="task-title">{{ task.title }}</h2>
+        <div class="task-meta">
+          <span class="badge status-badge" [style.background-color]="getStatusColor(task.status)">
+            {{ getStatusIcon(task.status) }} {{ 'TASKS.STATUS.' + task.status.toUpperCase() | translate }}
+          </span>
+          <span class="badge priority-badge" [style.color]="getPriorityColor(task.priority)">
+            {{ getPriorityIcon(task.priority) }} {{ 'TASKS.PRIORITY.' + task.priority.toUpperCase() | translate }}
+          </span>
         </div>
       </div>
 
-      <!-- Linked Tasks -->
-      <div class="linked-section" *ngIf="linkedTasks.length > 0">
-        <h4 class="section-header">
-          <i class="bi bi-check2-square"></i>
-          <span>Tasks</span>
-          <span class="badge">{{ linkedTasks.length }}</span>
-        </h4>
-        <div class="link-items">
-          <a *ngFor="let item of linkedTasks"
-             [routerLink]="['/tasks', item.id]"
-             class="link-item">
-            <div class="link-icon task-icon">
-              <i class="bi bi-check2-square"></i>
-            </div>
-            <div class="link-content">
-              <div class="link-title">{{ item.title || 'Untitled task' }}</div>
-              <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
-            </div>
-            <i class="bi bi-chevron-right link-arrow"></i>
-          </a>
+      <div class="task-properties">
+        <!-- Due Date -->
+        <div class="property-item" *ngIf="task.dueDate">
+          <label>{{ 'TASKS.DETAIL.DUE_DATE' | translate }}</label>
+          <div class="value">
+            <i class="bi bi-calendar"></i> {{ formatDate(task.dueDate) }}
+          </div>
+        </div>
+
+        <!-- Theme -->
+        <div class="property-item" *ngIf="task.theme">
+          <label>{{ 'TASKS.DETAIL.THEME' | translate }}</label>
+          <div class="value theme-value">
+            <span class="theme-dot" [style.background-color]="task.theme.color"></span>
+            {{ task.theme.title }}
+          </div>
         </div>
       </div>
 
-      <!-- Linked Transactions -->
-      <div class="linked-section" *ngIf="linkedTransactions.length > 0">
-        <h4 class="section-header">
-          <i class="bi bi-currency-dollar"></i>
-          <span>Transactions</span>
-          <span class="badge">{{ linkedTransactions.length }}</span>
-        </h4>
-        <div class="link-items">
-          <a *ngFor="let item of linkedTransactions"
-             [routerLink]="['/finance/transactions', item.id]"
-             class="link-item">
-            <div class="link-icon transaction-icon">
-              <i class="bi bi-currency-dollar"></i>
+      <!-- Description -->
+      <div class="info-section" *ngIf="task.description">
+        <h3>{{ 'TASKS.DETAIL.DESCRIPTION' | translate }}</h3>
+        <div class="markdown-content" [innerHTML]="renderMarkdown(task.description)"></div>
+      </div>
+
+      <!-- Subtasks -->
+      <div class="info-section">
+        <h3>{{ 'TASKS.DETAIL.SUBTASKS' | translate:{count: task.subtasks.length} }}</h3>
+
+        <div class="subtasks-list" *ngIf="task.subtasks.length > 0">
+          <div class="subtask-item" *ngFor="let sub of task.subtasks; let i = index" (click)="toggleSubtask(i)">
+            <div class="checkbox" [class.checked]="sub.isDone">
+              <i class="bi bi-check" *ngIf="sub.isDone"></i>
             </div>
-            <div class="link-content">
-              <div class="link-title">{{ item.title || 'Transaction' }}</div>
-              <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
-            </div>
-            <i class="bi bi-chevron-right link-arrow"></i>
-          </a>
+            <span class="subtask-title" [class.completed]="sub.isDone">{{ sub.title }}</span>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="task.subtasks.length === 0">
+          {{ 'TASKS.DETAIL.NO_SUBTASKS' | translate }}
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="info-section" *ngIf="task.tags && task.tags.length > 0">
+        <h3>{{ 'TASKS.DETAIL.TAGS' | translate }}</h3>
+        <div class="tags-list">
+          <span class="tag" *ngFor="let tag of task.tags" [style.background-color]="tag.color">
+            {{ tag.name }}
+          </span>
         </div>
       </div>
     </div>
+
+    <!-- Linked Items -->
+    <div class="detail-card linked-card"
+      *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
+      <h3>
+        <i class="bi bi-link-45deg"></i>
+        {{ 'TASKS.DETAIL.LINKED_ITEMS' | translate }}
+      </h3>
+
+      <div class="linked-sections">
+        <!-- Linked Notes -->
+        <div class="linked-section" *ngIf="linkedNotes.length > 0">
+          <div class="section-header">
+            <i class="bi bi-journal-text"></i>
+            <span>{{ 'TASKS.DETAIL.LINKED_NOTES' | translate }}</span>
+            <span class="badge">{{ linkedNotes.length }}</span>
+          </div>
+          <div class="link-items">
+            <a *ngFor="let note of linkedNotes" [routerLink]="['/notes', note.id]" class="link-item">
+              <div class="link-icon note-icon">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ note.title }}</div>
+                <div class="link-snippet" *ngIf="note.snippet">{{ note.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Linked Tasks -->
+        <div class="linked-section" *ngIf="linkedTasks.length > 0">
+          <div class="section-header">
+            <i class="bi bi-check-circle"></i>
+            <span>{{ 'TASKS.DETAIL.LINKED_TASKS' | translate }}</span>
+            <span class="badge">{{ linkedTasks.length }}</span>
+          </div>
+          <div class="link-items">
+            <a *ngFor="let t of linkedTasks" [routerLink]="['/tasks', t.id]" class="link-item">
+              <div class="link-icon task-icon">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ t.title }}</div>
+                <div class="link-snippet" *ngIf="t.snippet">{{ t.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Linked Transactions -->
+        <div class="linked-section" *ngIf="linkedTransactions.length > 0">
+          <div class="section-header">
+            <i class="bi bi-currency-dollar"></i>
+            <span>{{ 'TASKS.DETAIL.LINKED_TRANSACTIONS' | translate }}</span>
+            <span class="badge">{{ linkedTransactions.length }}</span>
+          </div>
+          <div class="link-items">
+            <a *ngFor="let tx of linkedTransactions" [routerLink]="['/finance/transactions', tx.id]" class="link-item">
+              <div class="link-icon transaction-icon">
+                <i class="bi bi-currency-dollar"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ tx.title }}</div>
+                <div class="link-snippet" *ngIf="tx.snippet">{{ tx.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </section>
 
   <footer>
-    <div class="error" *ngIf="error">{{ error }}</div>
-  <div class="updated">Last updated: {{ task.updatedAt | date:'dd/MM/yy HH:mm' }}</div>
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <!-- Footer Info -->
+    <div class="detail-footer">
+      <p>{{ 'TASKS.DETAIL.LAST_UPDATED' | translate:{date: formatDate(task.updatedAt)} }}</p>
+    </div>
   </footer>
 </div>
 
 <ng-template #loadingTpl>
-  <div class="loading">Loading task...</div>
+  <div class="loading">{{ 'TASKS.DETAIL.LOADING' | translate }}</div>
 </ng-template>

@@ -39,7 +39,8 @@
         "TASKS": "Tasks",
         "FINANCE": "Finance",
         "ARCHIVE": "Archive",
-        "SETTINGS": "Settings"
+        "SETTINGS": "Settings",
+        "LANGUAGE_SELECT": "Select Language"
     },
     "FINANCE": {
         "DASHBOARD": {
@@ -115,7 +116,42 @@
                 "PAGE_OF": "Page {{current}} of {{total}}",
                 "SHOWING": "Showing {{count}} of {{total}}"
             },
-            "QUICK_ACTIONS": "Quick Actions"
+            "QUICK_ACTIONS": "Quick Actions",
+            "DETAIL": {
+                "TITLE": "Transaction Details",
+                "BACK": "Back to Transactions",
+                "BACK_LIST": "Back to List",
+                "LOADING": "Loading transaction...",
+                "TYPE": "Type",
+                "AMOUNT": "Amount",
+                "DESCRIPTION": "Description",
+                "NO_DESCRIPTION": "No description",
+                "CATEGORY": "Category",
+                "UNCATEGORIZED": "Uncategorized",
+                "BUDGET_LINK": "Linked Budget",
+                "GOAL_LINK": "Linked Goal",
+                "TAGS": "Tags",
+                "DATE": "Transaction Date",
+                "CREATED_AT": "Created At",
+                "UPDATED_AT": "Last Updated",
+                "STATUS": "Status",
+                "STATUS_ARCHIVED": "Archived",
+                "STATUS_ACTIVE": "Active",
+                "LINKED_ITEMS": "Linked items",
+                "LINKED_NOTES": "Notes",
+                "LINKED_TASKS": "Tasks",
+                "LINKED_TRANSACTIONS": "Transactions",
+                "ACTIONS": "Actions",
+                "EDIT": "Edit Transaction",
+                "ARCHIVE": "Archive",
+                "RESTORE": "Restore",
+                "CONFIRM_ARCHIVE": "Archive transaction \"{{title}}\"?",
+                "CONFIRM_RESTORE": "Restore transaction \"{{title}}\"?",
+                "ARCHIVE_SUCCESS": "Transaction archived",
+                "RESTORE_SUCCESS": "Transaction restored",
+                "ARCHIVE_ERROR": "Failed to archive transaction",
+                "RESTORE_ERROR": "Failed to restore transaction"
+            }
         },
         "EDITOR": {
             "TITLE_NEW": "New Transaction",
@@ -237,7 +273,8 @@
                 "NEAR_LIMIT": "⚡ Near Limit",
                 "ON_TRACK": "✅ On Track",
                 "REMAINING": "remaining",
-                "DAYS_REMAINING": "days remaining"
+                "DAYS_REMAINING": "days remaining",
+                "TODAY": "today"
             },
             "EDITOR": {
                 "TITLE_CREATE": "Create Budget",
@@ -466,6 +503,125 @@
         }
     },
     "NOTES": {
+        "LIST": {
+            "TITLE": "My Notes",
+            "COUNT_ONE": "note",
+            "COUNT_MANY": "notes",
+            "BUTTONS": {
+                "BOARD_VIEW": "Board View",
+                "GRID_VIEW": "Grid View",
+                "LIST_VIEW": "List View",
+                "QUICK_CREATE": "Quick Create",
+                "CREATE_FIRST": "Create Your First Note",
+                "RETRY": "Retry",
+                "CLEAR_ALL": "Clear all",
+                "FILTERS": "Filters"
+            },
+            "SEARCH_PLACEHOLDER": "Search notes...",
+            "FILTERS": {
+                "BY_TAGS": "Filter by Tags"
+            },
+            "LOADING": "Loading notes...",
+            "EMPTY": {
+                "TITLE": "No notes yet",
+                "SEARCH_NO_MATCH": "No notes match your search criteria.",
+                "START_CAPTURING": "Start capturing your thoughts and ideas!"
+            },
+            "PAGINATION": {
+                "SHOWING": "Showing",
+                "TO": "to",
+                "OF": "of",
+                "PREVIOUS": "Previous",
+                "NEXT": "Next",
+                "SHOW": "Show:"
+            },
+            "CARD": {
+                "EDIT": "Edit",
+                "EXPORT": "Export",
+                "ARCHIVE": "Archive",
+                "RESTORE": "Restore"
+            },
+            "TIME": {
+                "JUST_NOW": "just now",
+                "MINUTES_AGO": "{{value}}m ago",
+                "HOURS_AGO": "{{value}}h ago",
+                "DAYS_AGO": "{{value}}d ago"
+            }
+        },
+        "BOARD": {
+            "TITLE": "Notes Board",
+            "BUTTONS": {
+                "LIST_VIEW": "List View",
+                "NEW_GROUP": "New Group"
+            },
+            "LOADING": "Loading board...",
+            "COLUMNS": {
+                "NO_GROUP": "No Group",
+                "EMPTY_UNGROUPED": "No ungrouped notes",
+                "DROP_HERE": "Drop notes here"
+            },
+            "ACTIONS": {
+                "EDIT": "Edit",
+                "DELETE": "Delete"
+            },
+            "MODAL": {
+                "TITLE_NEW": "New Group",
+                "TITLE_EDIT": "Edit Group",
+                "LABEL_TITLE": "Group Title",
+                "PLACEHOLDER_TITLE": "e.g., Work Notes",
+                "LABEL_COLOR": "Color",
+                "CANCEL": "Cancel",
+                "SAVE": "Save"
+            },
+            "ERRORS": {
+                "LOAD_FAILED": "Failed to load board",
+                "SAVE_FAILED": "Failed to save group",
+                "DELETE_FAILED": "Failed to delete group",
+                "REORDER_FAILED": "Failed to reorder groups",
+                "MOVE_FAILED": "Failed to move note"
+            },
+            "CONFIRM": {
+                "DELETE_GROUP": "Delete this group? Notes will be ungrouped."
+            }
+        },
+        "DETAIL": {
+            "BACK": "Back",
+            "ACTIONS": {
+                "EDIT": "Edit",
+                "EXPORT": "Export",
+                "ARCHIVE": "Archive",
+                "RESTORE": "Restore"
+            },
+            "META": {
+                "CREATED": "Created:",
+                "UPDATED": "Updated:"
+            },
+            "LINKED": {
+                "TITLE": "Linked items",
+                "NOTES": "Notes",
+                "TASKS": "Tasks",
+                "TRANSACTIONS": "Transactions",
+                "UNTITLED_NOTE": "Untitled note",
+                "UNTITLED_TASK": "Untitled task",
+                "TRANSACTION": "Transaction"
+            },
+            "LOADING": "Loading note...",
+            "ERRORS": {
+                "INVALID_ID": "Invalid note id",
+                "LOAD_FAILED": "Failed to load note",
+                "ARCHIVE_FAILED": "Failed to archive note",
+                "RESTORE_FAILED": "Failed to restore note",
+                "EXPORT_FAILED": "Failed to export note"
+            },
+            "CONFIRM": {
+                "ARCHIVE": "Archive this note? You can restore it later.",
+                "RESTORE": "Restore this note from archive?"
+            },
+            "REFS": {
+                "TASK": "Task",
+                "TRANSACTION": "Transaction"
+            }
+        },
         "EDITOR": {
             "TITLE_NEW": "New Note",
             "TITLE_EDIT": "Edit Note",
@@ -504,6 +660,45 @@
         }
     },
     "TASKS": {
+        "LIST": {
+            "TITLE": "My Tasks",
+            "BUTTONS": {
+                "BOARD_VIEW": "Board",
+                "LIST_VIEW": "List",
+                "NEW_TASK": "New Task",
+                "THEMES": "Themes"
+            },
+            "SEARCH_PLACEHOLDER": "Search tasks...",
+            "FILTERS": {
+                "ALL_STATUSES": "All Statuses",
+                "ALL_PRIORITIES": "All Priorities",
+                "ALL_THEMES": "All Themes",
+                "DUE_TO": "Due to"
+            },
+            "SORT": {
+                "LABEL": "Sort by:",
+                "DUE_DATE": "Due Date",
+                "CREATED": "Created",
+                "PRIORITY": "Priority",
+                "STATUS": "Status",
+                "ASC": "asc",
+                "DESC": "desc"
+            },
+            "META": {
+                "DUE": "Due:",
+                "PRIORITY": "Priority:",
+                "STATUS": "Status:",
+                "THEME": "Theme:"
+            },
+            "EMPTY": "No tasks found.",
+            "PAGINATION": {
+                "PREV": "Prev",
+                "NEXT": "Next",
+                "PAGE": "Page"
+            },
+            "LOADING": "Loading tasks...",
+            "CLEAR": "Clear"
+        },
         "EDITOR": {
             "TITLE_NEW": "New Task",
             "TITLE_EDIT": "Edit Task",
@@ -534,15 +729,9 @@
             "TITLE_PLACEHOLDER": "Task title...",
             "DESCRIPTION_PLACEHOLDER": "Write task description in Markdown...",
             "PREVIEW_LABEL": "Preview",
-            "ERRORS": {
-                "TITLE_REQUIRED": "Title required",
-                "LOAD_FAILED": "Failed to load task",
-                "CREATE_FAILED": "Failed to create task",
-                "SAVE_FAILED": "Failed to save task"
-            },
             "STATUS": {
-                "TODO": "Todo",
-                "IN_PROGRESS": "In Progress",
+                "TODO": "To Do",
+                "INPROGRESS": "In Progress",
                 "DONE": "Done"
             },
             "PRIORITY": {
@@ -550,6 +739,12 @@
                 "LOW": "Low",
                 "MEDIUM": "Medium",
                 "HIGH": "High"
+            },
+            "ERRORS": {
+                "TITLE_REQUIRED": "Title required",
+                "LOAD_FAILED": "Failed to load task",
+                "CREATE_FAILED": "Failed to create task",
+                "SAVE_FAILED": "Failed to save task"
             },
             "RECURRENCE": {
                 "NONE": "None",
@@ -559,8 +754,183 @@
             }
         },
         "BOARD": {
+            "TITLE": "Tasks",
+            "BUTTONS": {
+                "FILTERS": "Filters",
+                "NEW_TASK": "+ New Task",
+                "NEW_GROUP": "+ New Group",
+                "CANCEL": "Cancel"
+            },
+            "FILTERS": {
+                "STATUS": "Status",
+                "PRIORITY": "Priority",
+                "SEARCH": "Search",
+                "DUE_ON": "Due On",
+                "ALL": "All",
+                "TITLE_PLACEHOLDER": "Title...",
+                "APPLY": "Apply",
+                "RESET": "Reset"
+            },
+            "ADD_GROUP": {
+                "TITLE_PLACEHOLDER": "Group title",
+                "SAVE": "Save"
+            },
+            "COLUMN": {
+                "UNASSIGNED": "Unassigned",
+                "DELETE_ARIA": "Delete group",
+                "DELETE_TITLE": "Delete group"
+            },
+            "TASK_CARD": {
+                "ARCHIVE": "Archive",
+                "ARCHIVE_ARIA": "Archive task",
+                "SUBTASKS_DONE": "{{done}}/{{total}} subtasks done"
+            },
+            "EMPTY": "No tasks",
+            "LOADING": "Loading tasks...",
             "CONFIRM_DELETE_THEME": "Delete \"{{title}}\"?",
             "CONFIRM_DELETE_THEME_WITH_TASKS": "Delete \"{{title}}\"? {{count}} task(s) will be moved to Unassigned."
+        },
+        "DETAIL": {
+            "TITLE": "Task Details",
+            "BACK": "Back to Tasks",
+            "EDIT": "Edit",
+            "STATUS": "Status",
+            "PRIORITY": "Priority",
+            "DUE_DATE": "Due Date",
+            "THEME": "Theme",
+            "DESCRIPTION": "Description",
+            "SUBTASKS": "Subtasks ({{count}})",
+            "NO_SUBTASKS": "No subtasks yet. You can add them in the task editor.",
+            "TAGS": "Tags",
+            "SELECTED_TAGS": "Selected:",
+            "LINKED_ITEMS": "Linked items",
+            "LINKED_NOTES": "Notes",
+            "LINKED_TASKS": "Tasks",
+            "LINKED_TRANSACTIONS": "Transactions",
+            "LAST_UPDATED": "Last updated: {{date}}",
+            "LOADING": "Loading task...",
+            "ERRORS": {
+                "LOAD_FAILED": "Failed to load task",
+                "UPDATE_SUBTASK": "Failed to update subtask",
+                "TOGGLE_TAG": "Failed to toggle tag",
+                "LOAD_LINKS": "Failed to load links"
+            }
+        },
+        "STATUS": {
+            "TODO": "Todo",
+            "INPROGRESS": "In Progress",
+            "DONE": "Done"
+        },
+        "PRIORITY": {
+            "NONE": "None",
+            "LOW": "Low",
+            "MEDIUM": "Medium",
+            "HIGH": "High"
+        }
+    },
+    "ARCHIVE": {
+        "TITLE": "Archive",
+        "SUBTITLE": "View and restore archived items",
+        "FILTERS": {
+            "TYPE_LABEL": "Type:",
+            "SEARCH_LABEL": "Search:",
+            "SEARCH_PLACEHOLDER": "Search in archive...",
+            "TYPES": {
+                "ALL": "All Types",
+                "NOTE": "Notes",
+                "TASK": "Tasks",
+                "TRANSACTION": "Transactions",
+                "BUDGET": "Budgets",
+                "GOAL": "Financial Goals"
+            }
+        },
+        "LOADING": "Loading archive...",
+        "EMPTY": {
+            "TITLE": "Archive is empty",
+            "DESC": "Archived items will appear here"
+        },
+        "RESULTS_INFO": "Found: {{count}} {{suffix}}",
+        "TABLE": {
+            "TYPE": "Type",
+            "TITLE": "Title",
+            "DETAILS": "Details",
+            "ARCHIVED_AT": "Archived At",
+            "ACTIONS": "Actions"
+        },
+        "ACTIONS": {
+            "RESTORE": "Restore",
+            "DELETE": "Delete Permanently"
+        },
+        "PAGINATION": {
+            "PREVIOUS": "Previous",
+            "NEXT": "Next",
+            "PAGE_INFO": "Page {{current}} of {{total}}"
+        },
+        "DETAIL_MODAL": {
+            "TITLE": "Archived Item Details",
+            "BASIC_INFO": "Basic Information",
+            "ADDITIONAL_INFO": "Additional Information",
+            "CONTENT": "Content",
+            "NO_CONTENT": "No additional content",
+            "LOADING": "Loading details...",
+            "CLOSE": "Close",
+            "RESTORE": "Restore"
+        },
+        "ERRORS": {
+            "LOAD_FAILED": "Failed to load archive",
+            "RESTORE_FAILED": "Failed to restore item",
+            "DELETE_FAILED": "Failed to delete item",
+            "PARSE_FAILED": "Failed to parse data",
+            "DETAIL_LOAD_FAILED": "Failed to load details",
+            "RETRY": "Retry"
+        },
+        "CONFIRM": {
+            "RESTORE": "Restore {{type}} \"{{title}}\"?",
+            "DELETE_PERMANENTLY": "⚠️ WARNING!\n\nYou are about to PERMANENTLY delete {{type}} \"{{title}}\".\n\nThis action CANNOT be undone!\n\nContinue?",
+            "DELETE_FINAL": "Are you sure? This is permanent deletion!"
+        },
+        "METADATA": {
+            "LABELS": {
+                "Amount": "Amount",
+                "CurrencyCode": "Currency",
+                "Type": "Type",
+                "Limit": "Limit",
+                "TargetAmount": "Target Amount",
+                "CurrentAmount": "Current Amount",
+                "Category": "Category",
+                "Status": "Status",
+                "Priority": "Priority",
+                "DueDate": "Due Date",
+                "CompletedAt": "Completed",
+                "CharacterCount": "Characters",
+                "GroupId": "Group",
+                "Description": "Description"
+            },
+            "VALUES": {
+                "STATUS": {
+                    "Todo": "To Do",
+                    "InProgress": "In Progress",
+                    "Done": "Done"
+                },
+                "PRIORITY": {
+                    "None": "None",
+                    "Low": "Low",
+                    "Medium": "Medium",
+                    "High": "High"
+                },
+                "TYPE": {
+                    "Income": "Income",
+                    "Expense": "Expense"
+                }
+            }
+        },
+        "CONTENT_TITLES": {
+            "NOTE": "Note Text",
+            "TASK": "Task Description",
+            "TRANSACTION": "Note",
+            "BUDGET": "Budget Description",
+            "GOAL": "Goal Description",
+            "DEFAULT": "Content"
         }
     }
 }

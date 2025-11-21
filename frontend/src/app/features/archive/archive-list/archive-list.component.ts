@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ArchiveService } from '../../../shared/services/archive.service';
 import {
   ArchivedEntity,
@@ -15,7 +16,7 @@ import {
 @Component({
   selector: 'app-archive-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './archive-list.component.html',
   styleUrl: './archive-list.component.scss'
 })
@@ -46,15 +47,16 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
 
   // Entity types for filter
   entityTypes = [
-    { value: null, label: 'Всі типи' },
-    { value: EntityType.Note, label: 'Нотатки' },
-    { value: EntityType.Task, label: 'Завдання' },
-    { value: EntityType.Transaction, label: 'Транзакції' },
-    { value: EntityType.Budget, label: 'Бюджети' },
-    { value: EntityType.FinancialGoal, label: 'Фінансові цілі' }
+    { value: null, label: 'ARCHIVE.FILTERS.TYPES.ALL' },
+    { value: EntityType.Note, label: 'ARCHIVE.FILTERS.TYPES.NOTE' },
+    { value: EntityType.Task, label: 'ARCHIVE.FILTERS.TYPES.TASK' },
+    { value: EntityType.Transaction, label: 'ARCHIVE.FILTERS.TYPES.TRANSACTION' },
+    { value: EntityType.Budget, label: 'ARCHIVE.FILTERS.TYPES.BUDGET' },
+    { value: EntityType.FinancialGoal, label: 'ARCHIVE.FILTERS.TYPES.GOAL' }
   ];
 
   private destroy$ = new Subject<void>();
+  private translate = inject(TranslateService);
 
   constructor(private archiveService: ArchiveService) {}
 
@@ -118,7 +120,7 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to load archive:', err);
-          this.errorMessage = 'Не вдалося завантажити архів';
+          this.errorMessage = this.translate.instant('ARCHIVE.ERRORS.LOAD_FAILED');
           this.loading = false;
         }
       });
@@ -143,7 +145,8 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
    * Restore archived item
    */
   restore(item: ArchivedEntity): void {
-    if (!confirm(`Відновити ${this.getEntityTypeName(item.entityType).toLowerCase()} "${item.title}"?`)) {
+    const typeName = this.translate.instant(`ARCHIVE.FILTERS.TYPES.${this.getEntityTypeKey(item.entityType)}`);
+    if (!confirm(this.translate.instant('ARCHIVE.CONFIRM.RESTORE', { type: typeName, title: item.title }))) {
       return;
     }
 
@@ -157,7 +160,7 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('❌ Failed to restore item:', err);
-          alert('Не вдалося відновити елемент');
+          alert(this.translate.instant('ARCHIVE.ERRORS.RESTORE_FAILED'));
         }
       });
   }
@@ -166,15 +169,15 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
    * Permanently delete archived item
    */
   permanentDelete(item: ArchivedEntity): void {
-    const entityName = this.getEntityTypeName(item.entityType).toLowerCase();
-    const confirmMessage = `⚠️ УВАГА!\n\nВи збираєтеся НАЗАВЖДИ видалити ${entityName} "${item.title}".\n\nЦю дію НЕМОЖЛИВО скасувати!\n\nПродовжити?`;
+    const typeName = this.translate.instant(`ARCHIVE.FILTERS.TYPES.${this.getEntityTypeKey(item.entityType)}`);
+    const confirmMessage = this.translate.instant('ARCHIVE.CONFIRM.DELETE_PERMANENTLY', { type: typeName, title: item.title });
 
     if (!confirm(confirmMessage)) {
       return;
     }
 
     // Double confirmation for permanent deletion
-    if (!confirm('Ви впевнені? Це остаточне видалення!')) {
+    if (!confirm(this.translate.instant('ARCHIVE.CONFIRM.DELETE_FINAL'))) {
       return;
     }
 
@@ -188,7 +191,7 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('❌ Failed to delete item:', err);
-          alert('Не вдалося видалити елемент');
+          alert(this.translate.instant('ARCHIVE.ERRORS.DELETE_FAILED'));
         }
       });
   }
@@ -221,6 +224,20 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get entity type key for translation
+   */
+  getEntityTypeKey(type: EntityType): string {
+    switch (type) {
+      case EntityType.Note: return 'NOTE';
+      case EntityType.Task: return 'TASK';
+      case EntityType.Transaction: return 'TRANSACTION';
+      case EntityType.Budget: return 'BUDGET';
+      case EntityType.FinancialGoal: return 'GOAL';
+      default: return 'UNKNOWN';
+    }
+  }
+
+  /**
    * Get entity type icon
    */
   getEntityTypeIcon(type: EntityType): string {
@@ -232,7 +249,7 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
    */
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleString('uk-UA', {
+    return date.toLocaleString(this.translate.currentLang, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -289,12 +306,12 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
           this.parsedPayload = JSON.parse(detail.payloadJson);
         } catch (e) {
           console.error('Failed to parse payload JSON:', e);
-          this.parsedPayload = { error: 'Не вдалося розібрати дані', raw: detail.payloadJson };
+          this.parsedPayload = { error: this.translate.instant('ARCHIVE.ERRORS.PARSE_FAILED'), raw: detail.payloadJson };
         }
       },
       error: (err) => {
         console.error('Failed to fetch archive detail:', err);
-        this.parsedPayload = { error: 'Не вдалося завантажити деталі' };
+        this.parsedPayload = { error: this.translate.instant('ARCHIVE.ERRORS.DETAIL_LOAD_FAILED') };
       }
     });
   }
@@ -309,22 +326,7 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
    * Format metadata label to be user-friendly
    */
   formatMetadataLabel(key: string): string {
-    const labelMap: Record<string, string> = {
-      'Amount': 'Сума',
-      'CurrencyCode': 'Валюта',
-      'Type': 'Тип',
-      'Limit': 'Ліміт',
-      'TargetAmount': 'Цільова сума',
-      'CurrentAmount': 'Поточна сума',
-      'Category': 'Категорія',
-      'Status': 'Статус',
-      'Priority': 'Пріоритет',
-      'DueDate': 'Термін',
-      'CompletedAt': 'Завершено',
-      'CharacterCount': 'Символів',
-      'GroupId': 'Група'
-    };
-    return labelMap[key] || key;
+    return this.translate.instant(`ARCHIVE.METADATA.LABELS.${key}`);
   }
 
   /**
@@ -337,7 +339,7 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
 
     // Format currency amounts
     if (key === 'Amount' || key === 'Limit' || key === 'TargetAmount' || key === 'CurrentAmount') {
-      return new Intl.NumberFormat('uk-UA', {
+      return new Intl.NumberFormat(this.translate.currentLang, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(value);
@@ -345,46 +347,36 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
 
     // Format character count
     if (key === 'CharacterCount') {
-      return new Intl.NumberFormat('uk-UA').format(value);
+      return new Intl.NumberFormat(this.translate.currentLang).format(value);
     }
 
     // Format task status
     if (key === 'Status') {
-      const statusMap: Record<string, string> = {
-        'Todo': 'До виконання',
-        'InProgress': 'В процесі',
-        'Done': 'Виконано',
-        '0': 'До виконання',
-        '1': 'В процесі',
-        '2': 'Виконано'
-      };
-      return statusMap[value] || value;
+      // Map numeric status to string key if needed, or use value directly if it matches JSON keys
+      // Assuming value matches keys in JSON (Todo, InProgress, Done) or numeric
+      let statusKey = value;
+      if (value === '0' || value === 0) statusKey = 'Todo';
+      if (value === '1' || value === 1) statusKey = 'InProgress';
+      if (value === '2' || value === 2) statusKey = 'Done';
+      return this.translate.instant(`ARCHIVE.METADATA.VALUES.STATUS.${statusKey}`);
     }
 
     // Format task priority
     if (key === 'Priority') {
-      const priorityMap: Record<string, string> = {
-        'None': 'Немає',
-        'Low': 'Низький',
-        'Medium': 'Середній',
-        'High': 'Високий',
-        '0': 'Немає',
-        '1': 'Низький',
-        '2': 'Середній',
-        '3': 'Високий'
-      };
-      return priorityMap[value] || value;
+      let priorityKey = value;
+      if (value === '0' || value === 0) priorityKey = 'None';
+      if (value === '1' || value === 1) priorityKey = 'Low';
+      if (value === '2' || value === 2) priorityKey = 'Medium';
+      if (value === '3' || value === 3) priorityKey = 'High';
+      return this.translate.instant(`ARCHIVE.METADATA.VALUES.PRIORITY.${priorityKey}`);
     }
 
     // Format transaction type
     if (key === 'Type') {
-      const typeMap: Record<string, string> = {
-        'Income': 'Дохід',
-        'Expense': 'Витрата',
-        '0': 'Витрата',
-        '1': 'Дохід'
-      };
-      return typeMap[value] || value;
+      let typeKey = value;
+      if (value === '0' || value === 0) typeKey = 'Expense';
+      if (value === '1' || value === 1) typeKey = 'Income';
+      return this.translate.instant(`ARCHIVE.METADATA.VALUES.TYPE.${typeKey}`);
     }
 
     return String(value);
@@ -394,17 +386,18 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
    * Get content section title based on entity type
    */
   getContentSectionTitle(): string {
-    if (!this.selectedItem) return 'Вміст';
+    if (!this.selectedItem) return this.translate.instant('ARCHIVE.CONTENT_TITLES.DEFAULT');
 
     const titleMap: Record<EntityType, string> = {
-      [EntityType.Note]: 'Текст нотатки',
-      [EntityType.Task]: 'Опис завдання',
-      [EntityType.Transaction]: 'Примітка',
-      [EntityType.Budget]: 'Опис бюджету',
-      [EntityType.FinancialGoal]: 'Опис цілі'
+      [EntityType.Note]: 'ARCHIVE.CONTENT_TITLES.NOTE',
+      [EntityType.Task]: 'ARCHIVE.CONTENT_TITLES.TASK',
+      [EntityType.Transaction]: 'ARCHIVE.CONTENT_TITLES.TRANSACTION',
+      [EntityType.Budget]: 'ARCHIVE.CONTENT_TITLES.BUDGET',
+      [EntityType.FinancialGoal]: 'ARCHIVE.CONTENT_TITLES.GOAL'
     };
 
-    return titleMap[this.selectedItem.entityType] || 'Вміст';
+    const key = titleMap[this.selectedItem.entityType];
+    return key ? this.translate.instant(key) : this.translate.instant('ARCHIVE.CONTENT_TITLES.DEFAULT');
   }
 
   /**

@@ -82,7 +82,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         next: ({ themes, tasks }) => {
           // Build columns: Unassigned first, then themes by order
           const cols: ThemeColumn[] = [
-            { id: null, title: 'Unassigned', order: -1, color: '#94a3b8' },
+            { id: null, title: this.translate.instant('TASKS.BOARD.COLUMN.UNASSIGNED'), order: -1, color: '#94a3b8' },
             ...themes
               .slice()
               .sort((a, b) => a.order - b.order)
@@ -248,7 +248,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: ({ themes, tasks }) => {
           const cols: ThemeColumn[] = [
-            { id: null, title: 'Unassigned', order: -1, color: '#94a3b8' },
+            { id: null, title: this.translate.instant('TASKS.BOARD.COLUMN.UNASSIGNED'), order: -1, color: '#94a3b8' },
             ...themes
               .slice()
               .sort((a, b) => a.order - b.order)

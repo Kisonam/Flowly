@@ -46,7 +46,7 @@
         <div class="card-content">
           <h3>{{ 'FINANCE.DASHBOARD.INCOME' | translate }}</h3>
           <p class="amount">{{ stats.totalIncome | number:'1.2-2' }} {{ stats.currencyCode }}</p>
-          <span class="subtitle">{{ 'FINANCE.DASHBOARD.AVERAGE_DAY' | translate:{amount: (stats.averageIncome |
+          <span class="subtitle">{{ 'FINANCE.DASHBOARD.AVERAGE_DAY' | translate:{amount: ((stats.averageIncome || 0) |
             number:'1.2-2')} }}</span>
         </div>
       </div>
@@ -56,7 +56,7 @@
         <div class="card-content">
           <h3>{{ 'FINANCE.DASHBOARD.EXPENSE' | translate }}</h3>
           <p class="amount">{{ stats.totalExpense | number:'1.2-2' }} {{ stats.currencyCode }}</p>
-          <span class="subtitle">{{ 'FINANCE.DASHBOARD.AVERAGE_DAY' | translate:{amount: (stats.averageExpense |
+          <span class="subtitle">{{ 'FINANCE.DASHBOARD.AVERAGE_DAY' | translate:{amount: ((stats.averageExpense || 0) |
             number:'1.2-2')} }}</span>
         </div>
       </div>
@@ -66,8 +66,8 @@
         <div class="card-content">
           <h3>{{ 'FINANCE.DASHBOARD.BALANCE' | translate }}</h3>
           <p class="amount">{{ stats.balance | number:'1.2-2' }} {{ stats.currencyCode }}</p>
-          <span class="subtitle">{{ 'FINANCE.DASHBOARD.TRANSACTIONS_COUNT' | translate:{count: stats.transactionCount}
-            }}</span>
+          <span class="subtitle">{{ 'FINANCE.DASHBOARD.TRANSACTIONS_COUNT' | translate:{count:
+            (stats.totalTransactionCount || 0)} }}</span>
         </div>
       </div>
     </div>

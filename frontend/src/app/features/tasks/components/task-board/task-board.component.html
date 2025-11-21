@@ -1,51 +1,56 @@
 <div class="tasks-page" *ngIf="!loading; else loadingTpl">
   <div class="module-header">
-    <h2>Tasks</h2>
+    <h2>{{ 'TASKS.BOARD.TITLE' | translate }}</h2>
     <div class="module-actions">
-      <button class="btn-secondary" (click)="toggleFilters()" aria-label="Filters"
-        [attr.aria-expanded]="showFilters">Filters</button>
-      <a class="btn-primary" routerLink="/tasks/new">+ New Task</a>
-      <button class="btn-secondary" (click)="toggleAddTheme()">{{ showAddTheme ? 'Cancel' : '+ New Group' }}</button>
+      <button class="btn-secondary" (click)="toggleFilters()"
+        [attr.aria-label]="'TASKS.BOARD.BUTTONS.FILTERS' | translate" [attr.aria-expanded]="showFilters">{{
+        'TASKS.BOARD.BUTTONS.FILTERS' | translate }}</button>
+      <a class="btn-primary" routerLink="/tasks/new">{{ 'TASKS.BOARD.BUTTONS.NEW_TASK' | translate }}</a>
+      <button class="btn-secondary" (click)="toggleAddTheme()">{{ showAddTheme ? ('TASKS.BOARD.BUTTONS.CANCEL' |
+        translate) : ('TASKS.BOARD.BUTTONS.NEW_GROUP' | translate) }}</button>
     </div>
   </div>
 
   <div class="filters-panel" *ngIf="showFilters">
     <form class="filters-form" (ngSubmit)="applyFilters()">
       <div class="filters-row">
-        <label>Status
+        <label>{{ 'TASKS.BOARD.FILTERS.STATUS' | translate }}
           <select [(ngModel)]="filter.status" name="status">
-            <option value="">All</option>
-            <option value="Todo">To Do</option>
-            <option value="InProgress">In Progress</option>
-            <option value="Done">Done</option>
+            <option value="">{{ 'TASKS.BOARD.FILTERS.ALL' | translate }}</option>
+            <option value="Todo">{{ 'TASKS.STATUS.TODO' | translate }}</option>
+            <option value="InProgress">{{ 'TASKS.STATUS.INPROGRESS' | translate }}</option>
+            <option value="Done">{{ 'TASKS.STATUS.DONE' | translate }}</option>
           </select>
         </label>
-        <label>Priority
+        <label>{{ 'TASKS.BOARD.FILTERS.PRIORITY' | translate }}
           <select [(ngModel)]="filter.priority" name="priority">
-            <option value="">All</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
+            <option value="">{{ 'TASKS.BOARD.FILTERS.ALL' | translate }}</option>
+            <option value="Low">{{ 'TASKS.PRIORITY.LOW' | translate }}</option>
+            <option value="Medium">{{ 'TASKS.PRIORITY.MEDIUM' | translate }}</option>
+            <option value="High">{{ 'TASKS.PRIORITY.HIGH' | translate }}</option>
           </select>
         </label>
-        <label>Search
-          <input type="text" [(ngModel)]="filter.search" name="search" placeholder="Title..." />
+        <label>{{ 'TASKS.BOARD.FILTERS.SEARCH' | translate }}
+          <input type="text" [(ngModel)]="filter.search" name="search"
+            [placeholder]="'TASKS.BOARD.FILTERS.TITLE_PLACEHOLDER' | translate" />
         </label>
-        <label>Due On
+        <label>{{ 'TASKS.BOARD.FILTERS.DUE_ON' | translate }}
           <input type="date" [(ngModel)]="filter.dueDateTo" name="dueDateTo" />
         </label>
       </div>
       <div class="filters-actions">
-        <button type="submit" class="btn-primary small">Apply</button>
-        <button type="button" class="btn-secondary small" (click)="resetFilters()">Reset</button>
+        <button type="submit" class="btn-primary small">{{ 'TASKS.BOARD.FILTERS.APPLY' | translate }}</button>
+        <button type="button" class="btn-secondary small" (click)="resetFilters()">{{ 'TASKS.BOARD.FILTERS.RESET' |
+          translate }}</button>
       </div>
     </form>
   </div>
 
   <div class="add-theme" *ngIf="showAddTheme">
-    <input type="text" [(ngModel)]="newTheme.title" placeholder="Group title" />
+    <input type="text" [(ngModel)]="newTheme.title"
+      [placeholder]="'TASKS.BOARD.ADD_GROUP.TITLE_PLACEHOLDER' | translate" />
     <input type="color" [(ngModel)]="newTheme.color" />
-    <button class="btn-primary" (click)="saveTheme()">Save</button>
+    <button class="btn-primary" (click)="saveTheme()">{{ 'TASKS.BOARD.ADD_GROUP.SAVE' | translate }}</button>
   </div>
 
   <div class="board-wrapper" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="columns"
@@ -55,11 +60,12 @@
         <div class="group-header" [style.borderBottomColor]="col.color">
           <div class="group-title">
             <span class="drag-icon">⋮⋮</span>
-            <h3>{{ col.title }}</h3>
+            <h3>{{ col.id === null ? ('TASKS.BOARD.COLUMN.UNASSIGNED' | translate) : col.title }}</h3>
             <span class="count-badge">{{ (tasksByColumn.get(col.id) || []).length }}</span>
           </div>
           <button *ngIf="col.id !== null" class="delete-theme-btn" (click)="deleteTheme($event, col.id)"
-            aria-label="Delete group" title="Delete group">
+            [attr.aria-label]="'TASKS.BOARD.COLUMN.DELETE_ARIA' | translate"
+            [attr.title]="'TASKS.BOARD.COLUMN.DELETE_TITLE' | translate">
             🗑️
           </button>
         </div>
@@ -76,7 +82,8 @@
               <span [class.completed]="task.status === 'Done'">{{ task.title }}</span>
             </div>
             <div class="task-meta">
-              <span class="task-priority" [attr.data-priority]="task.priority">{{ task.priority }}</span>
+              <span class="task-priority" [attr.data-priority]="task.priority">{{ 'TASKS.PRIORITY.' +
+                task.priority.toUpperCase() | translate }}</span>
               <span *ngIf="task.dueDate" class="task-due-date" [title]="task.dueDate | date:'dd/MM/yy'">
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
                   style="vertical-align:middle;margin-right:2px;">
@@ -87,7 +94,7 @@
                 {{ task.dueDate | date:'dd/MM/yy' }}
               </span>
               <span *ngIf="task.subtasks && task.subtasks.length > 0" class="task-subtasks-meta"
-                [title]="getSubtaskProgress(task)[0] + '/' + getSubtaskProgress(task)[1] + ' subtasks done'">
+                [title]="'TASKS.BOARD.TASK_CARD.SUBTASKS_DONE' | translate:{done: getSubtaskProgress(task)[0], total: getSubtaskProgress(task)[1]}">
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
                   style="vertical-align:middle;margin-right:2px;">
                   <rect x="3" y="5" width="14" height="10" rx="2" stroke="#10b981" stroke-width="1.5" />
@@ -96,8 +103,9 @@
                 </svg>
                 {{ getSubtaskProgress(task)[0] }}/{{ getSubtaskProgress(task)[1] }}
               </span>
-              <button class="task-archive-btn" (click)="archiveTask($event, task)" title="Archive"
-                aria-label="Archive task">
+              <button class="task-archive-btn" (click)="archiveTask($event, task)"
+                [attr.title]="'TASKS.BOARD.TASK_CARD.ARCHIVE' | translate"
+                [attr.aria-label]="'TASKS.BOARD.TASK_CARD.ARCHIVE_ARIA' | translate">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M2 3h12v2H2V3zm1 3h10v8H3V6zm2 2v4h6V8H5z" />
                 </svg>
@@ -105,15 +113,16 @@
             </div>
           </div>
           <div class="empty-state" *ngIf="listData(col.id).length === 0">
-            <p>No tasks</p>
+            <p>{{ 'TASKS.BOARD.EMPTY' | translate }}</p>
           </div>
         </div>
-        <button class="add-item-btn" (click)="quickAddTask(col.id)">+ New Task</button>
+        <button class="add-item-btn" (click)="quickAddTask(col.id)">{{ 'TASKS.BOARD.BUTTONS.NEW_TASK' | translate
+          }}</button>
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #loadingTpl>
-  <div class="loading">Loading tasks...</div>
+  <div class="loading">{{ 'TASKS.BOARD.LOADING' | translate }}</div>
 </ng-template>

@@ -15,26 +15,9 @@ export class LocaleService {
   private http = inject(HttpClient);
   
   constructor() {
-    // Initialize translations
-    this.initializeTranslations();
-  }
-  
-  private async initializeTranslations(): Promise<void> {
-    // Load all translation files
-    for (const locale of this.supportedLocales) {
-      try {
-        const translations = await firstValueFrom(
-          this.http.get<any>(`./assets/i18n/${locale}.json`)
-        );
-        this.translate.setTranslation(locale, translations);
-      } catch (error) {
-        console.error(`Failed to load ${locale} translations:`, error);
-      }
-    }
-    
-    // Set initial locale
-    const locale = this.getCurrentLocale();
+    // Set default and current language
     this.translate.setDefaultLang('en');
+    const locale = this.getCurrentLocale();
     this.translate.use(locale);
   }
   

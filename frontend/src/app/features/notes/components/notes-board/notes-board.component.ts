@@ -9,16 +9,18 @@ import { NoteGroupsService } from '../../services/note-groups.service';
 import { Note } from '../../models/note.models';
 import { NoteGroup } from '../../models/note-group.models';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-notes-board',
-  imports: [CommonModule, FormsModule, DragDropModule, FocusTrapDirective],
+  imports: [CommonModule, FormsModule, DragDropModule, FocusTrapDirective, TranslateModule],
   templateUrl: './notes-board.component.html',
   styleUrl: './notes-board.component.scss'
 })
 export class NotesBoardComponent implements OnInit, OnDestroy {
   private notesService = inject(NotesService);
   private groupsService = inject(NoteGroupsService);
+  private translate = inject(TranslateService);
   router = inject(Router);
   private destroy$ = new Subject<void>();
 
@@ -64,7 +66,7 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to load board:', error);
-          this.errorMessage = error.message || 'Failed to load board';
+          this.errorMessage = error.message || this.translate.instant('NOTES.BOARD.ERRORS.LOAD_FAILED');
           this.isLoading = false;
         }
       });
@@ -120,13 +122,13 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Failed to save group:', error);
-        alert(error.message || 'Failed to save group');
+        alert(error.message || this.translate.instant('NOTES.BOARD.ERRORS.SAVE_FAILED'));
       }
     });
   }
 
   deleteGroup(groupId: string): void {
-    if (!confirm('Delete this group? Notes will be ungrouped.')) return;
+    if (!confirm(this.translate.instant('NOTES.BOARD.CONFIRM.DELETE_GROUP'))) return;
 
     this.groupsService.deleteGroup(groupId)
       .pipe(takeUntil(this.destroy$))
@@ -134,7 +136,7 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
         next: () => this.loadBoard(),
         error: (error) => {
           console.error('Failed to delete group:', error);
-          alert(error.message || 'Failed to delete group');
+          alert(error.message || this.translate.instant('NOTES.BOARD.ERRORS.DELETE_FAILED'));
         }
       });
   }
@@ -156,7 +158,7 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
         console.error('Failed to reorder groups:', err);
         // Revert on error
         moveItemInArray(this.groups, event.currentIndex, event.previousIndex);
-        alert(err.message || 'Failed to reorder groups');
+        alert(err.message || this.translate.instant('NOTES.BOARD.ERRORS.REORDER_FAILED'));
       }
     });
   }
@@ -236,7 +238,7 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
             this.ungroupedNotes = targetNotes;
           }
 
-          alert(error.message || 'Failed to move note');
+          alert(error.message || this.translate.instant('NOTES.BOARD.ERRORS.MOVE_FAILED'));
         }
       });
   }

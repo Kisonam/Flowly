@@ -37,7 +37,8 @@
         "TASKS": "Завдання",
         "FINANCE": "Фінанси",
         "ARCHIVE": "Архів",
-        "SETTINGS": "Налаштування"
+        "SETTINGS": "Налаштування",
+        "LANGUAGE_SELECT": "Вибрати мову"
     },
     "FINANCE": {
         "DASHBOARD": {
@@ -113,7 +114,42 @@
                 "PAGE_OF": "Сторінка {{current}} з {{total}}",
                 "SHOWING": "Показано {{count}} з {{total}}"
             },
-            "QUICK_ACTIONS": "Швидкі дії"
+            "QUICK_ACTIONS": "Швидкі дії",
+            "DETAIL": {
+                "TITLE": "Деталі транзакції",
+                "BACK": "Назад до транзакцій",
+                "BACK_LIST": "Назад до списку",
+                "LOADING": "Завантаження транзакції...",
+                "TYPE": "Тип",
+                "AMOUNT": "Сума",
+                "DESCRIPTION": "Опис",
+                "NO_DESCRIPTION": "Опис відсутній",
+                "CATEGORY": "Категорія",
+                "UNCATEGORIZED": "Без категорії",
+                "BUDGET_LINK": "Пов'язаний бюджет",
+                "GOAL_LINK": "Пов'язана ціль",
+                "TAGS": "Теги",
+                "DATE": "Дата транзакції",
+                "CREATED_AT": "Створено",
+                "UPDATED_AT": "Оновлено",
+                "STATUS": "Статус",
+                "STATUS_ARCHIVED": "Архівовано",
+                "STATUS_ACTIVE": "Активна",
+                "LINKED_ITEMS": "Пов'язані елементи",
+                "LINKED_NOTES": "Нотатки",
+                "LINKED_TASKS": "Завдання",
+                "LINKED_TRANSACTIONS": "Транзакції",
+                "ACTIONS": "Дії",
+                "EDIT": "Редагувати транзакцію",
+                "ARCHIVE": "Архівувати",
+                "RESTORE": "Відновити",
+                "CONFIRM_ARCHIVE": "Архівувати транзакцію \"{{title}}\"?",
+                "CONFIRM_RESTORE": "Відновити транзакцію \"{{title}}\"?",
+                "ARCHIVE_SUCCESS": "Транзакцію архівовано",
+                "RESTORE_SUCCESS": "Транзакцію відновлено",
+                "ARCHIVE_ERROR": "Не вдалося архівувати транзакцію",
+                "RESTORE_ERROR": "Не вдалося відновити транзакцію"
+            }
         },
         "EDITOR": {
             "TITLE_NEW": "Нова транзакція",
@@ -235,7 +271,8 @@
                 "NEAR_LIMIT": "⚡ Майже ліміт",
                 "ON_TRACK": "✅ В нормі",
                 "REMAINING": "залишилось",
-                "DAYS_REMAINING": "днів залишилось"
+                "DAYS_REMAINING": "днів залишилось",
+                "TODAY": "сьогодні"
             },
             "EDITOR": {
                 "TITLE_CREATE": "Створити бюджет",
@@ -464,6 +501,125 @@
         }
     },
     "NOTES": {
+        "LIST": {
+            "TITLE": "Мої нотатки",
+            "COUNT_ONE": "нотатка",
+            "COUNT_MANY": "нотаток",
+            "BUTTONS": {
+                "BOARD_VIEW": "Дошка",
+                "GRID_VIEW": "Сітка",
+                "LIST_VIEW": "Список",
+                "QUICK_CREATE": "Швидке створення",
+                "CREATE_FIRST": "Створити першу нотатку",
+                "RETRY": "Спробувати ще",
+                "CLEAR_ALL": "Очистити все",
+                "FILTERS": "Фільтри"
+            },
+            "SEARCH_PLACEHOLDER": "Пошук нотаток...",
+            "FILTERS": {
+                "BY_TAGS": "Фільтр за тегами"
+            },
+            "LOADING": "Завантаження нотаток...",
+            "EMPTY": {
+                "TITLE": "Нотаток ще немає",
+                "SEARCH_NO_MATCH": "Жодна нотатка не відповідає критеріям пошуку.",
+                "START_CAPTURING": "Почніть записувати свої думки та ідеї!"
+            },
+            "PAGINATION": {
+                "SHOWING": "Показано",
+                "TO": "до",
+                "OF": "з",
+                "PREVIOUS": "Попередня",
+                "NEXT": "Наступна",
+                "SHOW": "Показувати:"
+            },
+            "CARD": {
+                "EDIT": "Редагувати",
+                "EXPORT": "Експорт",
+                "ARCHIVE": "Архівувати",
+                "RESTORE": "Відновити"
+            },
+            "TIME": {
+                "JUST_NOW": "щойно",
+                "MINUTES_AGO": "{{value}} хв тому",
+                "HOURS_AGO": "{{value}} год тому",
+                "DAYS_AGO": "{{value}} дн тому"
+            }
+        },
+        "BOARD": {
+            "TITLE": "Дошка нотаток",
+            "BUTTONS": {
+                "LIST_VIEW": "Список",
+                "NEW_GROUP": "Нова група"
+            },
+            "LOADING": "Завантаження дошки...",
+            "COLUMNS": {
+                "NO_GROUP": "Без групи",
+                "EMPTY_UNGROUPED": "Немає незгрупованих нотаток",
+                "DROP_HERE": "Перетягніть нотатки сюди"
+            },
+            "ACTIONS": {
+                "EDIT": "Редагувати",
+                "DELETE": "Видалити"
+            },
+            "MODAL": {
+                "TITLE_NEW": "Нова група",
+                "TITLE_EDIT": "Редагувати групу",
+                "LABEL_TITLE": "Назва групи",
+                "PLACEHOLDER_TITLE": "напр., Робочі нотатки",
+                "LABEL_COLOR": "Колір",
+                "CANCEL": "Скасувати",
+                "SAVE": "Зберегти"
+            },
+            "ERRORS": {
+                "LOAD_FAILED": "Не вдалося завантажити дошку",
+                "SAVE_FAILED": "Не вдалося зберегти групу",
+                "DELETE_FAILED": "Не вдалося видалити групу",
+                "REORDER_FAILED": "Не вдалося змінити порядок груп",
+                "MOVE_FAILED": "Не вдалося перемістити нотатку"
+            },
+            "CONFIRM": {
+                "DELETE_GROUP": "Видалити цю групу? Нотатки будуть розгруповані."
+            }
+        },
+        "DETAIL": {
+            "BACK": "Назад",
+            "ACTIONS": {
+                "EDIT": "Редагувати",
+                "EXPORT": "Експорт",
+                "ARCHIVE": "Архівувати",
+                "RESTORE": "Відновити"
+            },
+            "META": {
+                "CREATED": "Створено:",
+                "UPDATED": "Оновлено:"
+            },
+            "LINKED": {
+                "TITLE": "Пов'язані елементи",
+                "NOTES": "Нотатки",
+                "TASKS": "Завдання",
+                "TRANSACTIONS": "Транзакції",
+                "UNTITLED_NOTE": "Нотатка без назви",
+                "UNTITLED_TASK": "Завдання без назви",
+                "TRANSACTION": "Транзакція"
+            },
+            "LOADING": "Завантаження нотатки...",
+            "ERRORS": {
+                "INVALID_ID": "Невірний ID нотатки",
+                "LOAD_FAILED": "Не вдалося завантажити нотатку",
+                "ARCHIVE_FAILED": "Не вдалося архівувати нотатку",
+                "RESTORE_FAILED": "Не вдалося відновити нотатку",
+                "EXPORT_FAILED": "Не вдалося експортувати нотатку"
+            },
+            "CONFIRM": {
+                "ARCHIVE": "Архівувати цю нотатку? Ви зможете відновити її пізніше.",
+                "RESTORE": "Відновити цю нотатку з архіву?"
+            },
+            "REFS": {
+                "TASK": "Завдання",
+                "TRANSACTION": "Транзакція"
+            }
+        },
         "EDITOR": {
             "TITLE_NEW": "Нова нотатка",
             "TITLE_EDIT": "Редагувати нотатку",
@@ -485,7 +641,7 @@
             "DROP_SUBTEXT": "або",
             "BROWSE_FILES": "Вибрати файли",
             "TITLE_PLACEHOLDER": "Заголовок нотатки...",
-            "MARKDOWN_PLACEHOLDER": "Пишіть вашу нотатку в Markdown...\n\n**Жирний текст**\n*Курсив*\n[Посилання](url)\n![Зображення](url)\n- Елемент списку\n1. Нумерований елемент\n> Цитата\n`код`\n{блок коду\n```",
+            "MARKDOWN_PLACEHOLDER": "Пишіть вашу нотатку в Markdown...\n\n**Жирний текст**\n*Курсив*\n[Посилання](url)\n![Зображення](url)\n- Елемент списку\n1. Нумерований елемент\n> Цитата\n`код`\n```\nблок коду\n```",
             "PREVIEW_LABEL": "Попередній перегляд",
             "ERRORS": {
                 "TITLE_REQUIRED": "Заголовок обов'язковий",
@@ -502,6 +658,45 @@
         }
     },
     "TASKS": {
+        "LIST": {
+            "TITLE": "Мої завдання",
+            "BUTTONS": {
+                "BOARD_VIEW": "Дошка",
+                "LIST_VIEW": "Список",
+                "NEW_TASK": "Нове завдання",
+                "THEMES": "Теми"
+            },
+            "SEARCH_PLACEHOLDER": "Пошук завдань...",
+            "FILTERS": {
+                "ALL_STATUSES": "Всі статуси",
+                "ALL_PRIORITIES": "Всі пріоритети",
+                "ALL_THEMES": "Всі теми",
+                "DUE_TO": "Термін до"
+            },
+            "SORT": {
+                "LABEL": "Сортувати за:",
+                "DUE_DATE": "Термін",
+                "CREATED": "Створено",
+                "PRIORITY": "Пріоритет",
+                "STATUS": "Статус",
+                "ASC": "зростання",
+                "DESC": "спадання"
+            },
+            "META": {
+                "DUE": "Термін:",
+                "PRIORITY": "Пріоритет:",
+                "STATUS": "Статус:",
+                "THEME": "Тема:"
+            },
+            "EMPTY": "Завдань не знайдено.",
+            "PAGINATION": {
+                "PREV": "Попередня",
+                "NEXT": "Наступна",
+                "PAGE": "Сторінка"
+            },
+            "LOADING": "Завантаження завдань...",
+            "CLEAR": "Очистити"
+        },
         "EDITOR": {
             "TITLE_NEW": "Нова задача",
             "TITLE_EDIT": "Редагувати задача",
@@ -532,15 +727,9 @@
             "TITLE_PLACEHOLDER": "Назва задачі...",
             "DESCRIPTION_PLACEHOLDER": "Опис задачі в Markdown...",
             "PREVIEW_LABEL": "Попередній перегляд",
-            "ERRORS": {
-                "TITLE_REQUIRED": "Назва обов'язкова",
-                "LOAD_FAILED": "Не вдалося завантажити задачу",
-                "CREATE_FAILED": "Не вдалося створити задачу",
-                "SAVE_FAILED": "Не вдалося зберегти задачу"
-            },
             "STATUS": {
                 "TODO": "До виконання",
-                "IN_PROGRESS": "В процесі",
+                "INPROGRESS": "В процесі",
                 "DONE": "Виконано"
             },
             "PRIORITY": {
@@ -548,6 +737,12 @@
                 "LOW": "Низький",
                 "MEDIUM": "Середній",
                 "HIGH": "Високий"
+            },
+            "ERRORS": {
+                "TITLE_REQUIRED": "Назва обов'язкова",
+                "LOAD_FAILED": "Не вдалося завантажити задачу",
+                "CREATE_FAILED": "Не вдалося створити задачу",
+                "SAVE_FAILED": "Не вдалося зберегти задачу"
             },
             "RECURRENCE": {
                 "NONE": "Немає",
@@ -557,8 +752,183 @@
             }
         },
         "BOARD": {
+            "TITLE": "Завдання",
+            "BUTTONS": {
+                "FILTERS": "Фільтри",
+                "NEW_TASK": "+ Нове завдання",
+                "NEW_GROUP": "+ Нова група",
+                "CANCEL": "Скасувати"
+            },
+            "FILTERS": {
+                "STATUS": "Статус",
+                "PRIORITY": "Пріоритет",
+                "SEARCH": "Пошук",
+                "DUE_ON": "Термін",
+                "ALL": "Всі",
+                "TITLE_PLACEHOLDER": "Назва...",
+                "APPLY": "Застосувати",
+                "RESET": "Скинути"
+            },
+            "ADD_GROUP": {
+                "TITLE_PLACEHOLDER": "Назва групи",
+                "SAVE": "Зберегти"
+            },
+            "COLUMN": {
+                "UNASSIGNED": "Непризначені",
+                "DELETE_ARIA": "Видалити групу",
+                "DELETE_TITLE": "Видалити групу"
+            },
+            "TASK_CARD": {
+                "ARCHIVE": "Архівувати",
+                "ARCHIVE_ARIA": "Архівувати завдання",
+                "SUBTASKS_DONE": "{{done}}/{{total}} підзавдань виконано"
+            },
+            "EMPTY": "Немає завдань",
+            "LOADING": "Завантаження завдань...",
             "CONFIRM_DELETE_THEME": "Видалити \"{{title}}\"?",
             "CONFIRM_DELETE_THEME_WITH_TASKS": "Видалити \"{{title}}\"? {{count}} задач(і) будуть переміщені в Непризначені."
+        },
+        "DETAIL": {
+            "TITLE": "Деталі завдання",
+            "BACK": "Назад до завдань",
+            "EDIT": "Редагувати",
+            "STATUS": "Статус",
+            "PRIORITY": "Пріоритет",
+            "DUE_DATE": "Термін",
+            "THEME": "Тема",
+            "DESCRIPTION": "Опис",
+            "SUBTASKS": "Підзавдання ({{count}})",
+            "NO_SUBTASKS": "Підзавдання відсутні. Ви можете додати їх у редакторі.",
+            "TAGS": "Теги",
+            "SELECTED_TAGS": "Вибрано:",
+            "LINKED_ITEMS": "Пов'язані елементи",
+            "LINKED_NOTES": "Нотатки",
+            "LINKED_TASKS": "Завдання",
+            "LINKED_TRANSACTIONS": "Транзакції",
+            "LAST_UPDATED": "Останнє оновлення: {{date}}",
+            "LOADING": "Завантаження завдання...",
+            "ERRORS": {
+                "LOAD_FAILED": "Не вдалося завантажити завдання",
+                "UPDATE_SUBTASK": "Не вдалося оновити підзавдання",
+                "TOGGLE_TAG": "Не вдалося змінити тег",
+                "LOAD_LINKS": "Не вдалося завантажити зв'язки"
+            }
+        },
+        "STATUS": {
+            "TODO": "До виконання",
+            "INPROGRESS": "В процесі",
+            "DONE": "Виконано"
+        },
+        "PRIORITY": {
+            "NONE": "Немає",
+            "LOW": "Низький",
+            "MEDIUM": "Середній",
+            "HIGH": "Високий"
+        }
+    },
+    "ARCHIVE": {
+        "TITLE": "Архів",
+        "SUBTITLE": "Переглядайте та відновлюйте архівовані елементи",
+        "FILTERS": {
+            "TYPE_LABEL": "Тип:",
+            "SEARCH_LABEL": "Пошук:",
+            "SEARCH_PLACEHOLDER": "Пошук в архіві...",
+            "TYPES": {
+                "ALL": "Всі типи",
+                "NOTE": "Нотатки",
+                "TASK": "Завдання",
+                "TRANSACTION": "Транзакції",
+                "BUDGET": "Бюджети",
+                "GOAL": "Фінансові цілі"
+            }
+        },
+        "LOADING": "Завантаження архіву...",
+        "EMPTY": {
+            "TITLE": "Архів порожній",
+            "DESC": "Тут з'являться архівовані елементи"
+        },
+        "RESULTS_INFO": "Знайдено: {{count}} {{suffix}}",
+        "TABLE": {
+            "TYPE": "Тип",
+            "TITLE": "Назва",
+            "DETAILS": "Детальніше",
+            "ARCHIVED_AT": "Архівовано",
+            "ACTIONS": "Дії"
+        },
+        "ACTIONS": {
+            "RESTORE": "Відновити",
+            "DELETE": "Видалити назавжди"
+        },
+        "PAGINATION": {
+            "PREVIOUS": "Попередня",
+            "NEXT": "Наступна",
+            "PAGE_INFO": "Сторінка {{current}} з {{total}}"
+        },
+        "DETAIL_MODAL": {
+            "TITLE": "Деталі архівованого елемента",
+            "BASIC_INFO": "Основна інформація",
+            "ADDITIONAL_INFO": "Додаткова інформація",
+            "CONTENT": "Вміст",
+            "NO_CONTENT": "Додатковий вміст відсутній",
+            "LOADING": "Завантаження деталей...",
+            "CLOSE": "Закрити",
+            "RESTORE": "Відновити"
+        },
+        "ERRORS": {
+            "LOAD_FAILED": "Не вдалося завантажити архів",
+            "RESTORE_FAILED": "Не вдалося відновити елемент",
+            "DELETE_FAILED": "Не вдалося видалити елемент",
+            "PARSE_FAILED": "Не вдалося розібрати дані",
+            "DETAIL_LOAD_FAILED": "Не вдалося завантажити деталі",
+            "RETRY": "Спробувати знову"
+        },
+        "CONFIRM": {
+            "RESTORE": "Відновити {{type}} \"{{title}}\"?",
+            "DELETE_PERMANENTLY": "⚠️ УВАГА!\n\nВи збираєтеся НАЗАВЖДИ видалити {{type}} \"{{title}}\".\n\nЦю дію НЕМОЖЛИВО скасувати!\n\nПродовжити?",
+            "DELETE_FINAL": "Ви впевнені? Це остаточне видалення!"
+        },
+        "METADATA": {
+            "LABELS": {
+                "Amount": "Сума",
+                "CurrencyCode": "Валюта",
+                "Type": "Тип",
+                "Limit": "Ліміт",
+                "TargetAmount": "Цільова сума",
+                "CurrentAmount": "Поточна сума",
+                "Category": "Категорія",
+                "Status": "Статус",
+                "Priority": "Пріоритет",
+                "DueDate": "Термін",
+                "CompletedAt": "Завершено",
+                "CharacterCount": "Символів",
+                "GroupId": "Група",
+                "Description": "Опис"
+            },
+            "VALUES": {
+                "STATUS": {
+                    "Todo": "До виконання",
+                    "InProgress": "В процесі",
+                    "Done": "Виконано"
+                },
+                "PRIORITY": {
+                    "None": "Немає",
+                    "Low": "Низький",
+                    "Medium": "Середній",
+                    "High": "Високий"
+                },
+                "TYPE": {
+                    "Income": "Дохід",
+                    "Expense": "Витрата"
+                }
+            }
+        },
+        "CONTENT_TITLES": {
+            "NOTE": "Текст нотатки",
+            "TASK": "Опис завдання",
+            "TRANSACTION": "Примітка",
+            "BUDGET": "Опис бюджету",
+            "GOAL": "Опис цілі",
+            "DEFAULT": "Вміст"
         }
     }
 }

@@ -18,8 +18,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideTranslateService(),
     provideTranslateHttpLoader({
-      prefix: './assets/i18n/',
-      suffix: '.json'
+      prefix: '/assets/i18n/',
+      suffix: '.json?v=' + new Date().getTime()
     })
   ]
 };

@@ -47,6 +47,8 @@ export class DashboardComponent implements OnInit {
 
     this.dashboardService.getDashboard().subscribe({
       next: (data) => {
+        console.log('📊 Dashboard data received:', data);
+        console.log('📋 Upcoming tasks:', data.upcomingTasks);
         this.dashboardData = data;
         this.loading = false;
       },

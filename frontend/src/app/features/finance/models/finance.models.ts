@@ -131,7 +131,7 @@ export interface FinanceStats {
   balance: number;
   averageIncome: number;
   averageExpense: number;
-  transactionCount: number;
+  totalTransactionCount: number; // Changed from transactionCount to match backend
   incomeByCategory: CategoryStats[];
   expenseByCategory: CategoryStats[];
   byMonth: MonthStats[];
