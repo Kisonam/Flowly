@@ -194,12 +194,12 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     // Both Income and Expense transactions can be linked to budgets
     // Income adds to budget, Expense subtracts from budget
 
-    // Filter budgets by currency
+    // Filter budgets by currency and exclude expired budgets
     this.filteredBudgets = this.budgets.filter(
-      budget => budget.currencyCode === currencyCode
+      budget => budget.currencyCode === currencyCode && budget.daysRemaining >= 0
     );
 
-    // Clear budget selection if current budget doesn't match currency
+    // Clear budget selection if current budget doesn't match currency or is expired
     const currentBudgetId = this.form.get('budgetId')?.value;
     if (currentBudgetId) {
       const budgetStillValid = this.filteredBudgets.some(b => b.id === currentBudgetId);

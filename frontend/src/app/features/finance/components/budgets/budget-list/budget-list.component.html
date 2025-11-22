@@ -106,32 +106,35 @@
 
   <!-- Budget List -->
   <div *ngIf="!loading && !errorMessage && filteredBudgets.length > 0" class="budgets-grid">
-    <div *ngFor="let budget of filteredBudgets" class="budget-card" [class.overspent]="isOverspent(budget)"
+    <div *ngFor="let budget of filteredBudgets" class="budget-card"
+      [class.overspent]="isOverspent(budget)"
+      [class.expired]="isExpired(budget)"
       (click)="viewBudget(budget)">
 
-      <!-- Header -->
-      <div class="budget-header">
-        <h3 class="budget-title">{{ budget.title }}</h3>
-        <div class="budget-period">
-          {{ formatDate(budget.periodStart) }} - {{ formatDate(budget.periodEnd) }}
+      <div class="budget-content">
+        <!-- Header -->
+        <div class="budget-header">
+          <h3 class="budget-title">{{ budget.title }}</h3>
+          <div class="budget-period">
+            {{ formatDate(budget.periodStart) }} - {{ formatDate(budget.periodEnd) }}
+          </div>
         </div>
-      </div>
 
-      <!-- Description (if available) -->
-      <div class="budget-description" *ngIf="budget.description">
-        <p>{{ budget.description }}</p>
-      </div>
+        <!-- Description (if available) -->
+        <div class="budget-description" *ngIf="budget.description">
+          <p>{{ budget.description }}</p>
+        </div>
 
-      <!-- Category -->
-      <div class="budget-category" *ngIf="budget.category">
-        <span class="category-badge" [style.background]="getCategoryColor(budget.category)">
-          <span *ngIf="budget.category.icon">{{ budget.category.icon }}</span>
-          {{ budget.category.name }}
-        </span>
-      </div>
+        <!-- Category -->
+        <div class="budget-category" *ngIf="budget.category">
+          <span class="category-badge" [style.background]="getCategoryColor(budget.category)">
+            <span *ngIf="budget.category.icon">{{ budget.category.icon }}</span>
+            {{ budget.category.name }}
+          </span>
+        </div>
 
-      <!-- Progress Bar -->
-      <div class="progress-section">
+        <!-- Progress Bar -->
+        <div class="progress-section">
         <div class="progress-info">
           <span class="spent">
             {{ formatCurrency(budget.currentSpent, budget.currencyCode) }}
@@ -164,10 +167,10 @@
         <span *ngIf="isOverspent(budget)" class="status-badge overspent">
           {{ 'FINANCE.BUDGETS.CARD.OVER_BUDGET' | translate }}
         </span>
-        <span *ngIf="!isOverspent(budget) && getProgressPercentage(budget) >= 80" class="status-badge warning">
+        <span *ngIf="!isOverspent(budget) && getProgressPercentage(budget) >= 80 && !isExpired(budget)" class="status-badge warning">
           {{ 'FINANCE.BUDGETS.CARD.NEAR_LIMIT' | translate }}
         </span>
-        <span *ngIf="getProgressPercentage(budget) < 80" class="status-badge ok">
+        <span *ngIf="getProgressPercentage(budget) < 80 && !isExpired(budget)" class="status-badge ok">
           {{ 'FINANCE.BUDGETS.CARD.ON_TRACK' | translate }}
         </span>
       </div>
@@ -175,6 +178,13 @@
       <!-- Days Remaining -->
       <div class="budget-days">
         <span class="days-text">{{ getDaysRemaining(budget) }}</span>
+      </div>
+
+        <!-- Expired Warning -->
+        <div class="expired-warning" *ngIf="isExpired(budget)">
+          <i class="bi bi-exclamation-triangle"></i>
+          <span>{{ 'FINANCE.BUDGETS.CARD.EXPIRED_MESSAGE' | translate }}</span>
+        </div>
       </div>
 
       <!-- Actions -->

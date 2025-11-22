@@ -1,119 +1,169 @@
-<div class="note-detail-container" *ngIf="!isLoading; else loadingTpl">
-  <div class="header">
-    <button class="btn-back" type="button" [title]="'NOTES.DETAIL.BACK' | translate" (click)="onBack()">
-      {{ 'NOTES.DETAIL.BACK' | translate }}
-    </button>
-    <h1 class="title">{{ note?.title }}</h1>
-
-    <div class="spacer"></div>
-
-    <div class="actions">
-      <button type="button" class="btn" (click)="onEdit()">
+<div class="container" *ngIf="!isLoading; else loadingTpl">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-left">
+      <a class="btn-back" (click)="onBack()">
+        <i class="bi bi-arrow-left"></i>
+        <span>{{ 'NOTES.DETAIL.BACK' | translate }}</span>
+      </a>
+      <h1>{{ 'NOTES.DETAIL.TITLE' | translate }}</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn" (click)="onEdit()">
         <i class="bi bi-pencil"></i> {{ 'NOTES.DETAIL.ACTIONS.EDIT' | translate }}
       </button>
-      <button type="button" class="btn" (click)="onExport()">
+      <button class="btn" (click)="onExport()">
         <i class="bi bi-download"></i> {{ 'NOTES.DETAIL.ACTIONS.EXPORT' | translate }}
       </button>
-      <button *ngIf="!note?.isArchived" type="button" class="btn danger" (click)="onArchive()">
+      <button *ngIf="!note?.isArchived" class="btn btn-danger" (click)="onArchive()">
         <i class="bi bi-archive"></i> {{ 'NOTES.DETAIL.ACTIONS.ARCHIVE' | translate }}
       </button>
-      <button *ngIf="note?.isArchived" type="button" class="btn" (click)="onRestore()">
+      <button *ngIf="note?.isArchived" class="btn btn-primary" (click)="onRestore()">
         <i class="bi bi-arrow-counterclockwise"></i> {{ 'NOTES.DETAIL.ACTIONS.RESTORE' | translate }}
       </button>
     </div>
-  </div>
+  </header>
 
-  <div class="meta">
-    <div class="tags" *ngIf="note?.tags?.length">
-      <span class="tag" *ngFor="let t of note?.tags" [ngStyle]="{ '--tag-color': t.color || '#6b7280' }">
-        <i class="bi bi-tag"></i> {{ t.name }}
-      </span>
-    </div>
-    <div class="dates">
-      <span>{{ 'NOTES.DETAIL.META.CREATED' | translate }} {{ note?.createdAt | date: 'medium' }}</span>
-      <span>{{ 'NOTES.DETAIL.META.UPDATED' | translate }} {{ note?.updatedAt | date: 'medium' }}</span>
-    </div>
-  </div>
-  <!-- TODO Pictures must have a size editor-->
-  <div class="content markdown-body" [innerHTML]="safeHtml"></div>
-
-  <div class="linked" *ngIf="links.length > 0">
-    <h3 class="linked-title"><i class="bi bi-link-45deg"></i> {{ 'NOTES.DETAIL.LINKED.TITLE' | translate }}</h3>
-    <div class="linked-sections">
-      <!-- Linked Notes -->
-      <div class="linked-section" *ngIf="linkedNotes.length > 0">
-        <h4 class="section-header">
-          <i class="bi bi-journal-text"></i>
-          <span>{{ 'NOTES.DETAIL.LINKED.NOTES' | translate }}</span>
-          <span class="badge">{{ linkedNotes.length }}</span>
-        </h4>
-        <div class="link-items">
-          <a *ngFor="let item of linkedNotes" [routerLink]="['/notes', item.id]" class="link-item">
-            <div class="link-icon note-icon">
-              <i class="bi bi-journal-text"></i>
-            </div>
-            <div class="link-content">
-              <div class="link-title">{{ item.title || ('NOTES.DETAIL.LINKED.UNTITLED_NOTE' | translate) }}</div>
-              <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
-            </div>
-            <i class="bi bi-chevron-right link-arrow"></i>
-          </a>
+  <section class="detail-content">
+    <!-- Main Info Card -->
+    <div class="detail-card main-card">
+      <div class="note-header">
+        <h2 class="note-title">{{ note?.title }}</h2>
+        <div class="note-meta">
+          <span class="meta-item">
+            <i class="bi bi-calendar"></i>
+            {{ 'NOTES.DETAIL.META.CREATED' | translate }} {{ note?.createdAt | date: 'medium' }}
+          </span>
+          <span class="meta-item">
+            <i class="bi bi-clock"></i>
+            {{ 'NOTES.DETAIL.META.UPDATED' | translate }} {{ note?.updatedAt | date: 'medium' }}
+          </span>
         </div>
       </div>
 
-      <!-- Linked Tasks -->
-      <div class="linked-section" *ngIf="linkedTasks.length > 0">
-        <h4 class="section-header">
-          <i class="bi bi-check2-square"></i>
-          <span>{{ 'NOTES.DETAIL.LINKED.TASKS' | translate }}</span>
-          <span class="badge">{{ linkedTasks.length }}</span>
-        </h4>
-        <div class="link-items">
-          <a *ngFor="let item of linkedTasks" [routerLink]="['/tasks', item.id]" class="link-item">
-            <div class="link-icon task-icon">
-              <i class="bi bi-check2-square"></i>
-            </div>
-            <div class="link-content">
-              <div class="link-title">{{ item.title || ('NOTES.DETAIL.LINKED.UNTITLED_TASK' | translate) }}</div>
-              <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
-            </div>
-            <i class="bi bi-chevron-right link-arrow"></i>
-          </a>
+      <!-- Tags Section -->
+      <div class="tags-section" *ngIf="note && note.tags && note.tags.length > 0">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+              <path d="M3 10l7-7 7 7M10 3v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="10" cy="6" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3>{{ 'NOTES.DETAIL.TAGS' | translate }}</h3>
+        </div>
+        <div class="tags-grid">
+          <div class="tag-card" *ngFor="let tag of note.tags">
+            <span class="tag-indicator" [style.background-color]="tag.color || '#6b7280'"></span>
+            <span class="tag-name">{{ tag.name }}</span>
+          </div>
         </div>
       </div>
 
-      <!-- Linked Transactions -->
-      <div class="linked-section" *ngIf="linkedTransactions.length > 0">
-        <h4 class="section-header">
-          <i class="bi bi-currency-dollar"></i>
-          <span>{{ 'NOTES.DETAIL.LINKED.TRANSACTIONS' | translate }}</span>
-          <span class="badge">{{ linkedTransactions.length }}</span>
-        </h4>
-        <div class="link-items">
-          <a *ngFor="let item of linkedTransactions" [routerLink]="['/finance/transactions', item.id]"
-            class="link-item">
-            <div class="link-icon transaction-icon">
-              <i class="bi bi-currency-dollar"></i>
-            </div>
-            <div class="link-content">
-              <div class="link-title">{{ item.title || ('NOTES.DETAIL.LINKED.TRANSACTION' | translate) }}</div>
-              <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
-            </div>
-            <i class="bi bi-chevron-right link-arrow"></i>
-          </a>
+      <!-- Description/Content Section -->
+      <div class="description-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+              <path d="M4 4h12M4 8h12M4 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>{{ 'NOTES.DETAIL.CONTENT' | translate }}</h3>
+        </div>
+        <!-- TODO Pictures must have a size editor-->
+        <div class="markdown-content" [innerHTML]="safeHtml"></div>
+      </div>
+    </div>
+
+    <!-- Linked Items -->
+    <div class="detail-card linked-card"
+      *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
+      <h3>
+        <i class="bi bi-link-45deg"></i>
+        {{ 'NOTES.DETAIL.LINKED.TITLE' | translate }}
+      </h3>
+
+      <div class="linked-sections">
+        <!-- Linked Notes -->
+        <div class="linked-section" *ngIf="linkedNotes.length > 0">
+          <div class="section-header">
+            <i class="bi bi-journal-text"></i>
+            <span>{{ 'NOTES.DETAIL.LINKED.NOTES' | translate }}</span>
+            <span class="badge">{{ linkedNotes.length }}</span>
+          </div>
+          <div class="link-items">
+            <a *ngFor="let item of linkedNotes" [routerLink]="['/notes', item.id]" class="link-item">
+              <div class="link-icon note-icon">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ item.title || ('NOTES.DETAIL.LINKED.UNTITLED_NOTE' | translate) }}</div>
+                <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Linked Tasks -->
+        <div class="linked-section" *ngIf="linkedTasks.length > 0">
+          <div class="section-header">
+            <i class="bi bi-check-circle"></i>
+            <span>{{ 'NOTES.DETAIL.LINKED.TASKS' | translate }}</span>
+            <span class="badge">{{ linkedTasks.length }}</span>
+          </div>
+          <div class="link-items">
+            <a *ngFor="let item of linkedTasks" [routerLink]="['/tasks', item.id]" class="link-item">
+              <div class="link-icon task-icon">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ item.title || ('NOTES.DETAIL.LINKED.UNTITLED_TASK' | translate) }}</div>
+                <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Linked Transactions -->
+        <div class="linked-section" *ngIf="linkedTransactions.length > 0">
+          <div class="section-header">
+            <i class="bi bi-currency-dollar"></i>
+            <span>{{ 'NOTES.DETAIL.LINKED.TRANSACTIONS' | translate }}</span>
+            <span class="badge">{{ linkedTransactions.length }}</span>
+          </div>
+          <div class="link-items">
+            <a *ngFor="let item of linkedTransactions" [routerLink]="['/finance/transactions', item.id]"
+              class="link-item">
+              <div class="link-icon transaction-icon">
+                <i class="bi bi-currency-dollar"></i>
+              </div>
+              <div class="link-content">
+                <div class="link-title">{{ item.title || ('NOTES.DETAIL.LINKED.TRANSACTION' | translate) }}</div>
+                <div class="link-snippet" *ngIf="item.snippet">{{ item.snippet }}</div>
+              </div>
+              <div class="link-arrow">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="alert alert-danger" *ngIf="errorMessage">
-    <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
-  </div>
+  <footer>
+    <div class="error" *ngIf="errorMessage">
+      <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
+    </div>
+  </footer>
 </div>
 
 <ng-template #loadingTpl>
-  <div class="loading-state">
-    <div class="spinner"></div>
-    <p>{{ 'NOTES.DETAIL.LOADING' | translate }}</p>
-  </div>
+  <div class="loading">{{ 'NOTES.DETAIL.LOADING' | translate }}</div>
 </ng-template>

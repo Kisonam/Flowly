@@ -268,6 +268,10 @@ export class BudgetListComponent implements OnInit, OnDestroy {
     return `${budget.daysRemaining} ${this.translate.instant('FINANCE.BUDGETS.CARD.DAYS_REMAINING')}`;
   }
 
+  isExpired(budget: Budget): boolean {
+    return budget.daysRemaining < 0;
+  }
+
   formatDate(date: string | Date | undefined): string {
     if (!date) return '—';
     try {

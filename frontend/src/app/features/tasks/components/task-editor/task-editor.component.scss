@@ -145,6 +145,31 @@
   text-align: center;
 }
 
+/* Past date warning */
+.past-date-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #b45309;
+  margin-top: 0.5rem;
+
+  :host-context(body.theme-low-stimulus) & {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    color: #374151;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
 /* Recurrence */
 .recurrence .rule select { width:100%; padding:.55rem .65rem; border:2px solid #cbd5e1; border-radius:8px; background:#fff; font-size:.75rem; }
 .checkbox-inline { display:flex; align-items:center; gap:.5rem; font-size:.6875rem; color:#374151; font-weight:500; }

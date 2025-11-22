@@ -270,7 +270,10 @@
                 "ON_TRACK": "✅ W normie",
                 "REMAINING": "pozostało",
                 "DAYS_REMAINING": "dni pozostało",
-                "TODAY": "dzisiaj"
+                "TODAY": "dzisiaj",
+                "EXPIRED": "Wygasł",
+                "ONE_DAY_LEFT": "Pozostał 1 dzień",
+                "EXPIRED_MESSAGE": "Budżet stracił aktualność. Okres się zakończył."
             },
             "EDITOR": {
                 "TITLE_CREATE": "Utwórz budżet",
@@ -581,7 +584,10 @@
             }
         },
         "DETAIL": {
+            "TITLE": "Szczegóły notatki",
             "BACK": "Wstecz",
+            "CONTENT": "Treść",
+            "TAGS": "Tagi",
             "ACTIONS": {
                 "EDIT": "Edytuj",
                 "EXPORT": "Eksportuj",
@@ -589,8 +595,8 @@
                 "RESTORE": "Przywróć"
             },
             "META": {
-                "CREATED": "Utworzono:",
-                "UPDATED": "Zaktualizowano:"
+                "CREATED": "Utworzono",
+                "UPDATED": "Zaktualizowano"
             },
             "LINKED": {
                 "TITLE": "Powiązane elementy",
@@ -737,6 +743,7 @@
                 "MEDIUM": "Średni",
                 "HIGH": "Wysoki"
             },
+            "PAST_DATE_WARNING": "⚠️ Uwaga: Wybrano datę z przeszłości. Zadanie zostanie utworzone z przeterminowanym terminem.",
             "ERRORS": {
                 "TITLE_REQUIRED": "Tytuł jest wymagany",
                 "LOAD_FAILED": "Nie udało się załadować zadania",

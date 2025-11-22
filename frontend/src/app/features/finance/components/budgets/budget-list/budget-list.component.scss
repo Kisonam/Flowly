@@ -164,6 +164,9 @@
   transition: all 0.2s ease;
   position: relative;
   border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -173,6 +176,16 @@
   &.overspent {
     border-color: #ef4444;
     background: #fef2f2;
+  }
+
+  &.expired {
+    border-color: #dc2626;
+    background: #fee2e2;
+
+    :host-context(body.theme-low-stimulus) & {
+      border-color: #6b7280;
+      background: #f3f4f6;
+    }
   }
 
   &.archived {
@@ -330,6 +343,30 @@
   }
 }
 
+.expired-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #dc2626;
+
+  :host-context(body.theme-low-stimulus) & {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    color: #374151;
+  }
+
+  i {
+    font-size: 18px;
+  }
+}
+
 .budget-description {
   font-size: 14px;
   color: #6b7280;
@@ -337,12 +374,13 @@
   margin: 0 0 16px 0;
 }
 
-// Actions
+// Budget Actions
 .budget-actions {
   display: flex;
   gap: 8px;
   padding-top: 16px;
   border-top: 1px solid #e5e7eb;
+  margin-top: auto;
 }
 
 .btn-icon {

@@ -1,7 +1,7 @@
 @if (stats) {
   <div class="activity-stats-grid">
     <!-- Active Tasks Block -->
-    <div class="stat-block tasks">
+    <div class="stat-block tasks clickable" (click)="navigateToTasks()">
       <div class="stat-icon">✅</div>
       <div class="stat-content">
         <h3 class="stat-value">{{ stats.activeTasksCount }}</h3>
@@ -10,7 +10,7 @@
     </div>
 
     <!-- Notes Block -->
-    <div class="stat-block notes">
+    <div class="stat-block notes clickable" (click)="navigateToNotes()">
       <div class="stat-icon">📝</div>
       <div class="stat-content">
         <h3 class="stat-value">{{ stats.notesCount }}</h3>
@@ -19,7 +19,7 @@
     </div>
 
     <!-- Transactions Block -->
-    <div class="stat-block transactions">
+    <div class="stat-block transactions clickable" (click)="navigateToTransactions()">
       <div class="stat-icon">💰</div>
       <div class="stat-content">
         <h3 class="stat-value">{{ stats.transactionsCount }}</h3>

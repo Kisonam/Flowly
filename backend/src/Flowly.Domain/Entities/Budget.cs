@@ -132,11 +132,10 @@ public class Budget
     }
 
     /// <summary>
-    /// Get days remaining in budget period
+    /// Get days remaining in budget period (negative if expired)
     /// </summary>
     public int GetDaysRemaining()
     {
-        if (IsExpired()) return 0;
         return (PeriodEnd - DateTime.UtcNow).Days;
     }
 

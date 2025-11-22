@@ -274,7 +274,10 @@
                 "ON_TRACK": "✅ On Track",
                 "REMAINING": "remaining",
                 "DAYS_REMAINING": "days remaining",
-                "TODAY": "today"
+                "TODAY": "today",
+                "EXPIRED": "Expired",
+                "ONE_DAY_LEFT": "1 day left",
+                "EXPIRED_MESSAGE": "Budget is no longer relevant. The period has ended."
             },
             "EDITOR": {
                 "TITLE_CREATE": "Create Budget",
@@ -585,7 +588,10 @@
             }
         },
         "DETAIL": {
+            "TITLE": "Note Details",
             "BACK": "Back",
+            "CONTENT": "Content",
+            "TAGS": "Tags",
             "ACTIONS": {
                 "EDIT": "Edit",
                 "EXPORT": "Export",
@@ -593,8 +599,8 @@
                 "RESTORE": "Restore"
             },
             "META": {
-                "CREATED": "Created:",
-                "UPDATED": "Updated:"
+                "CREATED": "Created",
+                "UPDATED": "Updated"
             },
             "LINKED": {
                 "TITLE": "Linked items",
@@ -742,6 +748,7 @@
                 "MEDIUM": "Medium",
                 "HIGH": "High"
             },
+            "PAST_DATE_WARNING": "⚠️ Warning: You selected a date in the past. The task will be created with an overdue deadline.",
             "ERRORS": {
                 "TITLE_REQUIRED": "Title required",
                 "LOAD_FAILED": "Failed to load task",

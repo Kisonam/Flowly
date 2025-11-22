@@ -50,6 +50,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   loading = false;
   saving = false;
   error = '';
+  pastDateWarning = '';
 
   readonly statusOptions: TasksStatus[] = ['Todo', 'InProgress', 'Done'];
   readonly priorityOptions: TaskPriority[] = ['None', 'Low', 'Medium', 'High'];
@@ -120,6 +121,10 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     // Live markdown preview & reference preload
     this.form.get('description')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => this.autoPreview$.next(val || ''));
     this.autoPreview$.pipe(debounceTime(250), takeUntil(this.destroy$)).subscribe((md: string) => this.updatePreview(md));
+
+    // Check for past due date
+    this.form.get('dueDate')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkPastDueDate());
+    this.form.get('dueTime')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkPastDueDate());
   }
 
   ngOnDestroy(): void {
@@ -328,6 +333,31 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     // Construct local date then convert to UTC ISO
     const local = new Date(y, m-1, d, hh, mm, 0, 0);
     return new Date(local.getTime() - local.getTimezoneOffset()*60000).toISOString();
+  }
+
+  private checkPastDueDate(): void {
+    const dateStr = this.form.get('dueDate')?.value;
+    const timeStr = this.form.get('dueTime')?.value;
+
+    if (!dateStr) {
+      this.pastDateWarning = '';
+      return;
+    }
+
+    const dueDateUtc = this.combineDateTimeToUtc(dateStr, timeStr);
+    if (!dueDateUtc) {
+      this.pastDateWarning = '';
+      return;
+    }
+
+    const dueDate = new Date(dueDateUtc);
+    const now = new Date();
+
+    if (dueDate < now) {
+      this.pastDateWarning = 'TASKS.EDITOR.PAST_DATE_WARNING';
+    } else {
+      this.pastDateWarning = '';
+    }
   }
 
   // =====================

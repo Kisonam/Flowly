@@ -54,6 +54,10 @@
         <label class="form-field">{{ 'TASKS.EDITOR.DUE_TIME_LABEL' | translate }}
           <input type="time" formControlName="dueTime" />
         </label>
+        <div class="past-date-warning" *ngIf="pastDateWarning">
+          <i class="bi bi-exclamation-triangle"></i>
+          <span>{{ pastDateWarning | translate }}</span>
+        </div>
         <label class="form-field">{{ 'TASKS.EDITOR.COLOR_LABEL' | translate }}
           <input type="color" formControlName="color" />
         </label>
