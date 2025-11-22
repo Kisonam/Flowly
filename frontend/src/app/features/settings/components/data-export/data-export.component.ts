@@ -1,7 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DialogService } from '../../../../core/services/dialog.service';
+import { environment } from '../../../../../environments/environment';
 
 interface ExportFormat {
   id: string;
@@ -20,7 +22,9 @@ interface ExportFormat {
 })
 export class DataExportComponent {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:5000'; // TODO: Use environment config
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private readonly apiUrl = environment.apiUrl.replace('/api', '');
 
   isExporting = false;
   message = '';
@@ -117,31 +121,33 @@ export class DataExportComponent {
   }
 
   deleteAllData(): void {
-    const confirmed = confirm(
-      'Ви впевнені, що хочете видалити всі дані? Цю дію неможливо скасувати!'
-    );
+    this.dialogService.confirmTranslated('SETTINGS.EXPORT.DELETE_CONFIRM')
+      .subscribe(confirmed => {
+        if (!confirmed) return;
 
-    if (!confirmed) {
-      return;
-    }
+        this.dialogService.confirmTranslated('SETTINGS.EXPORT.DELETE_FINAL_CONFIRM')
+          .subscribe(doubleConfirmed => {
+            if (!doubleConfirmed) return;
 
-    const doubleConfirmed = confirm(
-      'ОСТАННЯ ПОПЕРЕДЖЕННЯ: Всі ваші дані будуть безповоротно видалені. Продовжити?'
-    );
+            this.isExporting = true;
+            this.error = '';
+            this.message = '';
 
-    if (!doubleConfirmed) {
-      return;
-    }
-
-    this.isExporting = true;
-    this.error = '';
-    this.message = '';
-
-    // TODO: Implement actual data deletion
-    setTimeout(() => {
-      this.isExporting = false;
-      this.message = 'Всі дані видалено';
-      setTimeout(() => this.message = '', 3000);
-    }, 1000);
+            this.http.delete(`${this.apiUrl}/api/user/data`)
+              .subscribe({
+                next: () => {
+                  this.isExporting = false;
+                  this.message = this.translate.instant('SETTINGS.EXPORT.DELETE_SUCCESS');
+                  setTimeout(() => this.message = '', 3000);
+                },
+                error: (err) => {
+                  console.error('Delete error:', err);
+                  this.error = this.translate.instant('SETTINGS.EXPORT.DELETE_ERROR');
+                  this.isExporting = false;
+                  setTimeout(() => this.error = '', 5000);
+                }
+              });
+          });
+      });
   }
 }

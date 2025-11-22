@@ -999,7 +999,11 @@
         "DANGER_ZONE_DESCRIPTION": "Usuwanie danych jest nieodwracalne",
         "DELETE_ALL_TITLE": "Usuń wszystkie dane",
         "DELETE_ALL_DESCRIPTION": "Ta akcja trwale usunie wszystkie Twoje dane, w tym notatki, zadania, zapisy finansowe i ustawienia.",
-        "DELETE_ALL_BUTTON": "Usuń wszystkie dane"
+        "DELETE_ALL_BUTTON": "Usuń wszystkie dane",
+        "DELETE_CONFIRM": "Czy na pewno chcesz usunąć wszystkie dane? Tej akcji nie można cofnąć!",
+        "DELETE_FINAL_CONFIRM": "OSTATNIE OSTRZEŻENIE: Wszystkie Twoje dane zostaną trwale usunięte. Kontynuować?",
+        "DELETE_SUCCESS": "Wszystkie dane usunięte",
+        "DELETE_ERROR": "Błąd podczas usuwania danych. Spróbuj ponownie później."
     }
 }
 }

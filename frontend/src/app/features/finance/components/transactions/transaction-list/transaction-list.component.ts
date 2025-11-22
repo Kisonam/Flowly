@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../../../core/services/theme.service';
+import { DialogService } from '../../../../../core/services/dialog.service';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
 import {
@@ -34,6 +35,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
   private destroy$ = new Subject<void>();
 
   // Data
@@ -283,20 +285,23 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   }
 
   archiveTransaction(transaction: Transaction): void {
-    // TODO: Use a proper dialog service instead of confirm/alert
-    if (!confirm(this.translate.instant('FINANCE.TRANSACTIONS.ARCHIVE_CONFIRM', { title: transaction.title }))) return;
-
-    this.financeService.archiveTransaction(transaction.id)
+    this.dialogService.confirmTranslated('FINANCE.TRANSACTIONS.ARCHIVE_CONFIRM', { title: transaction.title })
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          console.log('✅ Transaction archived');
-          this.fetchTransactions();
-        },
-        error: (err: any) => {
-          console.error('❌ Failed to archive transaction', err);
-          alert(this.translate.instant('FINANCE.TRANSACTIONS.ARCHIVE_ERROR', { message: err.message }));
-        }
+      .subscribe(confirmed => {
+        if (!confirmed) return;
+
+        this.financeService.archiveTransaction(transaction.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              console.log('✅ Transaction archived');
+              this.fetchTransactions();
+            },
+            error: (err: any) => {
+              console.error('❌ Failed to archive transaction', err);
+              this.dialogService.alertTranslated('FINANCE.TRANSACTIONS.ARCHIVE_ERROR', { message: err.message });
+            }
+          });
       });
   }
 

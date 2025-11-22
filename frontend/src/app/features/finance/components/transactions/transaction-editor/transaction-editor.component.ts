@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, of, switchMap, takeUntil, tap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../../../core/services/theme.service';
+import { DialogService } from '../../../../../core/services/dialog.service';
 import { FinanceService } from '../../../services/finance.service';
 import { TagsService } from '../../../../../shared/services/tags.service';
 import { LinkSelectorComponent } from '../../../../../shared/components/link-selector/link-selector.component';
@@ -33,6 +34,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   private tagsService = inject(TagsService);
   private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
   private destroy$ = new Subject<void>();
 
   isEdit = false;
@@ -448,20 +450,24 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   onDelete(): void {
     if (!this.isEdit || !this.transactionId) return;
 
-    // TODO: Use translation for confirm
-    if (!confirm('Are you sure you want to archive this transaction?')) return;
-
-    this.financeService.archiveTransaction(this.transactionId)
+    const title = this.transaction?.title || '';
+    this.dialogService.confirmTranslated('COMMON.CONFIRM.ARCHIVE_TRANSACTION', { title })
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          console.log('✅ Transaction archived');
-          this.router.navigate(['/finance/transactions']);
-        },
-        error: (err) => {
-          console.error('❌ Failed to archive transaction', err);
-          this.error = err.message || 'Failed to archive transaction';
-        }
+      .subscribe(confirmed => {
+        if (!confirmed || !this.transactionId) return;
+
+        this.financeService.archiveTransaction(this.transactionId)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              console.log('✅ Transaction archived');
+              this.router.navigate(['/finance/transactions']);
+            },
+            error: (err) => {
+              console.error('❌ Failed to archive transaction', err);
+              this.error = err.message || 'Failed to archive transaction';
+            }
+          });
       });
   }
 
