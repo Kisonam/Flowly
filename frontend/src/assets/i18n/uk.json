@@ -501,7 +501,7 @@
     },
     "NOTES": {
         "LIST": {
-            "TITLE": "Мої нотатки",
+            "TITLE": "Нотатки",
             "COUNT_ONE": "нотатка",
             "COUNT_MANY": "нотаток",
             "BUTTONS": {
@@ -658,7 +658,7 @@
     },
     "TASKS": {
         "LIST": {
-            "TITLE": "Мої завдання",
+            "TITLE": "Завдання",
             "BUTTONS": {
                 "BOARD_VIEW": "Дошка",
                 "LIST_VIEW": "Список",
@@ -685,7 +685,9 @@
                 "DUE": "Термін:",
                 "PRIORITY": "Пріоритет:",
                 "STATUS": "Статус:",
-                "THEME": "Тема:"
+                "THEME": "Тема:",
+                "RECURRING": "Повторюване завдання",
+                "RECURRING_SHORT": "Повтор"
             },
             "EMPTY": "Завдань не знайдено.",
             "PAGINATION": {
@@ -780,7 +782,9 @@
             "TASK_CARD": {
                 "ARCHIVE": "Архівувати",
                 "ARCHIVE_ARIA": "Архівувати завдання",
-                "SUBTASKS_DONE": "{{done}}/{{total}} підзавдань виконано"
+                "SUBTASKS_DONE": "{{done}}/{{total}} підзавдань виконано",
+                "RECURRING": "Повторюване завдання",
+                "RECURRING_SHORT": "Повтор"
             },
             "EMPTY": "Немає завдань",
             "LOADING": "Завантаження завдань...",
@@ -811,6 +815,31 @@
                 "UPDATE_SUBTASK": "Не вдалося оновити підзавдання",
                 "TOGGLE_TAG": "Не вдалося змінити тег",
                 "LOAD_LINKS": "Не вдалося завантажити зв'язки"
+            },
+            "RECURRENCE": {
+                "TITLE": "Повторення завдання",
+                "LAST_OCCURRENCE": "Останнє виконання",
+                "NEXT_OCCURRENCE": "Наступне виконання",
+                "PATTERN": "Шаблон повторення"
+            }
+        },
+        "RECURRENCE": {
+            "DAILY": "Щодня",
+            "EVERY_N_DAYS": "Кожні {{n}} днів",
+            "WEEKLY": "Щотижня",
+            "WEEKLY_ON": "Щотижня у {{days}}",
+            "EVERY_N_WEEKS": "Кожні {{n}} тижнів",
+            "EVERY_N_WEEKS_ON": "Кожні {{n}} тижнів у {{days}}",
+            "MONTHLY": "Щомісяця",
+            "EVERY_N_MONTHS": "Кожні {{n}} місяців",
+            "DAYS": {
+                "MON": "Пн",
+                "TUE": "Вт",
+                "WED": "Ср",
+                "THU": "Чт",
+                "FRI": "Пт",
+                "SAT": "Сб",
+                "SUN": "Нд"
             }
         },
         "STATUS": {

@@ -210,4 +210,68 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
       return content;
     }
   }
+
+  getRecurrenceDescription(): string {
+    if (!this.task?.recurrence) return '';
+
+    const rule = this.task.recurrence.rule;
+    const parts = rule.split(';');
+    let freq = '';
+    let interval = 1;
+    let byDay = '';
+
+    parts.forEach(part => {
+      const [key, value] = part.split('=');
+      if (key === 'FREQ') freq = value;
+      if (key === 'INTERVAL') interval = parseInt(value);
+      if (key === 'BYDAY') byDay = value;
+    });
+
+    // Build human-readable description
+    if (freq === 'DAILY') {
+      return interval === 1
+        ? this.translate.instant('TASKS.RECURRENCE.DAILY')
+        : this.translate.instant('TASKS.RECURRENCE.EVERY_N_DAYS', { n: interval });
+    } else if (freq === 'WEEKLY') {
+      const days = byDay ? this.formatWeekDays(byDay) : '';
+      if (interval === 1) {
+        return days
+          ? this.translate.instant('TASKS.RECURRENCE.WEEKLY_ON', { days })
+          : this.translate.instant('TASKS.RECURRENCE.WEEKLY');
+      } else {
+        return days
+          ? this.translate.instant('TASKS.RECURRENCE.EVERY_N_WEEKS_ON', { n: interval, days })
+          : this.translate.instant('TASKS.RECURRENCE.EVERY_N_WEEKS', { n: interval });
+      }
+    } else if (freq === 'MONTHLY') {
+      return interval === 1
+        ? this.translate.instant('TASKS.RECURRENCE.MONTHLY')
+        : this.translate.instant('TASKS.RECURRENCE.EVERY_N_MONTHS', { n: interval });
+    }
+
+    return rule;
+  }
+
+  formatWeekDays(byDay: string): string {
+    const dayMap: { [key: string]: string } = {
+      'MO': this.translate.instant('TASKS.RECURRENCE.DAYS.MON'),
+      'TU': this.translate.instant('TASKS.RECURRENCE.DAYS.TUE'),
+      'WE': this.translate.instant('TASKS.RECURRENCE.DAYS.WED'),
+      'TH': this.translate.instant('TASKS.RECURRENCE.DAYS.THU'),
+      'FR': this.translate.instant('TASKS.RECURRENCE.DAYS.FRI'),
+      'SA': this.translate.instant('TASKS.RECURRENCE.DAYS.SAT'),
+      'SU': this.translate.instant('TASKS.RECURRENCE.DAYS.SUN')
+    };
+
+    return byDay.split(',').map(d => dayMap[d] || d).join(', ');
+  }
+
+  formatRecurrenceDate(date: string | Date | null | undefined): string {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString(this.translate.currentLang, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
 }

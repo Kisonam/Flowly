@@ -360,23 +360,41 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     const newStatus: 'Todo' | 'Done' = task.status === 'Done' ? 'Todo' : 'Done';
 
-    // Optimistic update
-    const oldStatus = task.status;
-    task.status = newStatus;
+    // If completing a task (changing to Done), use completeTask endpoint to trigger recurrence
+    if (newStatus === 'Done' && task.status !== 'Done') {
+      this.tasksService
+        .completeTask(task.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            console.log('✅ Task completed, reloading board');
+            // Reload the entire board to show the new recurring task
+            this.loadBoard();
+          },
+          error: (err) => {
+            console.error('Failed to complete task', err);
+            alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
+          }
+        });
+    } else {
+      // For other status changes (e.g., uncompleting), use regular status change
+      const oldStatus = task.status;
+      task.status = newStatus;
 
-    this.tasksService
-      .changeStatus(task.id, newStatus)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          console.log('✅ Task status updated');
-        },
-        error: (err) => {
-          console.error('Failed to update task status', err);
-          task.status = oldStatus; // Revert
-          alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
-        }
-      });
+      this.tasksService
+        .changeStatus(task.id, newStatus)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            console.log('✅ Task status updated');
+          },
+          error: (err) => {
+            console.error('Failed to update task status', err);
+            task.status = oldStatus; // Revert
+            alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
+          }
+        });
+    }
   }
 
   archiveTask(event: Event, task: Task): void {

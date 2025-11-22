@@ -29,7 +29,6 @@
     "THEME_TOGGLE": "Przełącz motyw",
     "LANGUAGE_SELECT": "Wybierz język",
     "USER_MENU": "Menu użytkownika",
-    "SETTINGS": "Ustawienia",
     "LOGOUT": "Wyloguj",
     "NAV": {
         "OVERVIEW": "Przegląd",
@@ -37,8 +36,7 @@
         "TASKS": "Zadania",
         "FINANCE": "Finanse",
         "ARCHIVE": "Archiwum",
-        "SETTINGS": "Ustawienia",
-        "LANGUAGE_SELECT": "Wybierz język"
+        "SETTINGS": "Ustawienia"
     },
     "FINANCE": {
         "DASHBOARD": {
@@ -502,7 +500,7 @@
     },
     "NOTES": {
         "LIST": {
-            "TITLE": "Moje notatki",
+            "TITLE": "Notatki",
             "COUNT_ONE": "notatka",
             "COUNT_MANY": "notatek",
             "BUTTONS": {
@@ -660,7 +658,7 @@
     },
     "TASKS": {
         "LIST": {
-            "TITLE": "Moje zadania",
+            "TITLE": "Zadania",
             "BUTTONS": {
                 "BOARD_VIEW": "Tablica",
                 "LIST_VIEW": "Lista",
@@ -932,103 +930,6 @@
             "DEFAULT": "Treść"
         }
     },
-    "ARCHIVE": {
-    "TITLE": "Archiwum",
-    "SUBTITLE": "Przeglądaj i przywracaj zarchiwizowane elementy",
-    "FILTERS": {
-        "TYPE_LABEL": "Typ:",
-        "SEARCH_LABEL": "Szukaj:",
-        "SEARCH_PLACEHOLDER": "Szukaj w archiwum...",
-        "TYPES": {
-            "ALL": "Wszystkie typy",
-            "NOTE": "Notatki",
-            "TASK": "Zadania",
-            "TRANSACTION": "Transakcje",
-            "BUDGET": "Budżety",
-            "GOAL": "Cele finansowe"
-        }
-    },
-    "LOADING": "Ładowanie archiwum...",
-    "EMPTY": {
-        "TITLE": "Archiwum jest puste",
-        "DESC": "Zarchiwizowane elementy pojawią się tutaj"
-    },
-    "RESULTS_INFO": "Znaleziono: {{count}} {{suffix}}",
-    "TABLE": {
-        "TYPE": "Typ",
-        "TITLE": "Tytuł",
-        "DETAILS": "Szczegóły",
-        "ARCHIVED_AT": "Zarchiwizowano",
-        "ACTIONS": "Akcje"
-    },
-    "ACTIONS": {
-        "RESTORE": "Przywróć",
-        "DELETE": "Usuń trwale"
-    },
-    "PAGINATION": {
-        "PREVIOUS": "Poprzednia",
-        "NEXT": "Następna",
-        "PAGE_INFO": "Strona {{current}} z {{total}}"
-    },
-    "DETAIL_MODAL": {
-        "TITLE": "Szczegóły zarchiwizowanego elementu",
-        "BASIC_INFO": "Podstawowe informacje",
-        "ADDITIONAL_INFO": "Dodatkowe informacje",
-        "CONTENT": "Treść",
-        "NO_CONTENT": "Brak dodatkowej treści",
-        "LOADING": "Ładowanie szczegółów...",
-        "CLOSE": "Zamknij",
-        "RESTORE": "Przywróć"
-    },
-    "ERRORS": {
-        "LOAD_FAILED": "Nie udało się załadować archiwum",
-        "RESTORE_FAILED": "Nie udało się przywrócić elementu",
-        "DELETE_FAILED": "Nie udało się usunąć elementu",
-        "PARSE_FAILED": "Nie udało się przetworzyć danych",
-        "DETAIL_LOAD_FAILED": "Nie udało się załadować szczegółów",
-        "RETRY": "Spróbuj ponownie"
-    },
-    "CONFIRM": {
-        "RESTORE": "Przywrócić {{type}} \"{{title}}\"?",
-        "DELETE_PERMANENTLY": "⚠️ OSTRZEŻENIE!\n\nZamierzasz TRWALE usunąć {{type}} \"{{title}}\".\n\nTego działania NIE MOŻNA cofnąć!\n\nKontynuować?",
-        "DELETE_FINAL": "Jesteś pewien? To jest trwałe usunięcie!"
-    },
-    "METADATA": {
-        "LABELS": {
-            "Amount": "Kwota",
-            "CurrencyCode": "Waluta",
-            "Type": "Typ",
-            "Limit": "Limit",
-            "TargetAmount": "Kwota docelowa",
-            "CurrentAmount": "Obecna kwota",
-            "Category": "Kategoria",
-            "Status": "Status",
-            "Priority": "Priorytet",
-            "DueDate": "Termin",
-            "CompletedAt": "Ukończono",
-            "CharacterCount": "Liczba znaków",
-            "GroupId": "Grupa",
-            "Description": "Opis"
-        },
-        "VALUES": {
-            "STATUS": {
-                "Todo": "Do zrobienia",
-                "InProgress": "W trakcie",
-                "Done": "Zrobione"
-            },
-            "PRIORITY": {
-                "None": "Brak",
-                "Low": "Niski",
-                "Medium": "Średni",
-                "High": "Wysoki"
-            },
-            "TYPE": {
-                "Income": "Przychód",
-                "Expense": "Wydatek"
-            }
-        }
-    }
-},
 "SETTINGS": {
     "TITLE": "Ustawienia",
     "SUBTITLE": "Zarządzaj swoim profilem i preferencjami",

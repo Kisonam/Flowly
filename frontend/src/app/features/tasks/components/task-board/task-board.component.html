@@ -1,6 +1,6 @@
 <div class="tasks-page" *ngIf="!loading; else loadingTpl">
   <div class="module-header">
-    <h2>{{ 'TASKS.BOARD.TITLE' | translate }}</h2>
+    <h1>{{ 'TASKS.BOARD.TITLE' | translate }}</h1>
     <div class="module-actions">
       <button class="btn-secondary" (click)="toggleFilters()"
         [attr.aria-label]="'TASKS.BOARD.BUTTONS.FILTERS' | translate" [attr.aria-expanded]="showFilters">{{
@@ -84,6 +84,12 @@
             <div class="task-meta">
               <span class="task-priority" [attr.data-priority]="task.priority">{{ 'TASKS.PRIORITY.' +
                 task.priority.toUpperCase() | translate }}</span>
+              <span *ngIf="task.recurrence" class="task-recurrence" [title]="'TASKS.BOARD.TASK_CARD.RECURRING' | translate">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                  <path d="M4 7h10M4 7l3-3M4 7l3 3M16 13H6M16 13l-3 3M16 13l-3-3" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
               <span *ngIf="task.dueDate" class="task-due-date" [title]="task.dueDate | date:'dd/MM/yy'">
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
                   style="vertical-align:middle;margin-right:2px;">

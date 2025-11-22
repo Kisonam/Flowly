@@ -145,9 +145,23 @@
 
 .group-content { min-height: 100px; display: flex; flex-direction: column; gap: var(--spacing-sm); flex: 1; }
 
-.task-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: var(--spacing-md); display: flex; justify-content: space-between; align-items: center; cursor: move; transition: var(--transition-base); }
+.task-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  cursor: move;
+  transition: all 0.15s ease-out;
+}
 .task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.task-card.dragging { opacity: .5; }
+.task-card.dragging {
+  opacity: 0 !important;
+  visibility: hidden;
+}
 .task-card.overdue { background: var(--danger-light); border-color: var(--danger); box-shadow: 0 0 0 2px var(--danger-light); }
 .task-card.overdue .task-content span { color: var(--danger); font-weight: 600; }
 .task-card.overdue .task-priority { border-color: var(--danger); }
@@ -156,18 +170,15 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  flex: 1 1 0%;
-  min-width: 0;
+  width: 100%;
   cursor: pointer;
-  overflow: hidden;
 
   span {
-    transition: var(--transition-base);
+    transition: all 0.15s ease-out;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 220px;
-    display: inline-block;
+    flex: 1;
     color: var(--text-primary);
 
     &.completed {
@@ -181,18 +192,37 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  flex-shrink: 0;
-  min-width: 0;
-  max-width: 70%;
-  overflow: hidden;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-.task-priority, .task-due-date, .task-subtasks-meta {
+.task-priority, .task-due-date, .task-subtasks-meta, .task-recurrence {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 90px;
   display: inline-block;
+}
+
+.task-recurrence {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #fef3c7;
+  border-radius: 50%;
+  color: #f59e0b;
+  transition: all 0.15s ease-out;
+
+  &:hover {
+    background: #fde68a;
+    transform: scale(1.15);
+  }
+
+  svg {
+    display: block;
+  }
 }
 
 .task-checkbox {
@@ -219,19 +249,19 @@
     border-radius: var(--border-radius-sm);
     background: var(--input-bg);
     cursor: pointer;
-    transition: var(--transition-base);
+    transition: all 0.15s ease-out;
 
     &::after {
       content: '';
       position: absolute;
       display: none;
-      left: 4px;
-      top: 1px;
+      left: 50%;
+      top: 50%;
       width: 4px;
       height: 8px;
       border: solid var(--primary);
       border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
+      transform: translate(-50%, -60%) rotate(45deg);
     }
   }
 
@@ -265,11 +295,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-base);
+  transition: all 0.15s ease-out;
 
   &:hover {
     background: var(--bg-hover);
     color: var(--danger);
+    transform: scale(1.1);
   }
 
   svg {

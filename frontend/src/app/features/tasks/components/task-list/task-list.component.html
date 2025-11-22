@@ -56,11 +56,26 @@
 
   <div class="list">
     <div class="row" *ngFor="let task of tasks">
-      <div class="title">
+      <div class="checkbox-wrapper">
+        <input
+          type="checkbox"
+          [checked]="task.status === 'Done'"
+          [disabled]="task.status === 'Done'"
+          (change)="completeTask(task.id)"
+          class="task-checkbox"
+        />
+      </div>
+      <div class="title" [routerLink]="['/tasks', task.id]" style="cursor: pointer;">
         <span class="status-dot" [style.background]="task.color || '#94a3b8'"></span>
         {{ task.title }}
       </div>
       <div class="meta">
+        <span *ngIf="task.recurrence" class="recurrence-badge" [title]="'TASKS.LIST.META.RECURRING' | translate">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M4 7h10M4 7l3-3M4 7l3 3M16 13H6M16 13l-3 3M16 13l-3-3" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
         <span *ngIf="task.dueDate">{{ 'TASKS.LIST.META.DUE' | translate }} {{ task.dueDate | date:'dd/MM/yy' }}</span>
         <span>{{ 'TASKS.LIST.META.PRIORITY' | translate }} {{ 'TASKS.PRIORITY.' + task.priority.toUpperCase() |
           translate }}</span>

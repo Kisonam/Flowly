@@ -32,26 +32,78 @@
 
       <div class="task-properties">
         <!-- Due Date -->
-        <div class="property-item" *ngIf="task.dueDate">
-          <label>{{ 'TASKS.DETAIL.DUE_DATE' | translate }}</label>
-          <div class="value">
-            <i class="bi bi-calendar"></i> {{ formatDate(task.dueDate) }}
+        <div class="property-card" *ngIf="task.dueDate">
+          <div class="property-icon calendar-icon">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+              <path d="M6 2v2M14 2v2M3 7h14M5 11h2v2H5v-2z" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round" />
+              <rect x="3" y="5" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5" />
+            </svg>
+          </div>
+          <div class="property-content">
+            <label>{{ 'TASKS.DETAIL.DUE_DATE' | translate }}</label>
+            <div class="value">{{ formatDate(task.dueDate) }}</div>
           </div>
         </div>
 
         <!-- Theme -->
-        <div class="property-item" *ngIf="task.theme">
-          <label>{{ 'TASKS.DETAIL.THEME' | translate }}</label>
-          <div class="value theme-value">
-            <span class="theme-dot" [style.background-color]="task.theme.color"></span>
-            {{ task.theme.title }}
+        <div class="property-card" *ngIf="task.theme">
+          <div class="property-icon theme-icon">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+              <path d="M7 3h6l4 4v10H3V7l4-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 3v4h6V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="property-content">
+            <label>{{ 'TASKS.DETAIL.THEME' | translate }}</label>
+            <div class="value theme-value">
+              <span class="theme-indicator" [style.background-color]="task.theme.color"></span>
+              {{ task.theme.title }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recurrence Info -->
+      <div class="recurrence-section" *ngIf="task.recurrence">
+        <div class="recurrence-header">
+          <div class="recurrence-icon">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+              <path d="M4 7h10M4 7l3-3M4 7l3 3M16 13H6M16 13l-3 3M16 13l-3-3" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="recurrence-content">
+            <h3>{{ 'TASKS.DETAIL.RECURRENCE.TITLE' | translate }}</h3>
+            <p class="recurrence-description">{{ getRecurrenceDescription() }}</p>
+          </div>
+        </div>
+        <div class="recurrence-details">
+          <div class="recurrence-detail-item" *ngIf="task.recurrence.lastOccurrence">
+            <span class="detail-label">{{ 'TASKS.DETAIL.RECURRENCE.LAST_OCCURRENCE' | translate }}</span>
+            <span class="detail-value">{{ formatRecurrenceDate(task.recurrence.lastOccurrence) }}</span>
+          </div>
+          <div class="recurrence-detail-item" *ngIf="task.recurrence.nextOccurrence">
+            <span class="detail-label">{{ 'TASKS.DETAIL.RECURRENCE.NEXT_OCCURRENCE' | translate }}</span>
+            <span class="detail-value next-date">{{ formatRecurrenceDate(task.recurrence.nextOccurrence) }}</span>
+          </div>
+          <div class="recurrence-detail-item">
+            <span class="detail-label">{{ 'TASKS.DETAIL.RECURRENCE.PATTERN' | translate }}</span>
+            <span class="detail-value">{{ getRecurrenceDescription() }}</span>
           </div>
         </div>
       </div>
 
       <!-- Description -->
-      <div class="info-section" *ngIf="task.description">
-        <h3>{{ 'TASKS.DETAIL.DESCRIPTION' | translate }}</h3>
+      <div class="description-section" *ngIf="task.description">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+              <path d="M4 4h12M4 8h12M4 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>{{ 'TASKS.DETAIL.DESCRIPTION' | translate }}</h3>
+        </div>
         <div class="markdown-content" [innerHTML]="renderMarkdown(task.description)"></div>
       </div>
 
@@ -73,12 +125,21 @@
       </div>
 
       <!-- Tags -->
-      <div class="info-section" *ngIf="task.tags && task.tags.length > 0">
-        <h3>{{ 'TASKS.DETAIL.TAGS' | translate }}</h3>
-        <div class="tags-list">
-          <span class="tag" *ngFor="let tag of task.tags" [style.background-color]="tag.color">
-            {{ tag.name }}
-          </span>
+      <div class="tags-section" *ngIf="task.tags && task.tags.length > 0">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+              <path d="M3 10l7-7 7 7M10 3v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="10" cy="6" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3>{{ 'TASKS.DETAIL.TAGS' | translate }}</h3>
+        </div>
+        <div class="tags-grid">
+          <div class="tag-card" *ngFor="let tag of task.tags">
+            <span class="tag-indicator" [style.background-color]="tag.color"></span>
+            <span class="tag-name">{{ tag.name }}</span>
+          </div>
         </div>
       </div>
     </div>

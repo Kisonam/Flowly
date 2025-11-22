@@ -68,9 +68,27 @@
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   padding: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+}
+
+.checkbox-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: start;
+  padding-top: 2px;
+}
+
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-color, #3b82f6);
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }
 
 .title {
@@ -78,6 +96,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 600;
+  grid-column: 2;
 }
 
 .status-dot {
@@ -93,6 +112,33 @@
   gap: 12px;
   font-size: 12px;
   color: #64748b;
+  grid-column: 2;
+}
+
+.recurrence-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #fef3c7;
+  color: #f59e0b;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  cursor: help;
+
+  &:hover {
+    background: #fde68a;
+    transform: scale(1.15);
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.row .tags {
+  grid-column: 2;
 }
 
 .pagination {

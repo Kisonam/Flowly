@@ -229,4 +229,19 @@ export class TaskListComponent implements OnInit, OnDestroy {
       dueTo: ''
     });
   }
+
+  completeTask(taskId: string): void {
+    this.tasksService.completeTask(taskId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          console.log(' Task completed, refreshing list');
+          this.fetchTasks();
+        },
+        error: (err) => {
+          console.error('Failed to complete task', err);
+          this.errorMessage = err.message || 'Failed to complete task';
+        }
+      });
+  }
 }

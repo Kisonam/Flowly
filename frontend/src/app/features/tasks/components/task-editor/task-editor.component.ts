@@ -246,46 +246,65 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
       });
     } else if (this.isEdit && this.taskId) {
       const dueDateUtc = this.combineDateTimeToUtc(v.dueDate, v.dueTime);
-      const updateDto: UpdateTaskRequest = {
-        title: v.title,
-        description: v.description || undefined,
-        dueDate: dueDateUtc || undefined,
-        status: v.status,
-        priority: v.priority,
-        color: v.color || undefined,
-        themeId: this.task?.theme?.id,
-        tagIds: this.selectedTagIds
-      };
 
-      this.tasksService.updateTask(this.taskId, updateDto).pipe(
-        switchMap((task) => {
-          this.task = task;
-          const calls = [] as any[];
+      // Check if status is being changed to Done
+      const isCompletingTask = v.status === 'Done' && this.task?.status !== 'Done';
 
-          // add newly entered subtasks
-          const subFields = this.subtasks.controls as FormGroup[];
-          subFields.forEach(ctrl => {
-            const title = ctrl.value.title?.trim();
-            if (title) calls.push(this.tasksService.addSubtask(task.id, { title }));
-          });
-
-          // set or clear recurrence (we only support set via UI; clearing could be added later)
-          if (v.enableRecurrence && v.recurrenceRule) {
-            calls.push(this.tasksService.setRecurrence(task.id, { rule: v.recurrenceRule }));
+      if (isCompletingTask) {
+        // Use completeTask endpoint to trigger recurrence logic
+        this.tasksService.completeTask(this.taskId).subscribe({
+          next: () => {
+            this.saving = false;
+            this.router.navigate(['/tasks']);
+          },
+          error: (err) => {
+            this.error = err?.message || 'Failed to complete task';
+            this.saving = false;
           }
+        });
+      } else {
+        // Normal update for other changes
+        const updateDto: UpdateTaskRequest = {
+          title: v.title,
+          description: v.description || undefined,
+          dueDate: dueDateUtc || undefined,
+          status: v.status,
+          priority: v.priority,
+          color: v.color || undefined,
+          themeId: this.task?.theme?.id,
+          tagIds: this.selectedTagIds
+        };
 
-          return calls.length ? forkJoin(calls) : of(null);
-        })
-      ).subscribe({
-        next: () => {
-          this.saving = false;
-          this.router.navigate(['/tasks', this.taskId]);
-        },
-        error: (err) => {
-          this.error = err?.message || 'Failed to save task';
-          this.saving = false;
-        }
-      });
+        this.tasksService.updateTask(this.taskId, updateDto).pipe(
+          switchMap((task) => {
+            this.task = task;
+            const calls = [] as any[];
+
+            // add newly entered subtasks
+            const subFields = this.subtasks.controls as FormGroup[];
+            subFields.forEach(ctrl => {
+              const title = ctrl.value.title?.trim();
+              if (title) calls.push(this.tasksService.addSubtask(task.id, { title }));
+            });
+
+            // set or clear recurrence (we only support set via UI; clearing could be added later)
+            if (v.enableRecurrence && v.recurrenceRule) {
+              calls.push(this.tasksService.setRecurrence(task.id, { rule: v.recurrenceRule }));
+            }
+
+            return calls.length ? forkJoin(calls) : of(null);
+          })
+        ).subscribe({
+          next: () => {
+            this.saving = false;
+            this.router.navigate(['/tasks', this.taskId]);
+          },
+          error: (err) => {
+            this.error = err?.message || 'Failed to save task';
+            this.saving = false;
+          }
+        });
+      }
     }
   }
 

@@ -504,7 +504,7 @@
     },
     "NOTES": {
         "LIST": {
-            "TITLE": "My Notes",
+            "TITLE": "Notes",
             "COUNT_ONE": "note",
             "COUNT_MANY": "notes",
             "BUTTONS": {
@@ -661,7 +661,7 @@
     },
     "TASKS": {
         "LIST": {
-            "TITLE": "My Tasks",
+            "TITLE": "Tasks",
             "BUTTONS": {
                 "BOARD_VIEW": "Board",
                 "LIST_VIEW": "List",
@@ -688,7 +688,9 @@
                 "DUE": "Due:",
                 "PRIORITY": "Priority:",
                 "STATUS": "Status:",
-                "THEME": "Theme:"
+                "THEME": "Theme:",
+                "RECURRING": "Recurring task",
+                "RECURRING_SHORT": "Repeat"
             },
             "EMPTY": "No tasks found.",
             "PAGINATION": {
@@ -783,7 +785,9 @@
             "TASK_CARD": {
                 "ARCHIVE": "Archive",
                 "ARCHIVE_ARIA": "Archive task",
-                "SUBTASKS_DONE": "{{done}}/{{total}} subtasks done"
+                "SUBTASKS_DONE": "{{done}}/{{total}} subtasks done",
+                "RECURRING": "Recurring task",
+                "RECURRING_SHORT": "Repeat"
             },
             "EMPTY": "No tasks",
             "LOADING": "Loading tasks...",
@@ -814,6 +818,31 @@
                 "UPDATE_SUBTASK": "Failed to update subtask",
                 "TOGGLE_TAG": "Failed to toggle tag",
                 "LOAD_LINKS": "Failed to load links"
+            },
+            "RECURRENCE": {
+                "TITLE": "Task Recurrence",
+                "LAST_OCCURRENCE": "Last Completed",
+                "NEXT_OCCURRENCE": "Next Scheduled",
+                "PATTERN": "Recurrence Pattern"
+            }
+        },
+        "RECURRENCE": {
+            "DAILY": "Daily",
+            "EVERY_N_DAYS": "Every {{n}} days",
+            "WEEKLY": "Weekly",
+            "WEEKLY_ON": "Weekly on {{days}}",
+            "EVERY_N_WEEKS": "Every {{n}} weeks",
+            "EVERY_N_WEEKS_ON": "Every {{n}} weeks on {{days}}",
+            "MONTHLY": "Monthly",
+            "EVERY_N_MONTHS": "Every {{n}} months",
+            "DAYS": {
+                "MON": "Mon",
+                "TUE": "Tue",
+                "WED": "Wed",
+                "THU": "Thu",
+                "FRI": "Fri",
+                "SAT": "Sat",
+                "SUN": "Sun"
             }
         },
         "STATUS": {
