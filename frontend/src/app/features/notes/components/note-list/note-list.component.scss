@@ -271,23 +271,35 @@
 
     .note-card {
       display: flex;
-      align-items: center;
+      align-items: stretch;
       flex: 1 1 auto;
       max-width: 100%;
+      min-height: 100px;
+      padding: 1.5rem;
+      padding-right: 200px; // Місце для кнопок
 
       .note-header {
         flex: 0 0 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        margin-bottom: 0;
       }
 
       .note-content {
         flex: 1;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
       }
 
       .note-footer {
-        flex: 0 0 250px;
+        flex: 0 0 300px;
         border-top: none;
         margin-top: 0;
         padding-top: 0;
+        display: flex;
+        align-items: center;
       }
     }
   }
@@ -486,6 +498,28 @@
   visibility: visible;
 }
 
+// List view - кнопки горизонтально справа
+.notes-container.view-list {
+  .note-header {
+    align-items: flex-start;
+  }
+
+  .note-title {
+    flex: 1;
+    max-width: none;
+    margin-bottom: 0.5rem;
+  }
+
+  .note-actions {
+    position: absolute;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
+    flex-direction: row;
+    gap: 8px;
+  }
+}
+
 .btn-icon {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid #e5e7eb;
@@ -499,25 +533,15 @@
   transition: all 0.15s ease;
   padding: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  font-size: 0;
-  line-height: 0;
+  font-size: 18px;
+  line-height: 1;
 
   &:hover {
     background: #f3f4f6;
     transform: scale(1.08);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
   }
-
-  &::before {
-    font-size: 18px;
-    line-height: 1;
-  }
 }
-
-button[title="Edit"]::before { content: "✏️"; }
-button[title="Export"]::before { content: "⬇️"; }
-button[title="Archive"]::before { content: "🗄️"; }
-button[title="Restore"]::before { content: "🔄"; }
 
 // ============================================
 // Pagination

@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface ExportFormat {
   id: string;
@@ -13,7 +14,7 @@ interface ExportFormat {
 @Component({
   selector: 'app-data-export',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './data-export.component.html',
   styleUrls: ['./data-export.component.scss']
 })
@@ -28,22 +29,22 @@ export class DataExportComponent {
   readonly exportFormats: ExportFormat[] = [
     {
       id: 'json',
-      name: 'JSON',
-      description: 'Експорт даних у форматі JSON',
+      name: 'SETTINGS.EXPORT.FORMATS.JSON.NAME',
+      description: 'SETTINGS.EXPORT.FORMATS.JSON.DESCRIPTION',
       icon: 'file-text',
       fileExtension: 'json'
     },
     {
       id: 'csv',
-      name: 'CSV',
-      description: 'Експорт даних у форматі CSV (для Excel)',
+      name: 'SETTINGS.EXPORT.FORMATS.CSV.NAME',
+      description: 'SETTINGS.EXPORT.FORMATS.CSV.DESCRIPTION',
       icon: 'table',
       fileExtension: 'zip'
     },
     {
       id: 'pdf',
-      name: 'PDF',
-      description: 'Експорт звіту у форматі PDF',
+      name: 'SETTINGS.EXPORT.FORMATS.PDF.NAME',
+      description: 'SETTINGS.EXPORT.FORMATS.PDF.DESCRIPTION',
       icon: 'file',
       fileExtension: 'pdf'
     }

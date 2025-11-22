@@ -29,7 +29,6 @@
     "THEME_TOGGLE": "Перемкнути тему",
     "LANGUAGE_SELECT": "Вибрати мову",
     "USER_MENU": "Меню користувача",
-    "SETTINGS": "Налаштування",
     "LOGOUT": "Вийти",
     "NAV": {
         "OVERVIEW": "Огляд",
@@ -929,6 +928,78 @@
             "BUDGET": "Опис бюджету",
             "GOAL": "Опис цілі",
             "DEFAULT": "Вміст"
+        }
+    },
+    "SETTINGS": {
+        "TITLE": "Налаштування",
+        "SUBTITLE": "Керуйте своїм профілем та налаштуваннями",
+        "TABS": {
+            "PROFILE": "Профіль",
+            "THEME": "Тема",
+            "EXPORT": "Експорт даних"
+        },
+        "PROFILE": {
+            "AVATAR_TITLE": "Аватар",
+            "UPLOAD_PHOTO": "Завантажити фото",
+            "DELETE": "Видалити",
+            "AVATAR_HINT": "JPG, PNG або GIF. Максимальний розмір 5MB.",
+            "INFO_TITLE": "Інформація профілю",
+            "NAME_LABEL": "Ім'я",
+            "NAME_PLACEHOLDER": "Введіть ваше ім'я",
+            "EMAIL_LABEL": "Email",
+            "EMAIL_READONLY": "Email не можна змінити",
+            "SAVE_CHANGES": "Зберегти зміни",
+            "SAVING": "Збереження...",
+            "PASSWORD_TITLE": "Зміна пароля",
+            "CURRENT_PASSWORD": "Поточний пароль",
+            "CURRENT_PASSWORD_PLACEHOLDER": "Введіть поточний пароль",
+            "NEW_PASSWORD": "Новий пароль",
+            "NEW_PASSWORD_PLACEHOLDER": "Введіть новий пароль",
+            "CONFIRM_PASSWORD": "Підтвердження пароля",
+            "CONFIRM_PASSWORD_PLACEHOLDER": "Підтвердіть новий пароль",
+            "CHANGE_PASSWORD": "Змінити пароль",
+            "CHANGING": "Зміна..."
+        },
+        "THEME": {
+            "TITLE": "Виберіть тему",
+            "DESCRIPTION": "Персоналізуйте інтерфейс програми згідно з вашими уподобаннями",
+            "PREVIEW_TITLE": "Попередній перегляд",
+            "PREVIEW_TEXT": "Приклад тексту в обраній темі",
+            "NORMAL": {
+                "NAME": "Звичайна",
+                "DESCRIPTION": "Класичний інтерфейс з яскравими кольорами"
+            },
+            "LOW_STIMULUS": {
+                "NAME": "Низька стимуляція",
+                "DESCRIPTION": "М'які кольори та мінімалістичний дизайн"
+            }
+        },
+        "EXPORT": {
+            "MARKDOWN_TITLE": "Експорт нотаток у Markdown",
+            "MARKDOWN_DESCRIPTION": "Завантажте всі ваші нотатки у форматі Markdown архівом ZIP",
+            "MARKDOWN_BUTTON": "Експортувати у Markdown",
+            "MARKDOWN_FILE_DESC": "ZIP архів з усіма нотатками у форматі .md",
+            "DATA_TITLE": "Експорт даних",
+            "DATA_DESCRIPTION": "Завантажте всі ваші дані у зручному форматі",
+            "FORMATS": {
+                "JSON": {
+                    "NAME": "JSON",
+                    "DESCRIPTION": "Структуровані дані у форматі JSON"
+                },
+                "CSV": {
+                    "NAME": "CSV",
+                    "DESCRIPTION": "Таблиця для Excel або Google Sheets"
+                },
+                "PDF": {
+                    "NAME": "PDF",
+                    "DESCRIPTION": "Документ для друку або перегляду"
+                }
+            },
+            "DANGER_ZONE_TITLE": "Небезпечна зона",
+            "DANGER_ZONE_DESCRIPTION": "Видалення даних є незворотною дією",
+            "DELETE_ALL_TITLE": "Видалити всі дані",
+            "DELETE_ALL_DESCRIPTION": "Ця дія безповоротно видалить всі ваші дані, включаючи нотатки, завдання, фінансові записи та налаштування.",
+            "DELETE_ALL_BUTTON": "Видалити всі дані"
         }
     }
 }

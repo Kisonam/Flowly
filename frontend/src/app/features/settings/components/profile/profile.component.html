@@ -1,7 +1,7 @@
 <div class="profile-section">
   <!-- Avatar Section -->
   <div class="section-card">
-    <h2 class="section-title">Аватар</h2>
+    <h2 class="section-title">{{ 'SETTINGS.PROFILE.AVATAR_TITLE' | translate }}</h2>
 
     <div class="avatar-container">
       <div class="avatar-preview">
@@ -29,7 +29,7 @@
             <polyline points="17 8 12 3 7 8"></polyline>
             <line x1="12" y1="3" x2="12" y2="15"></line>
           </svg>
-          <span>Завантажити фото</span>
+          <span>{{ 'SETTINGS.PROFILE.UPLOAD_PHOTO' | translate }}</span>
         </label>
 
         <button
@@ -42,33 +42,33 @@
             <polyline points="3 6 5 6 21 6"></polyline>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
           </svg>
-          <span>Видалити</span>
+          <span>{{ 'SETTINGS.PROFILE.DELETE' | translate }}</span>
         </button>
       </div>
 
-      <p class="avatar-hint">JPG, PNG або GIF. Максимальний розмір 5MB.</p>
+      <p class="avatar-hint">{{ 'SETTINGS.PROFILE.AVATAR_HINT' | translate }}</p>
     </div>
   </div>
 
   <!-- Profile Information -->
   <div class="section-card">
-    <h2 class="section-title">Інформація профілю</h2>
+    <h2 class="section-title">{{ 'SETTINGS.PROFILE.INFO_TITLE' | translate }}</h2>
 
     <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
       <div class="form-group">
-        <label for="displayName">Ім'я</label>
+        <label for="displayName">{{ 'SETTINGS.PROFILE.NAME_LABEL' | translate }}</label>
         <input
           type="text"
           id="displayName"
           formControlName="displayName"
           class="form-input"
-          placeholder="Введіть ваше ім'я"
+          [placeholder]="'SETTINGS.PROFILE.NAME_PLACEHOLDER' | translate"
         />
         <span *ngIf="displayNameError" class="error-message">{{ displayNameError }}</span>
       </div>
 
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="email">{{ 'SETTINGS.PROFILE.EMAIL_LABEL' | translate }}</label>
         <input
           type="email"
           id="email"
@@ -76,7 +76,7 @@
           class="form-input"
           readonly
         />
-        <span class="input-hint">Email не можна змінити</span>
+        <span class="input-hint">{{ 'SETTINGS.PROFILE.EMAIL_READONLY' | translate }}</span>
       </div>
 
       <div class="form-actions">
@@ -85,8 +85,8 @@
           class="btn btn-primary"
           [disabled]="profileForm.invalid || isLoadingProfile"
         >
-          <span *ngIf="!isLoadingProfile">Зберегти зміни</span>
-          <span *ngIf="isLoadingProfile">Збереження...</span>
+          <span *ngIf="!isLoadingProfile">{{ 'SETTINGS.PROFILE.SAVE_CHANGES' | translate }}</span>
+          <span *ngIf="isLoadingProfile">{{ 'SETTINGS.PROFILE.SAVING' | translate }}</span>
         </button>
       </div>
 
@@ -97,41 +97,41 @@
 
   <!-- Change Password -->
   <div class="section-card">
-    <h2 class="section-title">Зміна пароля</h2>
+    <h2 class="section-title">{{ 'SETTINGS.PROFILE.PASSWORD_TITLE' | translate }}</h2>
 
     <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
       <div class="form-group">
-        <label for="currentPassword">Поточний пароль</label>
+        <label for="currentPassword">{{ 'SETTINGS.PROFILE.CURRENT_PASSWORD' | translate }}</label>
         <input
           type="password"
           id="currentPassword"
           formControlName="currentPassword"
           class="form-input"
-          placeholder="Введіть поточний пароль"
+          [placeholder]="'SETTINGS.PROFILE.CURRENT_PASSWORD_PLACEHOLDER' | translate"
         />
         <span *ngIf="currentPasswordError" class="error-message">{{ currentPasswordError }}</span>
       </div>
 
       <div class="form-group">
-        <label for="newPassword">Новий пароль</label>
+        <label for="newPassword">{{ 'SETTINGS.PROFILE.NEW_PASSWORD' | translate }}</label>
         <input
           type="password"
           id="newPassword"
           formControlName="newPassword"
           class="form-input"
-          placeholder="Введіть новий пароль"
+          [placeholder]="'SETTINGS.PROFILE.NEW_PASSWORD_PLACEHOLDER' | translate"
         />
         <span *ngIf="newPasswordError" class="error-message">{{ newPasswordError }}</span>
       </div>
 
       <div class="form-group">
-        <label for="confirmPassword">Підтвердження пароля</label>
+        <label for="confirmPassword">{{ 'SETTINGS.PROFILE.CONFIRM_PASSWORD' | translate }}</label>
         <input
           type="password"
           id="confirmPassword"
           formControlName="confirmPassword"
           class="form-input"
-          placeholder="Підтвердіть новий пароль"
+          [placeholder]="'SETTINGS.PROFILE.CONFIRM_PASSWORD_PLACEHOLDER' | translate"
         />
         <span *ngIf="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
       </div>
@@ -142,8 +142,8 @@
           class="btn btn-primary"
           [disabled]="passwordForm.invalid || isLoadingPassword"
         >
-          <span *ngIf="!isLoadingPassword">Змінити пароль</span>
-          <span *ngIf="isLoadingPassword">Зміна...</span>
+          <span *ngIf="!isLoadingPassword">{{ 'SETTINGS.PROFILE.CHANGE_PASSWORD' | translate }}</span>
+          <span *ngIf="isLoadingPassword">{{ 'SETTINGS.PROFILE.CHANGING' | translate }}</span>
         </button>
       </div>
 

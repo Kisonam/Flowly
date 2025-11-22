@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ThemeMode as BackendThemeMode } from '../../../auth/models/user.model';
 import { ThemeService, ThemeMode } from '../../../../core/services/theme.service';
@@ -7,7 +8,7 @@ import { ThemeService, ThemeMode } from '../../../../core/services/theme.service
 @Component({
   selector: 'app-theme-settings',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './theme-settings.component.html',
   styleUrls: ['./theme-settings.component.scss']
 })
@@ -23,14 +24,14 @@ export class ThemeSettingsComponent implements OnInit {
   readonly themes = [
     {
       id: 'normal' as ThemeMode,
-      name: 'Звичайна',
-      description: 'Класична світла тема з яскравими кольорами та анімаціями',
+      name: 'SETTINGS.THEME.NORMAL.NAME',
+      description: 'SETTINGS.THEME.NORMAL.DESCRIPTION',
       preview: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
     },
     {
       id: 'low-stimulus' as ThemeMode,
-      name: 'Низька стимуляція',
-      description: 'Приглушені кольори, без анімацій та тіней',
+      name: 'SETTINGS.THEME.LOW_STIMULUS.NAME',
+      description: 'SETTINGS.THEME.LOW_STIMULUS.DESCRIPTION',
       preview: 'linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%)'
     }
   ];

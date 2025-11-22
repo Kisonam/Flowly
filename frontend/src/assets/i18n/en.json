@@ -932,5 +932,77 @@
             "GOAL": "Goal Description",
             "DEFAULT": "Content"
         }
+    },
+    "SETTINGS": {
+        "TITLE": "Settings",
+        "SUBTITLE": "Manage your profile and preferences",
+        "TABS": {
+            "PROFILE": "Profile",
+            "THEME": "Theme",
+            "EXPORT": "Data Export"
+        },
+        "PROFILE": {
+            "AVATAR_TITLE": "Avatar",
+            "UPLOAD_PHOTO": "Upload Photo",
+            "DELETE": "Delete",
+            "AVATAR_HINT": "JPG, PNG or GIF. Maximum size 5MB.",
+            "INFO_TITLE": "Profile Information",
+            "NAME_LABEL": "Name",
+            "NAME_PLACEHOLDER": "Enter your name",
+            "EMAIL_LABEL": "Email",
+            "EMAIL_READONLY": "Email cannot be changed",
+            "SAVE_CHANGES": "Save Changes",
+            "SAVING": "Saving...",
+            "PASSWORD_TITLE": "Change Password",
+            "CURRENT_PASSWORD": "Current Password",
+            "CURRENT_PASSWORD_PLACEHOLDER": "Enter current password",
+            "NEW_PASSWORD": "New Password",
+            "NEW_PASSWORD_PLACEHOLDER": "Enter new password",
+            "CONFIRM_PASSWORD": "Confirm Password",
+            "CONFIRM_PASSWORD_PLACEHOLDER": "Confirm new password",
+            "CHANGE_PASSWORD": "Change Password",
+            "CHANGING": "Changing..."
+        },
+        "THEME": {
+            "TITLE": "Choose Theme",
+            "DESCRIPTION": "Personalize the app interface according to your preferences",
+            "PREVIEW_TITLE": "Preview",
+            "PREVIEW_TEXT": "Sample text in selected theme",
+            "NORMAL": {
+                "NAME": "Normal",
+                "DESCRIPTION": "Classic interface with vibrant colors"
+            },
+            "LOW_STIMULUS": {
+                "NAME": "Low Stimulus",
+                "DESCRIPTION": "Soft colors and minimalist design"
+            }
+        },
+        "EXPORT": {
+            "MARKDOWN_TITLE": "Export Notes to Markdown",
+            "MARKDOWN_DESCRIPTION": "Download all your notes in Markdown format as a ZIP archive",
+            "MARKDOWN_BUTTON": "Export to Markdown",
+            "MARKDOWN_FILE_DESC": "ZIP archive with all notes in .md format",
+            "DATA_TITLE": "Export Data",
+            "DATA_DESCRIPTION": "Download all your data in a convenient format",
+            "FORMATS": {
+                "JSON": {
+                    "NAME": "JSON",
+                    "DESCRIPTION": "Structured data in JSON format"
+                },
+                "CSV": {
+                    "NAME": "CSV",
+                    "DESCRIPTION": "Spreadsheet for Excel or Google Sheets"
+                },
+                "PDF": {
+                    "NAME": "PDF",
+                    "DESCRIPTION": "Document for printing or viewing"
+                }
+            },
+            "DANGER_ZONE_TITLE": "Danger Zone",
+            "DANGER_ZONE_DESCRIPTION": "Data deletion is irreversible",
+            "DELETE_ALL_TITLE": "Delete All Data",
+            "DELETE_ALL_DESCRIPTION": "This action will permanently delete all your data, including notes, tasks, financial records, and settings.",
+            "DELETE_ALL_BUTTON": "Delete All Data"
+        }
     }
 }

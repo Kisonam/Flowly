@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ThemeSettingsComponent } from './components/theme-settings/theme-settings.component';
 import { DataExportComponent } from './components/data-export/data-export.component';
@@ -11,6 +12,7 @@ import { DataExportComponent } from './components/data-export/data-export.compon
   imports: [
     CommonModule,
     RouterModule,
+    TranslateModule,
     ProfileComponent,
     ThemeSettingsComponent,
     DataExportComponent
@@ -24,9 +26,9 @@ export class SettingsComponent implements OnInit {
   activeTab: 'profile' | 'theme' | 'export' = 'profile';
 
   readonly tabs = [
-    { id: 'profile' as const, label: 'Профіль', icon: 'user' },
-    { id: 'theme' as const, label: 'Тема', icon: 'palette' },
-    { id: 'export' as const, label: 'Експорт даних', icon: 'download' }
+    { id: 'profile' as const, label: 'SETTINGS.TABS.PROFILE', icon: 'user' },
+    { id: 'theme' as const, label: 'SETTINGS.TABS.THEME', icon: 'palette' },
+    { id: 'export' as const, label: 'SETTINGS.TABS.EXPORT', icon: 'download' }
   ];
 
   ngOnInit(): void {

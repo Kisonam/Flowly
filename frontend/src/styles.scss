@@ -14,6 +14,11 @@
   padding: 0;
 }
 
+html {
+  // Always reserve space for scrollbar to prevent layout shift
+  overflow-y: scroll;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--bg-primary);

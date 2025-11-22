@@ -1,8 +1,8 @@
 <div class="theme-settings">
   <div class="section-card">
-    <h2 class="section-title">Виберіть тему</h2>
+    <h2 class="section-title">{{ 'SETTINGS.THEME.TITLE' | translate }}</h2>
     <p class="section-description">
-      Персоналізуйте інтерфейс програми згідно з вашими уподобаннями
+      {{ 'SETTINGS.THEME.DESCRIPTION' | translate }}
     </p>
 
     <!-- Radio Button Selection -->
@@ -26,8 +26,8 @@
               <div class="radio-dot" *ngIf="selectedTheme === theme.id"></div>
             </div>
             <div class="option-text">
-              <h3 class="option-name">{{ theme.name }}</h3>
-              <p class="option-description">{{ theme.description }}</p>
+              <h3 class="option-name">{{ theme.name | translate }}</h3>
+              <p class="option-description">{{ theme.description | translate }}</p>
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
 
     <!-- Preview Section -->
     <div class="theme-preview-section">
-      <h3 class="preview-title">Попередній перегляд</h3>
+      <h3 class="preview-title">{{ 'SETTINGS.THEME.PREVIEW_TITLE' | translate }}</h3>
       <div class="preview-container">
         <div
           class="preview-box"
@@ -44,8 +44,8 @@
         >
           <div class="preview-content">
             <div class="preview-card">
-              <div class="preview-header">{{ getSelectedThemeName() }}</div>
-              <div class="preview-text">Приклад тексту в обраній темі</div>
+              <div class="preview-header">{{ getSelectedThemeName() | translate }}</div>
+              <div class="preview-text">{{ 'SETTINGS.THEME.PREVIEW_TEXT' | translate }}</div>
             </div>
           </div>
         </div>

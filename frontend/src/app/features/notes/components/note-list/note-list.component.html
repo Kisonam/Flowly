@@ -107,21 +107,21 @@
         <h3 class="note-title">{{ note.title }}</h3>
         <div class="note-actions">
           <button class="btn-icon" (click)="editNote(note.id, $event)" [title]="'NOTES.LIST.CARD.EDIT' | translate">
-            ✏️ {{ 'NOTES.LIST.CARD.EDIT' | translate }}
+            ✏️
           </button>
 
           <button class="btn-icon" (click)="exportNote(note.id, $event)" [title]="'NOTES.LIST.CARD.EXPORT' | translate">
-            ⬇️ {{ 'NOTES.LIST.CARD.EXPORT' | translate }}
+            ⬇️
           </button>
 
           <button class="btn-icon" *ngIf="!note.isArchived" (click)="archiveNote(note.id, $event)"
             [title]="'NOTES.LIST.CARD.ARCHIVE' | translate">
-            🗄️ {{ 'NOTES.LIST.CARD.ARCHIVE' | translate }}
+            🗄️
           </button>
 
           <button class="btn-icon" *ngIf="note.isArchived" (click)="restoreNote(note.id, $event)"
             [title]="'NOTES.LIST.CARD.RESTORE' | translate">
-            🔄 {{ 'NOTES.LIST.CARD.RESTORE' | translate }}
+            🔄
           </button>
         </div>
       </div>
