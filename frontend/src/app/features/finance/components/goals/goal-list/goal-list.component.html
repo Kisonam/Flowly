@@ -95,8 +95,8 @@
         </div>
       </div>
 
-      <!-- Description -->
-      <p *ngIf="goal.description" class="goal-description">{{ goal.description }}</p>
+      <!-- Description (always present, but may be empty) -->
+      <p class="goal-description">{{ goal.description || '' }}</p>
 
       <!-- Status Badges -->
       <div class="status-badges">

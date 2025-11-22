@@ -195,6 +195,12 @@
   }
 }
 
+.budget-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .budget-header {
   margin-bottom: 16px;
 
@@ -230,6 +236,7 @@
 
 .budget-category {
   margin-bottom: 16px;
+  min-height: 32px; // Reserve space even if no category (height of badge)
 
   .category-badge {
     display: inline-flex;
@@ -372,6 +379,11 @@
   color: #6b7280;
   line-height: 1.5;
   margin: 0 0 16px 0;
+  min-height: 42px; // Reserve space even if empty (2 lines of text)
+
+  p {
+    margin: 0;
+  }
 }
 
 // Budget Actions

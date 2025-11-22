@@ -146,9 +146,16 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     // Load tags
     this.selectedTagIds = task.tags?.map(t => t.id) || [];
 
-    // existing subtasks preview (allow add new via form array)
+    // Load existing subtasks
     this.subtasks.clear();
-    // Do not prefill form array with existing ones to avoid id handling here
+    if (task.subtasks && task.subtasks.length > 0) {
+      task.subtasks.forEach(subtask => {
+        this.subtasks.push(this.fb.group({
+          title: [subtask.title, Validators.required],
+          id: [subtask.id] // Keep track of existing subtask IDs
+        }));
+      });
+    }
 
     // recurrence
     if (task.recurrence?.rule) {
@@ -241,8 +248,8 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: () => {
           this.saving = false;
-          // Navigate to edit mode so user can add links
-          this.router.navigate(['/tasks/edit', this.task?.id]);
+          // Navigate to tasks board
+          this.router.navigate(['/tasks/board']);
         },
         error: (err) => {
           this.error = err?.message || 'Failed to create task';

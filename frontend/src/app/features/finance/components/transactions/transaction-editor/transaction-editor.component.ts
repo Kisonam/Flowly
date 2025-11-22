@@ -368,12 +368,8 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       next: (transaction) => {
         console.log('✅ Transaction saved:', transaction);
         this.saving = false;
-        // Navigate to edit mode so user can add links
-        if (!this.isEdit) {
-          this.router.navigate(['/finance/transactions/edit', transaction.id]);
-        } else {
-          this.router.navigate(['/finance/transactions']);
-        }
+        // Navigate to transactions list
+        this.router.navigate(['/finance/transactions']);
       },
       error: (err) => {
         console.error('❌ Failed to save transaction', err);
