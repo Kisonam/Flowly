@@ -1,7 +1,7 @@
 @if (multiCurrencyStats && filteredStats.length > 0) {
   <!-- Currency Filter -->
   <div class="currency-filter">
-    <div class="filter-label">Валюти:</div>
+    <div class="filter-label">{{ 'DASHBOARD.FINANCE_SUMMARY.CURRENCIES' | translate }}</div>
     <div class="currency-chips">
       @for (currency of availableCurrencies; track currency) {
         <button
@@ -19,42 +19,42 @@
     <div class="currency-section">
       <div class="currency-header">
         <h3>{{ getCurrencySymbol(currencyStats.currencyCode) }} {{ currencyStats.currencyCode }}</h3>
-        <span class="transaction-count">{{ currencyStats.transactionCount }} транзакцій</span>
+        <span class="transaction-count">{{ 'DASHBOARD.FINANCE_SUMMARY.TRANSACTIONS_COUNT' | translate:{count: currencyStats.transactionCount} }}</span>
       </div>
 
       <div class="finance-summary">
         <div class="summary-card">
-          <p>Дохід</p>
+          <p>{{ 'DASHBOARD.FINANCE_SUMMARY.INCOME' | translate }}</p>
           <h2>{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ currencyStats.totalIncome | number:'1.0-0' }}</h2>
         </div>
         <div class="summary-card">
-          <p>Витрати</p>
+          <p>{{ 'DASHBOARD.FINANCE_SUMMARY.EXPENSE' | translate }}</p>
           <h2>{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ currencyStats.totalExpense | number:'1.0-0' }}</h2>
         </div>
         <div class="summary-card" [class.featured]="currencyStats.netAmount >= 0" [class.negative]="currencyStats.netAmount < 0">
-          <p>Баланс</p>
+          <p>{{ 'DASHBOARD.FINANCE_SUMMARY.BALANCE' | translate }}</p>
           <h2>{{ getCurrencySymbol(currencyStats.currencyCode) }}{{ currencyStats.netAmount | number:'1.0-0' }}</h2>
         </div>
       </div>
 
       <!-- Category Statistics for this currency -->
       <div class="finance-chart">
-        <h4>Статистика по категоріях</h4>
+        <h4>{{ 'DASHBOARD.FINANCE_SUMMARY.CATEGORY_STATS' | translate }}</h4>
 
         <div class="chart-legend">
           <div class="legend-item">
             <div class="legend-color income"></div>
-            <span>Дохід</span>
+            <span>{{ 'DASHBOARD.FINANCE_SUMMARY.LEGEND.INCOME' | translate }}</span>
           </div>
           <div class="legend-item">
             <div class="legend-color expense"></div>
-            <span>Витрати</span>
+            <span>{{ 'DASHBOARD.FINANCE_SUMMARY.LEGEND.EXPENSE' | translate }}</span>
           </div>
         </div>
 
         <div class="categories-grid">
           <div class="category-section">
-            <h5>Топ витрат</h5>
+            <h5>{{ 'DASHBOARD.FINANCE_SUMMARY.TOP_EXPENSES' | translate }}</h5>
             <div class="category-list">
               @for (cat of currencyStats.expenseByCategory.slice(0, 5); track cat.categoryName) {
                 <div class="category-item">
@@ -68,13 +68,13 @@
                 </div>
               }
               @empty {
-                <p class="empty-text">Немає витрат</p>
+                <p class="empty-text">{{ 'DASHBOARD.FINANCE_SUMMARY.NO_EXPENSES' | translate }}</p>
               }
             </div>
           </div>
 
           <div class="category-section">
-            <h5>Топ доходів</h5>
+            <h5>{{ 'DASHBOARD.FINANCE_SUMMARY.TOP_INCOME' | translate }}</h5>
             <div class="category-list">
               @for (cat of currencyStats.incomeByCategory.slice(0, 5); track cat.categoryName) {
                 <div class="category-item">
@@ -88,7 +88,7 @@
                 </div>
               }
               @empty {
-                <p class="empty-text">Немає доходів</p>
+                <p class="empty-text">{{ 'DASHBOARD.FINANCE_SUMMARY.NO_INCOME' | translate }}</p>
               }
             </div>
           </div>
@@ -99,6 +99,6 @@
 } @else {
   <div class="loading-state">
     <div class="spinner"></div>
-    <p>Завантаження...</p>
+    <p>{{ 'DASHBOARD.FINANCE_SUMMARY.LOADING' | translate }}</p>
   </div>
 }

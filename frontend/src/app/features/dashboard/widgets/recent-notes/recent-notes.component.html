@@ -1,7 +1,7 @@
 <div class="chart-card" id="recent-notes">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>📝 Останні нотатки</h3>
-    <a routerLink="/notes" class="btn btn-sm btn-outline-primary">Всі</a>
+    <h3>📝 {{ 'DASHBOARD.RECENT_NOTES.TITLE' | translate }}</h3>
+    <a routerLink="/notes" class="btn btn-sm btn-outline-primary">{{ 'DASHBOARD.RECENT_NOTES.VIEW_ALL' | translate }}</a>
   </div>
   <div>
     @if (notes && notes.length > 0) {
@@ -18,7 +18,7 @@
                   </span>
                   @if (note.updatedAt !== note.createdAt) {
                     <span class="note-updated text-muted">
-                      Updated {{ formatDate(note.updatedAt) }}
+                      {{ 'DASHBOARD.RECENT_NOTES.UPDATED' | translate }} {{ formatDate(note.updatedAt) }}
                     </span>
                   }
                 </div>
@@ -30,8 +30,8 @@
       </ul>
     } @else {
       <div class="empty-state">
-        <p>Немає нотаток</p>
-        <small>Почніть створювати нотатки</small>
+        <p>{{ 'DASHBOARD.RECENT_NOTES.EMPTY.TITLE' | translate }}</p>
+        <small>{{ 'DASHBOARD.RECENT_NOTES.EMPTY.SUBTITLE' | translate }}</small>
       </div>
     }
   </div>

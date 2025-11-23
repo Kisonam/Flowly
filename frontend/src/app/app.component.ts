@@ -22,6 +22,10 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     // Theme service will initialize automatically via constructor
     // This ensures theme is applied on app startup
+
+    // Initialize locale service to ensure translations are loaded
+    // This triggers the constructor which sets up the language
+    this.localeService.getCurrentLocale();
   }
 
   get showNavbar(): boolean {

@@ -1,28 +1,28 @@
 <div class="dashboard-container">
   <!-- Header -->
   <div class="module-header">
-    <h2>Огляд</h2>
+    <h2>{{ 'DASHBOARD.TITLE' | translate }}</h2>
     <div class="module-actions">
       <button class="btn-primary" (click)="createTransaction()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        Транзакція
+        {{ 'DASHBOARD.BUTTONS.NEW_TRANSACTION' | translate }}
       </button>
       <button class="btn-primary" (click)="createTask()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        Завдання
+        {{ 'DASHBOARD.BUTTONS.NEW_TASK' | translate }}
       </button>
       <button class="btn-primary" (click)="createNote()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        Нотатка
+        {{ 'DASHBOARD.BUTTONS.NEW_NOTE' | translate }}
       </button>
     </div>
   </div>
@@ -31,20 +31,20 @@
   @if (loading) {
     <div class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">{{ 'DASHBOARD.LOADING' | translate }}</span>
       </div>
-      <p class="text-muted mt-3">Loading dashboard...</p>
+      <p class="text-muted mt-3">{{ 'DASHBOARD.LOADING' | translate }}</p>
     </div>
   }
 
   <!-- Error State -->
   @else if (error) {
     <div class="alert alert-danger" role="alert">
-      <h5 class="alert-heading">Error Loading Dashboard</h5>
+      <h5 class="alert-heading">{{ 'DASHBOARD.ERROR.TITLE' | translate }}</h5>
       <p class="mb-0">{{ error }}</p>
       <hr>
       <button class="btn btn-sm btn-outline-danger" (click)="loadDashboard()">
-        <i class="bi bi-arrow-clockwise"></i> Retry
+        <i class="bi bi-arrow-clockwise"></i> {{ 'DASHBOARD.ERROR.RETRY' | translate }}
       </button>
     </div>
   }

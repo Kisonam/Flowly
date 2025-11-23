@@ -42,6 +42,68 @@
         "SETTINGS": "Settings",
         "LANGUAGE_SELECT": "Select Language"
     },
+    "DASHBOARD": {
+        "TITLE": "Overview",
+        "BUTTONS": {
+            "NEW_TRANSACTION": "Transaction",
+            "NEW_TASK": "Task",
+            "NEW_NOTE": "Note"
+        },
+        "LOADING": "Loading dashboard...",
+        "ERROR": {
+            "TITLE": "Error Loading Dashboard",
+            "RETRY": "Retry"
+        },
+        "ACTIVITY_STATS": {
+            "ACTIVE_TASKS": "Active Tasks",
+            "NOTES": "Notes",
+            "TRANSACTIONS_MONTH": "Transactions (month)",
+            "PRODUCTIVITY": "Productivity",
+            "LOADING": "Loading statistics...",
+            "BREAKDOWN": {
+                "TASK_COMPLETION": "Task completion:",
+                "NOTES_ACTIVITY": "Notes activity:",
+                "FINANCIAL_TRACKING": "Financial tracking:",
+                "TASKS_CREATED": "Tasks created:",
+                "TASKS_COMPLETED": "Tasks completed:",
+                "NOTES_CREATED": "Notes created:"
+            }
+        },
+        "FINANCE_SUMMARY": {
+            "CURRENCIES": "Currencies:",
+            "TRANSACTIONS_COUNT": "{{count}} transactions",
+            "INCOME": "Income",
+            "EXPENSE": "Expenses",
+            "BALANCE": "Balance",
+            "CATEGORY_STATS": "Category Statistics",
+            "TOP_EXPENSES": "Top Expenses",
+            "TOP_INCOME": "Top Income",
+            "NO_EXPENSES": "No expenses",
+            "NO_INCOME": "No income",
+            "LOADING": "Loading...",
+            "LEGEND": {
+                "INCOME": "Income",
+                "EXPENSE": "Expenses"
+            }
+        },
+        "UPCOMING_TASKS": {
+            "TITLE": "Upcoming Tasks",
+            "VIEW_ALL": "All",
+            "EMPTY": {
+                "TITLE": "No upcoming tasks",
+                "SUBTITLE": "All done! 🎉"
+            }
+        },
+        "RECENT_NOTES": {
+            "TITLE": "Recent Notes",
+            "VIEW_ALL": "All",
+            "UPDATED": "Updated",
+            "EMPTY": {
+                "TITLE": "No notes",
+                "SUBTITLE": "Start creating notes"
+            }
+        }
+    },
     "FINANCE": {
         "DASHBOARD": {
             "TITLE": "Financial Dashboard",

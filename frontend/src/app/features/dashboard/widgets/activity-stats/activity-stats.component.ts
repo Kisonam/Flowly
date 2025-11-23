@@ -2,12 +2,13 @@ import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ViewportScroller } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivityStats } from '../../models/dashboard.models';
 
 @Component({
   selector: 'app-activity-stats',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './activity-stats.component.html',
   styleUrls: ['./activity-stats.component.scss']
 })

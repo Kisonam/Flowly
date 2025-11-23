@@ -38,6 +38,68 @@
         "ARCHIVE": "Archiwum",
         "SETTINGS": "Ustawienia"
     },
+    "DASHBOARD": {
+        "TITLE": "Przegląd",
+        "BUTTONS": {
+            "NEW_TRANSACTION": "Transakcja",
+            "NEW_TASK": "Zadanie",
+            "NEW_NOTE": "Notatka"
+        },
+        "LOADING": "Ładowanie pulpitu...",
+        "ERROR": {
+            "TITLE": "Błąd ładowania pulpitu",
+            "RETRY": "Spróbuj ponownie"
+        },
+        "ACTIVITY_STATS": {
+            "ACTIVE_TASKS": "Aktywne zadania",
+            "NOTES": "Notatki",
+            "TRANSACTIONS_MONTH": "Transakcje (miesiąc)",
+            "PRODUCTIVITY": "Produktywność",
+            "LOADING": "Ładowanie statystyk...",
+            "BREAKDOWN": {
+                "TASK_COMPLETION": "Ukończenie zadań:",
+                "NOTES_ACTIVITY": "Aktywność notatek:",
+                "FINANCIAL_TRACKING": "Śledzenie finansów:",
+                "TASKS_CREATED": "Utworzono zadań:",
+                "TASKS_COMPLETED": "Ukończono zadań:",
+                "NOTES_CREATED": "Utworzono notatek:"
+            }
+        },
+        "FINANCE_SUMMARY": {
+            "CURRENCIES": "Waluty:",
+            "TRANSACTIONS_COUNT": "{{count}} transakcji",
+            "INCOME": "Przychody",
+            "EXPENSE": "Wydatki",
+            "BALANCE": "Bilans",
+            "CATEGORY_STATS": "Statystyki według kategorii",
+            "TOP_EXPENSES": "Największe wydatki",
+            "TOP_INCOME": "Największe przychody",
+            "NO_EXPENSES": "Brak wydatków",
+            "NO_INCOME": "Brak przychodów",
+            "LOADING": "Ładowanie...",
+            "LEGEND": {
+                "INCOME": "Przychody",
+                "EXPENSE": "Wydatki"
+            }
+        },
+        "UPCOMING_TASKS": {
+            "TITLE": "Nadchodzące zadania",
+            "VIEW_ALL": "Wszystkie",
+            "EMPTY": {
+                "TITLE": "Brak nadchodzących zadań",
+                "SUBTITLE": "Wszystko zrobione! 🎉"
+            }
+        },
+        "RECENT_NOTES": {
+            "TITLE": "Ostatnie notatki",
+            "VIEW_ALL": "Wszystkie",
+            "UPDATED": "Zaktualizowano",
+            "EMPTY": {
+                "TITLE": "Brak notatek",
+                "SUBTITLE": "Zacznij tworzyć notatki"
+            }
+        }
+    },
     "FINANCE": {
         "DASHBOARD": {
             "TITLE": "Pulpit Finansowy",

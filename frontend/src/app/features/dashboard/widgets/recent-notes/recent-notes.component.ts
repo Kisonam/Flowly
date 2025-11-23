@@ -1,12 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { RecentNote } from '../../models/dashboard.models';
 
 @Component({
   selector: 'app-recent-notes',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslateModule],
   templateUrl: './recent-notes.component.html',
   styleUrls: ['./recent-notes.component.scss']
 })

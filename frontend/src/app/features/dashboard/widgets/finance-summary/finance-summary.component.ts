@@ -1,12 +1,13 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { FinanceStats, MultiCurrencyFinanceStats, CurrencyStats } from '../../models/dashboard.models';
 
 @Component({
   selector: 'app-finance-summary',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './finance-summary.component.html',
   styleUrls: ['./finance-summary.component.scss']
 })

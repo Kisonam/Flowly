@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, inject, OnInit, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, EventEmitter, Output, inject, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { User } from '../../features/auth/models/user.model';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 import { LocaleService, SupportedLocale } from '../../core/services/locale.service';
+import { filter, Subject, takeUntil } from 'rxjs';
 
 type Language = SupportedLocale;
 
@@ -22,7 +23,7 @@ interface LanguageOption {
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   @Output() moduleChange = new EventEmitter<string>();
 
   private router = inject(Router);
@@ -30,6 +31,7 @@ export class NavbarComponent implements OnInit {
   private themeService = inject(ThemeService);
   private localeService = inject(LocaleService);
   private translate = inject(TranslateService);
+  private destroy$ = new Subject<void>();
 
   activeModule: string = 'overview';
   currentUser: User | null = null;
@@ -65,6 +67,37 @@ export class NavbarComponent implements OnInit {
 
     // Load current language
     this.currentLanguage = this.localeService.getCurrentLocale();
+
+    // Update active module based on current route
+    this.updateActiveModuleFromRoute(this.router.url);
+
+    // Listen to route changes
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.updateActiveModuleFromRoute(event.urlAfterRedirects);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private updateActiveModuleFromRoute(url: string): void {
+    // Find which module matches the current URL
+    for (const module of this.modules) {
+      if (url.startsWith(module.route)) {
+        this.activeModule = module.id;
+        this.moduleChange.emit(module.id);
+        return;
+      }
+    }
+    // Default to overview if no match
+    this.activeModule = 'overview';
   }
 
   toggleTheme(): void {

@@ -1,12 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { UpcomingTask } from '../../models/dashboard.models';
 
 @Component({
   selector: 'app-upcoming-tasks',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslateModule],
   templateUrl: './upcoming-tasks.component.html',
   styleUrls: ['./upcoming-tasks.component.scss']
 })

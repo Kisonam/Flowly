@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { DashboardService } from './services/dashboard.service';
 import { DashboardData } from './models/dashboard.models';
 import { FinanceSummaryComponent } from './widgets/finance-summary/finance-summary.component';
@@ -14,6 +15,7 @@ import { ThemeService, ThemeMode } from '../../core/services/theme.service';
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     ActivityStatsComponent,
     FinanceSummaryComponent,
     UpcomingTasksComponent,
