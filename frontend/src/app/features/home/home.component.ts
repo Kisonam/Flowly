@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
 import { User } from '../auth/models/user.model';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NavbarComponent, TranslateModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
@@ -49,5 +51,12 @@ export class HomeComponent implements OnInit {
 
   navigateToSettings(): void {
     this.router.navigate(['/settings']);
+  }
+
+  scrollToFeatures(): void {
+    const element = document.getElementById('features');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

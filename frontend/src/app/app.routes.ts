@@ -9,17 +9,17 @@ import { SettingsComponent } from './features/settings/settings.component';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/auth/login',
+    redirectTo: '/home',
     pathMatch: 'full'
+  },
+  {
+    path: 'home',
+    component: HomeComponent
+    // No authGuard - accessible without authorization
   },
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
-  },
-  {
-    path: 'home',
-    component: HomeComponent,
-    canActivate: [authGuard]
   },
   {
     path: 'dashboard',
@@ -60,7 +60,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/auth/login'
+    redirectTo: '/home'
   }
 ];
 

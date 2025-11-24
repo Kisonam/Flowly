@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, inject, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Output, Input, inject, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../features/auth/services/auth.service';
@@ -25,6 +25,7 @@ interface LanguageOption {
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   @Output() moduleChange = new EventEmitter<string>();
+  @Input() showTabs: boolean = true; // Control tabs visibility
 
   private router = inject(Router);
   private authService = inject(AuthService);
@@ -150,6 +151,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   navigateToSettings(): void {
     this.closeUserMenu();
     this.router.navigate(['/settings']);
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
+  navigateToLogin(): void {
+    this.router.navigate(['/auth/login']);
   }
 
   logout(): void {

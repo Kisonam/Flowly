@@ -30,6 +30,79 @@
     "LANGUAGE_SELECT": "Wybierz język",
     "USER_MENU": "Menu użytkownika",
     "LOGOUT": "Wyloguj",
+    "HOME": {
+        "HERO": {
+            "TITLE": "Zorganizuj swoje życie z",
+            "BRAND": "Flowly",
+            "SUBTITLE": "Twoja kompleksowa platforma produktywności dla notatek, zadań i finansów",
+            "GET_STARTED": "Rozpocznij",
+            "LEARN_MORE": "Dowiedz się więcej"
+        },
+        "FEATURES": {
+            "TITLE": "Wszystko, czego potrzebujesz w jednym miejscu",
+            "SUBTITLE": "Potężne funkcje, które pomogą Ci pozostać zorganizowanym i produktywnym",
+            "NOTES": {
+                "TITLE": "Inteligentne notatki",
+                "DESCRIPTION": "Twórz bogate notatki z obsługą Markdown, organizuj za pomocą tagów i natychmiast znajdź wszystko dzięki potężnemu wyszukiwaniu",
+                "FEATURE_1": "Edytor Markdown z podglądem na żywo",
+                "FEATURE_2": "Organizacja oparta na tagach",
+                "FEATURE_3": "Wyszukiwanie pełnotekstowe",
+                "FEATURE_4": "Kolorowe kategorie"
+            },
+            "TASKS": {
+                "TITLE": "Zarządzanie zadaniami",
+                "DESCRIPTION": "Kontroluj swoje zadania dzięki elastycznemu zarządzaniu, priorytetom i śledzeniu postępów",
+                "FEATURE_1": "Widok tablicy Kanban",
+                "FEATURE_2": "Poziomy priorytetów i terminy",
+                "FEATURE_3": "Podzadania i listy kontrolne",
+                "FEATURE_4": "Śledzenie postępów"
+            },
+            "FINANCE": {
+                "TITLE": "Śledzenie finansów",
+                "DESCRIPTION": "Przejmij kontrolę nad swoimi finansami dzięki kompleksowemu śledzeniu, budżetom i wnikliwej analityce",
+                "FEATURE_1": "Śledzenie przychodów i wydatków",
+                "FEATURE_2": "Zarządzanie budżetem",
+                "FEATURE_3": "Cele finansowe",
+                "FEATURE_4": "Wizualna analityka i raporty"
+            }
+        },
+        "BENEFITS": {
+            "TITLE": "Dlaczego warto wybrać Flowly?",
+            "ALL_IN_ONE": {
+                "TITLE": "Platforma wszystko w jednym",
+                "DESCRIPTION": "Wszystko, czego potrzebujesz w jednym miejscu - koniec z przełączaniem między aplikacjami"
+            },
+            "LOW_STIMULUS": {
+                "TITLE": "Tryb niskiej stymulacji",
+                "DESCRIPTION": "Zmniejsz wizualny hałas dzięki naszej opcji motywu skoncentrowanej na dostępności"
+            },
+            "ORGANIZATION": {
+                "TITLE": "Potężna organizacja",
+                "DESCRIPTION": "Tagi, kolory i inteligentne wyszukiwanie, aby wszystko było zorganizowane"
+            },
+            "PROGRESS": {
+                "TITLE": "Śledź swoje postępy",
+                "DESCRIPTION": "Wizualne pulpity i analityka, aby zobaczyć trendy produktywności"
+            },
+            "PRIVACY": {
+                "TITLE": "Prywatność na pierwszym miejscu",
+                "DESCRIPTION": "Twoje dane pozostają bezpieczne i prywatne - nigdy nie sprzedajemy Twoich informacji"
+            },
+            "MULTILANG": {
+                "TITLE": "Wielojęzyczność",
+                "DESCRIPTION": "Dostępne w języku angielskim, ukraińskim i polskim"
+            }
+        },
+        "CTA": {
+            "TITLE": "Gotowy, aby się zorganizować?",
+            "SUBTITLE": "Dołącz do Flowly już dziś i przejmij kontrolę nad swoją produktywnością",
+            "BUTTON": "Zacznij teraz - to darmowe"
+        },
+        "FOOTER": {
+            "COPYRIGHT": "© 2024 Flowly. Wszelkie prawa zastrzeżone.",
+            "TAGLINE": "Stworzone z ❤️ dla entuzjastów produktywności"
+        }
+    },
     "NAV": {
         "OVERVIEW": "Przegląd",
         "NOTES": "Notatki",
@@ -39,7 +112,9 @@
         "SETTINGS": "Ustawienia",
         "LANGUAGE_SELECT": "Wybierz język",
         "THEME_TOGGLE": "Przełącz motyw",
-        "USER_MENU": "Menu użytkownika"
+        "USER_MENU": "Menu użytkownika",
+        "LOGIN": "Zaloguj się",
+        "GO_TO_DASHBOARD": "Przejdź do pulpitu"
     },
     "MOBILE_NAV": {
         "CREATE_NEW": "Utwórz",

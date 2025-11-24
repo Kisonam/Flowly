@@ -190,8 +190,7 @@
   .btn-back,
   .btn-upload,
   .btn-create-tag,
-  .color-btn,
-  .color-option {
+  .color-btn {
     background: #9ca3af !important;
     color: #1f2937 !important;
     border-color: #9ca3af !important;
@@ -210,11 +209,15 @@
     }
   }
 
-  // Ensure all backgrounds are gray (except navbar icon buttons)
+  // Color options for categories - keep colors visible for functionality
+  // Кольори категорій залишаються кольоровими для розрізнення
+  // Виключення обробляється через :not(.color-option) у загальних правилах нижче
+
+  // Ensure all backgrounds are gray (except navbar icon buttons and dropdown items)
   .btn,
   button,
   [class*="btn-"] {
-    &:not(.btn-link):not(.btn-text):not(.icon-btn):not(.tab):not(.user-avatar):not(.bottom-nav-item):not(.fab-create) {
+    &:not(.btn-link):not(.btn-text):not(.icon-btn):not(.tab):not(.user-avatar):not(.bottom-nav-item):not(.fab-create):not(.dropdown-item):not(.language-item):not(.create-option):not(.color-option) {
       background: #9ca3af !important;
       color: #1f2937 !important;
       border-color: #9ca3af !important;
@@ -224,5 +227,12 @@
         color: white !important;
       }
     }
+  }
+
+  // Покращена видимість обраного кольору категорії
+  .color-option.selected {
+    border-color: #111827 !important;
+    border-width: 3px !important;
+    box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.4) !important;
   }
 }

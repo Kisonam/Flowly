@@ -30,6 +30,6 @@ export class AppComponent implements OnInit {
 
   get showNavbar(): boolean {
     const url = this.router.url || '';
-    return !url.startsWith('/auth');
+    return !url.startsWith('/auth') && !url.startsWith('/home');
   }
 }

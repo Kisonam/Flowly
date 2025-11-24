@@ -33,6 +33,79 @@
         "SETTINGS": "Settings",
         "LOGOUT": "Logout"
     },
+    "HOME": {
+        "HERO": {
+            "TITLE": "Organize Your Life with",
+            "BRAND": "Flowly",
+            "SUBTITLE": "Your all-in-one personal productivity platform for notes, tasks, and finances",
+            "GET_STARTED": "Get Started",
+            "LEARN_MORE": "Learn More"
+        },
+        "FEATURES": {
+            "TITLE": "Everything You Need in One Place",
+            "SUBTITLE": "Powerful features to help you stay organized and productive",
+            "NOTES": {
+                "TITLE": "Smart Notes",
+                "DESCRIPTION": "Create rich notes with Markdown support, organize with tags, and find anything instantly with powerful search",
+                "FEATURE_1": "Markdown editor with live preview",
+                "FEATURE_2": "Tag-based organization",
+                "FEATURE_3": "Full-text search",
+                "FEATURE_4": "Color-coded categories"
+            },
+            "TASKS": {
+                "TITLE": "Task Management",
+                "DESCRIPTION": "Stay on top of your to-dos with flexible task management, priorities, and progress tracking",
+                "FEATURE_1": "Kanban board view",
+                "FEATURE_2": "Priority levels & due dates",
+                "FEATURE_3": "Subtasks & checklists",
+                "FEATURE_4": "Progress tracking"
+            },
+            "FINANCE": {
+                "TITLE": "Finance Tracker",
+                "DESCRIPTION": "Take control of your finances with comprehensive tracking, budgets, and insightful analytics",
+                "FEATURE_1": "Income & expense tracking",
+                "FEATURE_2": "Budget management",
+                "FEATURE_3": "Financial goals",
+                "FEATURE_4": "Visual analytics & reports"
+            }
+        },
+        "BENEFITS": {
+            "TITLE": "Why Choose Flowly?",
+            "ALL_IN_ONE": {
+                "TITLE": "All-in-One Platform",
+                "DESCRIPTION": "Everything you need in one place - no more switching between apps"
+            },
+            "LOW_STIMULUS": {
+                "TITLE": "Low-Stimulus Mode",
+                "DESCRIPTION": "Reduce visual noise with our accessibility-focused theme option"
+            },
+            "ORGANIZATION": {
+                "TITLE": "Powerful Organization",
+                "DESCRIPTION": "Tags, colors, and smart search to keep everything organized"
+            },
+            "PROGRESS": {
+                "TITLE": "Track Your Progress",
+                "DESCRIPTION": "Visual dashboards and analytics to see your productivity trends"
+            },
+            "PRIVACY": {
+                "TITLE": "Privacy First",
+                "DESCRIPTION": "Your data stays secure and private - we never sell your information"
+            },
+            "MULTILANG": {
+                "TITLE": "Multi-Language",
+                "DESCRIPTION": "Available in English, Ukrainian, and Polish"
+            }
+        },
+        "CTA": {
+            "TITLE": "Ready to Get Organized?",
+            "SUBTITLE": "Join Flowly today and take control of your productivity",
+            "BUTTON": "Start Now - It's Free"
+        },
+        "FOOTER": {
+            "COPYRIGHT": "© 2024 Flowly. All rights reserved.",
+            "TAGLINE": "Built with ❤️ for productivity enthusiasts"
+        }
+    },
     "NAV": {
         "OVERVIEW": "Overview",
         "NOTES": "Notes",
@@ -42,7 +115,9 @@
         "SETTINGS": "Settings",
         "LANGUAGE_SELECT": "Select Language",
         "THEME_TOGGLE": "Toggle Theme",
-        "USER_MENU": "User menu"
+        "USER_MENU": "User menu",
+        "LOGIN": "Login",
+        "GO_TO_DASHBOARD": "Go to Dashboard"
     },
     "MOBILE_NAV": {
         "CREATE_NEW": "Create New",

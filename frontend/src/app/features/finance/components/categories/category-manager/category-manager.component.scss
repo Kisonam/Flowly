@@ -116,8 +116,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  // Default gradient - overridden by inline style with category.color
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   position: relative;
+
+  // Кольори категорій завжди залишаються видимими, навіть у low-stimulus режимі
+  // Це важливо для розрізнення категорій
+  :host-context(body.theme-low-stimulus) & {
+    // Inline стилі з category.color не перезаписуються
+    opacity: 1;
+  }
 
   .category-icon {
     font-size: 3rem;
@@ -361,6 +369,13 @@ form {
   font-weight: bold;
   font-size: 1rem;
 
+  // Кольори завжди залишаються кольоровими, навіть у low-stimulus режимі
+  // Це важливо для розрізнення категорій
+  :host-context(body.theme-low-stimulus) & {
+    // Кольори не змінюються - вони потрібні для функціональності
+    opacity: 1;
+  }
+
   &:hover {
     transform: scale(1.1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -369,6 +384,12 @@ form {
   &.selected {
     border-color: #1f2937;
     box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.3);
+
+    :host-context(body.theme-low-stimulus) & {
+      border-color: #111827;
+      border-width: 3px;
+      box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.4);
+    }
   }
 }
 
@@ -410,7 +431,13 @@ form {
   display: flex;
   align-items: center;
   justify-content: center;
+  // Default gradient - overridden by inline style with selected color
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+  // Кольори preview завжди залишаються видимими у low-stimulus режимі
+  :host-context(body.theme-low-stimulus) & {
+    opacity: 1;
+  }
 
   .preview-icon {
     font-size: 2.5rem;

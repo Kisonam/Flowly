@@ -51,8 +51,14 @@
     font-weight: 700;
     color: var(--text-primary);
     user-select: none;
-    cursor: default;
+    cursor: pointer;
     flex-shrink: 0;
+    text-decoration: none;
+    transition: var(--transition-fast);
+
+    &:hover {
+      color: var(--text-secondary);
+    }
   }
 }
 
