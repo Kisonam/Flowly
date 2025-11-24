@@ -109,3 +109,61 @@ textarea:focus-visible {
   outline: 3px solid var(--accent-primary, #0066cc);
   outline-offset: 2px;
 }
+
+// ============================================
+// Mobile Navigation Spacing
+// ============================================
+
+// Add padding to body on mobile to account for fixed bottom navigation
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 80px; // Height of bottom nav + some spacing
+  }
+}
+
+// ============================================
+// Global Dropdown Styles
+// ============================================
+
+// Ensure all dropdown containers have relative positioning
+.dropdown-wrapper,
+.dropdown-container,
+.select-wrapper {
+  position: relative;
+}
+
+// Global dropdown menu styles
+.dropdown-menu,
+.dropdown-content,
+.select-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  min-width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--card-bg, white);
+  border: 1px solid var(--card-border, #e5e7eb);
+  border-radius: var(--border-radius, 0.375rem);
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.1));
+  z-index: 1000;
+
+  // Smooth scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color, #e5e7eb);
+    border-radius: 3px;
+
+    &:hover {
+      background: var(--text-secondary, #6b7280);
+    }
+  }
+}

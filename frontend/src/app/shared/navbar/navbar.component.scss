@@ -64,9 +64,9 @@
 
   .icon-btn {
     padding: var(--spacing-sm);
-    border: none;
+    border: 2px solid transparent;
     border-radius: var(--border-radius);
-    background: var(--bg-hover);
+    background: transparent;
     color: var(--text-primary);
     cursor: pointer;
     transition: var(--transition-fast);
@@ -76,8 +76,13 @@
     outline: none;
 
     &:hover {
-      background: var(--bg-active);
+      background: transparent;
+      border-color: transparent;
       transform: translateY(-1px);
+
+      svg {
+        stroke: var(--text-secondary);
+      }
     }
 
     &:active {
@@ -85,21 +90,22 @@
     }
 
     &.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      border: 2px solid var(--primary);
+      background: transparent;
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
 
       svg {
-        stroke: var(--primary);
+        stroke: var(--text-primary);
       }
 
       &:hover {
-        background: var(--primary-light);
+        background: transparent;
       }
     }
 
     svg {
       display: block;
+      stroke: var(--text-primary);
     }
   }
 
@@ -117,21 +123,21 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: none;
+    border: 2px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: var(--transition-fast);
-    box-shadow: var(--shadow);
-    background: var(--secondary);
+    box-shadow: none;
+    background: transparent;
     outline: none;
     overflow: hidden;
     position: relative;
 
     &:hover {
       transform: scale(1.1);
-      box-shadow: var(--shadow-md);
+      border-color: var(--text-secondary);
     }
 
     &:active {
@@ -147,12 +153,13 @@
     .avatar-initials {
       font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text-inverse);
+      color: var(--text-primary);
       user-select: none;
     }
 
     svg {
-      filter: drop-shadow(var(--shadow-sm));
+      stroke: var(--text-primary);
+      fill: none;
     }
   }
 }
@@ -172,7 +179,8 @@
   position: absolute;
   top: calc(100% + var(--spacing-sm));
   right: 0;
-  min-width: 240px;
+  min-width: 280px;
+  max-width: 320px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--border-radius-md);
@@ -263,7 +271,8 @@
   position: absolute;
   top: calc(100% + var(--spacing-sm));
   right: 0;
-  min-width: 220px;
+  min-width: 280px;
+  max-width: 320px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--border-radius-md);
@@ -356,7 +365,7 @@
 
 // Navigation Tabs
 .tabs-container {
-  background: var(--navbar-bg);
+  background: #ffffff;
   border-bottom: 1px solid var(--navbar-border);
 }
 
@@ -370,7 +379,7 @@
     -webkit-appearance: none;
     appearance: none;
     padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     border-radius: var(--border-radius);
     background: transparent;
     color: var(--text-secondary);
@@ -386,19 +395,24 @@
     overflow: hidden;
 
     &:hover:not(.active) {
-      background: var(--bg-hover);
-      border-color: var(--border-color);
+      background: transparent;
+      border-color: transparent;
       color: var(--text-primary);
+
+      .tab-icon svg {
+        stroke: var(--text-secondary);
+      }
     }
 
     &.active {
       background: transparent;
-      border-color: var(--primary);
+      border-color: var(--border-color);
       color: var(--text-primary);
+      font-weight: 600;
       box-shadow: none;
 
       .tab-icon svg {
-        stroke: var(--primary);
+        stroke: var(--text-primary);
       }
     }
 
@@ -430,11 +444,16 @@
 
 @media (max-width: 768px) {
   .navbar {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: 1rem var(--spacing-md);  // Збільшено з var(--spacing-sm) до 1rem
   }
 
   .navbar-left {
     gap: var(--spacing-sm);
+
+    .logo {
+      width: 36px;   // Збільшено з 40px
+      height: 36px;
+    }
 
     .app-title {
       font-size: 1.25rem;
@@ -442,24 +461,24 @@
   }
 
   .navbar-right {
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);  // Збільшено з var(--spacing-xs)
 
     .icon-btn {
-      padding: var(--spacing-xs);
+      padding: 0.625rem;  // Збільшено з var(--spacing-xs)
 
       svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;  // Збільшено з 18px
+        height: 20px;
       }
     }
 
     .user-avatar {
-      width: 32px;
-      height: 32px;
+      width: 36px;  // Збільшено з 32px
+      height: 36px;
 
       svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;  // Збільшено з 18px
+        height: 20px;
       }
     }
   }
@@ -491,7 +510,7 @@
 
 @media (max-width: 480px) {
   .navbar {
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: 0.75rem var(--spacing-sm);  // Збільшено з var(--spacing-xs)
   }
 
   .navbar-left {
@@ -506,29 +525,29 @@
     }
 
     .app-title {
-      font-size: 1rem;
+      font-size: 1.125rem;  // Збільшено з 1rem
     }
   }
 
   .navbar-right {
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);  // Збільшено з var(--spacing-xs)
 
     .icon-btn {
-      padding: var(--spacing-xs);
+      padding: 0.5rem;  // Збільшено з var(--spacing-xs)
 
       svg {
-        width: 16px;
-        height: 16px;
+        width: 18px;  // Збільшено з 16px
+        height: 18px;
       }
     }
 
     .user-avatar {
-      width: 30px;
-      height: 30px;
+      width: 32px;  // Збільшено з 30px
+      height: 32px;  // Виправлено з 30px
 
       svg {
-        width: 16px;
-        height: 16px;
+        width: 18px;  // Збільшено з 16px
+        height: 18px;
       }
     }
   }
@@ -598,4 +617,267 @@
 .navbar,
 .tabs-container {
   animation: slideDown var(--animation-speed) ease-out;
+}
+
+// Mobile Navigation
+// ==================
+
+// Hide/show based on screen size
+.desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.mobile-only {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex !important;
+  }
+
+  @media (min-width: 769px) {
+    display: none !important;
+  }
+}
+
+// Bottom Navigation Bar
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid var(--navbar-border);
+  padding: 8px 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+
+    .nav-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: transparent;
+      transition: all 0.2s ease;
+
+      svg {
+        stroke: var(--text-primary);
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    &.active {
+      color: var(--primary);
+
+      .nav-icon {
+        background: transparent;
+
+        svg {
+          stroke: var(--primary);
+        }
+      }
+    }
+  }
+}
+
+// Floating Action Button
+.fab-create {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  svg {
+    stroke: white;
+    fill: white;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.active {
+    svg {
+      transform: rotate(45deg);
+    }
+  }
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+  }
+}
+
+// Bottom Sheet
+.bottom-sheet-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1100;
+  animation: fadeIn 0.3s ease;
+}
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-primary);
+  border-radius: 24px 24px 0 0;
+  z-index: 1101;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 70vh;
+  overflow: hidden;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+
+  &.open {
+    transform: translateY(0);
+  }
+
+  .bottom-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--text-tertiary);
+    border-radius: 2px;
+    margin: 12px auto;
+    opacity: 0.5;
+  }
+
+  .bottom-sheet-content {
+    padding: 0 24px 32px;
+    overflow-y: auto;
+    max-height: calc(70vh - 60px);
+  }
+
+  .bottom-sheet-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 24px 0;
+  }
+
+  .create-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .create-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    .option-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      &.notes {
+        background: #dbeafe;
+        color: #2563eb;
+      }
+
+      &.tasks {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+
+      &.finance {
+        background: #fef3c7;
+        color: #d97706;
+      }
+
+      svg {
+        stroke: currentColor;
+      }
+    }
+
+    .option-text {
+      flex: 1;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .option-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .option-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

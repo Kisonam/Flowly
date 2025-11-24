@@ -13,36 +13,40 @@
     </div>
 
     <div class="header-actions">
-      <!-- View Mode Toggles -->
-      <button type="button" class="btn-secondary" [class.active]="isPreviewMode && !isSplitView"
-        [attr.aria-label]="'NOTES.EDITOR.PREVIEW_MODE' | translate" (click)="togglePreview()"
-        [title]="'NOTES.EDITOR.PREVIEW_MODE' | translate">
-        👁️ {{ 'NOTES.EDITOR.PREVIEW_MODE' | translate }}
-      </button>
-      <button type="button" class="btn-secondary" [class.active]="isSplitView"
-        [attr.aria-label]="'NOTES.EDITOR.SPLIT_MODE' | translate" (click)="toggleSplitView()"
-        [title]="'NOTES.EDITOR.SPLIT_MODE' | translate">
-        ↔️ {{ 'NOTES.EDITOR.SPLIT_MODE' | translate }}
-      </button>
-      <button type="button" class="btn-secondary" [class.active]="!isPreviewMode && !isSplitView"
-        [attr.aria-label]="'NOTES.EDITOR.EDITOR_MODE' | translate" (click)="isPreviewMode = false; isSplitView = false"
-        [title]="'NOTES.EDITOR.EDITOR_MODE' | translate">
-        ✍️ {{ 'NOTES.EDITOR.EDITOR_MODE' | translate }}
-      </button>
-
-      <!-- Save Status -->
-      <div class="save-status" *ngIf="lastSavedTime" role="status" aria-live="polite">
-        ✅ <span class="save-time">{{ 'NOTES.EDITOR.SAVED' | translate }} {{ lastSavedTime | date: 'short' }}</span>
+      <!-- First Row: Save Actions -->
+      <div class="actions-row actions-primary">
+        <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSaving">
+          {{ 'NOTES.EDITOR.CANCEL' | translate }}
+        </button>
+        <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="noteForm.invalid || isSaving">
+          <span *ngIf="!isSaving">{{ (isEditMode ? 'NOTES.EDITOR.UPDATE' : 'NOTES.EDITOR.CREATE') | translate }}</span>
+          <span *ngIf="isSaving">⏳ {{ 'NOTES.EDITOR.SAVING' | translate }}</span>
+        </button>
       </div>
 
-      <!-- Actions -->
-      <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSaving">
-        {{ 'NOTES.EDITOR.CANCEL' | translate }}
-      </button>
-      <button type="button" class="btn-primary" (click)="onSubmit()" [disabled]="noteForm.invalid || isSaving">
-        <span *ngIf="!isSaving">{{ (isEditMode ? 'NOTES.EDITOR.UPDATE' : 'NOTES.EDITOR.CREATE') | translate }}</span>
-        <span *ngIf="isSaving">⏳ {{ 'NOTES.EDITOR.SAVING' | translate }}</span>
-      </button>
+      <!-- Second Row: View Mode Toggles -->
+      <div class="actions-row actions-secondary">
+        <button type="button" class="btn-secondary" [class.active]="isPreviewMode && !isSplitView"
+          [attr.aria-label]="'NOTES.EDITOR.PREVIEW_MODE' | translate" (click)="togglePreview()"
+          [title]="'NOTES.EDITOR.PREVIEW_MODE' | translate">
+          {{ 'NOTES.EDITOR.PREVIEW_MODE' | translate }}
+        </button>
+        <button type="button" class="btn-secondary" [class.active]="isSplitView"
+          [attr.aria-label]="'NOTES.EDITOR.SPLIT_MODE' | translate" (click)="toggleSplitView()"
+          [title]="'NOTES.EDITOR.SPLIT_MODE' | translate">
+          {{ 'NOTES.EDITOR.SPLIT_MODE' | translate }}
+        </button>
+        <button type="button" class="btn-secondary" [class.active]="!isPreviewMode && !isSplitView"
+          [attr.aria-label]="'NOTES.EDITOR.EDITOR_MODE' | translate" (click)="isPreviewMode = false; isSplitView = false"
+          [title]="'NOTES.EDITOR.EDITOR_MODE' | translate">
+          {{ 'NOTES.EDITOR.EDITOR_MODE' | translate }}
+        </button>
+
+        <!-- Save Status -->
+        <div class="save-status" *ngIf="lastSavedTime" role="status" aria-live="polite">
+          ✅ <span class="save-time">{{ 'NOTES.EDITOR.SAVED' | translate }} {{ lastSavedTime | date: 'short' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 

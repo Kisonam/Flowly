@@ -44,7 +44,7 @@
             <p class="card-preview">{{ getPreview(note.markdown) }}</p>
             <div class="card-tags">
               <span *ngFor="let tag of note.tags.slice(0, 2)" class="tag-badge"
-                [style.--tag-color]="tag.color || '#6b7280'">
+                [style.--tag-color]="getTagColor(tag)">
                 {{ tag.name }}
               </span>
               <span class="tag-badge more" *ngIf="note.tags.length > 2">
@@ -60,7 +60,7 @@
 
       <!-- Group columns -->
       <div *ngFor="let group of groups" class="column" cdkDrag>
-        <div class="column-header" [style.border-color]="group.color">
+        <div class="column-header" [style.border-color]="getGroupColor(group)">
           <div class="column-left">
             <span class="drag-handle">⋮⋮</span>
             <h3 class="column-title">{{ group.title }}</h3>
@@ -85,7 +85,7 @@
             <p class="card-preview">{{ getPreview(note.markdown) }}</p>
             <div class="card-tags">
               <span *ngFor="let tag of note.tags.slice(0, 2)" class="tag-badge"
-                [style.--tag-color]="tag.color || '#6b7280'">
+                [style.--tag-color]="getTagColor(tag)">
                 {{ tag.name }}
               </span>
               <span class="tag-badge more" *ngIf="note.tags.length > 2">
@@ -110,7 +110,7 @@
       <h2 id="group-modal-title">{{ (editingGroup ? 'NOTES.BOARD.MODAL.TITLE_EDIT' : 'NOTES.BOARD.MODAL.TITLE_NEW') |
         translate }}</h2>
       <button class="btn-close" aria-label="Close dialog" (click)="closeGroupModal()">
-        <i class="bi bi-x" aria-hidden="true"></i>
+        ✖
       </button>
     </div>
     <div class="modal-body">
@@ -123,7 +123,7 @@
         <label>{{ 'NOTES.BOARD.MODAL.LABEL_COLOR' | translate }}</label>
         <div class="color-picker" role="group" aria-label="Group color selection">
           <button *ngFor="let color of predefinedColors" type="button" class="color-btn"
-            [class.selected]="groupForm.color === color" [style.background-color]="color"
+            [class.selected]="groupForm.color === color" [style.background-color]="getButtonColor(color)"
             [attr.aria-label]="'Select color ' + color" [attr.aria-pressed]="groupForm.color === color"
             (click)="groupForm.color = color"></button>
         </div>

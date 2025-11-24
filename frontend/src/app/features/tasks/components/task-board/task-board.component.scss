@@ -3,6 +3,10 @@
   padding: var(--spacing-xl);
   max-width: 1600px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-md);
+  }
 }
 
 .module-header {
@@ -10,17 +14,38 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .module-header h2 {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--text-primary);
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 }
 
 .module-actions {
   display: flex;
   gap: var(--spacing-sm);
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    width: 100%;
+
+    button, a {
+      flex: 1 1 auto;
+      min-width: 0;
+      justify-content: center;
+    }
+  }
 }
 
 .btn-primary,
@@ -103,6 +128,10 @@
   gap: var(--spacing-lg);
   overflow-x: auto;
   padding-bottom: var(--spacing-md);
+
+  @media (max-width: 768px) {
+    gap: var(--spacing-md);
+  }
 }
 
 .group-column {
@@ -118,6 +147,12 @@
   gap: var(--spacing-sm);
   cursor: move;
   transition: var(--transition-base);
+
+  @media (max-width: 768px) {
+    min-width: 280px;
+    max-width: 280px;
+    padding: var(--spacing-sm);
+  }
 }
 .group-column:hover { box-shadow: var(--shadow-lg); }
 
@@ -156,6 +191,11 @@
   gap: var(--spacing-sm);
   cursor: move;
   transition: all 0.15s ease-out;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-sm);
+    min-height: 60px;
+  }
 }
 .task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .task-card.dragging {

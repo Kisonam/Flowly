@@ -220,7 +220,7 @@ export class GoalListComponent implements OnInit, OnDestroy {
   }
 
   editGoal(id: string): void {
-    this.router.navigate(['/finance/goals/edit', id]);
+    this.router.navigate(['/finance/goals', id, 'edit']);
   }
 
   archiveGoal(id: string): void {

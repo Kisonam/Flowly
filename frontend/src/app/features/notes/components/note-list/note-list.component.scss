@@ -270,16 +270,45 @@
     flex-direction: column;
 
     .note-card {
-      display: flex;
-      align-items: stretch;
-      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
       max-width: 100%;
       min-height: 100px;
       padding: 1.5rem;
-      padding-right: 200px; // Місце для кнопок
+
+      @media (max-width: 1200px) {
+        grid-template-columns: 1fr 1fr auto;
+
+        .note-content {
+          grid-column: 1 / -2;
+        }
+      }
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+
+        .note-header {
+          order: 1;
+        }
+
+        .note-content {
+          order: 2;
+          grid-column: 1;
+        }
+
+        .note-footer {
+          order: 3;
+        }
+
+        .note-actions {
+          order: 4;
+        }
+      }
 
       .note-header {
-        flex: 0 0 300px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -287,19 +316,24 @@
       }
 
       .note-content {
-        flex: 1;
         margin-bottom: 0;
         display: flex;
         align-items: center;
       }
 
       .note-footer {
-        flex: 0 0 300px;
         border-top: none;
         margin-top: 0;
         padding-top: 0;
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .note-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: auto;
       }
     }
   }

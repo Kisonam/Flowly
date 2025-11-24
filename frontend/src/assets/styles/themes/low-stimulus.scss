@@ -24,17 +24,17 @@
   --info-light: #d1d5db;
 
   // Background colors - neutral palette
-  --bg-primary: #f8f9fa;
-  --bg-secondary: #e9ecef;
-  --bg-tertiary: #dee2e6;
-  --bg-hover: #e9ecef;
-  --bg-active: #dee2e6;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-hover: #f1f3f5;
+  --bg-active: #e9ecef;
 
   // Text colors - reduced contrast
-  --text-primary: #495057;
+  --text-primary: #212529;
   --text-secondary: #6c757d;
   --text-tertiary: #adb5bd;
-  --text-inverse: #f8f9fa;
+  --text-inverse: #ffffff;
   --text-link: #5a6268;
   --text-link-hover: #495057;
 
@@ -71,11 +71,11 @@
   --spacing-xl: 2rem;
 
   // Component specific
-  --navbar-bg: #f8f9fa;
-  --navbar-border: #dee2e6;
-  --sidebar-bg: #e9ecef;
-  --card-bg: #f8f9fa;
-  --card-border: #dee2e6;
+  --navbar-bg: #ffffff;
+  --navbar-border: #e9ecef;
+  --sidebar-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --card-border: #e9ecef;
   --input-bg: #ffffff;
   --input-border: #ced4da;
   --input-focus-border: #6c757d;
@@ -88,4 +88,141 @@
 .theme-low-stimulus *::after {
   animation: none !important;
   transition: none !important;
+}
+
+// Force all buttons to be gray in low-stimulus mode
+:root.theme-low-stimulus,
+.theme-low-stimulus {
+  // Primary buttons - dark gray
+  .btn-primary,
+  button.btn-primary,
+  a.btn-primary,
+  label.btn-primary,
+  .btn.btn-primary {
+    background: #6b7280 !important;
+    background-color: #6b7280 !important;
+    color: white !important;
+    border-color: #6b7280 !important;
+    box-shadow: none !important;
+
+    &:hover:not(:disabled):not(.disabled) {
+      background: #4b5563 !important;
+      background-color: #4b5563 !important;
+      border-color: #4b5563 !important;
+    }
+
+    &:disabled,
+    &.disabled {
+      background: #9ca3af !important;
+      background-color: #9ca3af !important;
+      border-color: #9ca3af !important;
+      opacity: 0.6;
+    }
+
+    &.active {
+      background: #374151 !important;
+      background-color: #374151 !important;
+      border-color: #374151 !important;
+    }
+  }
+
+  // Danger buttons - same gray
+  .btn-danger,
+  button.btn-danger,
+  a.btn-danger,
+  .btn.btn-danger {
+    background: #6b7280 !important;
+    background-color: #6b7280 !important;
+    color: white !important;
+    border-color: #6b7280 !important;
+    box-shadow: none !important;
+
+    &:hover:not(:disabled):not(.disabled) {
+      background: #4b5563 !important;
+      background-color: #4b5563 !important;
+      border-color: #4b5563 !important;
+    }
+  }
+
+  // Success, Warning, Info - same gray
+  .btn-success,
+  button.btn-success,
+  .btn-warning,
+  button.btn-warning,
+  .btn-info,
+  button.btn-info {
+    background: #6b7280 !important;
+    background-color: #6b7280 !important;
+    color: white !important;
+    border-color: #6b7280 !important;
+    box-shadow: none !important;
+
+    &:hover:not(:disabled) {
+      background: #4b5563 !important;
+      background-color: #4b5563 !important;
+      border-color: #4b5563 !important;
+    }
+  }
+
+  // Secondary buttons - lighter gray
+  .btn-secondary,
+  button.btn-secondary,
+  a.btn-secondary,
+  .btn.btn-secondary {
+    background: #9ca3af !important;
+    color: #1f2937 !important;
+    border-color: #9ca3af !important;
+
+    &:hover:not(:disabled) {
+      background: #6b7280 !important;
+      color: white !important;
+      border-color: #6b7280 !important;
+    }
+
+    &.active {
+      background: #6b7280 !important;
+      color: white !important;
+      border-color: #6b7280 !important;
+    }
+  }
+
+  // Custom buttons (excluding navbar icon buttons)
+  .btn-back,
+  .btn-upload,
+  .btn-create-tag,
+  .color-btn,
+  .color-option {
+    background: #9ca3af !important;
+    color: #1f2937 !important;
+    border-color: #9ca3af !important;
+
+    &:hover {
+      background: #6b7280 !important;
+      color: white !important;
+      border-color: #6b7280 !important;
+    }
+
+    &.selected,
+    &.active {
+      background: #6b7280 !important;
+      color: white !important;
+      border-color: #6b7280 !important;
+    }
+  }
+
+  // Ensure all backgrounds are gray (except navbar icon buttons)
+  .btn,
+  button,
+  [class*="btn-"] {
+    &:not(.btn-link):not(.btn-text):not(.icon-btn):not(.tab):not(.user-avatar):not(.bottom-nav-item):not(.fab-create) {
+      background: #9ca3af !important;
+      color: #1f2937 !important;
+      border-color: #9ca3af !important;
+
+      &:hover:not(:disabled) {
+        background: #6b7280 !important;
+        color: white !important;
+      }
+    }
+  }
 }

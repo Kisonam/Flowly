@@ -51,74 +51,49 @@
     <p>{{ 'ARCHIVE.EMPTY.DESC' | translate }}</p>
   </div>
 
-  <!-- Archive Table -->
-  <div *ngIf="!loading && !errorMessage && archivedItems.length > 0" class="archive-table-container">
+  <!-- Archive Cards -->
+  <div *ngIf="!loading && !errorMessage && archivedItems.length > 0" class="archive-cards-container">
     <div class="results-info">
       <span>{{ 'ARCHIVE.RESULTS_INFO' | translate: { count: totalCount, suffix: (totalCount === 1 ? 'element' :
         'elements') } }}</span>
     </div>
 
-    <table class="archive-table">
-      <thead>
-        <tr>
-          <th class="col-type">{{ 'ARCHIVE.TABLE.TYPE' | translate }}</th>
-          <th class="col-title">{{ 'ARCHIVE.TABLE.TITLE' | translate }}</th>
-          <th class="col-metadata">{{ 'ARCHIVE.TABLE.DETAILS' | translate }}</th>
-          <th class="col-date">{{ 'ARCHIVE.TABLE.ARCHIVED_AT' | translate }}</th>
-          <th class="col-actions">{{ 'ARCHIVE.TABLE.ACTIONS' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of archivedItems" class="archive-row" (click)="viewDetails(item)">
-          <!-- Type -->
-          <td class="col-type">
-            <div class="entity-type-badge" [attr.data-type]="item.entityType">
-              <i class="bi" [ngClass]="getEntityTypeIcon(item.entityType)"></i>
-              <span>{{ 'ARCHIVE.FILTERS.TYPES.' + getEntityTypeKey(item.entityType) | translate }}</span>
-            </div>
-          </td>
+    <div class="archive-cards">
+      <div *ngFor="let item of archivedItems" class="archive-card" (click)="viewDetails(item)">
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="entity-type-badge" [attr.data-type]="item.entityType">
+            <i class="bi" [ngClass]="getEntityTypeIcon(item.entityType)"></i>
+            <span>{{ 'ARCHIVE.FILTERS.TYPES.' + getEntityTypeKey(item.entityType) | translate }}</span>
+          </div>
+          <span class="archived-date">{{ formatDate(item.archivedAt) }}</span>
+        </div>
 
-          <!-- Title -->
-          <td class="col-title">
-            <div class="item-title">
-              <strong>{{ item.title }}</strong>
-              <small *ngIf="item.description" class="item-description">
-                {{ item.description }}
-              </small>
-            </div>
-          </td>
+        <!-- Card Body -->
+        <div class="card-body">
+          <h3 class="item-title">{{ item.title }}</h3>
+          <p *ngIf="item.description" class="item-description">{{ item.description }}</p>
+          <div *ngIf="getMetadataDisplay(item)" class="item-metadata">
+            <i class="bi bi-info-circle"></i>
+            <span>{{ getMetadataDisplay(item) }}</span>
+          </div>
+        </div>
 
-          <!-- Metadata -->
-          <td class="col-metadata">
-            <span class="metadata-text" *ngIf="getMetadataDisplay(item)">
-              {{ getMetadataDisplay(item) }}
-            </span>
-            <span class="metadata-empty" *ngIf="!getMetadataDisplay(item)">—</span>
-          </td>
-
-          <!-- Date -->
-          <td class="col-date">
-            <span class="archived-date">{{ formatDate(item.archivedAt) }}</span>
-          </td>
-
-          <!-- Actions -->
-          <td class="col-actions" (click)="$event.stopPropagation()">
-            <div class="action-buttons">
-              <button class="btn btn-sm btn-restore" (click)="$event.stopPropagation(); restore(item)"
-                [title]="'ARCHIVE.ACTIONS.RESTORE' | translate">
-                <i class="bi bi-arrow-counterclockwise"></i>
-                {{ 'ARCHIVE.ACTIONS.RESTORE' | translate }}
-              </button>
-              <button class="btn btn-sm btn-delete" (click)="$event.stopPropagation(); permanentDelete(item)"
-                [title]="'ARCHIVE.ACTIONS.DELETE' | translate">
-                <i class="bi bi-trash"></i>
-                {{ 'ARCHIVE.ACTIONS.DELETE' | translate }}
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <!-- Card Footer -->
+        <div class="card-footer" (click)="$event.stopPropagation()">
+          <button class="btn btn-sm btn-restore" (click)="$event.stopPropagation(); restore(item)"
+            [title]="'ARCHIVE.ACTIONS.RESTORE' | translate">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            {{ 'ARCHIVE.ACTIONS.RESTORE' | translate }}
+          </button>
+          <button class="btn btn-sm btn-delete" (click)="$event.stopPropagation(); permanentDelete(item)"
+            [title]="'ARCHIVE.ACTIONS.DELETE' | translate">
+            <i class="bi bi-trash"></i>
+            {{ 'ARCHIVE.ACTIONS.DELETE' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Pagination -->
     <div class="pagination" *ngIf="totalPages > 1">

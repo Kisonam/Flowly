@@ -37,7 +37,18 @@
         "FINANCE": "Фінанси",
         "ARCHIVE": "Архів",
         "SETTINGS": "Налаштування",
-        "LANGUAGE_SELECT": "Вибрати мову"
+        "LANGUAGE_SELECT": "Вибрати мову",
+        "THEME_TOGGLE": "Перемкнути тему",
+        "USER_MENU": "Меню користувача"
+    },
+    "MOBILE_NAV": {
+        "CREATE_NEW": "Створити",
+        "NEW_NOTE": "Нова нотатка",
+        "NEW_NOTE_DESC": "Створити нову нотатку",
+        "NEW_TASK": "Нове завдання",
+        "NEW_TASK_DESC": "Додати нове завдання",
+        "NEW_TRANSACTION": "Нова транзакція",
+        "NEW_TRANSACTION_DESC": "Записати транзакцію"
     },
     "DASHBOARD": {
         "TITLE": "Огляд",
@@ -167,8 +178,12 @@
                 "CREATED": "Створено:",
                 "EMPTY_TITLE": "Транзакцій не знайдено",
                 "EMPTY_SUBTITLE": "Спробуйте змінити фільтри або створіть нову транзакцію",
-                "ADD_BUTTON": "Додати транзакцію"
+                "ADD_BUTTON": "Додати транзакцію",
+                "EDIT": "Редагувати",
+                "ARCHIVE": "Архівувати",
+                "RESTORE": "Відновити"
             },
+            "ARCHIVE_CONFIRM": "Ви впевнені, що хочете архівувати транзакцію \"{{title}}\"?",
             "PAGINATION": {
                 "PREVIOUS": "Назад",
                 "NEXT": "Далі",

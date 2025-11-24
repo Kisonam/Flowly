@@ -10,6 +10,7 @@ import { Note } from '../../models/note.models';
 import { NoteGroup } from '../../models/note-group.models';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-notes-board',
@@ -21,6 +22,7 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
   private notesService = inject(NotesService);
   private groupsService = inject(NoteGroupsService);
   private translate = inject(TranslateService);
+  private themeService = inject(ThemeService);
   router = inject(Router);
   private destroy$ = new Subject<void>();
 
@@ -42,6 +44,14 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadBoard();
+
+    // Subscribe to theme changes
+    this.themeService.currentTheme$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Trigger change detection
+        this.groups = [...this.groups];
+      });
   }
 
   ngOnDestroy(): void {
@@ -270,6 +280,30 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       return text.substring(0, maxLength) + '...';
     }
     return text;
+  }
+
+  getTagColor(tag: { color?: string | null }): string {
+    // In low-stimulus mode, use gray colors
+    if (this.themeService.getCurrentTheme() === 'low-stimulus') {
+      return '#6b7280';
+    }
+    return tag.color || '#6b7280';
+  }
+
+  getGroupColor(group: { color?: string | null }): string {
+    // In low-stimulus mode, use gray colors
+    if (this.themeService.getCurrentTheme() === 'low-stimulus') {
+      return '#6b7280';
+    }
+    return group.color || '#8b5cf6';
+  }
+
+  getButtonColor(color: string): string {
+    // In low-stimulus mode, all color buttons should be gray
+    if (this.themeService.getCurrentTheme() === 'low-stimulus') {
+      return '#6b7280';
+    }
+    return color;
   }
 
   /**

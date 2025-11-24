@@ -6,6 +6,7 @@ import { Tag } from '../../../features/notes/models/note.models';
 import { TagsService, CreateTagRequest, UpdateTagRequest } from '../../services/tags.service';
 import { Subject, takeUntil } from 'rxjs';
 import { FocusTrapDirective } from '../../directives/focus-trap.directive';
+import { ThemeService } from '../../../core/services/theme.service';
 
 /**
  * Tag Manager Component
@@ -23,6 +24,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
 export class TagManagerComponent implements OnInit {
   private tagsService = inject(TagsService);
   private translate = inject(TranslateService);
+  private themeService = inject(ThemeService);
   private destroy$ = new Subject<void>();
 
   @Input() title = 'Tags';
@@ -69,6 +71,14 @@ export class TagManagerComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTags();
+
+    // Subscribe to theme changes
+    this.themeService.currentTheme$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Trigger change detection by updating tags signal
+        this.tags.set([...this.tags()]);
+      });
   }
 
   ngOnDestroy(): void {
@@ -240,6 +250,22 @@ export class TagManagerComponent implements OnInit {
     } else {
       this.editFormData.color = color;
     }
+  }
+
+  getTagColor(tag: Tag): string {
+    // In low-stimulus mode, use gray colors
+    if (this.themeService.getCurrentTheme() === 'low-stimulus') {
+      return '#6b7280';
+    }
+    return tag.color || '#6b7280';
+  }
+
+  getButtonColor(color: string): string {
+    // In low-stimulus mode, all color buttons should be gray
+    if (this.themeService.getCurrentTheme() === 'low-stimulus') {
+      return '#6b7280';
+    }
+    return color;
   }
 
   /**

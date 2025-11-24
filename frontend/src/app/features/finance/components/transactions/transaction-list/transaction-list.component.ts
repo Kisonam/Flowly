@@ -88,6 +88,14 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     this.loadAuxData();
     this.setupFilterListeners();
     this.fetchTransactions();
+
+    // Subscribe to theme changes to update colors
+    this.themeService.currentTheme$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Trigger change detection by reassigning transactions array
+        this.transactions = [...this.transactions];
+      });
   }
 
   ngOnDestroy(): void {
@@ -284,6 +292,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/finance/transactions', transaction.id]);
   }
 
+  editTransaction(transaction: Transaction): void {
+    this.router.navigate(['/finance/transactions', transaction.id, 'edit']);
+  }
+
   archiveTransaction(transaction: Transaction): void {
     this.dialogService.confirmTranslated('FINANCE.TRANSACTIONS.ARCHIVE_CONFIRM', { title: transaction.title })
       .pipe(takeUntil(this.destroy$))
@@ -345,13 +357,21 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   }
 
   getTagColor(tag: { color?: string | null }): string {
+    // In low-stimulus mode, use gray colors
+    if (this.themeService.getCurrentTheme() === 'low-stimulus') {
+      return '#6b7280'; // Gray for low-stimulus
+    }
     if (tag.color) return tag.color;
     return this.themeService.getCssVarValue('--primary', '#8b5cf6');
   }
 
   getCategoryColor(category: { color?: string | null }): string {
+    // In low-stimulus mode, use gray colors
+    if (this.themeService.getCurrentTheme() === 'low-stimulus') {
+      return '#6b7280'; // Gray for low-stimulus
+    }
     if (category.color) return category.color;
-    return this.themeService.getCssVarValue('--bg-secondary', '#e5e7eb');
+    return '#6366f1'; // Purple fallback for categories without color
   }
 
   formatAmount(amount: number, currencyCode: string): string {

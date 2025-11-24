@@ -36,7 +36,19 @@
         "TASKS": "Zadania",
         "FINANCE": "Finanse",
         "ARCHIVE": "Archiwum",
-        "SETTINGS": "Ustawienia"
+        "SETTINGS": "Ustawienia",
+        "LANGUAGE_SELECT": "Wybierz język",
+        "THEME_TOGGLE": "Przełącz motyw",
+        "USER_MENU": "Menu użytkownika"
+    },
+    "MOBILE_NAV": {
+        "CREATE_NEW": "Utwórz",
+        "NEW_NOTE": "Nowa notatka",
+        "NEW_NOTE_DESC": "Utwórz nową notatkę",
+        "NEW_TASK": "Nowe zadanie",
+        "NEW_TASK_DESC": "Dodaj nowe zadanie",
+        "NEW_TRANSACTION": "Nowa transakcja",
+        "NEW_TRANSACTION_DESC": "Zapisz transakcję"
     },
     "DASHBOARD": {
         "TITLE": "Przegląd",
@@ -166,8 +178,12 @@
                 "CREATED": "Utworzono:",
                 "EMPTY_TITLE": "Nie znaleziono transakcji",
                 "EMPTY_SUBTITLE": "Spróbuj zmienić filtry lub utwórz nową transakcję",
-                "ADD_BUTTON": "Dodaj transakcję"
+                "ADD_BUTTON": "Dodaj transakcję",
+                "EDIT": "Edytuj",
+                "ARCHIVE": "Archiwizuj",
+                "RESTORE": "Przywróć"
             },
+            "ARCHIVE_CONFIRM": "Czy na pewno chcesz zarchiwizować transakcję \"{{title}}\"?",
             "PAGINATION": {
                 "PREVIOUS": "Poprzednia",
                 "NEXT": "Następna",

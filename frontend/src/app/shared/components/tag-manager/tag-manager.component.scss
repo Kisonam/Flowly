@@ -127,8 +127,12 @@
 
   &.selected {
     background: var(--tag-color);
-    color: white;
+    color: white !important;
     border-color: var(--tag-color);
+
+    i {
+      color: white !important;
+    }
   }
 }
 

@@ -37,6 +37,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
   showUserMenu = false;
   showLanguageMenu = false;
+  showCreateMenu = false;
   currentLanguage: Language = 'en';
   currentTheme: ThemeMode = 'normal';
 
@@ -88,8 +89,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private updateActiveModuleFromRoute(url: string): void {
+    // Sort modules by route length (longest first) to match most specific routes first
+    const sortedModules = [...this.modules].sort((a, b) => b.route.length - a.route.length);
+
     // Find which module matches the current URL
-    for (const module of this.modules) {
+    for (const module of sortedModules) {
       if (url.startsWith(module.route)) {
         this.activeModule = module.id;
         this.moduleChange.emit(module.id);
@@ -180,5 +184,38 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.showLanguageMenu) {
       this.closeLanguageMenu();
     }
+    if (this.showCreateMenu) {
+      this.closeCreateMenu();
+    }
+  }
+
+  /**
+   * Mobile create menu methods
+   */
+  toggleCreateMenu(): void {
+    this.showCreateMenu = !this.showCreateMenu;
+    if (this.showCreateMenu) {
+      this.showUserMenu = false;
+      this.showLanguageMenu = false;
+    }
+  }
+
+  closeCreateMenu(): void {
+    this.showCreateMenu = false;
+  }
+
+  createNote(): void {
+    this.closeCreateMenu();
+    this.router.navigate(['/notes/new']);
+  }
+
+  createTask(): void {
+    this.closeCreateMenu();
+    this.router.navigate(['/tasks/new']);
+  }
+
+  createTransaction(): void {
+    this.closeCreateMenu();
+    this.router.navigate(['/finance/transactions/new']);
   }
 }

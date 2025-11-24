@@ -198,12 +198,15 @@
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
 .category-section {
+  min-width: 0;
+
   h5 {
     font-size: 0.9375rem;
     font-weight: 600;
@@ -225,15 +228,22 @@
     align-items: center;
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
+    gap: 0.5rem;
 
     span:first-child {
       font-weight: 500;
       color: #374151;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
     }
 
     .amount {
       font-weight: 600;
       color: #111827;
+      flex-shrink: 0;
     }
   }
 }

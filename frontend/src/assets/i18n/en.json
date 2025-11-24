@@ -40,7 +40,18 @@
         "FINANCE": "Finance",
         "ARCHIVE": "Archive",
         "SETTINGS": "Settings",
-        "LANGUAGE_SELECT": "Select Language"
+        "LANGUAGE_SELECT": "Select Language",
+        "THEME_TOGGLE": "Toggle Theme",
+        "USER_MENU": "User menu"
+    },
+    "MOBILE_NAV": {
+        "CREATE_NEW": "Create New",
+        "NEW_NOTE": "New Note",
+        "NEW_NOTE_DESC": "Create a new note",
+        "NEW_TASK": "New Task",
+        "NEW_TASK_DESC": "Add a new task",
+        "NEW_TRANSACTION": "New Transaction",
+        "NEW_TRANSACTION_DESC": "Record a transaction"
     },
     "DASHBOARD": {
         "TITLE": "Overview",
@@ -170,8 +181,12 @@
                 "CREATED": "Created:",
                 "EMPTY_TITLE": "No transactions found",
                 "EMPTY_SUBTITLE": "Try adjusting your filters or create a new transaction",
-                "ADD_BUTTON": "Add Transaction"
+                "ADD_BUTTON": "Add Transaction",
+                "EDIT": "Edit",
+                "ARCHIVE": "Archive",
+                "RESTORE": "Restore"
             },
+            "ARCHIVE_CONFIRM": "Are you sure you want to archive transaction \"{{title}}\"?",
             "PAGINATION": {
                 "PREVIOUS": "Previous",
                 "NEXT": "Next",

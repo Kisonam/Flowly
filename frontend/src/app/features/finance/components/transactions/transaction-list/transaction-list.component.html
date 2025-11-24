@@ -144,8 +144,10 @@
       <label>{{ 'FINANCE.TRANSACTIONS.FILTERS.TAGS_LABEL' | translate }}</label>
       <div class="tags-list">
         <span *ngFor="let tag of tags" class="tag-chip" [class.selected]="isTagSelected(tag.id)"
-          [style.background]="isTagSelected(tag.id) ? getTagColor(tag) : getCategoryColor({})"
-          [style.color]="isTagSelected(tag.id) ? 'white' : '#374151'" (click)="toggleTag(tag.id)">
+          [style.background]="getTagColor(tag)"
+          [style.color]="'white'"
+          [style.opacity]="isTagSelected(tag.id) ? '1' : '0.6'"
+          (click)="toggleTag(tag.id)">
           {{ tag.name }}
         </span>
       </div>
@@ -181,8 +183,8 @@
     <button class="btn btn-primary" (click)="fetchTransactions()">Retry</button>
   </div>
 
-  <!-- Transactions Table -->
-  <div *ngIf="!loading && !errorMessage" class="transactions-table">
+  <!-- Transactions Table (Desktop) -->
+  <div *ngIf="!loading && !errorMessage" class="transactions-table desktop-only">
     <table>
       <thead>
         <tr>
@@ -218,7 +220,9 @@
           <!-- Category -->
           <td class="category-cell">
             <div class="category-container">
-              <span class="category-badge" *ngIf="tx.category" [style.background]="getCategoryColor(tx.category)">
+              <span class="category-badge" *ngIf="tx.category"
+                [style.background]="getCategoryColor(tx.category) || '#6366f1'"
+                [style.color]="'white'">
                 <span *ngIf="tx.category.icon">{{ tx.category.icon }}</span>
                 {{ tx.category.name }}
               </span>
@@ -298,6 +302,84 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Transactions Cards (Mobile) -->
+  <div *ngIf="!loading && !errorMessage" class="transactions-cards mobile-only">
+    <div *ngFor="let tx of transactions" class="transaction-card" [class.archived]="tx.isArchived"
+      (click)="viewTransaction(tx)">
+
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="type-badge" [style.background]="getTransactionColor(tx.type)">
+          <span class="type-icon">{{ getTransactionIcon(tx.type) }}</span>
+          <span>{{ 'FINANCE.DASHBOARD.' + (tx.type | uppercase) | translate }}</span>
+        </div>
+        <div class="amount" [style.color]="getTransactionColor(tx.type)">
+          <strong>{{ formatAmount(tx.amount, tx.currencyCode) }}</strong>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <h3 class="transaction-title">{{ tx.title }}</h3>
+        <p *ngIf="tx.description" class="transaction-description">{{ tx.description }}</p>
+
+        <!-- Category & Badges -->
+        <div class="badges-row">
+          <span class="category-badge" *ngIf="tx.category"
+            [style.background]="getCategoryColor(tx.category) || '#6366f1'"
+            [style.color]="'white'">
+            <span *ngIf="tx.category.icon">{{ tx.category.icon }}</span>
+            {{ tx.category.name }}
+          </span>
+          <span class="category-badge uncategorized" *ngIf="!tx.category">
+            {{ 'FINANCE.TRANSACTIONS.TABLE.UNCATEGORIZED' | translate }}
+          </span>
+          <span class="linked-badge" *ngIf="tx.budget">💼 {{ tx.budget.title }}</span>
+          <span class="linked-badge" *ngIf="tx.goal">🎯 {{ tx.goal.title }}</span>
+        </div>
+
+        <!-- Tags -->
+        <div class="tags-row" *ngIf="tx.tags && tx.tags.length > 0">
+          <span *ngFor="let tag of tx.tags" class="tag-chip" [style.background]="getTagColor(tag)">
+            {{ tag.name }}
+          </span>
+        </div>
+
+        <!-- Date Info -->
+        <div class="date-row">
+          <span class="date-label">📅 {{ formatDate(tx.date) }}</span>
+          <span class="created-label">{{ 'FINANCE.TRANSACTIONS.TABLE.CREATED' | translate }} {{ formatDate(tx.createdAt) }}</span>
+        </div>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="card-footer" (click)="$event.stopPropagation()">
+        <button class="btn-icon-small" (click)="editTransaction(tx)"
+          [title]="'FINANCE.TRANSACTIONS.TABLE.EDIT' | translate">
+          ✏️
+        </button>
+        <button *ngIf="!tx.isArchived" class="btn-icon-small" (click)="archiveTransaction(tx)"
+          [title]="'FINANCE.TRANSACTIONS.TABLE.ARCHIVE' | translate">
+          📦
+        </button>
+        <button *ngIf="tx.isArchived" class="btn-icon-small" (click)="restoreTransaction(tx)"
+          [title]="'FINANCE.TRANSACTIONS.TABLE.RESTORE' | translate">
+          ↩️
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="empty" class="empty-state">
+      <div class="empty-icon">💸</div>
+      <h3>{{ 'FINANCE.TRANSACTIONS.TABLE.EMPTY_TITLE' | translate }}</h3>
+      <p>{{ 'FINANCE.TRANSACTIONS.TABLE.EMPTY_SUBTITLE' | translate }}</p>
+      <button class="btn btn-primary" routerLink="/finance/transactions/new">
+        {{ 'FINANCE.TRANSACTIONS.TABLE.ADD_BUTTON' | translate }}
+      </button>
+    </div>
   </div>
 
   <!-- Pagination -->

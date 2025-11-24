@@ -23,7 +23,7 @@
     <div class="tags-list" *ngIf="tags().length > 0">
       <div *ngFor="let tag of tags()" class="tag-item">
         <button type="button" class="tag-chip" [class.selected]="isSelected(tag.id)"
-          [style.--tag-color]="tag.color || '#6b7280'" (click)="toggleTag(tag.id)">
+          [style.--tag-color]="getTagColor(tag)" (click)="toggleTag(tag.id)">
           <i class="bi" [class.bi-check-square-fill]="isSelected(tag.id)" [class.bi-square]="!isSelected(tag.id)"></i>
           <span class="tag-name">{{ tag.name }}</span>
         </button>
@@ -58,7 +58,7 @@
           <label>Color</label>
           <div class="color-palette">
             <button *ngFor="let color of predefinedColors" type="button" class="color-option"
-              [class.selected]="createFormData.color === color" [style.background]="color"
+              [class.selected]="createFormData.color === color" [style.background]="getButtonColor(color)"
               (click)="selectColor(color, true)" [title]="color">
             </button>
           </div>
@@ -111,7 +111,7 @@
           <label>Color</label>
           <div class="color-palette" role="group" aria-label="Predefined colors">
             <button *ngFor="let color of predefinedColors" type="button" class="color-option"
-              [class.selected]="editFormData.color === color" [style.background]="color"
+              [class.selected]="editFormData.color === color" [style.background]="getButtonColor(color)"
               [attr.aria-label]="'Select color ' + color" [attr.aria-pressed]="editFormData.color === color"
               (click)="selectColor(color, false)" [title]="color">
             </button>
