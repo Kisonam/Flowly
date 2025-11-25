@@ -12,8 +12,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.getAccessToken();
 
   // Clone request and add Authorization header if token exists
+  // Skip auth header only for login, register, refresh, and google endpoints
+  const skipAuthUrls = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/google'];
+  const shouldAddAuth = token && !skipAuthUrls.some(url => req.url.includes(url));
+
   let authReq = req;
-  if (token && !req.url.includes('/auth/')) {
+  if (shouldAddAuth) {
     authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

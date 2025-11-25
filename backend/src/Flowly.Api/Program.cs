@@ -1,5 +1,6 @@
 using Flowly.Api.Configuration;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +71,21 @@ if (!app.Environment.IsProduction())
 {
     // app.UseHttpsRedirection(); // Disabled for Docker compatibility
 }
+
+// Serve static files from wwwroot
 app.UseStaticFiles();
+
+// Serve uploaded files from /app/uploads through /uploads URL
+var uploadsPath = builder.Configuration["FileStorage:Path"] ?? "/app/uploads";
+if (Directory.Exists(uploadsPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(uploadsPath),
+        RequestPath = "/uploads"
+    });
+}
+
 app.UseCorsConfiguration(app.Environment);
 app.UseAuthentication();
 app.UseAuthorization();

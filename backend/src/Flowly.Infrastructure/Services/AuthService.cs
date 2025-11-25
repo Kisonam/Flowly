@@ -10,6 +10,7 @@ using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace Flowly.Infrastructure.Services;
 
@@ -18,7 +19,8 @@ public class AuthService(UserManager<ApplicationUser> userManager,
                         IJwtService jwtService,
                         AppDbContext dbContext,
                         IOptions<JwtSettings> jwtSettings,
-                        IOptions<GoogleSettings> googleSettings) : IAuthService
+                        IOptions<GoogleSettings> googleSettings,
+                        IConfiguration configuration) : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
@@ -26,6 +28,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
     private readonly AppDbContext _dbContext = dbContext;
     private readonly JwtSettings _jwtSettings = jwtSettings.Value;
     private readonly GoogleSettings _googleSettings = googleSettings.Value;
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto, string? ipAddress = null)
     {
@@ -331,16 +334,18 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         // Generate unique filename
         var extension = Path.GetExtension(fileName);
         var uniqueFileName = $"{userId}_avatar_{Guid.NewGuid()}{extension}";
-        var uploadPath = Path.Combine("uploads", "avatars", userId.ToString());
-        var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", uploadPath);
+        
+        // Use /app/uploads directory (configured in docker-compose)
+        var uploadsBasePath = _configuration["FileStorage:Path"] ?? "/app/uploads";
+        var uploadPath = Path.Combine(uploadsBasePath, "avatars", userId.ToString());
 
         // Create directory if not exists
-        Directory.CreateDirectory(fullPath);
+        Directory.CreateDirectory(uploadPath);
 
         // Delete old avatar if exists
         if (!string.IsNullOrEmpty(user.AvatarPath))
         {
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.AvatarPath.TrimStart('/'));
+            var oldPath = Path.Combine(uploadsBasePath, user.AvatarPath.TrimStart('/').Replace("uploads/", ""));
             if (File.Exists(oldPath))
             {
                 File.Delete(oldPath);
@@ -348,7 +353,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         }
 
         // Save file
-        var filePath = Path.Combine(fullPath, uniqueFileName);
+        var filePath = Path.Combine(uploadPath, uniqueFileName);
         using (var fileStreamOutput = new FileStream(filePath, FileMode.Create))
         {
             await fileStream.CopyToAsync(fileStreamOutput);

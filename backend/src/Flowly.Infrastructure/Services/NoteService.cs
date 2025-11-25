@@ -5,6 +5,7 @@ using Flowly.Domain.Entities;
 using Flowly.Domain.Enums;
 using Flowly.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Flowly.Infrastructure.Services;
 
@@ -12,11 +13,13 @@ public class NoteService : INoteService
 {
     private readonly AppDbContext _dbContext;
     private readonly IArchiveService _archiveService;
+    private readonly IConfiguration _configuration;
 
-    public NoteService(AppDbContext dbContext, IArchiveService archiveService)
+    public NoteService(AppDbContext dbContext, IArchiveService archiveService, IConfiguration configuration)
     {
         _dbContext = dbContext;
         _archiveService = archiveService;
+        _configuration = configuration;
     }
 
     public async Task<PagedResult<NoteDto>> GetAllAsync(Guid userId, NoteFilterDto filter)
@@ -303,14 +306,16 @@ public class NoteService : INoteService
         // Generate unique filename
         var extension = Path.GetExtension(fileName);
         var uniqueFileName = $"{Guid.NewGuid()}{extension}";
-        var uploadPath = Path.Combine("uploads", "notes", userId.ToString(), noteId.ToString());
-        var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", uploadPath);
+        
+        // Use /app/uploads directory (configured in docker-compose)
+        var uploadsBasePath = _configuration["FileStorage:Path"] ?? "/app/uploads";
+        var uploadPath = Path.Combine(uploadsBasePath, "notes", userId.ToString(), noteId.ToString());
 
         // Create directory if not exists
-        Directory.CreateDirectory(fullPath);
+        Directory.CreateDirectory(uploadPath);
 
         // Save file
-        var filePath = Path.Combine(fullPath, uniqueFileName);
+        var filePath = Path.Combine(uploadPath, uniqueFileName);
         using (var fileStreamOutput = new FileStream(filePath, FileMode.Create))
         {
             await fileStream.CopyToAsync(fileStreamOutput);

@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ${POSTGRES_DATA_PATH:-./data/postgres}:/var/lib/postgresql/data
     networks:
       - flowly-network
     healthcheck:
@@ -31,8 +31,10 @@ services:
       Google__ClientId: ${GOOGLE_CLIENT_ID}
       Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
       Cors__Origins: ${CORS_ORIGINS}
+      FileStorage__Path: /app/uploads
+      FileStorage__MaxSizeMB: ${FILE_STORAGE_MAX_SIZE_MB:-10}
     volumes:
-      - uploads:/app/uploads
+      - ${UPLOADS_PATH:-./data/uploads}:/app/uploads
     networks:
       - flowly-network
     depends_on:
@@ -57,7 +59,3 @@ services:
 networks:
   flowly-network:
     driver: bridge
-
-volumes:
-  pgdata:
-  uploads:
