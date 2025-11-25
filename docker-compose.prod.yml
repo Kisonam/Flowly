@@ -1,11 +1,4 @@
-# docker-compose.prod.yml
-# Production Docker Compose Configuration
-# Usage: docker-compose -f docker-compose.prod.yml up -d
-
 services:
-  # ============================================
-  # PostgreSQL Database
-  # ============================================
   db:
     image: postgres:16-alpine
     container_name: flowly-db-prod
@@ -13,12 +6,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      # Production PostgreSQL optimizations
-      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # Optional: Custom PostgreSQL configuration
-      # - ./postgres.conf:/etc/postgresql/postgresql.conf
     networks:
       - flowly-network
     healthcheck:
@@ -26,168 +15,49 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s
     restart: unless-stopped
-    # Security: Don't expose database port in production
-    # Only accessible within Docker network
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 2G
-        reservations:
-          cpus: '1'
-          memory: 1G
 
-  # ============================================
-  # .NET API Backend
-  # ============================================
   api:
     build:
       context: .
       dockerfile: backend/Dockerfile
-      target: final
     image: flowly-api:latest
     container_name: flowly-api-prod
     environment:
-      # ASP.NET Core Configuration
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:5000
-      
-      # Database Connection
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};SSL Mode=Prefer;Trust Server Certificate=true"
-      
-      # JWT Configuration
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       Jwt__Secret: ${JWT_SECRET}
-      Jwt__Issuer: ${JWT_ISSUER:-FlowlyAPI}
-      Jwt__Audience: ${JWT_AUDIENCE:-FlowlyClient}
-      Jwt__AccessTokenExpirationMinutes: ${JWT_ACCESS_TOKEN_EXPIRATION_MINUTES:-15}
-      Jwt__RefreshTokenExpirationDays: ${JWT_REFRESH_TOKEN_EXPIRATION_DAYS:-7}
-      
-      # Google OAuth
       Google__ClientId: ${GOOGLE_CLIENT_ID}
       Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
-      
-      # CORS Configuration
-      Cors__Origins: ${CORS_ORIGINS:-http://localhost}
-      
-      # File Storage
-      FileStorage__Type: ${FILE_STORAGE_TYPE:-Local}
-      FileStorage__Path: ${FILE_STORAGE_PATH:-/app/uploads}
-      FileStorage__MaxSizeMB: ${FILE_STORAGE_MAX_SIZE_MB:-5}
-      
-      # Logging
-      Logging__LogLevel__Default: ${LOG_LEVEL:-Warning}
-      Logging__LogLevel__Microsoft.AspNetCore: Warning
-      
-      # Security
-      Password__MinLength: ${PASSWORD_MIN_LENGTH:-8}
-      Password__RequireSpecialChar: ${PASSWORD_REQUIRE_SPECIAL_CHAR:-true}
-      Password__RequireDigit: ${PASSWORD_REQUIRE_DIGIT:-true}
-      Password__RequireUppercase: ${PASSWORD_REQUIRE_UPPERCASE:-true}
-      
-      # Rate Limiting
-      RateLimit__Enabled: ${RATE_LIMIT_ENABLED:-true}
-      RateLimit__RequestsPerMinute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:-60}
-      
-      # Feature Flags
-      Features__GoogleAuthEnabled: ${FEATURE_GOOGLE_AUTH_ENABLED:-true}
-      Features__MediaUploadEnabled: ${FEATURE_MEDIA_UPLOAD_ENABLED:-true}
-      Features__ExportEnabled: ${FEATURE_EXPORT_ENABLED:-true}
+      Cors__Origins: ${CORS_ORIGINS}
     volumes:
-      # Persistent storage for uploaded files
-      - uploads:/app/uploads:rw
+      - uploads:/app/uploads
     networks:
       - flowly-network
     depends_on:
       db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 60s
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 1G
-        reservations:
-          cpus: '0.5'
-          memory: 512M
-    # Security: Don't expose API port directly in production
-    # Access through web service reverse proxy
-    # Uncomment if you need direct API access:
-    # ports:
-    #   - "${API_PORT:-5000}:5000"
 
-  # ============================================
-  # Angular Frontend with Nginx
-  # ============================================
   web:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: final
-      args:
-        - NODE_ENV=production
     image: flowly-web:latest
     container_name: flowly-web-prod
-    environment:
-      # Nginx configuration
-      NGINX_HOST: localhost
-      NGINX_PORT: 80
     ports:
-      - "${WEB_PORT:-80}:80"
+      - "80:80"
     networks:
       - flowly-network
     depends_on:
-      api:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+      - api
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
 
-# ============================================
-# Networks
-# ============================================
 networks:
   flowly-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
 
-# ============================================
-# Volumes
-# ============================================
 volumes:
-  # PostgreSQL data persistence
   pgdata:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${POSTGRES_DATA_PATH:-./data/postgres}
-  
-  # Uploaded files persistence
   uploads:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${UPLOADS_PATH:-./data/uploads}
