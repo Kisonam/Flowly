@@ -16,11 +16,17 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 {
     private readonly HttpClient _client;
     private readonly FlowlyWebApplicationFactory _factory;
+    private readonly System.Text.Json.JsonSerializerOptions _jsonOptions;
 
     public AuthFlowTests(FlowlyWebApplicationFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();
+        _jsonOptions = new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        _jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     }
 
     // ============================================
@@ -46,16 +52,17 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         {
             Email = "integration.test@example.com",
             Password = "TestPassword123!",
+            ConfirmPassword = "TestPassword123!",
             DisplayName = "Integration Test User"
         };
 
-        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
 
         // Assert - перевіряємо успішну реєстрацію
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK, 
             "реєстрація має бути успішною");
 
-        var registerResult = await registerResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
+        var registerResult = await registerResponse.Content.ReadFromJsonAsync<AuthResponseDto>(_jsonOptions);
         registerResult.Should().NotBeNull();
         registerResult!.AccessToken.Should().NotBeNullOrEmpty("має бути повернутий access token");
         registerResult.RefreshToken.Should().NotBeNullOrEmpty("має бути повернутий refresh token");
@@ -72,13 +79,13 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             Password = registerDto.Password
         };
 
-        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto, _jsonOptions);
 
         // Assert - перевіряємо успішний логін
         loginResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "логін має бути успішним");
 
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AuthResponseDto>(_jsonOptions);
         loginResult.Should().NotBeNull();
         loginResult!.AccessToken.Should().NotBeNullOrEmpty();
         loginResult.RefreshToken.Should().NotBeNullOrEmpty();
@@ -99,7 +106,7 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         profileResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "з валідним токеном має бути доступ до захищеного endpoint");
 
-        var profile = await profileResponse.Content.ReadFromJsonAsync<UserProfileDto>();
+        var profile = await profileResponse.Content.ReadFromJsonAsync<UserProfileDto>(_jsonOptions);
         profile.Should().NotBeNull();
         profile!.Email.Should().Be(registerDto.Email);
         profile.DisplayName.Should().Be(registerDto.DisplayName);
@@ -129,13 +136,14 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         {
             Email = "refresh.test@example.com",
             Password = "TestPassword123!",
+            ConfirmPassword = "TestPassword123!",
             DisplayName = "Refresh Test User"
         };
 
-        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var registerResult = await registerResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
+        var registerResult = await registerResponse.Content.ReadFromJsonAsync<AuthResponseDto>(_jsonOptions);
         var originalAccessToken = registerResult!.AccessToken;
         var originalRefreshToken = registerResult.RefreshToken;
 
@@ -149,13 +157,13 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             RefreshToken = originalRefreshToken
         };
 
-        var refreshResponse = await _client.PostAsJsonAsync("/api/auth/refresh", refreshDto);
+        var refreshResponse = await _client.PostAsJsonAsync("/api/auth/refresh", refreshDto, _jsonOptions);
 
         // Assert - перевіряємо успішне оновлення
         refreshResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "refresh token має працювати");
 
-        var refreshResult = await refreshResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
+        var refreshResult = await refreshResponse.Content.ReadFromJsonAsync<AuthResponseDto>(_jsonOptions);
         refreshResult.Should().NotBeNull();
         refreshResult!.AccessToken.Should().NotBeNullOrEmpty();
         refreshResult.RefreshToken.Should().NotBeNullOrEmpty();
@@ -232,10 +240,11 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         {
             Email = "duplicate@example.com",
             Password = "TestPassword123!",
+            ConfirmPassword = "TestPassword123!",
             DisplayName = "First User"
         };
 
-        var firstResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+        var firstResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
         firstResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // КРОК 2: Намагаємося зареєструвати другого з тим самим email
@@ -243,10 +252,11 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         {
             Email = "duplicate@example.com", // Той самий email
             Password = "DifferentPassword123!",
+            ConfirmPassword = "DifferentPassword123!",
             DisplayName = "Second User"
         };
 
-        var duplicateResponse = await _client.PostAsJsonAsync("/api/auth/register", duplicateDto);
+        var duplicateResponse = await _client.PostAsJsonAsync("/api/auth/register", duplicateDto, _jsonOptions);
 
         // Assert - має бути помилка
         duplicateResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest,
@@ -268,10 +278,11 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         {
             Email = "wrongpass@example.com",
             Password = "CorrectPassword123!",
+            ConfirmPassword = "CorrectPassword123!",
             DisplayName = "Test User"
         };
 
-        await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+        await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
 
         // КРОК 2: Намагаємося увійти з неправильним паролем
         var loginDto = new LoginDto
@@ -280,7 +291,7 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             Password = "WrongPassword123!" // Неправильний пароль
         };
 
-        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto, _jsonOptions);
 
         // Assert - має бути 401 Unauthorized
         loginResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized,

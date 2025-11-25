@@ -3,7 +3,12 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load environment variables
+// Load configuration files (appsettings + environment specific)
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+// Load environment variables (supports .env + system vars)
 DotNetEnv.Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 
@@ -11,8 +16,11 @@ builder.Configuration.AddEnvironmentVariables();
 // Configure Services
 // ============================================
 
-// Database
-builder.Services.AddDatabaseConfiguration(builder.Configuration);
+// Database: пропускаємо PostgreSQL у тестовому середовищі (інтеграційні тести самі реєструють InMemory)
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddDatabaseConfiguration(builder.Configuration);
+}
 
 // Identity
 builder.Services.AddIdentityConfiguration();

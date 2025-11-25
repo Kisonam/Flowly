@@ -14,6 +14,8 @@ namespace Flowly.IntegrationTests.Helpers;
 /// </summary>
 public class FlowlyWebApplicationFactory : WebApplicationFactory<Program>
 {
+    private const string TestDatabaseName = "FlowlyIntegrationTestDb";
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -25,11 +27,18 @@ public class FlowlyWebApplicationFactory : WebApplicationFactory<Program>
             services.RemoveAll(typeof(DbContextOptions<AppDbContext>));
             services.RemoveAll(typeof(AppDbContext));
 
-            // Додаємо In-Memory базу даних з унікальним ім'ям для кожного тестового хоста
+            // Додаємо In-Memory базу даних зі спільною назвою для всіх тестів
+            // Це дозволяє зберігати дані між запитами в межах одного тесту
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseInMemoryDatabase($"FlowlyIntegration_{Guid.NewGuid()}");
+                options.UseInMemoryDatabase(TestDatabaseName);
             });
+
+            // Ініціалізуємо базу даних
+            var provider = services.BuildServiceProvider();
+            using var scope = provider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Database.EnsureCreated();
         });
     }
 }

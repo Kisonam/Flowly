@@ -19,11 +19,17 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 {
     private readonly HttpClient _client;
     private readonly FlowlyWebApplicationFactory _factory;
+    private readonly System.Text.Json.JsonSerializerOptions _jsonOptions;
 
     public CrudFlowTests(FlowlyWebApplicationFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();
+        _jsonOptions = new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        _jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     }
 
     // ============================================
@@ -62,13 +68,13 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             TagIds = null
         };
 
-        var createResponse = await _client.PostAsJsonAsync("/api/notes", createDto);
+        var createResponse = await _client.PostAsJsonAsync("/api/notes", createDto, _jsonOptions);
 
         // Assert створення
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created,
             "нотатка має бути успішно створена");
 
-        var createdNote = await createResponse.Content.ReadFromJsonAsync<NoteDto>();
+        var createdNote = await createResponse.Content.ReadFromJsonAsync<NoteDto>(_jsonOptions);
         createdNote.Should().NotBeNull();
         createdNote!.Id.Should().NotBeEmpty();
         createdNote.Title.Should().Be(createDto.Title);
@@ -88,7 +94,7 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "нотатка має бути знайдена");
 
-        var retrievedNote = await getResponse.Content.ReadFromJsonAsync<NoteDto>();
+        var retrievedNote = await getResponse.Content.ReadFromJsonAsync<NoteDto>(_jsonOptions);
         retrievedNote.Should().NotBeNull();
         retrievedNote!.Id.Should().Be(noteId);
         retrievedNote.Title.Should().Be(createDto.Title);
@@ -106,13 +112,13 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             TagIds = null
         };
 
-        var updateResponse = await _client.PutAsJsonAsync($"/api/notes/{noteId}", updateDto);
+        var updateResponse = await _client.PutAsJsonAsync($"/api/notes/{noteId}", updateDto, _jsonOptions);
 
         // Assert оновлення
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "нотатка має бути успішно оновлена");
 
-        var updatedNote = await updateResponse.Content.ReadFromJsonAsync<NoteDto>();
+        var updatedNote = await updateResponse.Content.ReadFromJsonAsync<NoteDto>(_jsonOptions);
         updatedNote.Should().NotBeNull();
         updatedNote!.Title.Should().Be(updateDto.Title);
         updatedNote.Markdown.Should().Be(updateDto.Markdown);
@@ -123,7 +129,7 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         // КРОК 4: Архівування нотатки
         // ============================================
         
-        var archiveResponse = await _client.PostAsync($"/api/notes/{noteId}/archive", null);
+        var archiveResponse = await _client.DeleteAsync($"/api/notes/{noteId}");
 
         // Assert архівування
         archiveResponse.StatusCode.Should().Be(HttpStatusCode.OK,
@@ -131,7 +137,7 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         // Перевіряємо, що нотатка тепер архівована
         var archivedNoteResponse = await _client.GetAsync($"/api/notes/{noteId}");
-        var archivedNote = await archivedNoteResponse.Content.ReadFromJsonAsync<NoteDto>();
+        var archivedNote = await archivedNoteResponse.Content.ReadFromJsonAsync<NoteDto>(_jsonOptions);
         archivedNote!.IsArchived.Should().BeTrue("нотатка має бути архівована");
     }
 
@@ -171,13 +177,13 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             ThemeId = null
         };
 
-        var createResponse = await _client.PostAsJsonAsync("/api/tasks", createDto);
+        var createResponse = await _client.PostAsJsonAsync("/api/tasks", createDto, _jsonOptions);
 
         // Assert створення
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created,
             "задача має бути успішно створена");
 
-        var createdTask = await createResponse.Content.ReadFromJsonAsync<TaskDto>();
+        var createdTask = await createResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
         createdTask.Should().NotBeNull();
         createdTask!.Id.Should().NotBeEmpty();
         createdTask.Title.Should().Be(createDto.Title);
@@ -198,13 +204,13 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         };
 
         var subtask1Response = await _client.PostAsJsonAsync(
-            $"/api/tasks/{taskId}/subtasks", subtask1Dto);
+            $"/api/tasks/{taskId}/subtasks", subtask1Dto, _jsonOptions);
 
         // Assert додавання підзадачі
         subtask1Response.StatusCode.Should().Be(HttpStatusCode.Created,
             "підзадача має бути успішно додана");
 
-        var subtask1 = await subtask1Response.Content.ReadFromJsonAsync<SubtaskDto>();
+        var subtask1 = await subtask1Response.Content.ReadFromJsonAsync<SubtaskDto>(_jsonOptions);
         subtask1.Should().NotBeNull();
         subtask1!.Title.Should().Be(subtask1Dto.Title);
         subtask1.IsDone.Should().BeFalse("нова підзадача не має бути виконана");
@@ -219,11 +225,11 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         };
 
         var subtask2Response = await _client.PostAsJsonAsync(
-            $"/api/tasks/{taskId}/subtasks", subtask2Dto);
+            $"/api/tasks/{taskId}/subtasks", subtask2Dto, _jsonOptions);
 
         subtask2Response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var subtask2 = await subtask2Response.Content.ReadFromJsonAsync<SubtaskDto>();
+        var subtask2 = await subtask2Response.Content.ReadFromJsonAsync<SubtaskDto>(_jsonOptions);
         subtask2.Should().NotBeNull();
 
         // ============================================
@@ -231,7 +237,7 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         // ============================================
         
         var getTaskResponse = await _client.GetAsync($"/api/tasks/{taskId}");
-        var taskWithSubtasks = await getTaskResponse.Content.ReadFromJsonAsync<TaskDto>();
+        var taskWithSubtasks = await getTaskResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
         
         taskWithSubtasks!.Subtasks.Should().HaveCount(2,
             "задача має мати 2 підзадачі");
@@ -242,13 +248,19 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         // КРОК 5: Виконання першої підзадачі
         // ============================================
         
-        var toggleResponse = await _client.PatchAsync(
-            $"/api/tasks/{taskId}/subtasks/{subtask1.Id}/toggle", null);
+        var updateSubtaskDto = new UpdateSubtaskDto
+        {
+            Title = subtask1.Title,
+            IsDone = true
+        };
+
+        var toggleResponse = await _client.PutAsJsonAsync(
+            $"/api/tasks/{taskId}/subtasks/{subtask1.Id}", updateSubtaskDto, _jsonOptions);
 
         toggleResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "підзадача має бути успішно виконана");
 
-        var toggledSubtask = await toggleResponse.Content.ReadFromJsonAsync<SubtaskDto>();
+        var toggledSubtask = await toggleResponse.Content.ReadFromJsonAsync<SubtaskDto>(_jsonOptions);
         toggledSubtask!.IsDone.Should().BeTrue("підзадача має бути виконана");
         toggledSubtask.CompletedAt.Should().NotBeNull("має бути встановлена дата завершення");
 
@@ -256,13 +268,16 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         // КРОК 6: Завершення основної задачі
         // ============================================
         
-        var completeResponse = await _client.PatchAsync($"/api/tasks/{taskId}/complete", null);
+        var completeResponse = await _client.PostAsync($"/api/tasks/{taskId}/complete", null);
 
         // Assert завершення
         completeResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "задача має бути успішно завершена");
 
-        var completedTask = await completeResponse.Content.ReadFromJsonAsync<TaskDto>();
+        // Отримуємо оновлену задачу
+        var completedTaskResponse = await _client.GetAsync($"/api/tasks/{taskId}");
+        var completedTask = await completedTaskResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
+        
         completedTask!.Status.Should().Be(TasksStatus.Done,
             "задача має бути в статусі Done");
         completedTask.CompletedAt.Should().NotBeNull("має бути встановлена дата завершення");
@@ -293,8 +308,8 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             Markdown = "This is private"
         };
 
-        var createResponse = await _client.PostAsJsonAsync("/api/notes", createDto);
-        var createdNote = await createResponse.Content.ReadFromJsonAsync<NoteDto>();
+        var createResponse = await _client.PostAsJsonAsync("/api/notes", createDto, _jsonOptions);
+        var createdNote = await createResponse.Content.ReadFromJsonAsync<NoteDto>(_jsonOptions);
         var noteId = createdNote!.Id;
 
         // User2 намагається отримати нотатку User1
@@ -332,8 +347,8 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             Priority = TaskPriority.Medium
         };
 
-        var createResponse = await _client.PostAsJsonAsync("/api/tasks", createDto);
-        var createdTask = await createResponse.Content.ReadFromJsonAsync<TaskDto>();
+        var createResponse = await _client.PostAsJsonAsync("/api/tasks", createDto, _jsonOptions);
+        var createdTask = await createResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
         var taskId = createdTask!.Id;
 
         // User2 намагається оновити задачу User1
@@ -347,7 +362,7 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             Priority = TaskPriority.High
         };
 
-        var updateResponse = await _client.PutAsJsonAsync($"/api/tasks/{taskId}", updateDto);
+        var updateResponse = await _client.PutAsJsonAsync($"/api/tasks/{taskId}", updateDto, _jsonOptions);
 
         // Assert - має бути 404
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NotFound,
@@ -358,7 +373,7 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             new AuthenticationHeaderValue("Bearer", user1Token);
 
         var getResponse = await _client.GetAsync($"/api/tasks/{taskId}");
-        var unchangedTask = await getResponse.Content.ReadFromJsonAsync<TaskDto>();
+        var unchangedTask = await getResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
         unchangedTask!.Title.Should().Be("User1 Private Task",
             "задача не має бути змінена");
     }
@@ -377,27 +392,36 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         {
             Email = email,
             Password = password,
+            ConfirmPassword = password,
             DisplayName = email.Split('@')[0]
         };
 
-        // Намагаємося зареєструвати (може вже існувати)
-        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+        // Намагаємося зареєструвати
+        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
         
         if (registerResponse.IsSuccessStatusCode)
         {
-            var registerResult = await registerResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
+            var registerResult = await registerResponse.Content.ReadFromJsonAsync<AuthResponseDto>(_jsonOptions);
             return registerResult!.AccessToken;
         }
 
-        // Якщо реєстрація не вдалася (можливо вже існує), логінимося
+        // Якщо не вийшло - пробуємо залогінитись (на випадок якщо користувач вже є)
         var loginDto = new LoginDto
         {
             Email = email,
             Password = password
         };
 
-        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto, _jsonOptions);
+        
+        if (!loginResponse.IsSuccessStatusCode)
+        {
+            // Якщо і логін не вдався - кидаємо виключення з деталями
+            var errorContent = await loginResponse.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Authentication failed for {email}. Register status: {registerResponse.StatusCode}, Login status: {loginResponse.StatusCode}. Error: {errorContent}");
+        }
+
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AuthResponseDto>(_jsonOptions);
         return loginResult!.AccessToken;
     }
 }
