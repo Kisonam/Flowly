@@ -167,3 +167,26 @@ textarea:focus-visible {
     }
   }
 }
+
+// ============================================
+// CDK Drag&Drop Global Fixes for Mobile
+// ============================================
+.cdk-drag-preview {
+  @media (max-width: 768px) {
+    // Let CDK handle positioning, just optimize rendering
+    pointer-events: none !important;
+    z-index: 9999 !important;
+    // Use GPU acceleration
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+.cdk-drag {
+  @media (max-width: 768px) {
+    touch-action: none !important;
+    -webkit-user-drag: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
