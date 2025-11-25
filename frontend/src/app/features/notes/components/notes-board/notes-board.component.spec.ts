@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TranslateModule } from '@ngx-translate/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { NotesBoardComponent } from './notes-board.component';
 
 describe('NotesBoardComponent', () => {
@@ -8,7 +10,8 @@ describe('NotesBoardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NotesBoardComponent]
+      imports: [NotesBoardComponent, HttpClientTestingModule, TranslateModule.forRoot()],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 
