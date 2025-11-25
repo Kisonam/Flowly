@@ -81,3 +81,6 @@ app.MapGet("/health", () => Results.Ok(new
 Console.WriteLine("🚀 Flowly API is running!");
 
 app.Run();
+
+// Make Program class accessible for integration tests
+public partial class Program { }
