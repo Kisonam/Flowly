@@ -1,0 +1,65 @@
+# .dockerignore
+# Excludes files from Docker build context to speed up builds
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+LICENSE
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+azure-pipelines.yml
+
+# Build outputs (will be built inside container)
+**/bin/
+**/obj/
+**/dist/
+**/node_modules/
+**/.angular/
+
+# Test files
+**/*Tests/
+**/*.Test/
+**/TestResults/
+
+# Uploads and data (use volumes)
+uploads/
+data/
+backups/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.cache

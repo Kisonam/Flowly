@@ -39,15 +39,25 @@ WORKDIR /app
 # Install curl for healthchecks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Create uploads directory
-RUN mkdir -p /app/uploads && chmod 755 /app/uploads
+# Create non-root user for security
+RUN groupadd -r flowly && useradd -r -g flowly flowly
+
+# Create uploads directory with proper permissions
+RUN mkdir -p /app/uploads && chown -R flowly:flowly /app/uploads
 
 # Copy published app
 COPY --from=publish /app/publish .
 
+# Change ownership of app files
+RUN chown -R flowly:flowly /app
+
+# Switch to non-root user
+USER flowly
+
 # Set environment variables
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://+:5000
+ENV COMPlus_EnableDiagnostics=0
 
 # Expose port
 EXPOSE 5000

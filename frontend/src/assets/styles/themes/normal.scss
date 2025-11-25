@@ -1,4 +1,6 @@
 // Normal theme - default colors and animations
+// Apply to :root by default for pages without theme class
+:root,
 :root.theme-normal,
 body.theme-normal {
   // Brand colors

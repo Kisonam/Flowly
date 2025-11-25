@@ -277,6 +277,30 @@
   padding: 1rem 0;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: var(--border-radius-lg, 0.75rem);
+  border: 2px dashed var(--border-color, #e5e7eb);
+
+  svg {
+    color: var(--text-tertiary, #adb5bd);
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: var(--text-primary, #212529);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--text-secondary, #6c757d);
+    font-size: 0.9375rem;
+  }
+}
+
 .loading-state {
   text-align: center;
   padding: 3rem;

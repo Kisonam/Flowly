@@ -111,10 +111,24 @@
   border-radius: 0.5rem;
   padding: 0.75rem;
   font-weight: 600;
+  color: white;
 
   &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    color: white !important;
+  }
+
+  &:focus {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.5);
+  }
+
+  &:active {
+    background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+    color: white !important;
   }
 
   &:disabled {
@@ -125,11 +139,36 @@
 
 .btn-outline-secondary {
   border-color: #dee2e6;
+  background-color: white;
+  color: #6c757d;
 
-  &:hover {
-    background-color: #f8f9fa;
+  &:hover:not(:disabled) {
+    background-color: #f8f9fa !important;
+    border-color: #adb5bd !important;
+    color: #212529 !important;
+  }
+
+  &:focus {
+    background-color: white;
     border-color: #dee2e6;
-    color: #212529;
+    color: #6c757d;
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+  }
+
+  &:active {
+    background-color: #e9ecef !important;
+    border-color: #adb5bd !important;
+    color: #212529 !important;
+  }
+}
+
+.input-group {
+  .btn-outline-secondary {
+    border-left: 0;
+
+    i {
+      font-size: 1.1rem;
+    }
   }
 }
 
