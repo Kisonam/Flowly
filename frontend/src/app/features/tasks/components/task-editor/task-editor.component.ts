@@ -67,7 +67,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     status: ['Todo', Validators.required],
     priority: ['None', Validators.required],
     dueDate: [''],
-    dueTime: [''],
+    dueTime: [{ value: '', disabled: true }], // Disabled by default until date is selected
     // HTML color input does not accept empty string; set safe default to avoid console warning
     color: ['#000000'],
     subtasks: this.fb.array([]),
@@ -122,8 +122,19 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     this.form.get('description')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => this.autoPreview$.next(val || ''));
     this.autoPreview$.pipe(debounceTime(250), takeUntil(this.destroy$)).subscribe((md: string) => this.updatePreview(md));
 
-    // Check for past due date
-    this.form.get('dueDate')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkPastDueDate());
+    // Check for past due date and clear time if date is removed
+    this.form.get('dueDate')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((dateValue) => {
+      this.checkPastDueDate();
+      const timeControl = this.form.get('dueTime');
+      if (!dateValue) {
+        // Clear and disable time if date is removed
+        timeControl?.setValue('', { emitEvent: false });
+        timeControl?.disable({ emitEvent: false });
+      } else {
+        // Enable time if date is selected
+        timeControl?.enable({ emitEvent: false });
+      }
+    });
     this.form.get('dueTime')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkPastDueDate());
   }
 
@@ -322,12 +333,19 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
 
   private toDateInputValue(d: string | Date): string {
     const date = d instanceof Date ? d : new Date(d);
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    // Extract local date components
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private toTimeInputValue(d: string | Date): string {
     const date = d instanceof Date ? d : new Date(d);
-    return date.toISOString().slice(11,16); // HH:mm
+    // Extract local time components
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
   private combineDateTimeToUtc(dateStr?: string, timeStr?: string): string | null {
@@ -337,9 +355,10 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     const [y,m,d] = dateStr.split('-').map(p => parseInt(p,10));
     const [hh,mm] = time.split(':').map(p => parseInt(p,10));
     if ([y,m,d].some(isNaN) || [hh,mm].some(isNaN)) return null;
-    // Construct local date then convert to UTC ISO
+    // Construct local date - Date constructor already handles local timezone
     const local = new Date(y, m-1, d, hh, mm, 0, 0);
-    return new Date(local.getTime() - local.getTimezoneOffset()*60000).toISOString();
+    // Convert to ISO string (already in UTC)
+    return local.toISOString();
   }
 
   private checkPastDueDate(): void {

@@ -1,8 +1,7 @@
 .env.example
 .env
 frontend/src/environments/environment.prod.ts
-frontend/src/environments/environment.prod.ts
 docs/
 .idea/
 data/
-
+.DS_Store

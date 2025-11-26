@@ -889,8 +889,20 @@
       "LINKS_TITLE": "Links",
       "LINKS_INFO": "Save the task to add links",
       "TITLE_PLACEHOLDER": "Task title...",
-      "DESCRIPTION_PLACEHOLDER": "Write task description in Markdown...",
+      "DESCRIPTION_PLACEHOLDER": "Write task description in Markdown...\n\n**Bold text**\n*Italic*\n[Link](url)\n![Image](url)\n- List item\n1. Numbered item\n> Quote\n`code`\n```\ncode block\n```",
       "PREVIEW_LABEL": "Preview",
+      "MARKDOWN_HINT_TITLE": "Markdown:",
+      "MARKDOWN_EXAMPLES": {
+        "BOLD": "Bold text",
+        "ITALIC": "Italic",
+        "LINK": "Link",
+        "IMAGE": "Image",
+        "LIST_ITEM": "List item",
+        "NUMBERED_ITEM": "Numbered item",
+        "QUOTE": "Quote",
+        "CODE": "code",
+        "CODE_BLOCK": "Code block"
+      },
       "STATUS": {
         "TODO": "To Do",
         "INPROGRESS": "In Progress",

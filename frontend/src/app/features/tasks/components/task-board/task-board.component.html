@@ -72,7 +72,7 @@
         <div class="group-content" cdkDropList [id]="listId(col.id)" [cdkDropListData]="listData(col.id)"
           [cdkDropListConnectedTo]="getDropListIds()" (cdkDropListDropped)="onTaskDrop($event, col.id)">
           <div class="task-card" *ngFor="let task of listData(col.id)" cdkDrag [cdkDragData]="task"
-            [class.overdue]="task.isOverdue">
+            [class.overdue]="task.isOverdue" [style.border-left-color]="task.color || null">
             <div class="task-content" [routerLink]="['/tasks', task.id]">
               <div class="task-checkbox">
                 <input type="checkbox" [checked]="task.status === 'Done'" (click)="$event.stopPropagation()"

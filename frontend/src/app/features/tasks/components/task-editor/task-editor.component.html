@@ -13,7 +13,7 @@
         [attr.aria-label]="'TASKS.EDITOR.PREVIEW_MODE' | translate" [class.active]="isPreviewMode && !isSplitView">
         {{ 'TASKS.EDITOR.PREVIEW_MODE' | translate }}</button>
       <button type="button" class="btn-secondary" (click)="toggleSplitView()"
-        [attr.aria-label]="'TASKS.EDITOR.SPLIT_MODE' | translate" [class.active]="isSplitView">↔ {{
+        [attr.aria-label]="'TASKS.EDITOR.SPLIT_MODE' | translate" [class.active]="isSplitView"> {{
         'TASKS.EDITOR.SPLIT_MODE' | translate }}</button>
       <button type="button" class="btn-secondary" (click)="isPreviewMode=false; isSplitView=false"
         [attr.aria-label]="'TASKS.EDITOR.EDITOR_MODE' | translate" [class.active]="!isPreviewMode && !isSplitView">️ {{

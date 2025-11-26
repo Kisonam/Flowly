@@ -185,6 +185,7 @@
 .task-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
+  border-left: 4px solid var(--border-color); // Default, overridden by [style.border-left-color]
   border-radius: var(--border-radius);
   padding: var(--spacing-md);
   min-height: 80px;

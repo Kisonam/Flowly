@@ -886,8 +886,20 @@
       "LINKS_TITLE": "Посилання",
       "LINKS_INFO": "Збережіть задачу, щоб додати посилання",
       "TITLE_PLACEHOLDER": "Назва задачі...",
-      "DESCRIPTION_PLACEHOLDER": "Опис задачі в Markdown...",
+      "DESCRIPTION_PLACEHOLDER": "Опис задачі в Markdown...\n\n**Жирний текст**\n*Курсив*\n[Посилання](url)\n![Зображення](url)\n- Елемент списку\n1. Нумерований елемент\n> Цитата\n`код`\n```\nблок коду\n```",
       "PREVIEW_LABEL": "Попередній перегляд",
+      "MARKDOWN_HINT_TITLE": "Markdown:",
+      "MARKDOWN_EXAMPLES": {
+        "BOLD": "Жирний текст",
+        "ITALIC": "Курсив",
+        "LINK": "Посилання",
+        "IMAGE": "Зображення",
+        "LIST_ITEM": "Елемент списку",
+        "NUMBERED_ITEM": "Нумерований елемент",
+        "QUOTE": "Цитата",
+        "CODE": "код",
+        "CODE_BLOCK": "Блок коду"
+      },
       "STATUS": {
         "TODO": "До виконання",
         "INPROGRESS": "В процесі",
