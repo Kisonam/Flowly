@@ -36,23 +36,21 @@ RUN dotnet publish "Flowly.Api.csproj" -c Release -o /app/publish /p:UseAppHost=
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 
-# Install curl for healthchecks
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Install curl for healthchecks and gosu for user switching
+RUN apt-get update && apt-get install -y curl gosu && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
 RUN groupadd -r flowly && useradd -r -g flowly flowly
 
-# Create uploads directory with proper permissions
-RUN mkdir -p /app/uploads && chown -R flowly:flowly /app/uploads
-
 # Copy published app
 COPY --from=publish /app/publish .
 
+# Copy entrypoint script
+COPY backend/docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Change ownership of app files
 RUN chown -R flowly:flowly /app
-
-# Switch to non-root user
-USER flowly
 
 # Set environment variables
 ENV ASPNETCORE_ENVIRONMENT=Production
@@ -66,5 +64,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:5000/health || exit 1
 
-# Run the application
-ENTRYPOINT ["dotnet", "Flowly.Api.dll"]
+# Run the application via entrypoint script
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
