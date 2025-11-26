@@ -883,7 +883,7 @@
             "LINKS_TITLE": "Linki",
             "LINKS_INFO": "Zapisz zadanie, aby dodać linki",
             "TITLE_PLACEHOLDER": "Tytuł zadania...",
-            "DESCRIPTION_PLACEHOLDER": "Opis zadania w Markdown...",
+            "DESCRIPTION_PLACEHOLDER": "Opis zadania w Markdown...\n\n**Bold text**\n*Italic*\n[Link](url)\n![Image](url)\n- List item\n1. Numbered item\n> Quote\n`code`\n```\ncode block\n```",
             "PREVIEW_LABEL": "Podgląd",
             "STATUS": {
                 "TODO": "Do zrobienia",
