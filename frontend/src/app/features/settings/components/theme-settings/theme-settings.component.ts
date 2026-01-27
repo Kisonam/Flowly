@@ -41,7 +41,7 @@ export class ThemeSettingsComponent implements OnInit {
   }
 
   private loadCurrentTheme(): void {
-    // Subscribe to theme service
+    
     this.themeService.currentTheme$.subscribe(theme => {
       this.selectedTheme = theme;
     });
@@ -54,7 +54,6 @@ export class ThemeSettingsComponent implements OnInit {
 
     this.themeService.setTheme(themeId);
   }
-
 
   getSelectedThemePreview(): string {
     const theme = this.themes.find(t => t.id === this.selectedTheme);

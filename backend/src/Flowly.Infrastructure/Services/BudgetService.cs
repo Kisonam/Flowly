@@ -28,33 +28,29 @@ public class BudgetService : IBudgetService
             .Include(b => b.Category)
             .Where(b => b.UserId == userId);
 
-        // By default (when no filter provided), exclude archived budgets
         if (filter == null)
         {
             query = query.Where(b => !b.IsArchived);
         }
 
-        // Apply filters
         if (filter != null)
         {
-            // Filter by archived status only if explicitly specified
+            
             if (filter.IsArchived.HasValue)
             {
                 query = query.Where(b => b.IsArchived == filter.IsArchived.Value);
             }
-            // If IsArchived is not specified, show all budgets (both archived and non-archived)
 
             if (filter.IsActive.HasValue)
             {
                 var now = DateTime.UtcNow;
                 Console.WriteLine($"🔍 Filtering by IsActive: {filter.IsActive.Value}, Now: {now}");
-                // Only filter when IsActive is explicitly set to true
-                // If IsActive is null, show all budgets (both active and inactive)
+
                 if (filter.IsActive.Value)
                 {
                     query = query.Where(b => b.PeriodStart <= now && b.PeriodEnd >= now);
                 }
-                // If IsActive is false, show only inactive (archived) budgets
+                
                 else
                 {
                     query = query.Where(b => b.PeriodStart > now || b.PeriodEnd < now);
@@ -64,7 +60,6 @@ public class BudgetService : IBudgetService
             {
                 Console.WriteLine($"🔍 IsActive is null - showing ALL budgets");
             }
-            // If IsActive is null/undefined, don't apply any active/inactive filter
 
             if (filter.CategoryId.HasValue)
             {
@@ -103,7 +98,6 @@ public class BudgetService : IBudgetService
             Console.WriteLine($"  - Budget: {b.Title}, Period: {b.PeriodStart:yyyy-MM-dd} to {b.PeriodEnd:yyyy-MM-dd}, IsActive: {isActive}");
         }
 
-        // Calculate current spent for each budget
         var budgetDtos = new List<BudgetDto>();
         foreach (var budget in budgets)
         {
@@ -132,7 +126,7 @@ public class BudgetService : IBudgetService
 
     public async Task<BudgetDto> CreateAsync(Guid userId, CreateBudgetDto dto)
     {
-        // Validate
+        
         if (string.IsNullOrWhiteSpace(dto.Title))
         {
             throw new ArgumentException("Title is required", nameof(dto.Title));
@@ -148,7 +142,6 @@ public class BudgetService : IBudgetService
             throw new ArgumentException("Limit must be positive", nameof(dto.Limit));
         }
 
-        // Verify category if provided
         if (dto.CategoryId.HasValue)
         {
             var categoryExists = await _dbContext.Categories
@@ -161,7 +154,6 @@ public class BudgetService : IBudgetService
             }
         }
 
-        // Verify currency
         var currencyExists = await _dbContext.Currencies
             .AnyAsync(c => c.Code == dto.CurrencyCode);
 
@@ -200,7 +192,6 @@ public class BudgetService : IBudgetService
             throw new InvalidOperationException("Budget not found");
         }
 
-        // Verify category if provided
         if (dto.CategoryId.HasValue)
         {
             var categoryExists = await _dbContext.Categories
@@ -213,7 +204,6 @@ public class BudgetService : IBudgetService
             }
         }
 
-        // Verify currency
         var currencyExists = await _dbContext.Currencies
             .AnyAsync(c => c.Code == dto.CurrencyCode);
 
@@ -287,7 +277,7 @@ public class BudgetService : IBudgetService
 
     public async Task<List<TransactionListItemDto>> GetBudgetTransactionsAsync(Guid userId, Guid budgetId)
     {
-        // Verify budget exists and belongs to user
+        
         var budget = await _dbContext.Budgets
             .AsNoTracking()
             .FirstOrDefaultAsync(b => b.Id == budgetId && b.UserId == userId);
@@ -297,7 +287,6 @@ public class BudgetService : IBudgetService
             throw new InvalidOperationException("Budget not found");
         }
 
-        // Get all transactions linked to this budget
         var transactions = await _dbContext.Transactions
             .AsNoTracking()
             .Include(t => t.Category)
@@ -340,13 +329,9 @@ public class BudgetService : IBudgetService
         return transactions;
     }
 
-    // ============================================
-    // Private Helpers
-    // ============================================
-
     private async Task<decimal> CalculateCurrentSpentAsync(Guid userId, Budget budget)
     {
-        // Get all transactions linked to this budget
+        
         var linkedTransactions = await _dbContext.Transactions
             .AsNoTracking()
             .Where(t => t.UserId == userId
@@ -357,9 +342,6 @@ public class BudgetService : IBudgetService
                 && t.Date <= budget.PeriodEnd)
             .ToListAsync();
 
-        // Calculate net spent:
-        // - Expense transactions subtract from budget (add to spent) - positive
-        // - Income transactions add to budget (reduce spent) - negative
         var spent = linkedTransactions
             .Sum(t => t.Type == TransactionType.Expense ? t.Amount : -t.Amount);
 

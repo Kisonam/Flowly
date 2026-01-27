@@ -1,8 +1,4 @@
 namespace Flowly.Application.DTOs.Transactions;
-
-/// <summary>
-/// Budget summary DTO for transaction display
-/// </summary>
 public class BudgetSummaryDto
 {
     public Guid Id { get; set; }

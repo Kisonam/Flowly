@@ -10,10 +10,8 @@ public class TaskTheme
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 
-    // Navigation Properties
     public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>();
 
-    // Methods
     public void UpdateTitle(string title)
     {
         if (string.IsNullOrWhiteSpace(title))

@@ -22,14 +22,12 @@ export class ThemeManagerComponent implements OnInit, OnDestroy {
   loading = false;
   error = '';
 
-  // Editing mode per theme
   editingId: string | null = null;
   editForm: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(100)]],
     color: ['']
   });
 
-  // New theme form
   showNewForm = false;
   newForm: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(100)]],
@@ -124,7 +122,7 @@ export class ThemeManagerComponent implements OnInit, OnDestroy {
       next: () => console.log('Themes reordered'),
       error: (err) => {
         this.error = err?.message || 'Failed to reorder';
-        this.loadThemes(); // rollback on error
+        this.loadThemes(); 
       }
     });
   }

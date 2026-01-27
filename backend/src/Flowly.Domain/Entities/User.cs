@@ -20,7 +20,7 @@ public class User
     public ICollection<Tag> Tags { get; set; } = new List<Tag>();
     public ICollection<MediaAsset> MediaAssets { get; set; } = new List<MediaAsset>();
     public ICollection<ArchiveEntry> ArchiveEntries { get; set; } = new List<ArchiveEntry>();
-    // Methods
+
     public void UpdateDisplayName(string displayName)
     {
         if (string.IsNullOrWhiteSpace(displayName))

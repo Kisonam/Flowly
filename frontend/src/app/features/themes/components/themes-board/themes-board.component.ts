@@ -32,7 +32,7 @@ export class ThemesBoardComponent implements OnInit {
   }
 
   private loadNotes(): void {
-    // Load first page of active notes
+    
     this.notesService.getNotes({ isArchived: false, page: 1, pageSize: 100 })
       .subscribe({
         next: (res) => this.notes = res.items,
@@ -86,13 +86,11 @@ export class ThemesBoardComponent implements OnInit {
     const noteId = ev.dataTransfer?.getData('text/plain');
     if (!noteId) return;
 
-    // Remove from any previous theme
     for (const col of this.themes) {
       const idx = col.noteIds.indexOf(noteId);
       if (idx > -1) col.noteIds.splice(idx, 1);
     }
 
-    // Add to target theme
     if (!theme.noteIds.includes(noteId)) theme.noteIds.push(noteId);
     this.saveThemes();
   }

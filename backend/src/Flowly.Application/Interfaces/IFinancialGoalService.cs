@@ -1,11 +1,8 @@
-using Flowly.Application.DTOs.Common; // Potential future paging
+using Flowly.Application.DTOs.Common; 
 using Flowly.Application.DTOs.Transactions;
 
 namespace Flowly.Application.Interfaces;
 
-/// <summary>
-/// Service for managing financial goals and progress
-/// </summary>
 public interface IFinancialGoalService
 {
     Task<List<FinancialGoalDto>> GetAllAsync(Guid userId, GoalFilterDto? filter = null);
@@ -16,11 +13,9 @@ public interface IFinancialGoalService
     Task ArchiveAsync(Guid userId, Guid goalId);
     Task RestoreAsync(Guid userId, Guid goalId);
 
-    // Progress management
     Task<FinancialGoalDto> AddAmountAsync(Guid userId, Guid goalId, UpdateGoalAmountDto dto);
     Task<FinancialGoalDto> SubtractAmountAsync(Guid userId, Guid goalId, UpdateGoalAmountDto dto);
     Task<FinancialGoalDto> SetCurrentAmountAsync(Guid userId, Guid goalId, UpdateGoalAmountDto dto);
-    
-    // Transactions
+
     Task<List<TransactionListItemDto>> GetGoalTransactionsAsync(Guid userId, Guid goalId);
 }

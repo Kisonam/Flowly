@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Flowly.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class AddColorIconToCategory : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -94,7 +94,6 @@ namespace Flowly.Infrastructure.Migrations
                 values: new object[] { null, null });
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(

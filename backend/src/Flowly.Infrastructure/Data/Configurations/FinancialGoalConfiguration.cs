@@ -1,4 +1,4 @@
-// backend/src/Flowly.Infrastructure/Data/Configurations/FinancialGoalConfiguration.cs
+
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -36,12 +36,10 @@ public class FinancialGoalConfiguration : IEntityTypeConfiguration<FinancialGoal
         builder.Property(g => g.IsArchived)
             .HasDefaultValue(false);
 
-        // Indexes
         builder.HasIndex(g => g.UserId);
         builder.HasIndex(g => g.Deadline);
         builder.HasIndex(g => g.IsArchived);
 
-        // Relationships
         builder.HasOne(g => g.Currency)
             .WithMany()
             .HasForeignKey(g => g.CurrencyCode)

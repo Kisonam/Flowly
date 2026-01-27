@@ -2,9 +2,6 @@ using Flowly.Application.DTOs.Transactions;
 
 namespace Flowly.Application.Interfaces;
 
-/// <summary>
-/// Service for managing finance categories
-/// </summary>
 public interface ICategoryService
 {
     Task<List<CategoryDto>> GetAllAsync(Guid userId);

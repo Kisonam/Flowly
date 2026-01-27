@@ -32,7 +32,6 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
   loading = false;
   errorMessage = '';
 
-  // Links
   links: Link[] = [];
   linkedNotes: EntityPreview[] = [];
   linkedTasks: EntityPreview[] = [];
@@ -82,7 +81,7 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('❌ Failed to load links', err);
-          // Optional: show error toast
+          
         }
       });
   }
@@ -119,7 +118,6 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
     const subtask = this.task.subtasks[index];
     const updatedSubtask = { ...subtask, isDone: !subtask.isDone };
 
-    // Optimistic update
     const originalSubtasks = [...this.task.subtasks];
     this.task.subtasks[index] = updatedSubtask;
 
@@ -127,14 +125,14 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (updated) => {
-           // Update with server response if needed, but optimistic update usually enough for UI
+           
            if (this.task) {
              this.task.subtasks[index] = updated;
            }
         },
         error: (err) => {
           console.error('❌ Failed to update subtask', err);
-          // Revert optimistic update
+          
           if (this.task) {
             this.task.subtasks = originalSubtasks;
           }
@@ -144,8 +142,7 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
   }
 
   toggleTag(tagId: string): void {
-    // In a real app, this would toggle the tag on the task
-    // For now, we'll just log it
+
     console.log('Toggle tag:', tagId);
   }
 
@@ -227,7 +224,6 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
       if (key === 'BYDAY') byDay = value;
     });
 
-    // Build human-readable description
     if (freq === 'DAILY') {
       return interval === 1
         ? this.translate.instant('TASKS.RECURRENCE.DAILY')

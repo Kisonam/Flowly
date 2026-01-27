@@ -20,28 +20,23 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
 
-  // State
   categories: Category[] = [];
   loading = false;
   errorMessage = '';
 
-  // Form state
   showForm = false;
   editMode = false;
   currentCategoryId: string | null = null;
   categoryForm: FormGroup;
 
-  // UI
   selectedColor = '#10b981';
   selectedIcon = '📁';
 
-  // Icon options
   readonly ICON_OPTIONS = [
     '🍔', '🚗', '🛒', '🎬', '💡', '🏥', '📚', '✈️', '📈', '💰', '💼', '🏢',
     '🏠', '🎮', '☕', '🎵', '📱', '💻', '🎨', '⚽', '🎁', '🔧', '📦', '🌟'
   ];
 
-  // Color options
   readonly COLOR_OPTIONS = [
     '#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899',
     '#06b6d4', '#84cc16', '#f97316', '#14b8a6', '#6366f1', '#a855f7'
@@ -84,7 +79,6 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Form actions
   openCreateForm(): void {
     this.editMode = false;
     this.currentCategoryId = null;
@@ -216,9 +210,8 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Helpers
   isPredefinedCategory(category: Category): boolean {
-    // System categories have userId = null
+    
     return category.userId === null || category.userId === undefined;
   }
 

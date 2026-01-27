@@ -15,27 +15,21 @@ export class LocaleService {
   private http = inject(HttpClient);
 
   constructor() {
-    // Set default and current language
+    
     this.translate.setDefaultLang('en');
     const locale = this.getCurrentLocale();
     this.translate.use(locale);
   }
 
-  /**
-   * Get current locale from localStorage or use English as default
-   */
   getCurrentLocale(): SupportedLocale {
     const stored = localStorage.getItem(this.LOCALE_KEY);
     if (stored && this.isSupportedLocale(stored)) {
       return stored as SupportedLocale;
     }
-    // Always use English on first launch
+    
     return 'en';
   }
 
-  /**
-   * Set locale and switch language instantly
-   */
   setLocale(locale: SupportedLocale): void {
     if (!this.supportedLocales.includes(locale)) {
       console.warn(`Unsupported locale: ${locale}`);
@@ -43,19 +37,13 @@ export class LocaleService {
     }
 
     localStorage.setItem(this.LOCALE_KEY, locale);
-    this.translate.use(locale); // Instant switch!
+    this.translate.use(locale); 
   }
 
-  /**
-   * Check if locale is supported
-   */
   private isSupportedLocale(locale: string): boolean {
     return this.supportedLocales.includes(locale as SupportedLocale);
   }
 
-  /**
-   * Get all supported locales
-   */
   getSupportedLocales(): SupportedLocale[] {
     return [...this.supportedLocales];
   }

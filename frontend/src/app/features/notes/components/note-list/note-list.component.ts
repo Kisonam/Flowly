@@ -24,11 +24,9 @@ export class NoteListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private searchSubject$ = new Subject<string>();
 
-  // Data
   notes: Note[] = [];
   paginatedResult?: PaginatedResult<Note>;
 
-  // Filter state
   filter: NoteFilter = {
     search: '',
     tagIds: [],
@@ -37,13 +35,11 @@ export class NoteListComponent implements OnInit, OnDestroy {
     pageSize: 12
   };
 
-  // UI state
   isLoading = false;
   errorMessage = '';
   viewMode: 'grid' | 'list' = 'grid';
   showFilters = false;
 
-  // Tags for filter (loaded from backend)
   availableTags: { id: string; name: string; color?: string }[] = [];
 
   ngOnInit(): void {
@@ -57,9 +53,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Setup debounced search
-   */
   private setupSearchDebounce(): void {
     this.searchSubject$
       .pipe(
@@ -69,14 +62,11 @@ export class NoteListComponent implements OnInit, OnDestroy {
       )
       .subscribe(searchTerm => {
         this.filter.search = searchTerm;
-        this.filter.page = 1; // Reset to first page
+        this.filter.page = 1; 
         this.loadNotes();
       });
   }
 
-  /**
-   * Load available tags for filtering
-   */
   private loadAvailableTags(): void {
     this.tagsService.getTags()
       .pipe(takeUntil(this.destroy$))
@@ -89,9 +79,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Load notes with current filter
-   */
   loadNotes(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -112,25 +99,16 @@ export class NoteListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * CDK Drag & Drop ordering (client-side only, not persisted)
-   */
   onNoteDrop(event: CdkDragDrop<Note[]>): void {
     if (event.previousIndex === event.currentIndex) return;
 
     moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
   }
 
-  /**
-   * Handle search input
-   */
   onSearchChange(searchTerm: string): void {
     this.searchSubject$.next(searchTerm);
   }
 
-  /**
-   * Toggle tag filter
-   */
   toggleTagFilter(tagId: string): void {
     const index = this.filter.tagIds?.indexOf(tagId) ?? -1;
 
@@ -143,20 +121,14 @@ export class NoteListComponent implements OnInit, OnDestroy {
       this.filter.tagIds.push(tagId);
     }
 
-    this.filter.page = 1; // Reset to first page
+    this.filter.page = 1; 
     this.loadNotes();
   }
 
-  /**
-   * Check if tag is selected
-   */
   isTagSelected(tagId: string): boolean {
     return this.filter.tagIds?.includes(tagId) ?? false;
   }
 
-  /**
-   * Clear all filters
-   */
   clearFilters(): void {
     this.filter = {
       search: '',
@@ -168,9 +140,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
     this.loadNotes();
   }
 
-  /**
-   * Change page
-   */
   goToPage(page: number): void {
     if (page < 1 || (this.paginatedResult && page > this.paginatedResult.totalPages)) {
       return;
@@ -181,54 +150,33 @@ export class NoteListComponent implements OnInit, OnDestroy {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /**
-   * Change page size
-   */
   changePageSize(size: number): void {
     this.filter.pageSize = size;
-    this.filter.page = 1; // Reset to first page
+    this.filter.page = 1; 
     this.loadNotes();
   }
 
-  /**
-   * Toggle view mode
-   */
   toggleViewMode(): void {
     this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
   }
 
-  /**
-   * Toggle filters panel
-   */
   toggleFilters(): void {
     this.showFilters = !this.showFilters;
   }
 
-  /**
-   * Navigate to create note
-   */
   createNote(): void {
     this.router.navigate(['/notes/new']);
   }
 
-  /**
-   * Navigate to note detail
-   */
   viewNote(noteId: string): void {
     this.router.navigate(['/notes', noteId]);
   }
 
-  /**
-   * Quick edit note (inline)
-   */
   editNote(noteId: string, event: Event): void {
     event.stopPropagation();
     this.router.navigate(['/notes', noteId, 'edit']);
   }
 
-  /**
-   * Archive note
-   */
   archiveNote(noteId: string, event: Event): void {
     event.stopPropagation();
 
@@ -240,7 +188,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.loadNotes(); // Reload list
+          this.loadNotes(); 
         },
         error: (error) => {
           console.error('Failed to archive note:', error);
@@ -249,9 +197,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Restore note from archive
-   */
   restoreNote(noteId: string, event: Event): void {
     event.stopPropagation();
 
@@ -263,7 +208,7 @@ export class NoteListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.loadNotes(); // Reload list
+          this.loadNotes(); 
         },
         error: (error) => {
           console.error('Failed to restore note:', error);
@@ -272,9 +217,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Export note as markdown
-   */
   exportNote(noteId: string, event: Event): void {
     event.stopPropagation();
 
@@ -288,16 +230,10 @@ export class NoteListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Get tag by ID
-   */
   getTag(tagId: string) {
     return this.availableTags.find(t => t.id === tagId);
   }
 
-  /**
-   * Get end item number for pagination info
-   */
   getEndItem(): number {
     if (!this.paginatedResult) return 0;
     return Math.min(
@@ -306,9 +242,6 @@ export class NoteListComponent implements OnInit, OnDestroy {
     );
   }
 
-  /**
-   * Format date for display
-   */
   formatDate(date: Date): string {
     const now = new Date();
     const diff = now.getTime() - new Date(date).getTime();
@@ -324,17 +257,14 @@ export class NoteListComponent implements OnInit, OnDestroy {
     return new Date(date).toLocaleDateString(this.translate.currentLang);
   }
 
-  /**
-   * Get preview text from markdown
-   */
   getPreview(markdown: string, maxLength: number = 150): string {
-    // Remove markdown syntax for preview
+    
     let text = markdown
-      .replace(/#{1,6}\s/g, '') // Headers
-      .replace(/\*\*|__/g, '') // Bold
-      .replace(/\*|_/g, '') // Italic
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Links
-      .replace(/`{1,3}[^`]+`{1,3}/g, '') // Code
+      .replace(/#{1,6}\s/g, '') 
+      .replace(/\*\*|__/g, '') 
+      .replace(/\*|_/g, '') 
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') 
+      .replace(/`{1,3}[^`]+`{1,3}/g, '') 
       .trim();
 
     if (text.length > maxLength) {
@@ -344,15 +274,12 @@ export class NoteListComponent implements OnInit, OnDestroy {
     return text;
   }
 
-  /**
-   * Generate array for pagination
-   */
   getPaginationArray(): number[] {
     if (!this.paginatedResult) return [];
 
     const totalPages = this.paginatedResult.totalPages;
     const currentPage = this.paginatedResult.page;
-    const delta = 2; // Pages to show on each side of current page
+    const delta = 2; 
 
     const range: number[] = [];
     const rangeWithDots: (number | string)[] = [];

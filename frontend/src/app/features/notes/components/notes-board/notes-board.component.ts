@@ -33,7 +33,6 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
   isLoading = false;
   errorMessage = '';
 
-  // Modal state
   showGroupModal = false;
   editingGroup: NoteGroup | null = null;
   groupForm = { title: '', color: '#8b5cf6' };
@@ -45,11 +44,10 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadBoard();
 
-    // Subscribe to theme changes
     this.themeService.currentTheme$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        // Trigger change detection
+        
         this.groups = [...this.groups];
       });
   }
@@ -101,7 +99,6 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
     return this.notesMap.get(groupId) || [];
   }
 
-  // Group CRUD
   openGroupModal(group?: NoteGroup): void {
     this.editingGroup = group || null;
     this.groupForm = group
@@ -151,13 +148,11 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       });
   }
 
-  // CDK Drag & Drop for groups (columns)
   onGroupsDrop(event: CdkDragDrop<NoteGroup[]>): void {
     if (event.previousIndex === event.currentIndex) return;
 
     moveItemInArray(this.groups, event.previousIndex, event.currentIndex);
 
-    // Update order on backend
     const updates = this.groups.map((g, idx) =>
       this.groupsService.updateGroup(g.id, { order: idx })
     );
@@ -166,21 +161,19 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       next: () => console.log('✅ Groups reordered'),
       error: (err) => {
         console.error('Failed to reorder groups:', err);
-        // Revert on error
+        
         moveItemInArray(this.groups, event.currentIndex, event.previousIndex);
         alert(err.message || this.translate.instant('NOTES.BOARD.ERRORS.REORDER_FAILED'));
       }
     });
   }
 
-  // CDK Drag & Drop for notes
   onNoteDrop(event: CdkDragDrop<Note[]>, targetGroupId: string | null): void {
     const note: Note | undefined = event.item.data as Note;
     if (!note) return;
 
     const oldGroupId = note.groupId || null;
 
-    // If dropped in same group, just reorder
     if (oldGroupId === targetGroupId) {
       if (event.previousIndex === event.currentIndex) return;
 
@@ -190,22 +183,18 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       if (targetGroupId) {
         this.notesMap.set(targetGroupId, notes);
       } else {
-        this.ungroupedNotes = [...notes]; // Update ungrouped reference
+        this.ungroupedNotes = [...notes]; 
       }
       return;
     }
 
-    // Move note to different group
     const sourceNotes = oldGroupId ? this.notesMap.get(oldGroupId) || [] : [...this.ungroupedNotes];
     const targetNotes = targetGroupId ? this.notesMap.get(targetGroupId) || [] : [...this.ungroupedNotes];
 
-    // Optimistic UI update
     transferArrayItem(sourceNotes, targetNotes, event.previousIndex, event.currentIndex);
 
-    // Update note's groupId locally
     note.groupId = targetGroupId || undefined;
 
-    // Update maps/arrays
     if (oldGroupId) {
       this.notesMap.set(oldGroupId, sourceNotes);
     } else {
@@ -218,7 +207,6 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       this.ungroupedNotes = targetNotes;
     }
 
-    // Update on backend
     const updatePayload = targetGroupId
       ? { groupId: targetGroupId }
       : { groupId: '00000000-0000-0000-0000-000000000000' };
@@ -230,10 +218,8 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Failed to move note:', error);
 
-          // Revert note's groupId
           note.groupId = oldGroupId || undefined;
 
-          // Revert arrays
           transferArrayItem(targetNotes, sourceNotes, event.currentIndex, event.previousIndex);
 
           if (oldGroupId) {
@@ -253,7 +239,6 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Helper methods for CDK
   getDropListIds(): string[] {
     const groupIds = this.groups.map(g => `group-${g.id}`);
     return ['group-ungrouped', ...groupIds];
@@ -283,7 +268,7 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
   }
 
   getTagColor(tag: { color?: string | null }): string {
-    // In low-stimulus mode, use gray colors
+    
     if (this.themeService.getCurrentTheme() === 'low-stimulus') {
       return '#6b7280';
     }
@@ -291,7 +276,7 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
   }
 
   getGroupColor(group: { color?: string | null }): string {
-    // In low-stimulus mode, use gray colors
+    
     if (this.themeService.getCurrentTheme() === 'low-stimulus') {
       return '#6b7280';
     }
@@ -299,16 +284,13 @@ export class NotesBoardComponent implements OnInit, OnDestroy {
   }
 
   getButtonColor(color: string): string {
-    // In low-stimulus mode, all color buttons should be gray
+    
     if (this.themeService.getCurrentTheme() === 'low-stimulus') {
       return '#6b7280';
     }
     return color;
   }
 
-  /**
-   * Handle Escape key to close modal
-   */
   @HostListener('document:keydown.escape')
   handleEscapeKey(): void {
     if (this.showGroupModal) {

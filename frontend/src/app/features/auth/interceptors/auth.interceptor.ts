@@ -1,4 +1,4 @@
-// frontend/src/app/features/auth/interceptors/auth.interceptor.ts
+
 
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';

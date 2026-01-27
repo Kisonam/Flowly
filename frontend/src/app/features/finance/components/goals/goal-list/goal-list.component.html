@@ -4,7 +4,6 @@
     <button class="btn btn-primary" (click)="createGoal()">➕ {{ 'FINANCE.GOALS.NEW_BUTTON' | translate }}</button>
   </div>
 
-  <!-- Filters -->
   <div class="filters-section">
     <form [formGroup]="filterForm" class="filters-form">
       <div class="filter-row">
@@ -40,24 +39,20 @@
       </div>
     </form>
 
-    <!-- Results counter -->
     <div class="results-counter" *ngIf="!loading">
       <span>{{ 'FINANCE.GOALS.FILTERS.SHOWING' | translate:{count: filteredGoals.length, total: goals.length} }}</span>
     </div>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.GOALS.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage && !loading" class="error-state">
     <p>❌ {{ errorMessage }}</p>
   </div>
 
-  <!-- Empty State -->
   <div *ngIf="!loading && empty" class="empty-state">
     <div class="empty-icon">🎯</div>
     <h3>{{ 'FINANCE.GOALS.EMPTY.TITLE' | translate }}</h3>
@@ -65,19 +60,16 @@
     <button class="btn btn-primary" (click)="createGoal()">➕ {{ 'FINANCE.GOALS.EMPTY.BUTTON' | translate }}</button>
   </div>
 
-  <!-- No Results State -->
   <div *ngIf="!loading && !empty && filteredGoals.length === 0" class="empty-state">
     <div class="empty-icon">🔍</div>
     <h3>{{ 'FINANCE.GOALS.NO_RESULTS.TITLE' | translate }}</h3>
     <p>{{ 'FINANCE.GOALS.NO_RESULTS.DESC' | translate }}</p>
   </div>
 
-  <!-- Goals Grid -->
   <div *ngIf="!loading && filteredGoals.length > 0" class="goals-grid">
     <div *ngFor="let goal of filteredGoals" class="goal-card" [class.completed]="goal.isCompleted"
       [class.archived]="goal.isArchived" (click)="viewGoal(goal.id)">
 
-      <!-- Card Header -->
       <div class="card-header">
         <h3 class="goal-title">{{ goal.title }}</h3>
         <div class="goal-actions">
@@ -95,10 +87,8 @@
         </div>
       </div>
 
-      <!-- Description (always present, but may be empty) -->
       <p class="goal-description">{{ goal.description || '' }}</p>
 
-      <!-- Status Badges -->
       <div class="status-badges">
         <span *ngIf="goal.isCompleted" class="badge completed">✅ {{ 'FINANCE.GOALS.CARD.COMPLETED' | translate }}</span>
         <span *ngIf="goal.isArchived" class="badge archived">📦 {{ 'FINANCE.GOALS.CARD.ARCHIVED' | translate }}</span>
@@ -108,7 +98,6 @@
           'FINANCE.GOALS.CARD.APPROACHING' | translate }}</span>
       </div>
 
-      <!-- Progress Section -->
       <div class="progress-section">
         <div class="progress-header">
           <span class="progress-percentage">{{ goal.progressPercentage }}%</span>
@@ -117,7 +106,6 @@
           </span>
         </div>
 
-        <!-- Progress Bar -->
         <div class="progress-bar">
           <div class="progress-fill" [style.width.%]="goal.progressPercentage" [class.completed]="goal.isCompleted"
             [class.high]="goal.progressPercentage >= 75 && !goal.isCompleted"
@@ -126,7 +114,6 @@
           </div>
         </div>
 
-        <!-- Deadline Countdown -->
         <div class="deadline-section" *ngIf="goal.deadline">
           <div class="deadline-info" [class]="getDeadlineClass(goal)">
             <span class="deadline-icon">📅</span>
@@ -135,7 +122,6 @@
           </div>
         </div>
 
-        <!-- Completion Info -->
         <div class="completion-info" *ngIf="goal.completedAt">
           <span class="completion-icon">🎉</span>
           <span class="completion-text">{{ 'FINANCE.GOALS.CARD.COMPLETED_AT' | translate }} {{ goal.completedAt |
@@ -143,7 +129,6 @@
         </div>
       </div>
 
-      <!-- Archived Timestamp -->
       <div class="archived-info" *ngIf="goal.isArchived">
         <span class="archived-text">📦 {{ 'FINANCE.GOALS.CARD.ARCHIVED_AT' | translate }} {{ goal.createdAt |
           date:'dd/MM/yyyy' }}</span>

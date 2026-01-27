@@ -4,10 +4,10 @@
 
 namespace Flowly.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class AddTaskItemOrder : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
@@ -23,7 +23,6 @@ namespace Flowly.Infrastructure.Migrations
                 columns: new[] { "TaskThemeId", "Order" });
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(

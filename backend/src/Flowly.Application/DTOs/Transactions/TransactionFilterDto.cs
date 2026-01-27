@@ -2,9 +2,6 @@ using Flowly.Domain.Enums;
 
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// DTO for filtering transactions
-/// </summary>
 public class TransactionFilterDto
 {
     public string? Search { get; set; }

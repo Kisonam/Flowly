@@ -15,7 +15,7 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent
-    // No authGuard - accessible without authorization
+    
   },
   {
     path: 'auth',

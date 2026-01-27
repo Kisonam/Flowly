@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Tasks;
 
-/// <summary>
-/// Task recurrence information DTO
-/// </summary>
 public class RecurrenceDto
 {
     public Guid Id { get; set; }

@@ -20,10 +20,6 @@ public class TaskService : ITaskService
         _archiveService = archiveService;
     }
 
-    // ============================================
-    // Task CRUD Operations
-    // ============================================
-
     public async Task<PagedResult<TaskDto>> GetAllTasksAsync(Guid userId, TaskFilterDto filter)
     {
         var query = _dbContext.Tasks
@@ -35,7 +31,6 @@ public class TaskService : ITaskService
             .Where(t => t.UserId == userId)
             .AsQueryable();
 
-        // Apply filters
         if (!string.IsNullOrWhiteSpace(filter.Search))
         {
             var searchTerm = filter.Search.ToLower();
@@ -86,21 +81,17 @@ public class TaskService : ITaskService
             query = query.Where(t => t.DueDate.HasValue && t.DueDate.Value < now && t.Status != Domain.Enums.TasksStatus.Done);
         }
 
-        // Get total count
         var totalCount = await query.CountAsync();
 
-        // Apply pagination and ordering
-        // Order: theme grouping + explicit Order inside theme, fallback UpdatedAt for stable ordering
         var tasks = await query
-            .OrderBy(t => t.TaskThemeId.HasValue ? 0 : 1) // Unassigned first
-            .ThenBy(t => t.TaskThemeId) // Group by theme
+            .OrderBy(t => t.TaskThemeId.HasValue ? 0 : 1) 
+            .ThenBy(t => t.TaskThemeId) 
             .ThenBy(t => t.Order)
             .ThenByDescending(t => t.UpdatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ToListAsync();
 
-        // Map to DTOs
         var taskDtos = tasks.Select(MapToTaskDto).ToList();
 
         return new PagedResult<TaskDto>
@@ -132,13 +123,12 @@ public class TaskService : ITaskService
 
     public async Task<TaskDto> CreateTaskAsync(Guid userId, CreateTaskDto dto)
     {
-        // Validate input
+        
         if (string.IsNullOrWhiteSpace(dto.Title))
         {
             throw new ArgumentException("Title is required", nameof(dto.Title));
         }
 
-        // Verify theme if provided
         if (dto.ThemeId.HasValue)
         {
             var themeExists = await _dbContext.TaskThemes
@@ -150,8 +140,6 @@ public class TaskService : ITaskService
             }
         }
 
-        // Create task entity
-        // Determine order within theme (or unassigned)
         var baseQuery = _dbContext.Tasks.Where(t => t.UserId == userId && t.TaskThemeId == dto.ThemeId);
         var maxOrder = await baseQuery.MaxAsync(t => (int?)t.Order) ?? -1;
 
@@ -173,7 +161,6 @@ public class TaskService : ITaskService
 
         _dbContext.Tasks.Add(task);
 
-        // Add tags if provided
         if (dto.TagIds != null && dto.TagIds.Any())
         {
             await AddTagsToTaskAsync(task.Id, userId, dto.TagIds);
@@ -181,7 +168,6 @@ public class TaskService : ITaskService
 
         await _dbContext.SaveChangesAsync();
 
-        // Reload with relations
         return await GetTaskByIdAsync(userId, task.Id);
     }
 
@@ -196,13 +182,11 @@ public class TaskService : ITaskService
             throw new InvalidOperationException("Task not found");
         }
 
-        // Validate title
         if (string.IsNullOrWhiteSpace(dto.Title))
         {
             throw new ArgumentException("Title is required", nameof(dto.Title));
         }
 
-        // Verify theme if provided
         if (dto.ThemeId.HasValue)
         {
             var themeExists = await _dbContext.TaskThemes
@@ -214,15 +198,13 @@ public class TaskService : ITaskService
             }
         }
 
-        // Update fields
         task.Title = dto.Title.Trim();
         task.Description = dto.Description?.Trim();
     task.DueDate = NormalizeToUtcDate(dto.DueDate);
         task.Color = dto.Color;
         task.Priority = dto.Priority;
         task.TaskThemeId = dto.ThemeId;
-        
-        // Update status and handle completion
+
         if (task.Status != dto.Status)
         {
             task.ChangeStatus(dto.Status);
@@ -230,14 +212,12 @@ public class TaskService : ITaskService
 
         task.UpdatedAt = DateTime.UtcNow;
 
-        // Update tags if provided
         if (dto.TagIds != null)
         {
-            // Remove existing tags
+            
             var existingTags = task.TaskTags.ToList();
             _dbContext.TaskTags.RemoveRange(existingTags);
 
-            // Add new tags
             if (dto.TagIds.Any())
             {
                 await AddTagsToTaskAsync(taskId, userId, dto.TagIds);
@@ -249,9 +229,6 @@ public class TaskService : ITaskService
         return await GetTaskByIdAsync(userId, taskId);
     }
 
-    // ============================================
-    // Date helpers
-    // ============================================
     private static DateTime? NormalizeToUtcDate(DateTime? source)
     {
         if (!source.HasValue) return null;
@@ -261,7 +238,7 @@ public class TaskService : ITaskService
         {
             return dt.ToUniversalTime();
         }
-        // Unspecified: treat as local time and convert to UTC
+        
         var unspecifiedAsLocal = DateTime.SpecifyKind(dt, DateTimeKind.Local);
         return unspecifiedAsLocal.ToUniversalTime();
     }
@@ -285,10 +262,6 @@ public class TaskService : ITaskService
         await _dbContext.SaveChangesAsync();
     }
 
-    // ============================================
-    // Theme Management
-    // ============================================
-
     public async Task<List<TaskThemeDto>> GetThemesAsync(Guid userId)
     {
         var themes = await _dbContext.TaskThemes
@@ -306,7 +279,6 @@ public class TaskService : ITaskService
             throw new ArgumentException("Title is required", nameof(dto.Title));
         }
 
-        // Get max order
         var maxOrder = await _dbContext.TaskThemes
             .Where(t => t.UserId == userId)
             .MaxAsync(t => (int?)t.Order) ?? -1;
@@ -368,7 +340,6 @@ public class TaskService : ITaskService
             throw new InvalidOperationException("Theme not found");
         }
 
-        // Move all tasks to null theme
         foreach (var task in theme.Tasks)
         {
             task.MoveToTheme(null);
@@ -380,7 +351,7 @@ public class TaskService : ITaskService
 
     public async Task ReorderThemesAsync(Guid userId, List<Guid> themeIds)
     {
-        // Verify all themes belong to user
+        
         var themes = await _dbContext.TaskThemes
             .Where(t => t.UserId == userId && themeIds.Contains(t.Id))
             .ToListAsync();
@@ -390,7 +361,6 @@ public class TaskService : ITaskService
             throw new InvalidOperationException("One or more themes not found");
         }
 
-        // Update order
         for (int i = 0; i < themeIds.Count; i++)
         {
             var theme = themes.First(t => t.Id == themeIds[i]);
@@ -410,7 +380,6 @@ public class TaskService : ITaskService
             throw new InvalidOperationException("Task not found");
         }
 
-        // Verify new theme if provided
         if (newThemeId.HasValue)
         {
             var themeExists = await _dbContext.TaskThemes
@@ -422,7 +391,6 @@ public class TaskService : ITaskService
             }
         }
 
-        // Recalculate order in new theme
         if (task.TaskThemeId != newThemeId)
         {
             var maxOrder = await _dbContext.Tasks
@@ -437,10 +405,6 @@ public class TaskService : ITaskService
         }
         await _dbContext.SaveChangesAsync();
     }
-
-    // ============================================
-    // Subtask Management
-    // ============================================
 
     public async Task<SubtaskDto> AddSubtaskAsync(Guid userId, Guid taskId, CreateSubtaskDto dto)
     {
@@ -458,7 +422,6 @@ public class TaskService : ITaskService
             throw new ArgumentException("Title is required", nameof(dto.Title));
         }
 
-        // Get max order
         var maxOrder = task.Subtasks.Any() 
             ? task.Subtasks.Max(s => s.Order) 
             : -1;
@@ -474,8 +437,7 @@ public class TaskService : ITaskService
         };
 
         _dbContext.TaskSubtasks.Add(subtask);
-        
-        // Update parent task timestamp
+
         task.UpdatedAt = DateTime.UtcNow;
         
         await _dbContext.SaveChangesAsync();
@@ -485,7 +447,7 @@ public class TaskService : ITaskService
 
     public async Task<SubtaskDto> UpdateSubtaskAsync(Guid userId, Guid taskId, Guid subtaskId, UpdateSubtaskDto dto)
     {
-        // Verify task belongs to user
+        
         var task = await _dbContext.Tasks
             .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
 
@@ -521,7 +483,6 @@ public class TaskService : ITaskService
             }
         }
 
-        // Update parent task timestamp
         task.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync();
@@ -531,7 +492,7 @@ public class TaskService : ITaskService
 
     public async Task DeleteSubtaskAsync(Guid userId, Guid taskId, Guid subtaskId)
     {
-        // Verify task belongs to user
+        
         var task = await _dbContext.Tasks
             .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
 
@@ -549,8 +510,7 @@ public class TaskService : ITaskService
         }
 
         _dbContext.TaskSubtasks.Remove(subtask);
-        
-        // Update parent task timestamp
+
         task.UpdatedAt = DateTime.UtcNow;
         
         await _dbContext.SaveChangesAsync();
@@ -558,7 +518,7 @@ public class TaskService : ITaskService
 
     public async Task<SubtaskDto> ToggleSubtaskAsync(Guid userId, Guid taskId, Guid subtaskId)
     {
-        // Verify task belongs to user
+        
         var task = await _dbContext.Tasks
             .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
 
@@ -576,18 +536,13 @@ public class TaskService : ITaskService
         }
 
         subtask.Toggle();
-        
-        // Update parent task timestamp
+
         task.UpdatedAt = DateTime.UtcNow;
         
         await _dbContext.SaveChangesAsync();
 
         return MapToSubtaskDto(subtask);
     }
-
-    // ============================================
-    // Recurrence Management
-    // ============================================
 
     public async Task<RecurrenceDto> SetRecurrenceAsync(Guid userId, Guid taskId, CreateRecurrenceDto dto)
     {
@@ -605,7 +560,6 @@ public class TaskService : ITaskService
             throw new ArgumentException("Recurrence rule is required", nameof(dto.Rule));
         }
 
-        // Update existing or create new
         if (task.Recurrence != null)
         {
             task.Recurrence.UpdateRule(dto.Rule);
@@ -649,13 +603,9 @@ public class TaskService : ITaskService
         }
     }
 
-    // ============================================
-    // Tag Management
-    // ============================================
-
     public async Task AddTagAsync(Guid userId, Guid taskId, Guid tagId)
     {
-        // Verify task belongs to user
+        
         var task = await _dbContext.Tasks
             .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
 
@@ -664,7 +614,6 @@ public class TaskService : ITaskService
             throw new InvalidOperationException("Task not found");
         }
 
-        // Verify tag belongs to user
         var tag = await _dbContext.Tags
             .FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == userId);
 
@@ -673,16 +622,14 @@ public class TaskService : ITaskService
             throw new InvalidOperationException("Tag not found");
         }
 
-        // Check if tag already added
         var existingTaskTag = await _dbContext.TaskTags
             .FirstOrDefaultAsync(tt => tt.TaskId == taskId && tt.TagId == tagId);
 
         if (existingTaskTag != null)
         {
-            return; // Already exists, no need to add
+            return; 
         }
 
-        // Add tag
         var taskTag = new TaskTag
         {
             TaskId = taskId,
@@ -690,8 +637,7 @@ public class TaskService : ITaskService
         };
 
         _dbContext.TaskTags.Add(taskTag);
-        
-        // Update task timestamp
+
         task.UpdatedAt = DateTime.UtcNow;
         
         await _dbContext.SaveChangesAsync();
@@ -699,7 +645,7 @@ public class TaskService : ITaskService
 
     public async Task RemoveTagAsync(Guid userId, Guid taskId, Guid tagId)
     {
-        // Verify task belongs to user
+        
         var task = await _dbContext.Tasks
             .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
 
@@ -717,20 +663,15 @@ public class TaskService : ITaskService
         }
 
         _dbContext.TaskTags.Remove(taskTag);
-        
-        // Update task timestamp
+
         task.UpdatedAt = DateTime.UtcNow;
         
         await _dbContext.SaveChangesAsync();
     }
 
-    // ============================================
-    // Private Helper Methods
-    // ============================================
-
     private async Task AddTagsToTaskAsync(Guid taskId, Guid userId, List<Guid> tagIds)
     {
-        // Verify all tags belong to user
+        
         var tags = await _dbContext.Tags
             .Where(t => tagIds.Contains(t.Id) && t.UserId == userId)
             .ToListAsync();
@@ -740,7 +681,6 @@ public class TaskService : ITaskService
             throw new InvalidOperationException("One or more tags not found");
         }
 
-        // Add task-tag relations
         var taskTags = tagIds.Select(tagId => new TaskTag
         {
             TaskId = taskId,
@@ -782,23 +722,18 @@ public class TaskService : ITaskService
         };
     }
 
-    // ============================================
-    // Ordering / Status helpers
-    // ============================================
-
     public async Task ReorderTasksAsync(Guid userId, List<(Guid TaskId, Guid? ThemeId, int Order)> items)
     {
         var taskIds = items.Select(i => i.TaskId).ToList();
         var tasks = await _dbContext.Tasks.Where(t => t.UserId == userId && taskIds.Contains(t.Id)).ToListAsync();
 
-        // Verify all tasks fetched
         if (tasks.Count != items.Count)
             throw new InvalidOperationException("One or more tasks not found for reorder");
 
         foreach (var entry in items)
         {
             var task = tasks.First(t => t.Id == entry.TaskId);
-            // If theme changed we don't auto-shift others here, assumption: client sends full desired state
+            
             task.TaskThemeId = entry.ThemeId;
             task.Order = entry.Order;
             task.UpdatedAt = DateTime.UtcNow;
@@ -816,30 +751,25 @@ public class TaskService : ITaskService
             .Include(t => t.Recurrence)
             .FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == userId);
         if (task == null) throw new InvalidOperationException("Task not found");
-        
-        // Prevent accidental double processing: if already Done and CompletedAt set a moment ago, do nothing
+
         if (task.Status == Domain.Enums.TasksStatus.Done && task.CompletedAt.HasValue && (DateTime.UtcNow - task.CompletedAt.Value) < TimeSpan.FromSeconds(2))
         {
             return;
         }
 
-        // Mark current as completed
         task.Complete();
 
-        // If task is archived or has no recurrence, just save completion
         if (task.IsArchived || task.Recurrence == null)
         {
             await _dbContext.SaveChangesAsync();
             return;
         }
 
-        // Parse recurrence rule and create a NEW task instance scheduled for the next occurrence
         var parsed = ParseRecurrenceRule(task.Recurrence.Rule);
         var baseDateTime = task.DueDate ?? DateTime.UtcNow;
         var timeOfDay = baseDateTime.TimeOfDay;
         var nextDate = ComputeNextDate(baseDateTime.Date, parsed);
 
-        // Determine order in the target theme (append to the end)
         var maxOrder = await _dbContext.Tasks
             .Where(t => t.UserId == userId && t.TaskThemeId == task.TaskThemeId && !t.IsArchived)
             .Select(t => (int?)t.Order)
@@ -862,7 +792,6 @@ public class TaskService : ITaskService
             UpdatedAt = DateTime.UtcNow
         };
 
-        // Clone subtasks (titles and order), reset completion
         foreach (var s in task.Subtasks.OrderBy(x => x.Order))
         {
             newTask.Subtasks.Add(new TaskSubtask
@@ -877,7 +806,6 @@ public class TaskService : ITaskService
             });
         }
 
-        // Clone tags
         foreach (var tt in task.TaskTags)
         {
             newTask.TaskTags.Add(new TaskTag
@@ -887,7 +815,6 @@ public class TaskService : ITaskService
             });
         }
 
-        // Transfer recurrence to the new task: mark last occurrence on old, then create a new recurrence on the new task
         task.Recurrence.LastOccurrence = DateTime.UtcNow;
         var newRecurrence = new TaskRecurrence
         {
@@ -900,7 +827,6 @@ public class TaskService : ITaskService
         };
         newTask.Recurrence = newRecurrence;
 
-        // Remove recurrence from completed task to avoid duplicating schedules on old items
         _dbContext.TaskRecurrences.Remove(task.Recurrence);
 
         _dbContext.Tasks.Add(newTask);
@@ -943,7 +869,7 @@ public class TaskService : ITaskService
                     if (int.TryParse(val, out var interval) && interval > 0) result.Interval = interval;
                     break;
                 case "BYDAY":
-                    // e.g. MO,TU,WE
+                    
                     var days = val.Split(',', StringSplitOptions.RemoveEmptyEntries)
                         .Select(StringToDayOfWeek)
                         .Where(d => d.HasValue)
@@ -991,13 +917,13 @@ public class TaskService : ITaskService
             return baseDate.AddDays(7 * r.Interval);
         }
         var set = r.ByDays.OrderBy(d => d).ToArray();
-        // find next day in set strictly after baseDate.DayOfWeek; otherwise jump weeks
+        
         for (int i = 1; i <= 7 * r.Interval; i++)
         {
             var candidate = baseDate.AddDays(i);
             if (set.Contains(candidate.DayOfWeek)) return candidate;
         }
-        // fallback
+        
         return baseDate.AddDays(7 * r.Interval);
     }
 

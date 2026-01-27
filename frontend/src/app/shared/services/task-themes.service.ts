@@ -9,7 +9,7 @@ import { TaskTheme, CreateTaskTheme, UpdateTaskTheme } from '../models/task-them
 })
 export class TaskThemesService {
   private http = inject(HttpClient);
-  // environment.apiUrl already includes '/api'
+  
   private apiUrl = `${environment.apiUrl}/task-themes`;
 
   getThemes(): Observable<TaskTheme[]> {

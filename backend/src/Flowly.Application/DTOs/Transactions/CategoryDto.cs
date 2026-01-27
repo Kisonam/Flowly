@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// Category information DTO
-/// </summary>
 public class CategoryDto
 {
     public Guid Id { get; set; }

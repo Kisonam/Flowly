@@ -17,9 +17,6 @@ export class NotesService {
   private http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/notes`;
 
-  /**
-   * Get all notes with optional filtering and pagination
-   */
   getNotes(filter?: NoteFilter): Observable<PaginatedResult<Note>> {
     let params = new HttpParams();
 
@@ -49,9 +46,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Get a single note by ID
-   */
   getNoteById(id: string): Observable<Note> {
     return this.http.get<Note>(`${this.API_URL}/${id}`)
       .pipe(
@@ -61,9 +55,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Get a specific note by ID
-   */
   getNote(id: string): Observable<Note> {
     return this.http.get<Note>(`${this.API_URL}/${id}`)
       .pipe(
@@ -73,9 +64,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Create a new note
-   */
   createNote(request: CreateNoteRequest): Observable<Note> {
     return this.http.post<Note>(this.API_URL, request)
       .pipe(
@@ -85,9 +73,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Update an existing note
-   */
   updateNote(id: string, request: UpdateNoteRequest): Observable<Note> {
     return this.http.put<Note>(`${this.API_URL}/${id}`, request)
       .pipe(
@@ -97,9 +82,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Archive a note (soft delete)
-   */
   deleteNote(id: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`)
       .pipe(
@@ -108,9 +90,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Restore an archived note
-   */
   restoreNote(id: string): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/${id}/restore`, {})
       .pipe(
@@ -119,9 +98,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Add a tag to a note
-   */
   addTag(noteId: string, tagId: string): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/${noteId}/tags/${tagId}`, {})
       .pipe(
@@ -130,9 +106,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Remove a tag from a note
-   */
   removeTag(noteId: string, tagId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${noteId}/tags/${tagId}`)
       .pipe(
@@ -141,9 +114,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Upload media asset to a note
-   */
   uploadMedia(noteId: string, file: File): Observable<{ mediaUrl: string }> {
     const formData = new FormData();
     formData.append('file', file);
@@ -155,9 +125,6 @@ export class NotesService {
       );
   }
 
-  /**
-   * Export note as markdown file
-   */
   exportMarkdown(noteId: string): Observable<Blob> {
     return this.http.get(`${this.API_URL}/${noteId}/export`, {
       responseType: 'blob',
@@ -165,7 +132,7 @@ export class NotesService {
     })
       .pipe(
         map(response => {
-          // Extract filename from Content-Disposition header if available
+          
           const contentDisposition = response.headers.get('Content-Disposition');
           let filename = 'note.md';
 
@@ -176,7 +143,6 @@ export class NotesService {
             }
           }
 
-          // Create blob and download
           const blob = response.body!;
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
@@ -192,13 +158,6 @@ export class NotesService {
       );
   }
 
-  // ============================================
-  // Private Helper Methods
-  // ============================================
-
-  /**
-   * Convert date strings to Date objects in paginated result
-   */
   private convertDates(result: PaginatedResult<Note>): PaginatedResult<Note> {
     return {
       ...result,
@@ -206,9 +165,6 @@ export class NotesService {
     };
   }
 
-  /**
-   * Convert date strings to Date objects in a single note
-   */
   private convertNoteDate(note: Note): Note {
     return {
       ...note,
@@ -217,9 +173,6 @@ export class NotesService {
     };
   }
 
-  /**
-   * Handle HTTP errors
-   */
   private handleError(error: any): Observable<never> {
     console.error('❌ Notes service error:', error);
 

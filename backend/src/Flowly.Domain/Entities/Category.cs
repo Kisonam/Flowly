@@ -1,4 +1,3 @@
-// backend/src/Flowly.Domain/Entities/Category.cs
 namespace Flowly.Domain.Entities;
 public class Category 
 { 

@@ -1,4 +1,4 @@
-// frontend/src/app/features/auth/services/auth.service.ts
+
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -31,7 +31,6 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  // BehaviorSubject для статусу автентифікації
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -49,18 +48,16 @@ export class AuthService {
       return;
     }
 
-    // Check if access token is valid
     if (this.hasValidToken()) {
-      // Token is valid, set authenticated state
+      
       this.isAuthenticatedSubject.next(true);
 
-      // Load user info from storage or server
       const cachedUser = this.getUserFromStorage();
       if (cachedUser) {
         this.currentUserSubject.next(cachedUser);
       }
     } else {
-      // Access token expired, try to refresh
+      
       this.refreshToken().subscribe({
         next: () => {
           console.log('✅ Token refreshed on app initialization');
@@ -74,12 +71,6 @@ export class AuthService {
     }
   }
 
-  // Authentication Methods
-
-
-  /**
-   * Register new user
-   */
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/register`, request)
       .pipe(
@@ -88,9 +79,6 @@ export class AuthService {
       );
   }
 
-  /**
-   * Login with email and password
-   */
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, request)
       .pipe(
@@ -99,9 +87,6 @@ export class AuthService {
       );
   }
 
-  /**
-   * Login with Google
-   */
   loginWithGoogle(idToken: string): Observable<AuthResponse> {
     const request: GoogleLoginRequest = { idToken };
     return this.http.post<AuthResponse>(`${this.API_URL}/google`, request)
@@ -111,14 +96,11 @@ export class AuthService {
       );
   }
 
-  /**
-   * Logout user
-   */
   logout(): void {
     const refreshToken = this.getRefreshToken();
 
     if (refreshToken) {
-      // Revoke token on server
+      
       this.http.post(`${this.API_URL}/revoke`, { refreshToken })
         .subscribe({
           next: () => console.log('Token revoked on server'),
@@ -132,9 +114,6 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  /**
-   * Refresh access token
-   */
   refreshToken(): Observable<AuthResponse> {
     const accessToken = this.getAccessToken();
     const refreshToken = this.getRefreshToken();
@@ -155,11 +134,6 @@ export class AuthService {
       );
   }
 
-  // Profile Methods
-
-  /**
-   * Get current user profile
-   */
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.API_URL}/me`)
       .pipe(
@@ -171,9 +145,6 @@ export class AuthService {
       );
   }
 
-  /**
-   * Update user profile
-   */
   updateProfile(request: UpdateProfileRequest): Observable<User> {
     return this.http.put<User>(`${this.API_URL}/profile`, request)
       .pipe(
@@ -185,17 +156,11 @@ export class AuthService {
       );
   }
 
-  /**
-   * Change password
-   */
   changePassword(request: ChangePasswordRequest): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/change-password`, request)
       .pipe(catchError(this.handleError));
   }
 
-  /**
-   * Upload avatar
-   */
   uploadAvatar(file: File): Observable<{ avatarUrl: string }> {
     const formData = new FormData();
     formData.append('file', file);
@@ -214,9 +179,6 @@ export class AuthService {
       );
   }
 
-  /**
-   * Delete avatar
-   */
   deleteAvatar(): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/avatar`)
       .pipe(
@@ -232,51 +194,29 @@ export class AuthService {
       );
   }
 
-  // ============================================
-  // Token Management
-  // ============================================
-
-  /**
-   * Get access token
-   */
   getAccessToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  /**
-   * Get refresh token
-   */
   getRefreshToken(): string | null {
     return localStorage.getItem(this.REFRESH_TOKEN_KEY);
   }
 
-  /**
-   * Check if user is authenticated
-   */
   isAuthenticated(): boolean {
     return this.hasValidToken();
   }
 
-  /**
-   * Get current user value (synchronous)
-   */
   getCurrentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
-  // ============================================
-  // Private Helper Methods
-  // ============================================
-
   private handleAuthSuccess(response: AuthResponse): void {
-    // Save tokens
+    
     localStorage.setItem(this.TOKEN_KEY, response.accessToken);
     localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
 
-    // Save user
     this.setUser(response.user);
 
-    // Update observables
     this.currentUserSubject.next(response.user);
     this.isAuthenticatedSubject.next(true);
 
@@ -297,10 +237,10 @@ export class AuthService {
     if (!token) return false;
 
     try {
-      // Decode JWT to check expiration
+      
       const payload = JSON.parse(atob(token.split('.')[1]));
-      const exp = payload.exp * 1000; // Convert to milliseconds
-      // Add 5 second buffer to prevent edge cases
+      const exp = payload.exp * 1000; 
+      
       return Date.now() < (exp - 5000);
     } catch {
       return false;

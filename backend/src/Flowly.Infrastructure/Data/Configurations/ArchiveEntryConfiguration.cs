@@ -20,7 +20,6 @@ public class ArchiveEntryConfiguration : IEntityTypeConfiguration<ArchiveEntry>
             .IsRequired()
             .HasColumnType("text");
 
-        // Indexes
         builder.HasIndex(a => a.UserId);
         builder.HasIndex(a => a.EntityType);
         builder.HasIndex(a => a.ArchivedAt);

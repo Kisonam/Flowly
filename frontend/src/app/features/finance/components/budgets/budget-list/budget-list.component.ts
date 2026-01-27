@@ -29,22 +29,20 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   errorMessage = '';
   empty = false;
 
-  // Available currencies for filter (loaded from backend)
   currencies: Currency[] = [];
   loadingCurrencies = false;
 
-  // Filter form
   filterForm: FormGroup;
 
   constructor() {
     this.filterForm = this.fb.group({
-      search: [''], // Search by title
-      status: ['active'], // 'all', 'active', 'archived'
-      currencyCode: [''], // Filter by currency
-      minAmount: [''], // Minimum limit amount
-      maxAmount: [''], // Maximum limit amount
-      periodStart: [''], // Start date
-      periodEnd: [''] // End date
+      search: [''], 
+      status: ['active'], 
+      currencyCode: [''], 
+      minAmount: [''], 
+      maxAmount: [''], 
+      periodStart: [''], 
+      periodEnd: [''] 
     });
   }
   ngOnInit(): void {
@@ -68,7 +66,7 @@ export class BudgetListComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Failed to load currencies:', err);
         this.loadingCurrencies = false;
-        // Fallback to default currencies
+        
         this.currencies = [
           { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
           { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -118,13 +116,13 @@ export class BudgetListComponent implements OnInit, OnDestroy {
     let isArchived: boolean | undefined = undefined;
 
     if (formValue.status === 'active') {
-      // Show only non-archived budgets (regardless of period)
+      
       isArchived = false;
     } else if (formValue.status === 'archived') {
-      // Show only archived budgets
+      
       isArchived = true;
     } else {
-      // 'all' - show everything
+      
       isArchived = undefined;
     }
 
@@ -139,12 +137,10 @@ export class BudgetListComponent implements OnInit, OnDestroy {
     return filter;
   }
 
-  // Client-side filtering for search and amount
   get filteredBudgets(): Budget[] {
     let filtered = [...this.budgets];
     const formValue = this.filterForm.value;
 
-    // Search by title, description, or category name
     if (formValue.search) {
       const search = formValue.search.toLowerCase();
       filtered = filtered.filter(b =>
@@ -154,20 +150,18 @@ export class BudgetListComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Filter by min amount
     if (formValue.minAmount) {
       const min = Number(formValue.minAmount);
       filtered = filtered.filter(b => b.limit >= min);
     }
 
-    // Filter by max amount
     if (formValue.maxAmount) {
       const max = Number(formValue.maxAmount);
       filtered = filtered.filter(b => b.limit <= max);
     }
 
     return filtered;
-  }  // Actions
+  }  
   viewBudget(budget: Budget): void {
     this.router.navigate(['/finance/budgets', budget.id]);
   }
@@ -218,7 +212,6 @@ export class BudgetListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Helpers
   getProgressPercentage(budget: Budget): number {
     return budget.progressPercentage;
   }
@@ -238,12 +231,12 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   }
 
   getCategoryColor(category: any): string {
-    // In low-stimulus mode, always use theme variable
+    
     const currentTheme = this.themeService.getCurrentTheme();
     if (currentTheme === 'low-stimulus') {
       return this.themeService.getCssVarValue('--secondary-light', '#d1d5db');
     }
-    // In normal mode, use category color or fallback
+    
     if (category?.color) {
       return category.color;
     }

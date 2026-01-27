@@ -33,7 +33,6 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
   safeHtml: SafeHtml | null = null;
   links: Link[] = [];
 
-  // Computed lists based on links
   linkedTasks: any[] = [];
   linkedTransactions: any[] = [];
   linkedNotes: any[] = [];
@@ -67,7 +66,6 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
           html = this.replaceReferenceTokens(html);
           this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(html);
 
-          // Load links for this note
           this.loadLinks();
         },
         error: (err) => {
@@ -99,7 +97,7 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
     this.linkedNotes = [];
 
     links.forEach(link => {
-      // Get the "other" entity preview
+      
       const preview = link.fromType === LinkEntityType.Note && link.fromId === this.noteId
         ? link.toPreview
         : link.fromPreview;
@@ -164,7 +162,6 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/notes']);
   }
 
-  // Replace [[task:ID|Label]] and [[tx:ID|Label]] tokens with styled pills
   private replaceReferenceTokens(html: string): string {
     const refRegex = /\[\[(task|tx):([A-Za-z0-9\-]{6,})\|?([^\]]*)\]\]/g;
     return html.replace(refRegex, (_match, type: string, id: string, label: string) => {

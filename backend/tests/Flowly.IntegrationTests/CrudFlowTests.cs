@@ -11,10 +11,6 @@ using Xunit;
 
 namespace Flowly.IntegrationTests;
 
-/// <summary>
-/// Інтеграційні тести для CRUD операцій.
-/// Тестуємо повні flow створення, читання, оновлення та видалення через API.
-/// </summary>
 public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 {
     private readonly HttpClient _client;
@@ -32,34 +28,14 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         _jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     }
 
-    // ============================================
-    // ТЕСТ 1: Note CRUD Flow - Create → Get → Update → Archive
-    // ============================================
-    
-    /// <summary>
-    /// Тестуємо повний життєвий цикл нотатки:
-    /// 1. Створення нової нотатки
-    /// 2. Отримання нотатки по ID
-    /// 3. Оновлення нотатки
-    /// 4. Архівування нотатки
-    /// 
-    /// Це перевіряє всі основні CRUD операції через реальні HTTP запити.
-    /// </summary>
     [Fact]
     public async Task NoteCrudFlow_CreateGetUpdateArchive_ShouldWorkEndToEnd()
     {
-        // ============================================
-        // ПІДГОТОВКА: Автентифікація
-        // ============================================
-        
+
         var authToken = await AuthenticateUserAsync("note.crud@example.com", "TestPass123!");
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", authToken);
 
-        // ============================================
-        // КРОК 1: Створення нотатки
-        // ============================================
-        
         var createDto = new CreateNoteDto
         {
             Title = "My Integration Test Note",
@@ -70,7 +46,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var createResponse = await _client.PostAsJsonAsync("/api/notes", createDto, _jsonOptions);
 
-        // Assert створення
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created,
             "нотатка має бути успішно створена");
 
@@ -84,13 +59,8 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var noteId = createdNote.Id;
 
-        // ============================================
-        // КРОК 2: Отримання нотатки по ID
-        // ============================================
-        
         var getResponse = await _client.GetAsync($"/api/notes/{noteId}");
 
-        // Assert отримання
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "нотатка має бути знайдена");
 
@@ -100,10 +70,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         retrievedNote.Title.Should().Be(createDto.Title);
         retrievedNote.Markdown.Should().Be(createDto.Markdown);
 
-        // ============================================
-        // КРОК 3: Оновлення нотатки
-        // ============================================
-        
         var updateDto = new UpdateNoteDto
         {
             Title = "Updated Title",
@@ -114,7 +80,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var updateResponse = await _client.PutAsJsonAsync($"/api/notes/{noteId}", updateDto, _jsonOptions);
 
-        // Assert оновлення
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "нотатка має бути успішно оновлена");
 
@@ -125,49 +90,24 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         updatedNote.UpdatedAt.Should().BeAfter(updatedNote.CreatedAt,
             "UpdatedAt має бути оновлений");
 
-        // ============================================
-        // КРОК 4: Архівування нотатки
-        // ============================================
-        
         var archiveResponse = await _client.DeleteAsync($"/api/notes/{noteId}");
 
-        // Assert архівування
         archiveResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "нотатка має бути успішно архівована");
 
-        // Перевіряємо, що нотатка тепер архівована
         var archivedNoteResponse = await _client.GetAsync($"/api/notes/{noteId}");
         var archivedNote = await archivedNoteResponse.Content.ReadFromJsonAsync<NoteDto>(_jsonOptions);
         archivedNote!.IsArchived.Should().BeTrue("нотатка має бути архівована");
     }
 
-    // ============================================
-    // ТЕСТ 2: Task CRUD Flow - Create → Add Subtask → Complete
-    // ============================================
-    
-    /// <summary>
-    /// Тестуємо повний життєвий цикл задачі:
-    /// 1. Створення нової задачі
-    /// 2. Додавання підзадачі
-    /// 3. Завершення задачі
-    /// 
-    /// Це перевіряє роботу з ієрархічними структурами (task + subtasks).
-    /// </summary>
     [Fact]
     public async Task TaskCrudFlow_CreateAddSubtaskComplete_ShouldWorkEndToEnd()
     {
-        // ============================================
-        // ПІДГОТОВКА: Автентифікація
-        // ============================================
-        
+
         var authToken = await AuthenticateUserAsync("task.crud@example.com", "TestPass123!");
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", authToken);
 
-        // ============================================
-        // КРОК 1: Створення задачі
-        // ============================================
-        
         var createDto = new CreateTaskDto
         {
             Title = "Integration Test Task",
@@ -179,7 +119,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var createResponse = await _client.PostAsJsonAsync("/api/tasks", createDto, _jsonOptions);
 
-        // Assert створення
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created,
             "задача має бути успішно створена");
 
@@ -194,10 +133,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var taskId = createdTask.Id;
 
-        // ============================================
-        // КРОК 2: Додавання першої підзадачі
-        // ============================================
-        
         var subtask1Dto = new CreateSubtaskDto
         {
             Title = "First Subtask"
@@ -206,7 +141,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         var subtask1Response = await _client.PostAsJsonAsync(
             $"/api/tasks/{taskId}/subtasks", subtask1Dto, _jsonOptions);
 
-        // Assert додавання підзадачі
         subtask1Response.StatusCode.Should().Be(HttpStatusCode.Created,
             "підзадача має бути успішно додана");
 
@@ -215,10 +149,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         subtask1!.Title.Should().Be(subtask1Dto.Title);
         subtask1.IsDone.Should().BeFalse("нова підзадача не має бути виконана");
 
-        // ============================================
-        // КРОК 3: Додавання другої підзадачі
-        // ============================================
-        
         var subtask2Dto = new CreateSubtaskDto
         {
             Title = "Second Subtask"
@@ -232,10 +162,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         var subtask2 = await subtask2Response.Content.ReadFromJsonAsync<SubtaskDto>(_jsonOptions);
         subtask2.Should().NotBeNull();
 
-        // ============================================
-        // КРОК 4: Перевірка, що задача має обидві підзадачі
-        // ============================================
-        
         var getTaskResponse = await _client.GetAsync($"/api/tasks/{taskId}");
         var taskWithSubtasks = await getTaskResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
         
@@ -244,10 +170,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         taskWithSubtasks.Subtasks.Should().Contain(s => s.Title == "First Subtask");
         taskWithSubtasks.Subtasks.Should().Contain(s => s.Title == "Second Subtask");
 
-        // ============================================
-        // КРОК 5: Виконання першої підзадачі
-        // ============================================
-        
         var updateSubtaskDto = new UpdateSubtaskDto
         {
             Title = subtask1.Title,
@@ -264,17 +186,11 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         toggledSubtask!.IsDone.Should().BeTrue("підзадача має бути виконана");
         toggledSubtask.CompletedAt.Should().NotBeNull("має бути встановлена дата завершення");
 
-        // ============================================
-        // КРОК 6: Завершення основної задачі
-        // ============================================
-        
         var completeResponse = await _client.PostAsync($"/api/tasks/{taskId}/complete", null);
 
-        // Assert завершення
         completeResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "задача має бути успішно завершена");
 
-        // Отримуємо оновлену задачу
         var completedTaskResponse = await _client.GetAsync($"/api/tasks/{taskId}");
         var completedTask = await completedTaskResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
         
@@ -284,21 +200,13 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         completedTask.CompletedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
     }
 
-    // ============================================
-    // ТЕСТ 3: Неможливість отримати чужу нотатку
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Перевіряємо, що користувач не може отримати нотатку іншого користувача.
-    /// </summary>
     [Fact]
     public async Task GetNote_FromAnotherUser_ShouldReturn404()
     {
-        // Створюємо двох користувачів
+        
         var user1Token = await AuthenticateUserAsync("user1@example.com", "Pass123!");
         var user2Token = await AuthenticateUserAsync("user2@example.com", "Pass123!");
 
-        // User1 створює нотатку
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", user1Token);
 
@@ -312,32 +220,22 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         var createdNote = await createResponse.Content.ReadFromJsonAsync<NoteDto>(_jsonOptions);
         var noteId = createdNote!.Id;
 
-        // User2 намагається отримати нотатку User1
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", user2Token);
 
         var getResponse = await _client.GetAsync($"/api/notes/{noteId}");
 
-        // Assert - має бути 404 (не розкриваємо, що нотатка існує)
         getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound,
             "користувач не може отримати чужу нотатку");
     }
 
-    // ============================================
-    // ТЕСТ 4: Неможливість оновити чужу задачу
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Перевіряємо, що користувач не може оновити задачу іншого користувача.
-    /// </summary>
     [Fact]
     public async Task UpdateTask_FromAnotherUser_ShouldReturn404()
     {
-        // Створюємо двох користувачів
+        
         var user1Token = await AuthenticateUserAsync("taskuser1@example.com", "Pass123!");
         var user2Token = await AuthenticateUserAsync("taskuser2@example.com", "Pass123!");
 
-        // User1 створює задачу
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", user1Token);
 
@@ -351,7 +249,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         var createdTask = await createResponse.Content.ReadFromJsonAsync<TaskDto>(_jsonOptions);
         var taskId = createdTask!.Id;
 
-        // User2 намагається оновити задачу User1
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", user2Token);
 
@@ -364,11 +261,9 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var updateResponse = await _client.PutAsJsonAsync($"/api/tasks/{taskId}", updateDto, _jsonOptions);
 
-        // Assert - має бути 404
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NotFound,
             "користувач не може оновити чужу задачу");
 
-        // Перевіряємо, що задача не змінилася
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", user1Token);
 
@@ -378,14 +273,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             "задача не має бути змінена");
     }
 
-    // ============================================
-    // Helper Methods
-    // ============================================
-    
-    /// <summary>
-    /// Допоміжний метод для автентифікації користувача.
-    /// Реєструє нового користувача (якщо потрібно) і повертає access token.
-    /// </summary>
     private async Task<string> AuthenticateUserAsync(string email, string password)
     {
         var registerDto = new RegisterDto
@@ -396,7 +283,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             DisplayName = email.Split('@')[0]
         };
 
-        // Намагаємося зареєструвати
         var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
         
         if (registerResponse.IsSuccessStatusCode)
@@ -405,7 +291,6 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             return registerResult!.AccessToken;
         }
 
-        // Якщо не вийшло - пробуємо залогінитись (на випадок якщо користувач вже є)
         var loginDto = new LoginDto
         {
             Email = email,
@@ -416,7 +301,7 @@ public class CrudFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         
         if (!loginResponse.IsSuccessStatusCode)
         {
-            // Якщо і логін не вдався - кидаємо виключення з деталями
+            
             var errorContent = await loginResponse.Content.ReadAsStringAsync();
             throw new InvalidOperationException($"Authentication failed for {email}. Register status: {registerResponse.StatusCode}, Login status: {loginResponse.StatusCode}. Error: {errorContent}");
         }

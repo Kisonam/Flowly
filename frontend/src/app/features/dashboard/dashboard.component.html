@@ -1,5 +1,5 @@
 <div class="dashboard-container">
-  <!-- Header -->
+  
   <div class="module-header">
     <h2>{{ 'DASHBOARD.TITLE' | translate }}</h2>
     <div class="module-actions">
@@ -27,7 +27,6 @@
     </div>
   </div>
 
-  <!-- Loading State -->
   @if (loading) {
     <div class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
@@ -37,7 +36,6 @@
     </div>
   }
 
-  <!-- Error State -->
   @else if (error) {
     <div class="alert alert-danger" role="alert">
       <h5 class="alert-heading">{{ 'DASHBOARD.ERROR.TITLE' | translate }}</h5>
@@ -49,18 +47,15 @@
     </div>
   }
 
-  <!-- Dashboard Content -->
   @else if (dashboardData) {
-    <!-- Activity Stats (4 blocks) -->
+    
     <app-activity-stats [stats]="dashboardData.activityStats"></app-activity-stats>
 
-    <!-- Finance Summary -->
     <app-finance-summary
       [stats]="dashboardData.financeStats"
       [multiCurrencyStats]="dashboardData.multiCurrencyFinanceStats">
     </app-finance-summary>
 
-    <!-- Bottom Grid -->
     <div class="bottom-charts">
       <app-upcoming-tasks [tasks]="dashboardData.upcomingTasks"></app-upcoming-tasks>
       <app-recent-notes [notes]="dashboardData.recentNotes"></app-recent-notes>

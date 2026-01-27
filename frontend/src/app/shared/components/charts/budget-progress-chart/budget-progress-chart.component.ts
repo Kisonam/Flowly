@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, Afte
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
-// Register Chart.js components
 Chart.register(...registerables);
 
 export interface BudgetProgressData {
@@ -29,8 +28,8 @@ export class BudgetProgressChartComponent implements OnChanges, AfterViewInit, O
   @Input() showTitle = true;
   @Input() responsive = true;
   @Input() showPercentage = true;
-  @Input() warningThreshold = 80; // Show warning color when budget usage exceeds this percentage
-  @Input() dangerThreshold = 100; // Show danger color when budget usage exceeds this percentage
+  @Input() warningThreshold = 80; 
+  @Input() dangerThreshold = 100; 
 
   private chart?: Chart;
   private viewInitialized = false;
@@ -89,7 +88,7 @@ export class BudgetProgressChartComponent implements OnChanges, AfterViewInit, O
         ]
       },
       options: {
-        indexAxis: 'y', // Horizontal bars
+        indexAxis: 'y', 
         responsive: this.responsive,
         maintainAspectRatio: false,
         plugins: {
@@ -112,12 +111,12 @@ export class BudgetProgressChartComponent implements OnChanges, AfterViewInit, O
                 const value = context.parsed.x || 0;
 
                 if (context.datasetIndex === 0) {
-                  // Current dataset
+                  
                   const limit = this.data[context.dataIndex].limit;
                   const percentage = limit > 0 ? ((value / limit) * 100).toFixed(1) : '0';
                   return `${label}: ${value.toFixed(2)} (${percentage}%)`;
                 } else {
-                  // Limit dataset
+                  
                   return `${label}: ${value.toFixed(2)}`;
                 }
               }
@@ -176,26 +175,24 @@ export class BudgetProgressChartComponent implements OnChanges, AfterViewInit, O
   }
 
   private getColorByProgress(current: number, limit: number): string {
-    if (limit === 0) return 'rgba(156, 163, 175, 0.8)'; // Gray for undefined
+    if (limit === 0) return 'rgba(156, 163, 175, 0.8)'; 
 
     const percentage = (current / limit) * 100;
 
     if (percentage >= this.dangerThreshold) {
-      return 'rgba(239, 68, 68, 0.8)'; // Red - over budget
+      return 'rgba(239, 68, 68, 0.8)'; 
     } else if (percentage >= this.warningThreshold) {
-      return 'rgba(251, 191, 36, 0.8)'; // Yellow/Orange - warning
+      return 'rgba(251, 191, 36, 0.8)'; 
     } else {
-      return 'rgba(34, 197, 94, 0.8)'; // Green - safe
+      return 'rgba(34, 197, 94, 0.8)'; 
     }
   }
 
-  // Helper method to get progress percentage
   getProgressPercentage(budget: BudgetProgressData): number {
     if (budget.limit === 0) return 0;
     return (budget.current / budget.limit) * 100;
   }
 
-  // Helper method to get remaining amount
   getRemainingAmount(budget: BudgetProgressData): number {
     return Math.max(0, budget.limit - budget.current);
   }

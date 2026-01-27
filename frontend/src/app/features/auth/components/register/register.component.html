@@ -1,17 +1,15 @@
-<!-- frontend/src/app/features/auth/components/register/register.component.html -->
+
 
 <div class="register-container">
   <h2 class="auth-title">{{ 'AUTH.REGISTER.TITLE' | translate }}</h2>
   <p class="auth-subtitle">{{ 'AUTH.REGISTER.SUBTITLE' | translate }}</p>
 
-  <!-- Error Alert -->
   <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
     <strong>Error:</strong> {{ errorMessage }}
   </div>
 
-  <!-- Register Form -->
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <!-- Display Name -->
+    
     <div class="mb-3">
       <label for="displayName" class="form-label">{{ 'AUTH.REGISTER.DISPLAY_NAME_LABEL' | translate }}</label>
       <input type="text" class="form-control" id="displayName" formControlName="displayName"
@@ -24,7 +22,6 @@
       </div>
     </div>
 
-    <!-- Email -->
     <div class="mb-3">
       <label for="email" class="form-label">{{ 'AUTH.REGISTER.EMAIL_LABEL' | translate }}</label>
       <input type="email" class="form-control" id="email" formControlName="email"
@@ -36,7 +33,6 @@
       </div>
     </div>
 
-    <!-- Password -->
     <div class="mb-3">
       <label for="password" class="form-label">{{ 'AUTH.REGISTER.PASSWORD_LABEL' | translate }}</label>
       <div class="input-group">
@@ -53,7 +49,6 @@
           }}</span>
       </div>
 
-      <!-- Password Strength Indicator -->
       <div class="password-requirements mt-2" *ngIf="password?.errors?.['passwordStrength'] && password?.touched">
         <small class="text-muted">{{ 'AUTH.REGISTER.PASSWORD_REQUIREMENTS.TITLE' | translate }}</small>
         <ul class="list-unstyled mb-0">
@@ -85,7 +80,6 @@
       </div>
     </div>
 
-    <!-- Confirm Password -->
     <div class="mb-3">
       <label for="confirmPassword" class="form-label">{{ 'AUTH.REGISTER.CONFIRM_PASSWORD_LABEL' | translate }}</label>
       <div class="input-group">
@@ -105,7 +99,6 @@
       </div>
     </div>
 
-    <!-- Submit Button -->
     <button type="submit" class="btn btn-primary w-100 mb-3" [disabled]="isLoading">
       <span *ngIf="!isLoading">{{ 'AUTH.REGISTER.CREATE_ACCOUNT_BUTTON' | translate }}</span>
       <span *ngIf="isLoading">
@@ -114,15 +107,12 @@
       </span>
     </button>
 
-    <!-- Divider -->
     <div class="divider">
       <span>{{ 'AUTH.REGISTER.OR' | translate }}</span>
     </div>
 
-    <!-- Google Sign-Up Button Container -->
     <div id="googleSignUpButton" class="google-button-container mb-3"></div>
 
-    <!-- Fallback Google Sign-Up Button (if SDK button doesn't render) -->
     <button type="button" class="btn btn-outline-secondary w-100 mb-3 google-fallback-button"
       (click)="registerWithGoogle()" [disabled]="isLoading">
       <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px">
@@ -138,7 +128,6 @@
       {{ 'AUTH.REGISTER.SIGN_UP_WITH_GOOGLE' | translate }}
     </button>
 
-    <!-- Login Link -->
     <p class="text-center mt-4">
       {{ 'AUTH.REGISTER.ALREADY_HAVE_ACCOUNT' | translate }}
       <a routerLink="/auth/login" class="text-primary">{{ 'AUTH.REGISTER.SIGN_IN_LINK' | translate }}</a>

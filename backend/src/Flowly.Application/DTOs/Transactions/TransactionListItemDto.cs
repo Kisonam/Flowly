@@ -18,8 +18,7 @@ public class TransactionListItemDto
     public DateTime CreatedAt { get; set; }
     public string? Description { get; set; }
     public bool IsArchived { get; set; }
-    
-    // Related entities
+
     public CategoryDto? Category { get; set; }
     public BudgetSummaryDto? Budget { get; set; }
     public GoalSummaryDto? Goal { get; set; }

@@ -1,5 +1,4 @@
-// Google Authentication Service
-// Handles Google Identity Services integration
+
 
 import { Injectable, NgZone } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
@@ -23,10 +22,6 @@ export class GoogleAuthService {
 
   constructor(private ngZone: NgZone) {}
 
-  /**
-   * Initialize Google Identity Services
-   * Should be called once during app initialization
-   */
   initialize(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.initialized) {
@@ -34,9 +29,8 @@ export class GoogleAuthService {
         return;
       }
 
-      // Check if Google Identity Services script is loaded
       if (!window.google?.accounts?.id) {
-        // Wait for script to load
+        
         const checkInterval = setInterval(() => {
           if (window.google?.accounts?.id) {
             clearInterval(checkInterval);
@@ -46,7 +40,6 @@ export class GoogleAuthService {
           }
         }, 100);
 
-        // Timeout after 10 seconds
         setTimeout(() => {
           clearInterval(checkInterval);
           reject(new Error('Google Identity Services failed to load'));
@@ -59,32 +52,24 @@ export class GoogleAuthService {
     });
   }
 
-  /**
-   * Initialize Google Authentication
-   */
   private initializeGoogleAuth(): void {
     const config: GoogleInitConfig = {
       client_id: this.clientId,
       callback: (response: GoogleCallbackResponse) => {
-        // Run callback inside Angular zone
+        
         this.ngZone.run(() => {
           this.credentialResponseSubject.next(response.credential);
         });
       },
       auto_select: false,
       cancel_on_tap_outside: true,
-      ux_mode: 'popup', // Use popup instead of One Tap to avoid CORS issues
+      ux_mode: 'popup', 
       context: 'signin'
     };
 
     window.google!.accounts.id.initialize(config);
   }
 
-  /**
-   * Render Google Sign-In button
-   * @param element HTML element where button will be rendered
-   * @param options Button configuration
-   */
   renderButton(element: HTMLElement, options?: Partial<GoogleButtonConfig>): void {
     if (!window.google?.accounts?.id) {
       console.error('Google Identity Services not loaded');
@@ -105,9 +90,6 @@ export class GoogleAuthService {
     window.google.accounts.id.renderButton(element, buttonConfig);
   }
 
-  /**
-   * Show One Tap prompt
-   */
   showOneTap(): void {
     if (!window.google?.accounts?.id) {
       console.error('Google Identity Services not loaded');
@@ -117,9 +99,6 @@ export class GoogleAuthService {
     window.google.accounts.id.prompt();
   }
 
-  /**
-   * Disable auto-select
-   */
   disableAutoSelect(): void {
     if (!window.google?.accounts?.id) {
       return;
@@ -128,9 +107,6 @@ export class GoogleAuthService {
     window.google.accounts.id.disableAutoSelect();
   }
 
-  /**
-   * Cancel One Tap prompt
-   */
   cancel(): void {
     if (!window.google?.accounts?.id) {
       return;
@@ -139,17 +115,10 @@ export class GoogleAuthService {
     window.google.accounts.id.cancel();
   }
 
-  /**
-   * Get credential response observable
-   */
   getCredentialResponse(): Observable<string> {
     return this.credentialResponseSubject.asObservable();
   }
 
-  /**
-   * Sign in with Google (programmatic)
-   * Returns the ID token
-   */
   signIn(): Promise<string> {
     return new Promise((resolve, reject) => {
       const subscription = this.credentialResponseSubject.subscribe({
@@ -163,10 +132,8 @@ export class GoogleAuthService {
         }
       });
 
-      // Show One Tap prompt
       this.showOneTap();
 
-      // Timeout after 60 seconds
       setTimeout(() => {
         subscription.unsubscribe();
         reject(new Error('Google Sign-In timeout'));
@@ -174,9 +141,6 @@ export class GoogleAuthService {
     });
   }
 
-  /**
-   * Revoke Google access
-   */
   revoke(email: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       if (!window.google?.accounts?.id) {
@@ -194,16 +158,10 @@ export class GoogleAuthService {
     });
   }
 
-  /**
-   * Check if Google Identity Services is available
-   */
   isAvailable(): boolean {
     return !!window.google?.accounts?.id;
   }
 
-  /**
-   * Decode JWT token (for debugging only - don't rely on this for security)
-   */
   decodeCredential(credential: string): any {
     try {
       const base64Url = credential.split('.')[1];

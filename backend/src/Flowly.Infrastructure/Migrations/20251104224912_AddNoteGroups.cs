@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Flowly.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class AddNoteGroups : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
@@ -53,7 +53,6 @@ namespace Flowly.Infrastructure.Migrations
                 onDelete: ReferentialAction.SetNull);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(

@@ -20,7 +20,6 @@ public static class SwaggerConfiguration
                 }
             });
 
-            // Include XML comments for better documentation
             var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             if (File.Exists(xmlPath))
@@ -28,14 +27,12 @@ public static class SwaggerConfiguration
                 options.IncludeXmlComments(xmlPath);
             }
 
-            // Support for file uploads with IFormFile
             options.MapType<IFormFile>(() => new OpenApiSchema
             {
                 Type = "string",
                 Format = "binary"
             });
 
-            // Add JWT authentication to Swagger
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Description = "JWT Authorization header using the Bearer scheme. Enter your token in the text input below.",

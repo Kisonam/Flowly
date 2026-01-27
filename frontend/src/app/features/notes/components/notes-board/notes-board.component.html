@@ -1,5 +1,5 @@
 <div class="board-container">
-  <!-- Header -->
+  
   <div class="board-header">
     <h1>{{ 'NOTES.BOARD.TITLE' | translate }}</h1>
     <div class="header-actions">
@@ -12,24 +12,21 @@
     </div>
   </div>
 
-  <!-- Loading -->
   <div class="loading" *ngIf="isLoading">
     <div class="spinner-border text-primary"></div>
     <p>{{ 'NOTES.BOARD.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error -->
   <div class="alert alert-danger" *ngIf="errorMessage && !isLoading">
     {{ errorMessage }}
     <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadBoard()">{{ 'NOTES.LIST.BUTTONS.RETRY' | translate
       }}</button>
   </div>
 
-  <!-- Board with CDK Drag & Drop -->
   <div class="board-wrapper" *ngIf="!isLoading && !errorMessage" cdkDropList cdkDropListOrientation="horizontal"
     [cdkDropListData]="groups" (cdkDropListDropped)="onGroupsDrop($event)">
     <div class="board-columns" cdkDropListGroup>
-      <!-- Ungrouped column -->
+      
       <div class="column">
         <div class="column-header">
           <h3 class="column-title">{{ 'NOTES.BOARD.COLUMNS.NO_GROUP' | translate }}</h3>
@@ -58,7 +55,6 @@
         </div>
       </div>
 
-      <!-- Group columns -->
       <div *ngFor="let group of groups" class="column" cdkDrag>
         <div class="column-header" [style.border-color]="getGroupColor(group)">
           <div class="column-left">
@@ -102,7 +98,6 @@
   </div>
 </div>
 
-<!-- Group Modal -->
 <div class="modal-overlay" *ngIf="showGroupModal" (click)="closeGroupModal()">
   <div class="modal-content" appFocusTrap role="dialog" aria-labelledby="group-modal-title" aria-modal="true"
     (click)="$event.stopPropagation()">

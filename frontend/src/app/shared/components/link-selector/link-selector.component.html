@@ -1,5 +1,5 @@
 <div class="link-selector">
-  <!-- Header -->
+  
   <div class="header">
     <h3 class="title">
       <i class="bi bi-link-45deg"></i>
@@ -15,19 +15,16 @@
     </button>
   </div>
 
-  <!-- Loading state -->
   <div *ngIf="isLoading()" class="loading">
     <i class="bi bi-hourglass-split spinner"></i>
     Loading links...
   </div>
 
-  <!-- Error state -->
   <div *ngIf="error()" class="error">
     <i class="bi bi-exclamation-triangle"></i>
     {{ error() }}
   </div>
 
-  <!-- Links list -->
   <div *ngIf="!isLoading() && !error()" class="links-list">
     <div *ngIf="links().length === 0" class="no-links">
       <i class="bi bi-link-45deg"></i>
@@ -59,7 +56,6 @@
     </div>
   </div>
 
-  <!-- Add Link Dialog -->
   <div *ngIf="showAddDialog()" class="dialog-overlay" (click)="closeAddDialog()">
     <div class="dialog" (click)="$event.stopPropagation()">
       <div class="dialog-header">
@@ -70,7 +66,7 @@
       </div>
 
       <div class="dialog-body">
-        <!-- Link Type Selector -->
+        
         <div class="form-group">
           <label>Link to:</label>
           <div class="link-type-buttons">
@@ -87,7 +83,6 @@
           </div>
         </div>
 
-        <!-- Search Input -->
         <div class="form-group">
           <label>Search {{ getEntityTypeName(selectedLinkType()) }}:</label>
           <div class="search-input">
@@ -102,7 +97,6 @@
           </div>
         </div>
 
-        <!-- Search Results -->
         <div class="search-results">
           <div *ngIf="searchQuery() && searchQuery().length < 2" class="search-hint">
             Type at least 2 characters to search

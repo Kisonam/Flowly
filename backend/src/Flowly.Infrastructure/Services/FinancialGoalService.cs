@@ -25,7 +25,6 @@ public class FinancialGoalService : IFinancialGoalService
             .AsNoTracking()
             .Where(g => g.UserId == userId);
 
-        // Apply filters
         if (filter != null)
         {
             if (filter.IsCompleted.HasValue)
@@ -86,7 +85,7 @@ public class FinancialGoalService : IFinancialGoalService
 
     public async Task<FinancialGoalDto> CreateAsync(Guid userId, CreateGoalDto dto)
     {
-        // Validate
+        
         if (string.IsNullOrWhiteSpace(dto.Title))
         {
             throw new ArgumentException("Title is required", nameof(dto.Title));
@@ -97,7 +96,6 @@ public class FinancialGoalService : IFinancialGoalService
             throw new ArgumentException("Target amount must be positive", nameof(dto.TargetAmount));
         }
 
-        // Verify currency
         var currencyExists = await _dbContext.Currencies
             .AnyAsync(c => c.Code == dto.CurrencyCode);
 
@@ -138,7 +136,6 @@ public class FinancialGoalService : IFinancialGoalService
             throw new InvalidOperationException("Financial goal not found");
         }
 
-        // Verify currency
         var currencyExists = await _dbContext.Currencies
             .AnyAsync(c => c.Code == dto.CurrencyCode);
 
@@ -195,10 +192,6 @@ public class FinancialGoalService : IFinancialGoalService
         await _dbContext.SaveChangesAsync();
     }
 
-    // ============================================
-    // Progress Management
-    // ============================================
-
     public async Task<FinancialGoalDto> AddAmountAsync(Guid userId, Guid goalId, UpdateGoalAmountDto dto)
     {
         var goal = await _dbContext.FinancialGoals
@@ -249,7 +242,7 @@ public class FinancialGoalService : IFinancialGoalService
 
     public async Task<List<TransactionListItemDto>> GetGoalTransactionsAsync(Guid userId, Guid goalId)
     {
-        // Verify goal exists and belongs to user
+        
         var goal = await _dbContext.FinancialGoals
             .FirstOrDefaultAsync(g => g.Id == goalId && g.UserId == userId);
 
@@ -258,7 +251,6 @@ public class FinancialGoalService : IFinancialGoalService
             throw new InvalidOperationException("Financial goal not found");
         }
 
-        // Get all transactions linked to this goal
         var transactions = await _dbContext.Transactions
             .Include(t => t.Category)
             .Include(t => t.TransactionTags)
@@ -293,10 +285,6 @@ public class FinancialGoalService : IFinancialGoalService
 
         return transactions;
     }
-
-    // ============================================
-    // Private Helpers
-    // ============================================
 
     private static FinancialGoalDto MapToDto(FinancialGoal goal)
     {

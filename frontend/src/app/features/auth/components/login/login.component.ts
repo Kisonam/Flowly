@@ -1,4 +1,4 @@
-// frontend/src/app/features/auth/components/login/login.component.ts
+
 
 import { Component, inject, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -34,10 +34,9 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.initForm();
 
-    // Get return URL from route parameters; fallback to '/dashboard'
     const q = this.route.snapshot.queryParams['returnUrl'] as string | undefined;
     if (q && q.trim().length > 0) {
-      // Avoid redirecting back to auth pages or root which could cause loops
+      
       if (q === '/' || q.startsWith('/auth')) {
         this.returnUrl = '/dashboard';
       } else {
@@ -47,10 +46,9 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
       this.returnUrl = '/dashboard';
     }
 
-    // Initialize Google Auth and subscribe to responses
     this.googleAuthService.initialize()
       .then(() => {
-        // Subscribe to Google credential responses
+        
         this.googleAuthService.getCredentialResponse()
           .pipe(takeUntil(this.destroy$))
           .subscribe({
@@ -68,7 +66,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Render Google Sign-In button after view is initialized
+    
     setTimeout(() => {
       const buttonContainer = document.getElementById('googleSignInButton');
       if (buttonContainer && this.googleAuthService.isAvailable()) {
@@ -81,7 +79,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
             shape: 'rectangular',
             width: buttonContainer.offsetWidth || 300
           });
-          // Hide fallback button if Google button rendered successfully
+          
           const fallbackButton = document.querySelector('.google-fallback-button') as HTMLElement;
           if (fallbackButton) {
             fallbackButton.style.display = 'none';
@@ -138,7 +136,6 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('✅ Google credential received');
     this.isLoading = true;
 
-    // Send credential to backend
     this.authService.loginWithGoogle(credential)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -164,7 +161,6 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Trigger Google prompt
     try {
       this.googleAuthService.showOneTap();
     } catch (error) {
@@ -183,7 +179,6 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  // Helper methods for template
   get email() { return this.loginForm.get('email'); }
   get password() { return this.loginForm.get('password'); }
 }

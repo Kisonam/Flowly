@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Dashboard;
 
-/// <summary>
-/// Lightweight note DTO for dashboard
-/// </summary>
 public class RecentNoteDto
 {
     public Guid Id { get; set; }

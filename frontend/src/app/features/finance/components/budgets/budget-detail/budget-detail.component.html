@@ -1,5 +1,5 @@
 <div class="budget-detail-container">
-  <!-- Header -->
+  
   <div class="detail-header">
     <button class="btn btn-back" (click)="goBack()">
       <span>←</span> {{ 'FINANCE.BUDGETS.DETAIL.BACK' | translate }}
@@ -7,23 +7,20 @@
     <h2>💼 {{ 'FINANCE.BUDGETS.DETAIL.TITLE' | translate }}</h2>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.BUDGETS.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage" class="error-state">
     <p>❌ {{ errorMessage }}</p>
     <button class="btn btn-primary" (click)="goBack()">{{ 'FINANCE.BUDGETS.DETAIL.BACK_LIST' | translate }}</button>
   </div>
 
-  <!-- Budget Detail -->
   <div *ngIf="!loading && !errorMessage && budget" class="budget-detail">
-    <!-- Main Card -->
+    
     <div class="detail-card main-card">
-      <!-- Header -->
+      
       <div class="card-header">
         <div class="budget-title-section">
           <h1>{{ budget.title }}</h1>
@@ -33,7 +30,6 @@
         </div>
       </div>
 
-      <!-- Progress Section -->
       <div class="progress-section">
         <div class="amount-summary">
           <div class="amount-item spent">
@@ -79,9 +75,8 @@
         </div>
       </div>
 
-      <!-- Details Section -->
       <div class="details-section">
-        <!-- Category -->
+        
         <div class="detail-item" *ngIf="budget.category">
           <label>{{ 'FINANCE.BUDGETS.DETAIL.CATEGORY' | translate }}</label>
           <div class="category-display">
@@ -92,7 +87,6 @@
           </div>
         </div>
 
-        <!-- Period Dates -->
         <div class="detail-item">
           <label>{{ 'FINANCE.BUDGETS.DETAIL.PERIOD' | translate }}</label>
           <div class="date-range">
@@ -108,7 +102,6 @@
           </div>
         </div>
 
-        <!-- Days Remaining -->
         <div class="detail-item" *ngIf="budget.daysRemaining !== undefined">
           <label>{{ 'FINANCE.BUDGETS.DETAIL.TIME_LEFT' | translate }}</label>
           <div class="days-remaining">
@@ -117,7 +110,6 @@
           </div>
         </div>
 
-        <!-- Status -->
         <div class="detail-item">
           <label>{{ 'FINANCE.BUDGETS.DETAIL.STATUS' | translate }}</label>
           <div class="status-badges">
@@ -127,7 +119,6 @@
           </div>
         </div>
 
-        <!-- Created/Updated -->
         <div class="detail-item">
           <label>{{ 'FINANCE.BUDGETS.DETAIL.CREATED' | translate }}</label>
           <div class="timestamp">{{ formatDate(budget.createdAt) }}</div>
@@ -139,7 +130,6 @@
       </div>
     </div>
 
-    <!-- Actions Card -->
     <div class="detail-card actions-card">
       <h3>{{ 'FINANCE.BUDGETS.DETAIL.ACTIONS' | translate }}</h3>
       <div class="action-buttons">
@@ -158,7 +148,6 @@
       </div>
     </div>
 
-    <!-- Transactions Card -->
     <div class="detail-card transactions-card">
       <div class="card-header">
         <h3>💰 {{ 'FINANCE.BUDGETS.DETAIL.TRANSACTIONS' | translate }}</h3>
@@ -166,18 +155,15 @@
           transactions.length, suffix: (transactions.length !== 1 ? 's' : '')} }}</span>
       </div>
 
-      <!-- Loading State -->
       <div *ngIf="loadingTransactions" class="loading-state">
         <div class="spinner-small"></div>
         <p>{{ 'FINANCE.BUDGETS.DETAIL.TRANSACTIONS_LOADING' | translate }}</p>
       </div>
 
-      <!-- Empty State -->
       <div *ngIf="!loadingTransactions && transactions.length === 0" class="empty-state">
         <p>{{ 'FINANCE.BUDGETS.DETAIL.TRANSACTIONS_EMPTY' | translate }}</p>
       </div>
 
-      <!-- Transactions List -->
       <div *ngIf="!loadingTransactions && transactions.length > 0" class="transactions-list">
         <div *ngFor="let transaction of transactions" class="transaction-item"
           (click)="viewTransaction(transaction.id)">

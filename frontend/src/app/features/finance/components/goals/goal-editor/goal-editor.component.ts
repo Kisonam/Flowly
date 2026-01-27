@@ -14,7 +14,7 @@ import { FinanceService } from '../../../services/finance.service';
   styleUrl: './goal-editor.component.scss'
 })
 export class GoalEditorComponent implements OnInit {
-  @Input() goal?: FinancialGoal | null = null; // For editing existing goal
+  @Input() goal?: FinancialGoal | null = null; 
   @Output() save = new EventEmitter<CreateGoalRequest | UpdateGoalRequest>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -32,14 +32,13 @@ export class GoalEditorComponent implements OnInit {
   goalId?: string;
 
   ngOnInit(): void {
-    // Check if we have a goal ID from route params
+    
     this.goalId = this.route.snapshot.paramMap.get('id') || undefined;
     this.isEditMode = !!this.goalId;
 
     this.initForm();
     this.loadCurrencies();
 
-    // If edit mode, load the goal data
     if (this.goalId) {
       this.loadGoal(this.goalId);
     }
@@ -74,14 +73,12 @@ export class GoalEditorComponent implements OnInit {
       deadline: this.formatDateForInput(goal.deadline)
     });
 
-    // In edit mode, disable currentAmount
     this.goalForm.get('currentAmount')?.disable();
   }
 
   private loadCurrencies(): void {
     this.loadingCurrencies = true;
 
-    // Disable currency select while loading
     if (this.goalForm) {
       this.goalForm.get('currencyCode')?.disable();
     }
@@ -90,7 +87,7 @@ export class GoalEditorComponent implements OnInit {
       next: (currencies) => {
         this.currencies = currencies;
         this.loadingCurrencies = false;
-        // Enable currency select after loading
+        
         if (this.goalForm) {
           this.goalForm.get('currencyCode')?.enable();
         }
@@ -98,14 +95,14 @@ export class GoalEditorComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load currencies:', err);
         this.loadingCurrencies = false;
-        // Fallback to default currencies if API fails
+        
         this.currencies = [
           { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
           { code: 'USD', symbol: '$', name: 'US Dollar' },
           { code: 'EUR', symbol: '€', name: 'Euro' },
           { code: 'PLN', symbol: 'zł', name: 'Polish Zloty' }
         ];
-        // Enable currency select even after error
+        
         if (this.goalForm) {
           this.goalForm.get('currencyCode')?.enable();
         }
@@ -123,7 +120,6 @@ export class GoalEditorComponent implements OnInit {
       deadline: [this.formatDateForInput(this.goal?.deadline)]
     });
 
-    // In edit mode, disable currentAmount (should be updated via separate endpoint)
     if (this.isEditMode) {
       this.goalForm.get('currentAmount')?.disable();
     }
@@ -133,7 +129,7 @@ export class GoalEditorComponent implements OnInit {
     if (!date) return null;
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     if (isNaN(dateObj.getTime())) return null;
-    return dateObj.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    return dateObj.toISOString().split('T')[0]; 
   }
 
   onSubmit(): void {
@@ -149,15 +145,15 @@ export class GoalEditorComponent implements OnInit {
 
     if (this.saving) {
       console.log('Already saving, returning');
-      return; // Prevent double submission
+      return; 
     }
 
     this.saving = true;
-    const formValue = this.goalForm.getRawValue(); // getRawValue() includes disabled fields
+    const formValue = this.goalForm.getRawValue(); 
     console.log('Form raw value:', formValue);
 
     if (this.isEditMode && this.goalId) {
-      // Update existing goal (without currentAmount)
+      
       const updateRequest: UpdateGoalRequest = {
         title: formValue.title,
         description: formValue.description || undefined,
@@ -166,7 +162,6 @@ export class GoalEditorComponent implements OnInit {
         deadline: formValue.deadline || undefined
       };
 
-      // Emit for parent components if used
       if (this.save.observers.length > 0) {
         this.save.emit(updateRequest);
       }
@@ -184,7 +179,7 @@ export class GoalEditorComponent implements OnInit {
         }
       });
     } else {
-      // Create new goal
+      
       const createRequest: CreateGoalRequest = {
         title: formValue.title,
         description: formValue.description || undefined,
@@ -194,7 +189,6 @@ export class GoalEditorComponent implements OnInit {
         deadline: formValue.deadline || undefined
       };
 
-      // Emit for parent components if used
       if (this.save.observers.length > 0) {
         this.save.emit(createRequest);
       }
@@ -215,7 +209,7 @@ export class GoalEditorComponent implements OnInit {
   }
 
   onCancel(): void {
-    // Navigate back or emit cancel event
+    
     if (this.cancel.observers.length > 0) {
       this.cancel.emit();
     } else {
@@ -223,25 +217,18 @@ export class GoalEditorComponent implements OnInit {
     }
   }
 
-  // Helper to get form control errors
   getError(controlName: string): string | null {
     const control = this.goalForm.get(controlName);
     if (!control || !control.errors || !control.touched) return null;
 
     if (control.errors['required']) return this.translate.instant('FINANCE.GOALS.EDITOR.ERRORS.REQUIRED');
     if (control.errors['min']) return this.translate.instant('FINANCE.GOALS.EDITOR.ERRORS.MIN_VALUE', { min: control.errors['min'].min });
-    if (control.errors['maxlength']) return this.translate.instant('FINANCE.EDITOR.ERRORS.MAX_LENGTH', { max: control.errors['maxlength'].requiredLength }); // Reusing generic editor error if available or create new.
-    // I don't have MAX_LENGTH in GOALS.EDITOR.ERRORS. I'll use generic INVALID or add it.
-    // I added FINANCE.EDITOR.ERRORS.MAX_LENGTH in budget editor task. I can reuse it if it's in FINANCE.EDITOR.
-    // Let's check en.json. Yes, FINANCE.EDITOR.ERRORS.MAX_LENGTH exists.
-    // Wait, FINANCE.EDITOR is for Transaction Editor? No, it's generic FINANCE.EDITOR.
-    // Actually, I added FINANCE.EDITOR.ERRORS.MAX_LENGTH in budget editor task.
-    // Let's use FINANCE.EDITOR.ERRORS.MAX_LENGTH.
-    
+    if (control.errors['maxlength']) return this.translate.instant('FINANCE.EDITOR.ERRORS.MAX_LENGTH', { max: control.errors['maxlength'].requiredLength }); 
+
     return this.translate.instant('FINANCE.GOALS.EDITOR.ERRORS.INVALID');
   }
 
   get minDate(): string {
-    return new Date().toISOString().split('T')[0]; // Today
+    return new Date().toISOString().split('T')[0]; 
   }
 }

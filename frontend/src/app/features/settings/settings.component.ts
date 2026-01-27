@@ -32,7 +32,7 @@ export class SettingsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Check if there's a tab parameter in the URL
+    
     this.route.queryParams.subscribe(params => {
       const tab = params['tab'];
       if (tab && this.isValidTab(tab)) {

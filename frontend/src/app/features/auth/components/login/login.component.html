@@ -2,14 +2,12 @@
   <h2 class="auth-title">{{ 'AUTH.LOGIN.TITLE' | translate }}</h2>
   <p class="auth-subtitle">{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>
 
-  <!-- Error Alert -->
   <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
     <strong>Error:</strong> {{ errorMessage }}
   </div>
 
-  <!-- Login Form -->
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <!-- Email -->
+    
     <div class="mb-3">
       <label for="email" class="form-label">{{ 'AUTH.LOGIN.EMAIL_LABEL' | translate }}</label>
       <input type="email" class="form-control" id="email" formControlName="email"
@@ -21,7 +19,6 @@
       </div>
     </div>
 
-    <!-- Password -->
     <div class="mb-3">
       <label for="password" class="form-label">{{ 'AUTH.LOGIN.PASSWORD_LABEL' | translate }}</label>
       <div class="input-group">
@@ -38,7 +35,6 @@
       </div>
     </div>
 
-    <!-- Remember Me -->
     <div class="mb-3 form-check">
       <input type="checkbox" class="form-check-input" id="rememberMe" formControlName="rememberMe">
       <label class="form-check-label" for="rememberMe">
@@ -46,7 +42,6 @@
       </label>
     </div>
 
-    <!-- Submit Button -->
     <button type="submit" class="btn btn-primary w-100 mb-3" [disabled]="isLoading">
       <span *ngIf="!isLoading">{{ 'AUTH.LOGIN.SIGN_IN_BUTTON' | translate }}</span>
       <span *ngIf="isLoading">
@@ -55,15 +50,12 @@
       </span>
     </button>
 
-    <!-- Divider -->
     <div class="divider">
       <span>{{ 'AUTH.LOGIN.OR' | translate }}</span>
     </div>
 
-    <!-- Google Sign-In Button Container -->
     <div id="googleSignInButton" class="google-button-container mb-3"></div>
 
-    <!-- Fallback Google Sign-In Button (if SDK button doesn't render) -->
     <button type="button" class="btn btn-outline-secondary w-100 mb-3 google-fallback-button"
       (click)="loginWithGoogle()" [disabled]="isLoading">
       <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px">
@@ -79,7 +71,6 @@
       {{ 'AUTH.LOGIN.SIGN_IN_WITH_GOOGLE' | translate }}
     </button>
 
-    <!-- Register Link -->
     <p class="text-center mt-4">
       {{ 'AUTH.LOGIN.NO_ACCOUNT' | translate }}
       <a routerLink="/auth/register" class="text-primary">{{ 'AUTH.LOGIN.SIGN_UP_LINK' | translate }}</a>

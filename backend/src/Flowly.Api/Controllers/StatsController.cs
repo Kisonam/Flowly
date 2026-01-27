@@ -21,14 +21,6 @@ public class StatsController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get financial statistics for a specified period
-    /// </summary>
-    /// <param name="periodStart">Start date of the period (required)</param>
-    /// <param name="periodEnd">End date of the period (required)</param>
-    /// <param name="currencyCode">Optional: Filter by specific currency (e.g., "UAH", "USD")</param>
-    /// <response code="200">Returns aggregated statistics including income/expense by category, monthly trends, and averages</response>
-    /// <response code="400">Invalid date range or parameters</response>
     [HttpGet]
     [ProducesResponseType(typeof(FinanceStatsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -65,11 +57,6 @@ public class StatsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get quick statistics for current month
-    /// </summary>
-    /// <param name="currencyCode">Optional: Filter by specific currency</param>
-    /// <response code="200">Returns current month statistics</response>
     [HttpGet("current-month")]
     [ProducesResponseType(typeof(FinanceStatsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCurrentMonthStats([FromQuery] string? currencyCode = null)
@@ -93,11 +80,6 @@ public class StatsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get quick statistics for current year
-    /// </summary>
-    /// <param name="currencyCode">Optional: Filter by specific currency</param>
-    /// <response code="200">Returns current year statistics</response>
     [HttpGet("current-year")]
     [ProducesResponseType(typeof(FinanceStatsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCurrentYearStats([FromQuery] string? currencyCode = null)
@@ -121,12 +103,6 @@ public class StatsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get statistics for the last N days
-    /// </summary>
-    /// <param name="days">Number of days to look back (default: 30)</param>
-    /// <param name="currencyCode">Optional: Filter by specific currency</param>
-    /// <response code="200">Returns statistics for the specified period</response>
     [HttpGet("last-days")]
     [ProducesResponseType(typeof(FinanceStatsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLastDaysStats(

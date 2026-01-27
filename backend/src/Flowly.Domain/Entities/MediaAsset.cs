@@ -1,31 +1,16 @@
 namespace Flowly.Domain.Entities;
-
 public class MediaAsset
 {
     public Guid Id { get; set; }
-
     public Guid UserId { get; set; }
-
     public Guid? NoteId { get; set; }
-
     public string Path { get; set; } = string.Empty;
-
     public string FileName { get; set; } = string.Empty;
-
     public string MimeType { get; set; } = string.Empty;
-
     public long Size { get; set; }
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-
-    // Navigation Properties
-
-    // public ApplicationUser User { get; set; } = null!;
-
     public Note? Note { get; set; }
-
-    // Methods
 
     public void AttachToNote(Guid noteId)
     {

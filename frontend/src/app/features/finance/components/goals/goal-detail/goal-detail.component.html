@@ -1,5 +1,5 @@
 <div class="goal-detail-container">
-  <!-- Header -->
+  
   <div class="detail-header">
     <button class="btn btn-back" (click)="goBack()">
       <span>←</span> {{ 'FINANCE.GOALS.DETAIL.BACK' | translate }}
@@ -7,23 +7,20 @@
     <h2>🎯 {{ 'FINANCE.GOALS.DETAIL.TITLE' | translate }}</h2>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.GOALS.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage" class="error-state">
     <p>❌ {{ errorMessage }}</p>
     <button class="btn btn-primary" (click)="goBack()">{{ 'FINANCE.GOALS.DETAIL.BACK_LIST' | translate }}</button>
   </div>
 
-  <!-- Goal Detail -->
   <div *ngIf="!loading && !errorMessage && goal" class="goal-detail">
-    <!-- Main Card -->
+    
     <div class="detail-card main-card">
-      <!-- Header -->
+      
       <div class="card-header">
         <div class="goal-title-section">
           <h1>{{ goal.title }}</h1>
@@ -33,7 +30,6 @@
         </div>
       </div>
 
-      <!-- Progress Section -->
       <div class="progress-section">
         <div class="amount-summary">
           <div class="amount-item saved">
@@ -78,9 +74,8 @@
         </div>
       </div>
 
-      <!-- Details Section -->
       <div class="details-section">
-        <!-- Deadline -->
+        
         <div class="detail-item" *ngIf="goal.deadline">
           <label>{{ 'FINANCE.GOALS.DETAIL.DEADLINE' | translate }}</label>
           <div class="deadline-display">
@@ -94,7 +89,6 @@
           </div>
         </div>
 
-        <!-- Completion Date -->
         <div class="detail-item" *ngIf="goal.completedAt">
           <label>{{ 'FINANCE.GOALS.DETAIL.COMPLETED' | translate }}</label>
           <div class="completed-date">
@@ -103,7 +97,6 @@
           </div>
         </div>
 
-        <!-- Status -->
         <div class="detail-item">
           <label>{{ 'FINANCE.GOALS.DETAIL.STATUS' | translate }}</label>
           <div class="status-badges">
@@ -113,7 +106,6 @@
           </div>
         </div>
 
-        <!-- Created/Updated -->
         <div class="detail-item">
           <label>{{ 'FINANCE.GOALS.DETAIL.CREATED' | translate }}</label>
           <div class="timestamp">{{ formatDate(goal.createdAt) }}</div>
@@ -125,7 +117,6 @@
       </div>
     </div>
 
-    <!-- Actions Card -->
     <div class="detail-card actions-card">
       <h3>{{ 'FINANCE.GOALS.DETAIL.ACTIONS' | translate }}</h3>
       <div class="action-buttons">
@@ -135,7 +126,6 @@
       </div>
     </div>
 
-    <!-- Transactions Card -->
     <div class="detail-card transactions-card">
       <div class="card-header">
         <h3>💰 {{ 'FINANCE.GOALS.DETAIL.TRANSACTIONS' | translate }}</h3>
@@ -143,18 +133,15 @@
           transactions.length, suffix: (transactions.length !== 1 ? 's' : '')} }}</span>
       </div>
 
-      <!-- Loading State -->
       <div *ngIf="loadingTransactions" class="loading-state">
         <div class="spinner-small"></div>
         <p>{{ 'FINANCE.GOALS.DETAIL.TRANSACTIONS_LOADING' | translate }}</p>
       </div>
 
-      <!-- Empty State -->
       <div *ngIf="!loadingTransactions && transactions.length === 0" class="empty-state">
         <p>📭 {{ 'FINANCE.GOALS.DETAIL.TRANSACTIONS_EMPTY' | translate }}</p>
       </div>
 
-      <!-- Transactions List -->
       <div *ngIf="!loadingTransactions && transactions.length > 0" class="transactions-list">
         <div *ngFor="let transaction of transactions" class="transaction-item"
           (click)="viewTransaction(transaction.id)">

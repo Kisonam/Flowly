@@ -21,9 +21,6 @@ public class BudgetsController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get all budgets with optional filtering
-    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<BudgetDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
@@ -37,8 +34,7 @@ public class BudgetsController : ControllerBase
         try
         {
             var userId = GetCurrentUserId();
-            
-            // Log received parameters
+
             _logger.LogInformation("📥 GetAll parameters: isActive={IsActive}, isArchived={IsArchived}, dateFrom={DateFrom}, dateTo={DateTo}, currency={Currency}", 
                 isActive, isArchived, dateFrom, dateTo, currencyCode);
             
@@ -63,9 +59,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get budget by ID
-    /// </summary>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(BudgetDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -89,9 +82,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Create a new budget
-    /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(BudgetDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -121,9 +111,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update an existing budget
-    /// </summary>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(BudgetDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -153,9 +140,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Delete a budget
-    /// </summary>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -180,9 +164,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Archive a budget
-    /// </summary>
     [HttpPost("{id}/archive")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -207,9 +188,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Restore an archived budget
-    /// </summary>
     [HttpPost("{id}/restore")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -234,9 +212,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Check if budget is overspent
-    /// </summary>
     [HttpGet("{id}/overspent")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -260,9 +235,6 @@ public class BudgetsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get all transactions linked to a specific budget
-    /// </summary>
     [HttpGet("{id}/transactions")]
     [ProducesResponseType(typeof(List<TransactionListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

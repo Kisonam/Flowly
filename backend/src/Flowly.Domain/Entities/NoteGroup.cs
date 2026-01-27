@@ -10,10 +10,8 @@ public class NoteGroup
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 
-    // Navigation
     public ICollection<Note> Notes { get; set; } = new List<Note>();
 
-    // Methods
     public void UpdateTitle(string title)
     {
         if (string.IsNullOrWhiteSpace(title))

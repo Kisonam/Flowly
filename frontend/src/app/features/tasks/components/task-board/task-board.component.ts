@@ -9,7 +9,7 @@ import { TasksService } from '../../services/tasks.service';
 import { Task } from '../../models/task.models';
 
 interface ThemeColumn {
-  id: string | null; // null for unassigned
+  id: string | null; 
   title: string;
   color?: string;
   order: number;
@@ -29,28 +29,21 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
-  // Columns: themes + Unassigned
   columns: ThemeColumn[] = [];
   tasksByColumn = new Map<string | null, Task[]>();
 
-  // UI state
   loading = false;
   errorMessage = '';
 
-  // Add theme form
   showAddTheme = false;
   newTheme = { title: '', color: '#8b5cf6' };
 
-  // Quick add per column
   newTaskTitles = new Map<string | null, string>();
 
-
-  // Filters panel state
   showFilters = false;
   showArchivedTasks = false;
   filter: { status?: string; priority?: string; search?: string; dueDateTo?: string } = {};
 
-  // Returns [done, total] subtasks count for a task
   getSubtaskProgress(task: Task): [number, number] {
     if (!task.subtasks || !Array.isArray(task.subtasks)) return [0, 0];
     const total = task.subtasks.length;
@@ -59,7 +52,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Read route data to determine if showing archived tasks
+    
     this.showArchivedTasks = this.route.snapshot.data['archived'] ?? false;
     this.loadBoard();
   }
@@ -80,7 +73,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ themes, tasks }) => {
-          // Build columns: Unassigned first, then themes by order
+          
           const cols: ThemeColumn[] = [
             { id: null, title: this.translate.instant('TASKS.BOARD.COLUMN.UNASSIGNED'), order: -1, color: '#94a3b8' },
             ...themes
@@ -90,7 +83,6 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
           ];
           this.columns = cols;
 
-          // Group tasks
           this.tasksByColumn.clear();
           for (const col of cols) this.tasksByColumn.set(col.id, []);
           for (const task of tasks.items) {
@@ -99,7 +91,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
             arr.push(task);
             this.tasksByColumn.set(themeId, arr);
           }
-          // Sort tasks within each column by order field
+          
           for (const [themeId, tasks] of this.tasksByColumn.entries()) {
             tasks.sort((a, b) => a.order - b.order);
             this.tasksByColumn.set(themeId, tasks);
@@ -115,7 +107,6 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Connected drop lists ids
   getDropListIds(): string[] {
     return this.columns.map((c) => this.listId(c.id));
   }
@@ -124,7 +115,6 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
     return `list-${themeId ?? 'null'}`;
   }
 
-  // Ensure templates always work with Task[] (never undefined)
   listData(themeId: string | null): Task[] {
     return this.tasksByColumn.get(themeId) ?? [];
   }
@@ -139,7 +129,6 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
     const source = this.tasksByColumn.get(prevThemeId) ?? [];
     const target = this.tasksByColumn.get(currThemeId) ?? [];
 
-    // Optimistic local update: remove from source, insert into target
     const idx = source.findIndex((t) => t.id === task.id);
     if (idx !== -1) {
       const [moved] = source.splice(idx, 1);
@@ -148,22 +137,18 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
       this.tasksByColumn.set(currThemeId, target);
     }
 
-    // Compute new order for all affected tasks in target column (and source if needed)
     const affectedItems: { taskId: string; themeId: string | null; order: number }[] = [];
 
-    // Target column: assign sequential order from 0
     target.forEach((t, i) => {
       affectedItems.push({ taskId: t.id, themeId: currThemeId, order: i });
     });
 
-    // If theme changed (different column), also update source column if it has tasks
     if (prevThemeId !== currThemeId && source.length > 0) {
       source.forEach((t, i) => {
         affectedItems.push({ taskId: t.id, themeId: prevThemeId, order: i });
       });
     }
 
-    // Persist reorder (send only affected tasks)
     this.tasksService
       .reorderTasks(affectedItems)
       .pipe(takeUntil(this.destroy$))
@@ -173,7 +158,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to reorder tasks', err);
-          // Revert on error
+          
           const targetArr = this.tasksByColumn.get(currThemeId) ?? [];
           const revertIdx = targetArr.findIndex((t) => t.id === task.id);
           if (revertIdx !== -1) targetArr.splice(revertIdx, 1);
@@ -217,10 +202,9 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
       });
   }
 
-  /** Navigate to full task editor with preselected theme via query param */
   quickAddTask(themeId: string | null): void {
     const queryParams: any = {};
-    if (themeId) queryParams.themeId = themeId; // don't send for null (Unassigned)
+    if (themeId) queryParams.themeId = themeId; 
     this.router.navigate(['/tasks/new'], { queryParams });
   }
 
@@ -229,14 +213,14 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    // Re-fetch tasks with filters (themes unaffected)
+    
     this.loading = true;
     const taskFilter: any = { isArchived: this.showArchivedTasks, page: 1, pageSize: 1000 };
     if (this.filter.status) taskFilter.status = this.filter.status;
     if (this.filter.priority) taskFilter.priority = this.filter.priority;
     if (this.filter.search) taskFilter.search = this.filter.search.trim();
     if (this.filter.dueDateTo) {
-      // Date equality: send as dueDateOn (date-only). Service will normalize to start-of-day UTC.
+      
       taskFilter.dueDateOn = this.filter.dueDateTo;
     }
 
@@ -263,7 +247,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
             arr.push(task);
             this.tasksByColumn.set(themeId, arr);
           }
-          // Sort tasks by order
+          
           for (const [themeId, tasks] of this.tasksByColumn.entries()) {
             tasks.sort((a, b) => a.order - b.order);
             this.tasksByColumn.set(themeId, tasks);
@@ -286,17 +270,14 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
   onThemesDrop(event: CdkDragDrop<ThemeColumn[]>): void {
     if (event.previousIndex === event.currentIndex) return;
 
-    // Reorder columns array
     const movedColumn = this.columns[event.previousIndex];
     this.columns.splice(event.previousIndex, 1);
     this.columns.splice(event.currentIndex, 0, movedColumn);
 
-    // Extract theme IDs (skip Unassigned which is always first)
     const themeIds = this.columns
       .filter(c => c.id !== null)
       .map(c => c.id as string);
 
-    // Send reorder request
     this.tasksService
       .reorderThemes(themeIds)
       .pipe(takeUntil(this.destroy$))
@@ -306,7 +287,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to reorder themes', err);
-          // Revert
+          
           this.columns.splice(event.currentIndex, 1);
           this.columns.splice(event.previousIndex, 0, movedColumn);
           alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
@@ -327,12 +308,10 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
 
     if (!confirm(confirmMessage)) return;
 
-    // Optimistic UI update
     const columnIndex = this.columns.findIndex(c => c.id === themeId);
     const removedColumn = this.columns[columnIndex];
     this.columns.splice(columnIndex, 1);
 
-    // Move tasks to Unassigned
     const unassignedTasks = this.tasksByColumn.get(null) || [];
     this.tasksByColumn.set(null, [...unassignedTasks, ...tasksInColumn]);
     this.tasksByColumn.delete(themeId);
@@ -346,7 +325,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to delete theme', err);
-          // Revert
+          
           this.columns.splice(columnIndex, 0, removedColumn);
           this.tasksByColumn.set(themeId, tasksInColumn);
           const revertedUnassigned = unassignedTasks;
@@ -360,7 +339,6 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     const newStatus: 'Todo' | 'Done' = task.status === 'Done' ? 'Todo' : 'Done';
 
-    // If completing a task (changing to Done), use completeTask endpoint to trigger recurrence
     if (newStatus === 'Done' && task.status !== 'Done') {
       this.tasksService
         .completeTask(task.id)
@@ -368,7 +346,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             console.log('✅ Task completed, reloading board');
-            // Reload the entire board to show the new recurring task
+            
             this.loadBoard();
           },
           error: (err) => {
@@ -377,7 +355,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
           }
         });
     } else {
-      // For other status changes (e.g., uncompleting), use regular status change
+      
       const oldStatus = task.status;
       task.status = newStatus;
 
@@ -390,7 +368,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
           },
           error: (err) => {
             console.error('Failed to update task status', err);
-            task.status = oldStatus; // Revert
+            task.status = oldStatus; 
             alert(err.message || this.translate.instant('COMMON.ERRORS.FAILED_TO_UPDATE'));
           }
         });
@@ -401,7 +379,6 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     if (!confirm(this.translate.instant('COMMON.CONFIRM.ARCHIVE_TASK', { title: task.title }))) return;
 
-    // Find which column contains this task (check all columns including null for Unassigned)
     let foundColumnId: string | null | undefined = undefined;
     for (const [key, tasks] of this.tasksByColumn.entries()) {
       if (tasks.some(t => t.id === task.id)) {
@@ -410,13 +387,11 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
       }
     }
 
-    // If not found, can't proceed
     if (foundColumnId === undefined) {
       console.error('Task not found in any column');
       return;
     }
 
-    // Optimistic removal
     const tasks = this.tasksByColumn.get(foundColumnId) ?? [];
     const idx = tasks.findIndex(t => t.id === task.id);
     if (idx !== -1) {
@@ -433,7 +408,7 @@ export class TaskBoardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to archive task', err);
-          // Revert
+          
           if (idx !== -1 && foundColumnId !== undefined) {
             tasks.splice(idx, 0, task);
             this.tasksByColumn.set(foundColumnId, tasks);

@@ -1,4 +1,4 @@
-// frontend/src/app/features/auth/auth.routes.ts
+
 
 import { Routes } from '@angular/router';
 import { AuthLayoutComponent } from './components/auth-layout/auth-layout.component';
@@ -10,7 +10,7 @@ export const AUTH_ROUTES: Routes = [
   {
     path: '',
     component: AuthLayoutComponent,
-    canActivate: [guestGuard], // Only non-authenticated users
+    canActivate: [guestGuard], 
     children: [
       { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },

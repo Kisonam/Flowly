@@ -9,7 +9,7 @@ import { NoteGroup, CreateNoteGroup, UpdateNoteGroup } from '../models/note-grou
 })
 export class NoteGroupsService {
   private http = inject(HttpClient);
-    // environment.apiUrl already includes '/api', so don't repeat it here
+    
     private apiUrl = `${environment.apiUrl}/note-groups`;
 
   getGroups(): Observable<NoteGroup[]> {

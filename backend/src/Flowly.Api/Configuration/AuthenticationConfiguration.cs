@@ -11,14 +11,12 @@ public static class AuthenticationConfiguration
         this IServiceCollection services, 
         IConfiguration configuration)
     {
-        // Bind JWT settings
+        
         services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
 
-        // Get JWT settings
         var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>()
             ?? throw new InvalidOperationException("JWT settings not found in appsettings.json");
 
-        // Configure JWT Authentication
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -28,7 +26,7 @@ public static class AuthenticationConfiguration
         .AddJwtBearer(options =>
         {
             options.SaveToken = true;
-            options.RequireHttpsMetadata = false; // Set to true in production
+            options.RequireHttpsMetadata = false; 
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -38,10 +36,9 @@ public static class AuthenticationConfiguration
                 ValidIssuer = jwtSettings.Issuer,
                 ValidAudience = jwtSettings.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-                ClockSkew = TimeSpan.Zero // Remove 5 min default tolerance
+                ClockSkew = TimeSpan.Zero 
             };
 
-            // JWT event logging
             options.Events = new JwtBearerEvents
             {
                 OnAuthenticationFailed = context =>

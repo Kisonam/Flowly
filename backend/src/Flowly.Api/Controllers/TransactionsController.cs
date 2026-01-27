@@ -23,13 +23,6 @@ public class TransactionsController : ControllerBase
         _logger = logger;
     }
 
-    // ============================================
-    // CRUD Operations
-    // ============================================
-
-    /// <summary>
-    /// Get all transactions with filtering and pagination
-    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<TransactionListItemDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
@@ -48,7 +41,6 @@ public class TransactionsController : ControllerBase
         {
             var userId = GetCurrentUserId();
 
-            // Parse tag IDs
             List<Guid>? tagIdList = null;
             if (!string.IsNullOrWhiteSpace(tagIds))
             {
@@ -58,7 +50,6 @@ public class TransactionsController : ControllerBase
                     .ToList();
             }
 
-            // Validate pagination
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 20;
             if (pageSize > 100) pageSize = 100;
@@ -88,9 +79,6 @@ public class TransactionsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get transaction by ID
-    /// </summary>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -114,9 +102,6 @@ public class TransactionsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Create a new transaction
-    /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -146,9 +131,6 @@ public class TransactionsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update an existing transaction
-    /// </summary>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -178,9 +160,6 @@ public class TransactionsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Archive a transaction
-    /// </summary>
     [HttpPost("{id}/archive")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -205,9 +184,6 @@ public class TransactionsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Restore an archived transaction
-    /// </summary>
     [HttpPost("{id}/restore")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -232,13 +208,6 @@ public class TransactionsController : ControllerBase
         }
     }
 
-    // ============================================
-    // Stats
-    // ============================================
-
-    /// <summary>
-    /// Get financial statistics for a period
-    /// </summary>
     [HttpGet("stats")]
     [ProducesResponseType(typeof(FinanceStatsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetStats(
@@ -259,10 +228,6 @@ public class TransactionsController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
-
-    // ============================================
-    // Helpers
-    // ============================================
 
     private Guid GetCurrentUserId()
     {

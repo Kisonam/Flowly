@@ -73,13 +73,11 @@ export class ProfileComponent implements OnInit {
     if (input.files && input.files[0]) {
       const file = input.files[0];
 
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         this.profileError = 'Будь ласка, оберіть файл зображення';
         return;
       }
 
-      // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
         this.profileError = 'Розмір файлу не повинен перевищувати 5MB';
         return;
@@ -87,14 +85,12 @@ export class ProfileComponent implements OnInit {
 
       this.selectedFile = file;
 
-      // Preview image
       const reader = new FileReader();
       reader.onload = () => {
         this.avatarPreview = reader.result as string;
       };
       reader.readAsDataURL(file);
 
-      // Upload immediately
       this.uploadAvatar();
     }
   }

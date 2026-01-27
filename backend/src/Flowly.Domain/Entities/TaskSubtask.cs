@@ -10,10 +10,8 @@ public class TaskSubtask
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? CompletedAt { get; set; }
 
-    // Navigation Properties
     public TaskItem TaskItem { get; set; } = null!;
 
-    // Methods
     public void UpdateTitle(string title)
     {
         if (string.IsNullOrWhiteSpace(title))

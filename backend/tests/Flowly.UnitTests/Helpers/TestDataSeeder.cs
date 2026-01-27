@@ -6,15 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Flowly.UnitTests.Helpers;
 
-/// <summary>
-/// Допоміжний клас для створення тестових даних.
-/// Забезпечує консистентність тестових даних між різними тестами.
-/// </summary>
 public static class TestDataSeeder
 {
-    /// <summary>
-    /// Створює тестового користувача з заданими параметрами.
-    /// </summary>
+
     public static async Task<ApplicationUser> CreateTestUserAsync(
         UserManager<ApplicationUser> userManager,
         string email = "test@example.com",
@@ -40,9 +34,6 @@ public static class TestDataSeeder
         return user;
     }
 
-    /// <summary>
-    /// Створює тестові теги для користувача.
-    /// </summary>
     public static async Task<List<Tag>> CreateTestTagsAsync(AppDbContext context, Guid userId, int count = 3)
     {
         var tags = new List<Tag>();
@@ -63,9 +54,6 @@ public static class TestDataSeeder
         return tags;
     }
 
-    /// <summary>
-    /// Створює тестові категорії для фінансів.
-    /// </summary>
     public static async Task<List<Category>> CreateTestCategoriesAsync(AppDbContext context, Guid userId)
     {
         var categories = new List<Category>
@@ -101,12 +89,9 @@ public static class TestDataSeeder
         return categories;
     }
 
-    /// <summary>
-    /// Створює тестову валюту.
-    /// </summary>
     public static async Task<Currency> CreateTestCurrencyAsync(AppDbContext context, string code = "USD")
     {
-        // Перевіряємо чи вже існує така валюта
+        
         var existing = await context.Currencies.FindAsync(code);
         if (existing != null)
         {
@@ -125,9 +110,6 @@ public static class TestDataSeeder
         return currency;
     }
 
-    /// <summary>
-    /// Створює тестову тему для задач.
-    /// </summary>
     public static async Task<TaskTheme> CreateTestTaskThemeAsync(
         AppDbContext context,
         Guid userId,
@@ -149,9 +131,6 @@ public static class TestDataSeeder
         return theme;
     }
 
-    /// <summary>
-    /// Створює тестовий бюджет.
-    /// </summary>
     public static async Task<Budget> CreateTestBudgetAsync(
         AppDbContext context,
         Guid userId,

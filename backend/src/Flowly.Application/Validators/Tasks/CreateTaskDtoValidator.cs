@@ -25,8 +25,6 @@ public class CreateTaskDtoValidator : AbstractValidator<CreateTaskDto>
             .Matches(@"^#[0-9A-Fa-f]{6}$").WithMessage("Color must be in hex format (e.g., #FF5733)")
             .When(x => !string.IsNullOrWhiteSpace(x.Color));
 
-        // Allow past due dates, so users can create overdue tasks
-
         RuleFor(x => x.TagIds)
             .Must(tags => tags == null || tags.Count <= 20)
             .WithMessage("Cannot assign more than 20 tags to a task");

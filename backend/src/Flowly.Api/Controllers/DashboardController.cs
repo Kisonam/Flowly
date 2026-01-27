@@ -21,12 +21,6 @@ public class DashboardController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get dashboard overview data
-    /// Returns finance stats for current month, upcoming 5 tasks, and recent 3 notes
-    /// </summary>
-    /// <response code="200">Dashboard data retrieved successfully</response>
-    /// <response code="401">Not authenticated</response>
     [HttpGet]
     [ProducesResponseType(typeof(DashboardDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

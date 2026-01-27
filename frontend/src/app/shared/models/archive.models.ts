@@ -1,6 +1,4 @@
-/**
- * Entity types that can be archived
- */
+
 export enum EntityType {
   Note = 'Note',
   Task = 'Task',
@@ -9,29 +7,20 @@ export enum EntityType {
   FinancialGoal = 'FinancialGoal'
 }
 
-/**
- * Archived entity item
- */
 export interface ArchivedEntity {
   id: string;
   entityType: EntityType;
   entityId: string;
-  archivedAt: string; // ISO date string
+  archivedAt: string; 
   title: string;
   description?: string;
   metadata?: Record<string, any>;
 }
 
-/**
- * Archived entity detail (includes full JSON payload)
- */
 export interface ArchivedEntityDetail extends ArchivedEntity {
-  payloadJson: string; // Full JSON snapshot of the archived entity
+  payloadJson: string; 
 }
 
-/**
- * Query parameters for archived entities
- */
 export interface ArchiveQuery {
   entityType?: EntityType;
   search?: string;
@@ -41,9 +30,6 @@ export interface ArchiveQuery {
   sortDirection?: 'asc' | 'desc';
 }
 
-/**
- * Paginated response for archived entities
- */
 export interface ArchiveListResponse {
   items: ArchivedEntity[];
   totalCount: number;
@@ -52,9 +38,6 @@ export interface ArchiveListResponse {
   totalPages: number;
 }
 
-/**
- * Helper function to get entity type display name
- */
 export function getEntityTypeName(type: EntityType): string {
   switch (type) {
     case EntityType.Note:
@@ -72,9 +55,6 @@ export function getEntityTypeName(type: EntityType): string {
   }
 }
 
-/**
- * Helper function to get entity type icon
- */
 export function getEntityTypeIcon(type: EntityType): string {
   switch (type) {
     case EntityType.Note:

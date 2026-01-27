@@ -22,7 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class TaskEditorComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
-  router = inject(Router); // public for template
+  router = inject(Router); 
   private tasksService = inject(TasksService);
   private tagsService = inject(TagsService);
   private destroy$ = new Subject<void>();
@@ -30,20 +30,18 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   isEdit = false;
   taskId: string | null = null;
   task?: Task;
-  // Preselected theme when coming from board quick button
+  
   initialThemeId: string | null = null;
-  // Markdown preview state & references
+  
   isPreviewMode = false;
   isSplitView = true;
   descriptionPreview = '';
   private autoPreview$ = new Subject<string>();
-  // Cancel handler reused from note editor semantics
+  
   onCancel(): void { this.router.navigate(['/tasks/board']); }
 
-  // Expose LinkEntityType to template
   LinkEntityType = LinkEntityType;
 
-  // Tags state
   availableTags: Tag[] = [];
   selectedTagIds: string[] = [];
 
@@ -67,8 +65,8 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     status: ['Todo', Validators.required],
     priority: ['None', Validators.required],
     dueDate: [''],
-    dueTime: [{ value: '', disabled: true }], // Disabled by default until date is selected
-    // HTML color input does not accept empty string; set safe default to avoid console warning
+    dueTime: [{ value: '', disabled: true }], 
+    
     color: ['#000000'],
     subtasks: this.fb.array([]),
     enableRecurrence: [false],
@@ -80,10 +78,9 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Capture query param for theme preselection (creation mode)
+    
     this.initialThemeId = this.route.snapshot.queryParamMap.get('themeId');
 
-    // Load available tags
     this.loadAvailableTags();
 
     this.route.paramMap
@@ -107,9 +104,9 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
             this.patchForm(task);
             this.loading = false;
           }
-          // If creating new and have themeId, patch hidden value (done in submit)
+          
           if (!this.isEdit && this.initialThemeId) {
-            // no direct form field yet; theme applied in createDto
+            
           }
         },
         error: (err) => {
@@ -118,20 +115,18 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Live markdown preview & reference preload
     this.form.get('description')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => this.autoPreview$.next(val || ''));
     this.autoPreview$.pipe(debounceTime(250), takeUntil(this.destroy$)).subscribe((md: string) => this.updatePreview(md));
 
-    // Check for past due date and clear time if date is removed
     this.form.get('dueDate')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((dateValue) => {
       this.checkPastDueDate();
       const timeControl = this.form.get('dueTime');
       if (!dateValue) {
-        // Clear and disable time if date is removed
+        
         timeControl?.setValue('', { emitEvent: false });
         timeControl?.disable({ emitEvent: false });
       } else {
-        // Enable time if date is selected
+        
         timeControl?.enable({ emitEvent: false });
       }
     });
@@ -154,21 +149,18 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
       color: task.color || ''
     });
 
-    // Load tags
     this.selectedTagIds = task.tags?.map(t => t.id) || [];
 
-    // Load existing subtasks
     this.subtasks.clear();
     if (task.subtasks && task.subtasks.length > 0) {
       task.subtasks.forEach(subtask => {
         this.subtasks.push(this.fb.group({
           title: [subtask.title, Validators.required],
-          id: [subtask.id] // Keep track of existing subtask IDs
+          id: [subtask.id] 
         }));
       });
     }
 
-    // recurrence
     if (task.recurrence?.rule) {
       this.form.patchValue({ enableRecurrence: true, recurrenceRule: task.recurrence.rule });
     }
@@ -227,7 +219,6 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
           this.task = task;
           const calls = [] as any[];
 
-          // apply non-default status via update
           if (v.status && v.status !== 'Todo') {
             const updateDto: UpdateTaskRequest = {
               title: task.title,
@@ -242,14 +233,12 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
             calls.push(this.tasksService.updateTask(task.id, updateDto));
           }
 
-          // add subtasks
           const subFields = this.subtasks.controls as FormGroup[];
           subFields.forEach(ctrl => {
             const title = ctrl.value.title?.trim();
             if (title) calls.push(this.tasksService.addSubtask(task.id, { title }));
           });
 
-          // recurrence
           if (v.enableRecurrence && v.recurrenceRule) {
             calls.push(this.tasksService.setRecurrence(task.id, { rule: v.recurrenceRule }));
           }
@@ -259,7 +248,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: () => {
           this.saving = false;
-          // Navigate to tasks board
+          
           this.router.navigate(['/tasks/board']);
         },
         error: (err) => {
@@ -270,11 +259,10 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     } else if (this.isEdit && this.taskId) {
       const dueDateUtc = this.combineDateTimeToUtc(v.dueDate, v.dueTime);
 
-      // Check if status is being changed to Done
       const isCompletingTask = v.status === 'Done' && this.task?.status !== 'Done';
 
       if (isCompletingTask) {
-        // Use completeTask endpoint to trigger recurrence logic
+        
         this.tasksService.completeTask(this.taskId).subscribe({
           next: () => {
             this.saving = false;
@@ -286,7 +274,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
           }
         });
       } else {
-        // Normal update for other changes
+        
         const updateDto: UpdateTaskRequest = {
           title: v.title,
           description: v.description || undefined,
@@ -303,14 +291,12 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
             this.task = task;
             const calls = [] as any[];
 
-            // add newly entered subtasks
             const subFields = this.subtasks.controls as FormGroup[];
             subFields.forEach(ctrl => {
               const title = ctrl.value.title?.trim();
               if (title) calls.push(this.tasksService.addSubtask(task.id, { title }));
             });
 
-            // set or clear recurrence (we only support set via UI; clearing could be added later)
             if (v.enableRecurrence && v.recurrenceRule) {
               calls.push(this.tasksService.setRecurrence(task.id, { rule: v.recurrenceRule }));
             }
@@ -333,7 +319,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
 
   private toDateInputValue(d: string | Date): string {
     const date = d instanceof Date ? d : new Date(d);
-    // Extract local date components
+    
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -342,7 +328,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
 
   private toTimeInputValue(d: string | Date): string {
     const date = d instanceof Date ? d : new Date(d);
-    // Extract local time components
+    
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
@@ -350,14 +336,14 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
 
   private combineDateTimeToUtc(dateStr?: string, timeStr?: string): string | null {
     if (!dateStr) return null;
-    // If no time provided treat as 23:59 local (soft deadline end of day)
+    
     const time = timeStr && timeStr.length ? timeStr : '23:59';
     const [y,m,d] = dateStr.split('-').map(p => parseInt(p,10));
     const [hh,mm] = time.split(':').map(p => parseInt(p,10));
     if ([y,m,d].some(isNaN) || [hh,mm].some(isNaN)) return null;
-    // Construct local date - Date constructor already handles local timezone
+    
     const local = new Date(y, m-1, d, hh, mm, 0, 0);
-    // Convert to ISO string (already in UTC)
+    
     return local.toISOString();
   }
 
@@ -386,9 +372,6 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  // =====================
-  // Markdown preview
-  // =====================
   togglePreview(): void { this.isPreviewMode = !this.isPreviewMode; if (this.isPreviewMode) this.isSplitView = false; }
   toggleSplitView(): void { this.isSplitView = !this.isSplitView; if (this.isSplitView) this.isPreviewMode = false; }
   private updatePreview(md: string): void {
@@ -400,9 +383,6 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  // =====================
-  // Link handlers
-  // =====================
   onLinkCreated(link: Link): void {
     console.log('✅ Link created:', link);
   }

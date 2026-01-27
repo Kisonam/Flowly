@@ -23,11 +23,6 @@ export class TasksService {
   private http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/tasks`;
 
-  // ============================================
-  // Tasks CRUD
-  // ============================================
-
-  /** Get tasks with full filtering + pagination */
   getTasks(filter?: TaskFilter): Observable<PaginatedResult<Task>> {
     let params = new HttpParams();
 
@@ -39,13 +34,13 @@ export class TasksService {
       if (filter.priority) params = params.set('priority', filter.priority);
       if (filter.isArchived !== undefined) params = params.set('isArchived', String(filter.isArchived));
       if (filter.isOverdue !== undefined) params = params.set('isOverdue', String(filter.isOverdue));
-      // Normalize dates to ISO (UTC) to ensure consistent backend parsing
+      
       if (filter.dueDateOn) {
         const onIso = this.toIsoStartOfDay(filter.dueDateOn);
         params = params.set('dueDateOn', onIso);
       }
       if (filter.dueDateTo) {
-        // Interpret date-only values as end-of-day in the user's local time, then convert to UTC
+        
         const toIso = this.toIsoEndOfDay(filter.dueDateTo);
         params = params.set('dueDateTo', toIso);
       }
@@ -60,7 +55,6 @@ export class TasksService {
     );
   }
 
-  /** Get single task */
   getTask(id: string): Observable<Task> {
     return this.http.get<Task>(`${this.API_URL}/${id}`).pipe(
       map(task => this.convertTaskDates(task)),
@@ -69,7 +63,6 @@ export class TasksService {
     );
   }
 
-  /** Create task */
   createTask(dto: CreateTaskRequest): Observable<Task> {
     console.log('📤 TasksService.createTask called with:', dto);
     return this.http.post<Task>(this.API_URL, dto).pipe(
@@ -79,7 +72,6 @@ export class TasksService {
     );
   }
 
-  /** Update task */
   updateTask(id: string, dto: UpdateTaskRequest): Observable<Task> {
     return this.http.put<Task>(`${this.API_URL}/${id}`, dto).pipe(
       map(task => this.convertTaskDates(task)),
@@ -88,17 +80,12 @@ export class TasksService {
     );
   }
 
-  /** Archive task */
   archiveTask(id: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`).pipe(
       tap(() => console.log('✅ Task archived:', id)),
       catchError(this.handleError)
     );
   }
-
-  // ============================================
-  // Themes
-  // ============================================
 
   getThemes(): Observable<TaskTheme[]> {
     return this.http.get<TaskTheme[]>(`${this.API_URL}/themes`).pipe(
@@ -143,10 +130,6 @@ export class TasksService {
     );
   }
 
-  // ============================================
-  // Ordering & status helpers
-  // ============================================
-
   reorderTasks(items: { taskId: string; themeId?: string | null; order: number }[]): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/reorder`, { items }).pipe(
       tap(() => console.log('✅ Tasks reordered')),
@@ -167,10 +150,6 @@ export class TasksService {
       catchError(this.handleError)
     );
   }
-
-  // ============================================
-  // Subtasks
-  // ============================================
 
   addSubtask(taskId: string, dto: CreateSubtaskRequest): Observable<Subtask> {
     return this.http.post<Subtask>(`${this.API_URL}/${taskId}/subtasks`, dto).pipe(
@@ -193,20 +172,12 @@ export class TasksService {
     );
   }
 
-  // ============================================
-  // Recurrence
-  // ============================================
-
   setRecurrence(taskId: string, dto: CreateRecurrenceRequest): Observable<Recurrence> {
     return this.http.put<Recurrence>(`${this.API_URL}/${taskId}/recurrence`, dto).pipe(
       tap(r => console.log('✅ Recurrence set:', r)),
       catchError(this.handleError)
     );
   }
-
-  // ============================================
-  // Tags
-  // ============================================
 
   addTag(taskId: string, tagId: string): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/${taskId}/tags/${tagId}`, {}).pipe(
@@ -221,10 +192,6 @@ export class TasksService {
       catchError(this.handleError)
     );
   }
-
-  // ============================================
-  // Helpers
-  // ============================================
 
   private convertPagedDates(result: PaginatedResult<Task>): PaginatedResult<Task> {
     return { ...result, items: result.items.map(t => this.convertTaskDates(t)) };
@@ -252,7 +219,7 @@ export class TasksService {
   }
 
   private handleError(error: any): Observable<never> {
-    // Log detailed server error payload for diagnostics
+    
     const problemErrors = error?.error?.errors;
     console.error('❌ Tasks service error:', {
       status: error.status,
@@ -269,7 +236,7 @@ export class TasksService {
     else if (error.status === 404) message = 'Resource not found';
     else if (error.status === 401) message = 'Unauthorized';
     else if (error.status === 403) message = 'Forbidden';
-    // Show first validation error if available
+    
     if (problemErrors) {
       const first = Object.values(problemErrors).flat()[0];
       if (first) message = first as string;
@@ -277,12 +244,11 @@ export class TasksService {
     return throwError(() => new Error(message));
   }
 
-  /** Convert value to ISO string at end-of-day (23:59:59Z). Always returns UTC ISO with 'Z'. */
   private toIsoEndOfDay(value: string | Date): string {
     if (typeof value === 'string') {
       const dateOnlyMatch = /^\d{4}-\d{2}-\d{2}$/.test(value);
       if (dateOnlyMatch) {
-        // Construct local date at 23:59:59
+        
         const [y, m, d] = value.split('-').map(Number);
         const local = new Date(y, (m - 1), d, 23, 59, 59, 0);
         if (isNaN(local.getTime())) return value;
@@ -293,14 +259,13 @@ export class TasksService {
           local.getUTCHours(),
           local.getUTCMinutes(),
           local.getUTCSeconds()
-        )).toISOString(); // keep trailing 'Z'
+        )).toISOString(); 
       }
     }
-    // Fallback: keep original conversion
+    
     return this.toIsoDate(value);
   }
 
-  /** Convert value to ISO string at start-of-day (00:00:00Z). Always returns UTC ISO with 'Z'. */
   private toIsoStartOfDay(value: string | Date): string {
     if (typeof value === 'string') {
       const dateOnlyMatch = /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -321,14 +286,13 @@ export class TasksService {
     return this.toIsoDate(value);
   }
 
-  /** Convert string or Date to ISO with timezone Z for backend query (keeps seconds, may include .000Z) */
   private toIsoDate(value: string | Date): string {
     const dateObj = typeof value === 'string' ? new Date(value) : value;
-    // If invalid date, skip normalization and return original string to let backend handle
+    
     if (isNaN(dateObj.getTime())) {
       return typeof value === 'string' ? value : '';
     }
-    // Ensure UTC and include 'Z'
+    
     return new Date(Date.UTC(
       dateObj.getUTCFullYear(),
       dateObj.getUTCMonth(),

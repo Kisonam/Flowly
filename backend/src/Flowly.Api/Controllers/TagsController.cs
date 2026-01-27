@@ -17,12 +17,6 @@ public class TagsController(ITagService tagService, ILogger<TagsController> logg
     private readonly ITagService _tagService = tagService;
     private readonly ILogger<TagsController> _logger = logger;
 
-    /// <summary>
-    /// Get all tags for the current user
-    /// </summary>
-    /// <returns>List of tags</returns>
-    /// <response code="200">Tags retrieved successfully</response>
-    /// <response code="401">Not authenticated</response>
     [HttpGet]
     [ProducesResponseType(typeof(List<TagDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -78,7 +72,6 @@ public class TagsController(ITagService tagService, ILogger<TagsController> logg
         }
     }
 
-
     [HttpPost]
     [ProducesResponseType(typeof(TagDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -115,16 +108,6 @@ public class TagsController(ITagService tagService, ILogger<TagsController> logg
         }
     }
 
-    /// <summary>
-    /// Update an existing tag
-    /// </summary>
-    /// <param name="id">Tag ID</param>
-    /// <param name="dto">Tag update data</param>
-    /// <returns>Updated tag</returns>
-    /// <response code="200">Tag updated successfully</response>
-    /// <response code="404">Tag not found</response>
-    /// <response code="400">Validation error</response>
-    /// <response code="401">Not authenticated</response>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(TagDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -173,14 +156,6 @@ public class TagsController(ITagService tagService, ILogger<TagsController> logg
         }
     }
 
-    /// <summary>
-    /// Delete a tag
-    /// </summary>
-    /// <param name="id">Tag ID</param>
-    /// <returns>Success message</returns>
-    /// <response code="200">Tag deleted successfully</response>
-    /// <response code="404">Tag not found</response>
-    /// <response code="401">Not authenticated</response>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]

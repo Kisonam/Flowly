@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// Month statistics DTO
-/// </summary>
 public class MonthStatsDto
 {
     public int Year { get; set; }

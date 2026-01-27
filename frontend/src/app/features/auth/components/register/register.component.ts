@@ -1,4 +1,4 @@
-// frontend/src/app/features/auth/components/register/register.component.ts
+
 
 import { Component, inject, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -33,10 +33,9 @@ export class RegisterComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.initForm();
 
-    // Initialize Google Auth and subscribe to responses
     this.googleAuthService.initialize()
       .then(() => {
-        // Subscribe to Google credential responses
+        
         this.googleAuthService.getCredentialResponse()
           .pipe(takeUntil(this.destroy$))
           .subscribe({
@@ -54,7 +53,7 @@ export class RegisterComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Render Google Sign-Up button after view is initialized
+    
     setTimeout(() => {
       const buttonContainer = document.getElementById('googleSignUpButton');
       if (buttonContainer && this.googleAuthService.isAvailable()) {
@@ -67,7 +66,7 @@ export class RegisterComponent implements OnInit, OnDestroy, AfterViewInit {
             shape: 'rectangular',
             width: buttonContainer.offsetWidth || 300
           });
-          // Hide fallback button if Google button rendered successfully
+          
           const fallbackButton = document.querySelector('.google-fallback-button') as HTMLElement;
           if (fallbackButton) {
             fallbackButton.style.display = 'none';
@@ -127,7 +126,6 @@ export class RegisterComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('✅ Google credential received');
     this.isLoading = true;
 
-    // Send credential to backend (registration through Google)
     this.authService.loginWithGoogle(credential)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -153,7 +151,6 @@ export class RegisterComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Trigger Google prompt
     try {
       this.googleAuthService.showOneTap();
     } catch (error) {
@@ -169,7 +166,6 @@ export class RegisterComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // Custom Validators
   private passwordValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
@@ -215,7 +211,6 @@ export class RegisterComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  // Helper methods for template
   get email() { return this.registerForm.get('email'); }
   get displayName() { return this.registerForm.get('displayName'); }
   get password() { return this.registerForm.get('password'); }

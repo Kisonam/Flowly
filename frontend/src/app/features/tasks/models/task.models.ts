@@ -1,4 +1,4 @@
-// Task feature TypeScript models mirroring backend DTOs
+
 
 export interface Tag {
   id: string;
@@ -45,7 +45,7 @@ export interface Task {
   createdAt: string | Date;
   updatedAt: string | Date;
   completedAt?: string | Date | null;
-  order: number; // Позиція всередині теми (або unassigned)
+  order: number; 
   theme?: TaskTheme | null;
   subtasks: Subtask[];
   tags: Tag[];
@@ -53,11 +53,10 @@ export interface Task {
   isOverdue: boolean;
 }
 
-// Create / Update DTOs
 export interface CreateTaskRequest {
   title: string;
   description?: string;
-  dueDate?: string; // ISO date
+  dueDate?: string; 
   themeId?: string;
   color?: string;
   priority?: TaskPriority;
@@ -83,7 +82,6 @@ export interface UpdateTaskThemeRequest { title?: string; color?: string; order?
 
 export interface CreateRecurrenceRequest { rule: string; }
 
-// Filtering & pagination
 export interface TaskFilter {
   search?: string;
   tagIds?: string[];
@@ -92,7 +90,7 @@ export interface TaskFilter {
   priority?: TaskPriority;
   isArchived?: boolean;
   isOverdue?: boolean;
-  dueDateOn?: string; // ISO string representing start of day in UTC
+  dueDateOn?: string; 
   dueDateTo?: string;
   page?: number;
   pageSize?: number;

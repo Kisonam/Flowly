@@ -1,5 +1,5 @@
 <div class="category-manager-container">
-  <!-- Header -->
+  
   <div class="module-header">
     <h2>📂 {{ 'FINANCE.CATEGORIES.TITLE' | translate }}</h2>
     <div class="header-actions">
@@ -12,26 +12,22 @@
     </div>
   </div>
 
-  <!-- Loading -->
   <div *ngIf="loading" class="loading">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.CATEGORIES.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error -->
   <div *ngIf="errorMessage" class="error-message">
     ❌ {{ errorMessage }}
   </div>
 
-  <!-- Categories Grid -->
   <div *ngIf="!loading && !showForm" class="categories-grid">
     <div *ngFor="let category of categories" class="category-card" [class.predefined]="isPredefinedCategory(category)">
-      <!-- Header with icon and color -->
+      
       <div class="category-header" [style.background]="category.color || '#10b981'">
         <span class="category-icon">{{ category.icon || '📁' }}</span>
       </div>
 
-      <!-- Body -->
       <div class="category-body">
         <h3 class="category-name">{{ category.name }}</h3>
         <span *ngIf="isPredefinedCategory(category)" class="predefined-badge">
@@ -39,7 +35,6 @@
         </span>
       </div>
 
-      <!-- Actions -->
       <div class="category-actions" *ngIf="!isPredefinedCategory(category)">
         <button class="btn-icon edit" (click)="openEditForm(category)"
           [title]="'FINANCE.CATEGORIES.FORM.TITLE_EDIT' | translate">
@@ -52,7 +47,6 @@
       </div>
     </div>
 
-    <!-- Empty state -->
     <div *ngIf="categories.length === 0" class="empty-state">
       <div class="empty-icon">📂</div>
       <h3>{{ 'FINANCE.CATEGORIES.EMPTY.TITLE' | translate }}</h3>
@@ -63,19 +57,17 @@
     </div>
   </div>
 
-  <!-- Create/Edit Form -->
   <div *ngIf="showForm" class="form-container">
     <div class="form-card">
-      <!-- Form Header -->
+      
       <div class="form-header">
         <h3>{{ (editMode ? 'FINANCE.CATEGORIES.FORM.TITLE_EDIT' : 'FINANCE.CATEGORIES.FORM.TITLE_CREATE') | translate }}
         </h3>
         <button class="btn-close" (click)="closeForm()" title="Close">✕</button>
       </div>
 
-      <!-- Form -->
       <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-        <!-- Name -->
+        
         <div class="form-group">
           <label for="name">{{ 'FINANCE.CATEGORIES.FORM.NAME_LABEL' | translate }} <span
               class="required">*</span></label>
@@ -87,7 +79,6 @@
           </div>
         </div>
 
-        <!-- Icon Selector -->
         <div class="form-group">
           <label>{{ 'FINANCE.CATEGORIES.FORM.ICON_LABEL' | translate }}</label>
           <div class="icon-grid">
@@ -98,7 +89,6 @@
           </div>
         </div>
 
-        <!-- Color Selector -->
         <div class="form-group">
           <label>{{ 'FINANCE.CATEGORIES.FORM.COLOR_LABEL' | translate }}</label>
           <div class="color-grid">
@@ -109,7 +99,6 @@
           </div>
         </div>
 
-        <!-- Preview -->
         <div class="preview-section">
           <label>{{ 'FINANCE.CATEGORIES.FORM.PREVIEW_LABEL' | translate }}</label>
           <div class="category-preview">
@@ -125,7 +114,6 @@
           </div>
         </div>
 
-        <!-- Actions -->
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" (click)="closeForm()">
             {{ 'FINANCE.CATEGORIES.FORM.CANCEL' | translate }}

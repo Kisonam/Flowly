@@ -1,4 +1,4 @@
-// backend/src/Flowly.Infrastructure/Data/Configurations/RefreshTokenConfiguration.cs
+
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -24,9 +24,8 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .HasDefaultValue(false);
 
         builder.Property(rt => rt.CreatedByIp)
-            .HasMaxLength(45); // Max length for IPv6
+            .HasMaxLength(45); 
 
-        // Indexes
         builder.HasIndex(rt => rt.Token)
             .IsUnique();
         

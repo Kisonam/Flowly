@@ -9,6 +9,5 @@ public class ApplicationUser : IdentityUser<Guid>
     public string DisplayName { get; set; } = string.Empty;
     public string? AvatarPath { get; set; }
     public ThemeMode PreferredTheme { get; set; } = ThemeMode.Normal;
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

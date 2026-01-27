@@ -10,10 +10,6 @@ using Xunit;
 
 namespace Flowly.UnitTests.Services;
 
-/// <summary>
-/// Тести для NoteService - перевіряємо роботу з нотатками.
-/// Фокус на захисті даних користувачів та правильній фільтрації.
-/// </summary>
 public class NoteServiceTests : IDisposable
 {
     private readonly AppDbContext _context;
@@ -27,23 +23,15 @@ public class NoteServiceTests : IDisposable
         _context = TestDbContextFactory.CreateInMemoryContext();
         _archiveServiceMock = new Mock<IArchiveService>();
         _noteService = new NoteService(_context, _archiveServiceMock.Object);
-        
-        // Створюємо двох тестових користувачів для перевірки ізоляції даних
+
         _testUserId = Guid.NewGuid();
         _otherUserId = Guid.NewGuid();
     }
 
-    // ============================================
-    // ТЕСТ 1: Створення нотатки з валідними даними
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо, що користувач може створити нотатку з валідними даними.
-    /// </summary>
     [Fact]
     public async Task CreateAsync_WithValidData_ShouldCreateNoteSuccessfully()
     {
-        // Arrange
+        
         var createDto = new CreateNoteDto
         {
             Title = "My First Note",
@@ -52,10 +40,8 @@ public class NoteServiceTests : IDisposable
             TagIds = null
         };
 
-        // Act
         var result = await _noteService.CreateAsync(_testUserId, createDto);
 
-        // Assert
         result.Should().NotBeNull();
         result.Title.Should().Be("My First Note");
         result.Markdown.Should().Be("# Hello World\n\nThis is my first note.");
@@ -63,24 +49,15 @@ public class NoteServiceTests : IDisposable
         result.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
         result.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
 
-        // Перевіряємо, що нотатка збережена в базі
         var noteInDb = await _context.Notes.FindAsync(result.Id);
         noteInDb.Should().NotBeNull();
         noteInDb!.UserId.Should().Be(_testUserId, "нотатка має належати правильному користувачу");
     }
 
-    // ============================================
-    // ТЕСТ 2: Створення нотатки з тегами
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо, що можна створити нотатку з тегами.
-    /// БЕЗПЕКА: Перевіряємо, що можна використовувати тільки свої теги.
-    /// </summary>
     [Fact]
     public async Task CreateAsync_WithTags_ShouldAttachTagsToNote()
     {
-        // Arrange - створюємо теги для користувача
+        
         var tags = await TestDataSeeder.CreateTestTagsAsync(_context, _testUserId, 2);
 
         var createDto = new CreateNoteDto
@@ -90,32 +67,21 @@ public class NoteServiceTests : IDisposable
             TagIds = tags.Select(t => t.Id).ToList()
         };
 
-        // Act
         var result = await _noteService.CreateAsync(_testUserId, createDto);
 
-        // Assert
         result.Tags.Should().HaveCount(2, "нотатка має мати 2 теги");
         result.Tags.Select(t => t.Id).Should().BeEquivalentTo(tags.Select(t => t.Id));
 
-        // Перевіряємо зв'язки в базі
         var noteTags = await _context.NoteTags
             .Where(nt => nt.NoteId == result.Id)
             .ToListAsync();
         noteTags.Should().HaveCount(2);
     }
 
-    // ============================================
-    // ТЕСТ 3: Неможливість використати чужі теги
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Користувач не може прикріпити до своєї нотатки теги іншого користувача.
-    /// Це захищає від витоку інформації через теги.
-    /// </summary>
     [Fact]
     public async Task CreateAsync_WithOtherUsersTags_ShouldThrowException()
     {
-        // Arrange - створюємо теги для іншого користувача
+        
         var otherUserTags = await TestDataSeeder.CreateTestTagsAsync(_context, _otherUserId, 2);
 
         var createDto = new CreateNoteDto
@@ -125,7 +91,6 @@ public class NoteServiceTests : IDisposable
             TagIds = otherUserTags.Select(t => t.Id).ToList()
         };
 
-        // Act & Assert
         var act = async () => await _noteService.CreateAsync(_testUserId, createDto);
         
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -133,13 +98,6 @@ public class NoteServiceTests : IDisposable
                 "має бути помилка про неіснуючі теги (не розкриваємо, що вони чужі)");
     }
 
-    // ============================================
-    // ТЕСТ 4: Валідація обов'язкових полів
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо валідацію обов'язкових полів при створенні нотатки.
-    /// </summary>
     [Theory]
     [InlineData("", "Content", "Title is required")]
     [InlineData("   ", "Content", "Title is required")]
@@ -148,31 +106,23 @@ public class NoteServiceTests : IDisposable
     public async Task CreateAsync_WithInvalidData_ShouldThrowArgumentException(
         string title, string markdown, string expectedMessage)
     {
-        // Arrange
+        
         var createDto = new CreateNoteDto
         {
             Title = title,
             Markdown = markdown
         };
 
-        // Act & Assert
         var act = async () => await _noteService.CreateAsync(_testUserId, createDto);
         
         await act.Should().ThrowAsync<ArgumentException>()
             .WithMessage($"*{expectedMessage}*");
     }
 
-    // ============================================
-    // ТЕСТ 5: Архівування нотатки
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо, що нотатка може бути архівована.
-    /// </summary>
     [Fact]
     public async Task ArchiveAsync_ShouldCallArchiveService()
     {
-        // Arrange - створюємо нотатку
+        
         var createDto = new CreateNoteDto
         {
             Title = "Note to Archive",
@@ -180,10 +130,8 @@ public class NoteServiceTests : IDisposable
         };
         var note = await _noteService.CreateAsync(_testUserId, createDto);
 
-        // Act
         await _noteService.ArchiveAsync(_testUserId, note.Id);
 
-        // Assert - перевіряємо, що викликався ArchiveService
         _archiveServiceMock.Verify(
             x => x.ArchiveEntityAsync(
                 _testUserId,
@@ -193,24 +141,15 @@ public class NoteServiceTests : IDisposable
             "має бути викликаний метод архівування");
     }
 
-    // ============================================
-    // ТЕСТ 6: Фільтрація нотаток за тегами
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо, що можна фільтрувати нотатки за тегами.
-    /// БЕЗПЕКА: Користувач бачить тільки свої нотатки.
-    /// </summary>
     [Fact]
     public async Task GetAllAsync_FilterByTags_ShouldReturnOnlyMatchingNotes()
     {
-        // Arrange - створюємо теги
+        
         var tags = await TestDataSeeder.CreateTestTagsAsync(_context, _testUserId, 3);
         var tag1 = tags[0];
         var tag2 = tags[1];
         var tag3 = tags[2];
 
-        // Створюємо нотатки з різними тегами
         var note1 = await _noteService.CreateAsync(_testUserId, new CreateNoteDto
         {
             Title = "Note 1",
@@ -232,7 +171,6 @@ public class NoteServiceTests : IDisposable
             TagIds = new List<Guid> { tag3.Id }
         });
 
-        // Act - фільтруємо по tag2
         var filter = new NoteFilterDto
         {
             TagIds = new List<Guid> { tag2.Id },
@@ -241,24 +179,16 @@ public class NoteServiceTests : IDisposable
         };
         var result = await _noteService.GetAllAsync(_testUserId, filter);
 
-        // Assert
         result.Items.Should().HaveCount(2, "тільки 2 нотатки мають tag2");
         result.Items.Select(n => n.Id).Should().Contain(new[] { note1.Id, note2.Id });
         result.Items.Select(n => n.Id).Should().NotContain(note3.Id);
         result.TotalCount.Should().Be(2);
     }
 
-    // ============================================
-    // ТЕСТ 7: Фільтрація за текстовим пошуком
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо пошук по тексту в заголовку та вмісті нотатки.
-    /// </summary>
     [Fact]
     public async Task GetAllAsync_SearchByText_ShouldReturnMatchingNotes()
     {
-        // Arrange - створюємо нотатки з різним вмістом
+        
         await _noteService.CreateAsync(_testUserId, new CreateNoteDto
         {
             Title = "Shopping List",
@@ -277,7 +207,6 @@ public class NoteServiceTests : IDisposable
             Markdown = "How to make bread: mix flour and water"
         });
 
-        // Act - шукаємо "bread"
         var filter = new NoteFilterDto
         {
             Search = "bread",
@@ -286,24 +215,15 @@ public class NoteServiceTests : IDisposable
         };
         var result = await _noteService.GetAllAsync(_testUserId, filter);
 
-        // Assert
         result.Items.Should().HaveCount(2, "2 нотатки містять слово 'bread'");
         result.Items.Should().Contain(n => n.Title == "Shopping List");
         result.Items.Should().Contain(n => n.Title == "Recipe");
     }
 
-    // ============================================
-    // ТЕСТ 8: Ізоляція даних між користувачами
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Користувач бачить тільки свої нотатки, не чужі.
-    /// Це критично важливо для захисту приватності.
-    /// </summary>
     [Fact]
     public async Task GetAllAsync_ShouldReturnOnlyUserOwnNotes()
     {
-        // Arrange - створюємо нотатки для двох користувачів
+        
         await _noteService.CreateAsync(_testUserId, new CreateNoteDto
         {
             Title = "My Note 1",
@@ -322,36 +242,25 @@ public class NoteServiceTests : IDisposable
             Markdown = "Other user content"
         });
 
-        // Act - отримуємо нотатки для testUser
         var filter = new NoteFilterDto { Page = 1, PageSize = 10 };
         var result = await _noteService.GetAllAsync(_testUserId, filter);
 
-        // Assert
         result.Items.Should().HaveCount(2, "користувач має бачити тільки свої 2 нотатки");
         result.Items.Should().OnlyContain(n => n.Title.StartsWith("My Note"));
         result.Items.Should().NotContain(n => n.Title == "Other User Note");
         result.TotalCount.Should().Be(2);
     }
 
-    // ============================================
-    // ТЕСТ 9: Неможливість отримати чужу нотатку по ID
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Користувач не може отримати нотатку іншого користувача, навіть знаючи ID.
-    /// Це захищає від несанкціонованого доступу.
-    /// </summary>
     [Fact]
     public async Task GetByIdAsync_WithOtherUsersNoteId_ShouldThrowException()
     {
-        // Arrange - створюємо нотатку для іншого користувача
+        
         var otherUserNote = await _noteService.CreateAsync(_otherUserId, new CreateNoteDto
         {
             Title = "Private Note",
             Markdown = "Confidential information"
         });
 
-        // Act & Assert - testUser намагається отримати чужу нотатку
         var act = async () => await _noteService.GetByIdAsync(_testUserId, otherUserNote.Id);
         
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -359,17 +268,10 @@ public class NoteServiceTests : IDisposable
                 "має бути загальна помилка без деталей для безпеки");
     }
 
-    // ============================================
-    // ТЕСТ 10: Фільтрація архівованих нотаток
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо, що можна фільтрувати нотатки за статусом архівування.
-    /// </summary>
     [Fact]
     public async Task GetAllAsync_FilterByArchived_ShouldReturnCorrectNotes()
     {
-        // Arrange - створюємо нотатки
+        
         var note1 = await _noteService.CreateAsync(_testUserId, new CreateNoteDto
         {
             Title = "Active Note",
@@ -382,12 +284,10 @@ public class NoteServiceTests : IDisposable
             Markdown = "Will be archived"
         });
 
-        // Архівуємо другу нотатку вручну через контекст
         var noteEntity = await _context.Notes.FindAsync(note2.Id);
         noteEntity!.Archive();
         await _context.SaveChangesAsync();
 
-        // Act - отримуємо тільки активні нотатки
         var activeFilter = new NoteFilterDto
         {
             IsArchived = false,
@@ -396,7 +296,6 @@ public class NoteServiceTests : IDisposable
         };
         var activeResult = await _noteService.GetAllAsync(_testUserId, activeFilter);
 
-        // Act - отримуємо тільки архівовані нотатки
         var archivedFilter = new NoteFilterDto
         {
             IsArchived = true,
@@ -405,7 +304,6 @@ public class NoteServiceTests : IDisposable
         };
         var archivedResult = await _noteService.GetAllAsync(_testUserId, archivedFilter);
 
-        // Assert
         activeResult.Items.Should().HaveCount(1);
         activeResult.Items.First().Id.Should().Be(note1.Id);
 
@@ -413,18 +311,10 @@ public class NoteServiceTests : IDisposable
         archivedResult.Items.First().Id.Should().Be(note2.Id);
     }
 
-    // ============================================
-    // ТЕСТ 11: Оновлення нотатки оновлює timestamp
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо, що при оновленні нотатки змінюється UpdatedAt.
-    /// Це важливо для сортування та відстеження змін.
-    /// </summary>
     [Fact]
     public async Task UpdateAsync_ShouldUpdateTimestamp()
     {
-        // Arrange - створюємо нотатку
+        
         var note = await _noteService.CreateAsync(_testUserId, new CreateNoteDto
         {
             Title = "Original Title",
@@ -432,11 +322,9 @@ public class NoteServiceTests : IDisposable
         });
 
         var originalUpdatedAt = note.UpdatedAt;
-        
-        // Чекаємо трохи, щоб timestamp точно змінився
+
         await Task.Delay(100);
 
-        // Act - оновлюємо нотатку
         var updateDto = new UpdateNoteDto
         {
             Title = "Updated Title",
@@ -444,24 +332,16 @@ public class NoteServiceTests : IDisposable
         };
         var updated = await _noteService.UpdateAsync(_testUserId, note.Id, updateDto);
 
-        // Assert
         updated.Title.Should().Be("Updated Title");
         updated.Markdown.Should().Be("Updated content");
         updated.UpdatedAt.Should().BeAfter(originalUpdatedAt, 
             "UpdatedAt має бути оновлений");
     }
 
-    // ============================================
-    // ТЕСТ 12: Неможливість оновити чужу нотатку
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Користувач не може оновити нотатку іншого користувача.
-    /// </summary>
     [Fact]
     public async Task UpdateAsync_WithOtherUsersNote_ShouldThrowException()
     {
-        // Arrange - створюємо нотатку для іншого користувача
+        
         var otherUserNote = await _noteService.CreateAsync(_otherUserId, new CreateNoteDto
         {
             Title = "Other User Note",
@@ -474,28 +354,19 @@ public class NoteServiceTests : IDisposable
             Markdown = "Hacked content"
         };
 
-        // Act & Assert
         var act = async () => await _noteService.UpdateAsync(_testUserId, otherUserNote.Id, updateDto);
         
         await act.Should().ThrowAsync<InvalidOperationException>()
             .WithMessage("*not found*");
 
-        // Перевіряємо, що нотатка не змінилася
         var unchangedNote = await _noteService.GetByIdAsync(_otherUserId, otherUserNote.Id);
         unchangedNote.Title.Should().Be("Other User Note", "нотатка не має бути змінена");
     }
 
-    // ============================================
-    // ТЕСТ 13: Пагінація працює коректно
-    // ============================================
-    
-    /// <summary>
-    /// Перевіряємо, що пагінація працює правильно.
-    /// </summary>
     [Fact]
     public async Task GetAllAsync_WithPagination_ShouldReturnCorrectPage()
     {
-        // Arrange - створюємо 5 нотаток
+        
         for (int i = 1; i <= 5; i++)
         {
             await _noteService.CreateAsync(_testUserId, new CreateNoteDto
@@ -505,7 +376,6 @@ public class NoteServiceTests : IDisposable
             });
         }
 
-        // Act - отримуємо другу сторінку (2 елементи на сторінці)
         var filter = new NoteFilterDto
         {
             Page = 2,
@@ -513,7 +383,6 @@ public class NoteServiceTests : IDisposable
         };
         var result = await _noteService.GetAllAsync(_testUserId, filter);
 
-        // Assert
         result.Items.Should().HaveCount(2, "на сторінці має бути 2 елементи");
         result.TotalCount.Should().Be(5, "загалом має бути 5 нотаток");
         result.Page.Should().Be(2);

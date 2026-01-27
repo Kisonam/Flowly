@@ -19,7 +19,7 @@ public class CategoryService : ICategoryService
     {
         var categories = await _dbContext.Categories
             .AsNoTracking()
-            .Where(c => c.UserId == userId || c.UserId == null) // User categories + system categories
+            .Where(c => c.UserId == userId || c.UserId == null) 
             .OrderBy(c => c.Name)
             .Select(c => new CategoryDto
             {
@@ -63,7 +63,6 @@ public class CategoryService : ICategoryService
             throw new ArgumentException("Category name is required", nameof(dto.Name));
         }
 
-        // Check if category with same name already exists for this user
         var exists = await _dbContext.Categories
             .AnyAsync(c => c.UserId == userId && c.Name == dto.Name.Trim());
 
@@ -109,7 +108,6 @@ public class CategoryService : ICategoryService
             throw new ArgumentException("Category name is required", nameof(dto.Name));
         }
 
-        // Check if another category with same name exists
         var exists = await _dbContext.Categories
             .AnyAsync(c => c.UserId == userId 
                 && c.Name == dto.Name.Trim() 
@@ -145,7 +143,6 @@ public class CategoryService : ICategoryService
             throw new InvalidOperationException("Category not found or cannot be deleted");
         }
 
-        // Check if category is used in transactions
         var hasTransactions = await _dbContext.Transactions
             .AnyAsync(t => t.CategoryId == categoryId);
 
@@ -154,7 +151,6 @@ public class CategoryService : ICategoryService
             throw new InvalidOperationException("Cannot delete category that has associated transactions");
         }
 
-        // Check if category is used in budgets
         var hasBudgets = await _dbContext.Budgets
             .AnyAsync(b => b.CategoryId == categoryId);
 

@@ -8,9 +8,6 @@ using System.Security.Claims;
 
 namespace Flowly.Api.Controllers;
 
-/// <summary>
-/// Controller for managing archived entities
-/// </summary>
 [Authorize]
 [ApiController]
 [Route("api/archive")]
@@ -31,15 +28,6 @@ public class ArchiveController : ControllerBase
         _migrationService = migrationService;
     }
 
-    /// <summary>
-    /// Get list of archived entities with pagination and filtering
-    /// </summary>
-    /// <param name="entityType">Optional: Filter by entity type</param>
-    /// <param name="search">Optional: Search query</param>
-    /// <param name="page">Page number (default: 1)</param>
-    /// <param name="pageSize">Page size (default: 20)</param>
-    /// <param name="sortBy">Sort by field (ArchivedAt, Title, EntityType)</param>
-    /// <param name="sortDirection">Sort direction (asc, desc)</param>
     [HttpGet]
     [ProducesResponseType(typeof(ArchiveListResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -74,10 +62,6 @@ public class ArchiveController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get detailed information about a specific archived entity (includes full JSON payload)
-    /// </summary>
-    /// <param name="archiveEntryId">ID of the archive entry</param>
     [HttpGet("{archiveEntryId}/detail")]
     [ProducesResponseType(typeof(ArchivedEntityDetailDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -101,10 +85,6 @@ public class ArchiveController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Restore an archived entity from JSON snapshot
-    /// </summary>
-    /// <param name="archiveEntryId">ID of the archive entry to restore</param>
     [HttpPost("{archiveEntryId}/restore")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -132,10 +112,6 @@ public class ArchiveController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Permanently delete an archived entity (cannot be undone)
-    /// </summary>
-    /// <param name="archiveEntryId">ID of the archive entry to permanently delete</param>
     [HttpDelete("{archiveEntryId}/permanent")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -163,10 +139,6 @@ public class ArchiveController : ControllerBase
         }
     }
 
-    // ============================================
-    // Helper Methods
-    // ============================================
-
     private Guid GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -177,13 +149,6 @@ public class ArchiveController : ControllerBase
         return userId;
     }
 
-    /// <summary>
-    /// Migrate existing archived entities to the new archive system
-    /// </summary>
-    /// <remarks>
-    /// This endpoint should be called once to migrate all existing archived entities
-    /// from the old system (IsArchived flag) to the new system (ArchiveEntries table).
-    /// </remarks>
     [HttpPost("migrate")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

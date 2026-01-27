@@ -38,7 +38,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private destroy$ = new Subject<void>();
 
-  // Data
   transactions: Transaction[] = [];
   categories: Category[] = [];
   tags: { id: string; name: string; color?: string }[] = [];
@@ -47,32 +46,27 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   totalPages = 1;
   totalCount = 0;
 
-  // UI state
   loading = false;
   errorMessage = '';
   empty = false;
-  showFilters = true; // Toggle filters visibility
-  showQuickActions = false; // Toggle quick actions menu
+  showFilters = true; 
+  showQuickActions = false; 
 
-  // Currency options
   currencies: { code: string; name: string; symbol: string }[] = [];
 
-  // Transaction types
   transactionTypes: { value: TransactionType; label: string; color: string }[] = [
     { value: 'Income', label: 'FINANCE.DASHBOARD.INCOME', color: '#10b981' },
     { value: 'Expense', label: 'FINANCE.DASHBOARD.EXPENSE', color: '#ef4444' }
   ];
 
-  // Sorting
   sortOptions: SortOption[] = [
     { key: 'date', label: 'FINANCE.TRANSACTIONS.TABLE.DATE' },
     { key: 'amount', label: 'FINANCE.TRANSACTIONS.TABLE.AMOUNT' },
     { key: 'createdAt', label: 'FINANCE.TRANSACTIONS.TABLE.CREATED' }
   ];
-  currentSort: SortOption | null = { key: 'createdAt', label: 'FINANCE.TRANSACTIONS.TABLE.CREATED' }; // Default sort by creation date
+  currentSort: SortOption | null = { key: 'createdAt', label: 'FINANCE.TRANSACTIONS.TABLE.CREATED' }; 
   sortDirection: 'asc' | 'desc' = 'desc';
 
-  // Filter form
   filterForm: FormGroup = this.fb.group({
     search: [''],
     type: [''],
@@ -89,11 +83,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     this.setupFilterListeners();
     this.fetchTransactions();
 
-    // Subscribe to theme changes to update colors
     this.themeService.currentTheme$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        // Trigger change detection by reassigning transactions array
+        
         this.transactions = [...this.transactions];
       });
   }
@@ -111,7 +104,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   }
 
   loadAuxData(): void {
-    // Load currencies
+    
     this.financeService.getCurrencies().pipe(takeUntil(this.destroy$)).subscribe({
       next: (currencies: any) => {
         this.currencies = currencies;
@@ -120,7 +113,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
       error: (err: any) => console.error('❌ Failed to load currencies', err)
     });
 
-    // Load categories & tags in parallel
     this.financeService.getCategories().pipe(takeUntil(this.destroy$)).subscribe({
       next: (categories: Category[]) => {
         this.categories = categories;
@@ -142,7 +134,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     this.filterForm.valueChanges
       .pipe(debounceTime(300), takeUntil(this.destroy$))
       .subscribe(() => {
-        this.page = 1; // reset page on filter change
+        this.page = 1; 
         this.fetchTransactions();
       });
   }
@@ -157,8 +149,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
       tagIds: v.tagIds?.length ? v.tagIds : undefined,
       dateFrom: v.dateFrom || undefined,
       dateTo: v.dateTo || undefined,
-      // When checkbox is unchecked (false), show only non-archived (false)
-      // When checkbox is checked (true), show only archived (true)
+
       isArchived: v.isArchived === true ? true : false,
       page: this.page,
       pageSize: this.pageSize
@@ -198,13 +189,12 @@ export class TransactionListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Sorting
   setSort(option: SortOption): void {
     if (this.currentSort?.key === option.key) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.currentSort = option;
-      this.sortDirection = 'desc'; // default desc for transactions
+      this.sortDirection = 'desc'; 
     }
     this.transactions = this.applySorting(this.transactions.slice());
   }
@@ -218,14 +208,14 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         case 'date': {
           const ad = new Date(a.date).getTime();
           const bd = new Date(b.date).getTime();
-          return (bd - ad) * dir; // Fixed: bd - ad for descending by default
+          return (bd - ad) * dir; 
         }
         case 'amount':
-          return (b.amount - a.amount) * dir; // Fixed: b - a for descending by default
+          return (b.amount - a.amount) * dir; 
         case 'createdAt': {
           const ad = new Date(a.createdAt).getTime();
           const bd = new Date(b.createdAt).getTime();
-          return (bd - ad) * dir; // Fixed: bd - ad for descending by default
+          return (bd - ad) * dir; 
         }
         default:
           return 0;
@@ -233,7 +223,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Pagination
   prevPage(): void {
     if (this.page > 1) {
       this.page--;
@@ -255,7 +244,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Filters
   toggleTag(tagId: string): void {
     const current = this.filterForm.get('tagIds')?.value || [];
     const index = current.indexOf(tagId);
@@ -287,7 +275,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Actions
   viewTransaction(transaction: Transaction): void {
     this.router.navigate(['/finance/transactions', transaction.id]);
   }
@@ -332,7 +319,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // UI Toggles
   toggleFilters(): void {
     this.showFilters = !this.showFilters;
   }
@@ -345,7 +331,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     this.showQuickActions = false;
   }
 
-  // Helpers
   getTransactionColor(type: TransactionType): string {
     const successColor = this.themeService.getCssVarValue('--success', '#10b981');
     const dangerColor = this.themeService.getCssVarValue('--danger', '#ef4444');
@@ -357,21 +342,21 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   }
 
   getTagColor(tag: { color?: string | null }): string {
-    // In low-stimulus mode, use gray colors
+    
     if (this.themeService.getCurrentTheme() === 'low-stimulus') {
-      return '#6b7280'; // Gray for low-stimulus
+      return '#6b7280'; 
     }
     if (tag.color) return tag.color;
     return this.themeService.getCssVarValue('--primary', '#8b5cf6');
   }
 
   getCategoryColor(category: { color?: string | null }): string {
-    // In low-stimulus mode, use gray colors
+    
     if (this.themeService.getCurrentTheme() === 'low-stimulus') {
-      return '#6b7280'; // Gray for low-stimulus
+      return '#6b7280'; 
     }
     if (category.color) return category.color;
-    return '#6366f1'; // Purple fallback for categories without color
+    return '#6366f1'; 
   }
 
   formatAmount(amount: number, currencyCode: string): string {
@@ -398,7 +383,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     try {
       const d = typeof date === 'string' ? new Date(date) : date;
 
-      // Check if date is valid
       if (isNaN(d.getTime())) {
         return '—';
       }

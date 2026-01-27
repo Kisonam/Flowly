@@ -8,10 +8,6 @@ using Xunit;
 
 namespace Flowly.IntegrationTests;
 
-/// <summary>
-/// Інтеграційні тести для повного Auth flow.
-/// Тестуємо реальні HTTP запити через весь стек додатку.
-/// </summary>
 public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 {
     private readonly HttpClient _client;
@@ -29,25 +25,10 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         _jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     }
 
-    // ============================================
-    // ТЕСТ 1: Повний Auth Flow - Register → Login → Access Protected Endpoint
-    // ============================================
-    
-    /// <summary>
-    /// Тестуємо повний цикл автентифікації:
-    /// 1. Реєстрація нового користувача
-    /// 2. Логін з отриманням токенів
-    /// 3. Доступ до захищеного endpoint з токеном
-    /// 
-    /// Це перевіряє, що вся система автентифікації працює end-to-end.
-    /// </summary>
     [Fact]
     public async Task AuthFlow_RegisterLoginAccessProtected_ShouldWorkEndToEnd()
     {
-        // ============================================
-        // КРОК 1: Реєстрація нового користувача
-        // ============================================
-        
+
         var registerDto = new RegisterDto
         {
             Email = "integration.test@example.com",
@@ -58,7 +39,6 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
 
-        // Assert - перевіряємо успішну реєстрацію
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK, 
             "реєстрація має бути успішною");
 
@@ -69,10 +49,6 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         registerResult.User.Should().NotBeNull();
         registerResult.User.Email.Should().Be(registerDto.Email);
 
-        // ============================================
-        // КРОК 2: Логін з тими самими credentials
-        // ============================================
-        
         var loginDto = new LoginDto
         {
             Email = registerDto.Email,
@@ -81,7 +57,6 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto, _jsonOptions);
 
-        // Assert - перевіряємо успішний логін
         loginResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "логін має бути успішним");
 
@@ -91,18 +66,11 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         loginResult.RefreshToken.Should().NotBeNullOrEmpty();
         loginResult.User.Email.Should().Be(registerDto.Email);
 
-        // ============================================
-        // КРОК 3: Доступ до захищеного endpoint
-        // ============================================
-        
-        // Додаємо JWT токен до заголовків
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", loginResult.AccessToken);
 
-        // Намагаємося отримати профіль користувача (захищений endpoint)
         var profileResponse = await _client.GetAsync("/api/auth/me");
 
-        // Assert - перевіряємо успішний доступ
         profileResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "з валідним токеном має бути доступ до захищеного endpoint");
 
@@ -112,26 +80,10 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         profile.DisplayName.Should().Be(registerDto.DisplayName);
     }
 
-    // ============================================
-    // ТЕСТ 2: Refresh Token Flow
-    // ============================================
-    
-    /// <summary>
-    /// Тестуємо механізм оновлення токенів:
-    /// 1. Реєстрація та отримання токенів
-    /// 2. Використання refresh token для отримання нових токенів
-    /// 3. Перевірка, що нові токени працюють
-    /// 
-    /// Це важливо для безпеки - користувачі можуть залишатися авторизованими
-    /// без повторного введення пароля.
-    /// </summary>
     [Fact]
     public async Task RefreshTokenFlow_ShouldReturnNewTokens()
     {
-        // ============================================
-        // КРОК 1: Реєстрація користувача
-        // ============================================
-        
+
         var registerDto = new RegisterDto
         {
             Email = "refresh.test@example.com",
@@ -147,10 +99,6 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         var originalAccessToken = registerResult!.AccessToken;
         var originalRefreshToken = registerResult.RefreshToken;
 
-        // ============================================
-        // КРОК 2: Використання refresh token
-        // ============================================
-        
         var refreshDto = new RefreshTokenDto
         {
             AccessToken = originalAccessToken,
@@ -159,7 +107,6 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var refreshResponse = await _client.PostAsJsonAsync("/api/auth/refresh", refreshDto, _jsonOptions);
 
-        // Assert - перевіряємо успішне оновлення
         refreshResponse.StatusCode.Should().Be(HttpStatusCode.OK,
             "refresh token має працювати");
 
@@ -167,17 +114,12 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         refreshResult.Should().NotBeNull();
         refreshResult!.AccessToken.Should().NotBeNullOrEmpty();
         refreshResult.RefreshToken.Should().NotBeNullOrEmpty();
-        
-        // Нові токени мають відрізнятися від старих
+
         refreshResult.AccessToken.Should().NotBe(originalAccessToken,
             "має бути згенерований новий access token");
         refreshResult.RefreshToken.Should().NotBe(originalRefreshToken,
             "має бути згенерований новий refresh token");
 
-        // ============================================
-        // КРОК 3: Перевірка, що новий токен працює
-        // ============================================
-        
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", refreshResult.AccessToken);
 
@@ -186,56 +128,33 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
             "новий access token має працювати");
     }
 
-    // ============================================
-    // ТЕСТ 3: Неможливість доступу без токену
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Перевіряємо, що захищені endpoints недоступні без токену.
-    /// </summary>
     [Fact]
     public async Task ProtectedEndpoint_WithoutToken_ShouldReturn401()
     {
-        // Намагаємося отримати доступ без токену
+        
         var response = await _client.GetAsync("/api/auth/me");
 
-        // Assert - має бути 401 Unauthorized
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized,
             "без токену доступ має бути заборонений");
     }
 
-    // ============================================
-    // ТЕСТ 4: Неможливість доступу з невалідним токеном
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Перевіряємо, що невалідний токен не дає доступу.
-    /// </summary>
     [Fact]
     public async Task ProtectedEndpoint_WithInvalidToken_ShouldReturn401()
     {
-        // Додаємо невалідний токен
+        
         _client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", "invalid.token.here");
 
         var response = await _client.GetAsync("/api/auth/me");
 
-        // Assert - має бути 401 Unauthorized
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized,
             "з невалідним токеном доступ має бути заборонений");
     }
 
-    // ============================================
-    // ТЕСТ 5: Неможливість зареєструватися з існуючим email
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Перевіряємо, що неможливо створити два акаунти з одним email.
-    /// </summary>
     [Fact]
     public async Task Register_WithExistingEmail_ShouldReturn400()
     {
-        // КРОК 1: Реєструємо першого користувача
+        
         var registerDto = new RegisterDto
         {
             Email = "duplicate@example.com",
@@ -247,10 +166,9 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
         var firstResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
         firstResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // КРОК 2: Намагаємося зареєструвати другого з тим самим email
         var duplicateDto = new RegisterDto
         {
-            Email = "duplicate@example.com", // Той самий email
+            Email = "duplicate@example.com", 
             Password = "DifferentPassword123!",
             ConfirmPassword = "DifferentPassword123!",
             DisplayName = "Second User"
@@ -258,22 +176,14 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         var duplicateResponse = await _client.PostAsJsonAsync("/api/auth/register", duplicateDto, _jsonOptions);
 
-        // Assert - має бути помилка
         duplicateResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest,
             "не можна створити два акаунти з одним email");
     }
 
-    // ============================================
-    // ТЕСТ 6: Логін з неправильним паролем
-    // ============================================
-    
-    /// <summary>
-    /// БЕЗПЕКА: Перевіряємо, що неможливо увійти з неправильним паролем.
-    /// </summary>
     [Fact]
     public async Task Login_WithWrongPassword_ShouldReturn401()
     {
-        // КРОК 1: Реєструємо користувача
+        
         var registerDto = new RegisterDto
         {
             Email = "wrongpass@example.com",
@@ -284,16 +194,14 @@ public class AuthFlowTests : IClassFixture<FlowlyWebApplicationFactory>
 
         await _client.PostAsJsonAsync("/api/auth/register", registerDto, _jsonOptions);
 
-        // КРОК 2: Намагаємося увійти з неправильним паролем
         var loginDto = new LoginDto
         {
             Email = registerDto.Email,
-            Password = "WrongPassword123!" // Неправильний пароль
+            Password = "WrongPassword123!" 
         };
 
         var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto, _jsonOptions);
 
-        // Assert - має бути 401 Unauthorized
         loginResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized,
             "з неправильним паролем логін має бути заборонений");
     }

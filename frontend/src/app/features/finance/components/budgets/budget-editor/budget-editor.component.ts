@@ -30,7 +30,6 @@ export class BudgetEditorComponent implements OnInit {
   categories: Category[] = [];
   loadingCategories = false;
 
-  // Available currencies (loaded from backend)
   currencies: Currency[] = [];
   loadingCurrencies = false;
 
@@ -97,7 +96,7 @@ export class BudgetEditorComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load currencies:', err);
         this.loadingCurrencies = false;
-        // Fallback to default currencies
+        
         this.currencies = [
           { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
           { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -126,7 +125,7 @@ export class BudgetEditorComponent implements OnInit {
   }
 
   private patchForm(budget: Budget): void {
-    // Format dates for input[type="date"]
+    
     const startDate = this.formatDateForInput(budget.periodStart);
     const endDate = this.formatDateForInput(budget.periodEnd);
 
@@ -244,7 +243,6 @@ export class BudgetEditorComponent implements OnInit {
     return this.currencies.find(c => c.code === code)?.symbol || code;
   }
 
-  // Validation helpers
   hasError(field: string): boolean {
     const control = this.budgetForm.get(field);
     return !!(control && control.invalid && (control.dirty || control.touched));

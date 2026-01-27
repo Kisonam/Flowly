@@ -37,7 +37,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadDashboard();
 
-    // Subscribe to theme changes
     this.themeService.currentTheme$.subscribe(theme => {
       this.currentTheme = theme;
     });
@@ -62,7 +61,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Quick create actions
   createTransaction(): void {
     this.router.navigate(['/finance/transactions/new']);
   }

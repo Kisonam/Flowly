@@ -21,31 +21,26 @@ import {
   styleUrl: './archive-list.component.scss'
 })
 export class ArchiveListComponent implements OnInit, OnDestroy {
-  // Data
+  
   archivedItems: ArchivedEntity[] = [];
   totalCount = 0;
   currentPage = 1;
   pageSize = 20;
   totalPages = 0;
 
-  // Filters
   selectedEntityType: EntityType | null = null;
   searchQuery = '';
   private searchSubject = new Subject<string>();
 
-  // UI State
   loading = false;
   errorMessage = '';
 
-  // Detail modal
   showDetailModal = false;
   selectedItem: ArchivedEntity | null = null;
   parsedPayload: any = null;
 
-  // For template access
   Object = Object;
 
-  // Entity types for filter
   entityTypes = [
     { value: null, label: 'ARCHIVE.FILTERS.TYPES.ALL' },
     { value: EntityType.Note, label: 'ARCHIVE.FILTERS.TYPES.NOTE' },
@@ -70,9 +65,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Setup search with debounce
-   */
   private setupSearchDebounce(): void {
     this.searchSubject
       .pipe(
@@ -86,9 +78,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Load archived items
-   */
   loadArchive(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -126,24 +115,15 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Handle search input change
-   */
   onSearchChange(): void {
     this.searchSubject.next(this.searchQuery);
   }
 
-  /**
-   * Handle entity type filter change
-   */
   onEntityTypeChange(): void {
     this.currentPage = 1;
     this.loadArchive();
   }
 
-  /**
-   * Restore archived item
-   */
   restore(item: ArchivedEntity): void {
     const typeName = this.translate.instant(`ARCHIVE.FILTERS.TYPES.${this.getEntityTypeKey(item.entityType)}`);
     if (!confirm(this.translate.instant('ARCHIVE.CONFIRM.RESTORE', { type: typeName, title: item.title }))) {
@@ -165,9 +145,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Permanently delete archived item
-   */
   permanentDelete(item: ArchivedEntity): void {
     const typeName = this.translate.instant(`ARCHIVE.FILTERS.TYPES.${this.getEntityTypeKey(item.entityType)}`);
     const confirmMessage = this.translate.instant('ARCHIVE.CONFIRM.DELETE_PERMANENTLY', { type: typeName, title: item.title });
@@ -176,7 +153,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Double confirmation for permanent deletion
     if (!confirm(this.translate.instant('ARCHIVE.CONFIRM.DELETE_FINAL'))) {
       return;
     }
@@ -196,9 +172,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Go to next page
-   */
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
@@ -206,9 +179,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Go to previous page
-   */
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -216,16 +186,10 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Get entity type display name
-   */
   getEntityTypeName(type: EntityType): string {
     return getEntityTypeName(type);
   }
 
-  /**
-   * Get entity type key for translation
-   */
   getEntityTypeKey(type: EntityType): string {
     switch (type) {
       case EntityType.Note: return 'NOTE';
@@ -237,16 +201,10 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Get entity type icon
-   */
   getEntityTypeIcon(type: EntityType): string {
     return getEntityTypeIcon(type);
   }
 
-  /**
-   * Format date for display
-   */
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleString(this.translate.currentLang, {
@@ -258,11 +216,8 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Get metadata display value
-   */
   getMetadataDisplay(item: ArchivedEntity): string {
-    // First, try to show metadata
+    
     if (item.metadata && Object.keys(item.metadata).length > 0) {
       const entries = Object.entries(item.metadata);
       if (entries.length > 0) {
@@ -270,7 +225,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
         const key = firstEntry[0];
         const value = firstEntry[1];
 
-        // Format the label and value using our helper methods
         const label = this.formatMetadataLabel(key);
         const formattedValue = this.formatMetadataValue(key, value);
 
@@ -284,7 +238,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       }
     }
 
-    // If no metadata, show description preview
     if (item.description) {
       const preview = item.description.length > 50
         ? item.description.substring(0, 50) + '...'
@@ -299,7 +252,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     this.selectedItem = item;
     this.showDetailModal = true;
 
-    // Fetch full details from backend
     this.archiveService.getDetail(item.id).subscribe({
       next: (detail) => {
         try {
@@ -322,22 +274,15 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     this.parsedPayload = null;
   }
 
-  /**
-   * Format metadata label to be user-friendly
-   */
   formatMetadataLabel(key: string): string {
     return this.translate.instant(`ARCHIVE.METADATA.LABELS.${key}`);
   }
 
-  /**
-   * Format metadata value to be user-friendly
-   */
   formatMetadataValue(key: string, value: any): string {
     if (value === null || value === undefined) {
       return '—';
     }
 
-    // Format currency amounts
     if (key === 'Amount' || key === 'Limit' || key === 'TargetAmount' || key === 'CurrentAmount') {
       return new Intl.NumberFormat(this.translate.currentLang, {
         minimumFractionDigits: 2,
@@ -345,15 +290,12 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       }).format(value);
     }
 
-    // Format character count
     if (key === 'CharacterCount') {
       return new Intl.NumberFormat(this.translate.currentLang).format(value);
     }
 
-    // Format task status
     if (key === 'Status') {
-      // Map numeric status to string key if needed, or use value directly if it matches JSON keys
-      // Assuming value matches keys in JSON (Todo, InProgress, Done) or numeric
+
       let statusKey = value;
       if (value === '0' || value === 0) statusKey = 'Todo';
       if (value === '1' || value === 1) statusKey = 'InProgress';
@@ -361,7 +303,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       return this.translate.instant(`ARCHIVE.METADATA.VALUES.STATUS.${statusKey}`);
     }
 
-    // Format task priority
     if (key === 'Priority') {
       let priorityKey = value;
       if (value === '0' || value === 0) priorityKey = 'None';
@@ -371,7 +312,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       return this.translate.instant(`ARCHIVE.METADATA.VALUES.PRIORITY.${priorityKey}`);
     }
 
-    // Format transaction type
     if (key === 'Type') {
       let typeKey = value;
       if (value === '0' || value === 0) typeKey = 'Expense';
@@ -382,9 +322,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     return String(value);
   }
 
-  /**
-   * Get content section title based on entity type
-   */
   getContentSectionTitle(): string {
     if (!this.selectedItem) return this.translate.instant('ARCHIVE.CONTENT_TITLES.DEFAULT');
 
@@ -400,20 +337,15 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
     return key ? this.translate.instant(key) : this.translate.instant('ARCHIVE.CONTENT_TITLES.DEFAULT');
   }
 
-  /**
-   * Extract content from payload based on entity type
-   */
   getContentFromPayload(): string {
     if (!this.parsedPayload || this.parsedPayload.error) {
       return '';
     }
 
-    // For Notes - check Markdown field first
     if (this.parsedPayload.Markdown) {
       return this.parsedPayload.Markdown;
     }
 
-    // Try to get Content/Text field (alternative for Notes)
     if (this.parsedPayload.Content) {
       return this.parsedPayload.Content;
     }
@@ -421,12 +353,10 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
       return this.parsedPayload.Text;
     }
 
-    // Try to get Description field (for Tasks, Budgets, Goals)
     if (this.parsedPayload.Description) {
       return this.parsedPayload.Description;
     }
 
-    // For Transactions, show Notes if available
     if (this.parsedPayload.Notes) {
       return this.parsedPayload.Notes;
     }

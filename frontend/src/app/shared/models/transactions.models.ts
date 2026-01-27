@@ -5,7 +5,7 @@ export interface TransactionListItem {
   amount: number;
   currencyCode: string;
   type: TransactionType;
-  date: string; // ISO string
+  date: string; 
   description?: string;
   isArchived: boolean;
 }

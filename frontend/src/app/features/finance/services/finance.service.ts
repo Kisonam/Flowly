@@ -31,11 +31,6 @@ export class FinanceService {
   private readonly BASE_URL = `${environment.apiUrl}/finance`;
   private readonly CURRENCIES_URL = `${environment.apiUrl}/currencies`;
 
-  // ============================================
-  // Transactions
-  // ============================================
-
-  /** Get transactions with filtering + pagination */
   getTransactions(filter?: TransactionFilter): Observable<PaginatedResult<Transaction>> {
     let params = new HttpParams();
 
@@ -59,7 +54,6 @@ export class FinanceService {
     );
   }
 
-  /** Get single transaction */
   getTransaction(id: string): Observable<Transaction> {
     return this.http.get<Transaction>(`${this.BASE_URL}/transactions/${id}`).pipe(
       map(tx => this.convertTransactionDates(tx)),
@@ -68,7 +62,6 @@ export class FinanceService {
     );
   }
 
-  /** Create transaction */
   createTransaction(dto: CreateTransactionRequest): Observable<Transaction> {
     console.log('📤 FinanceService.createTransaction:', dto);
     return this.http.post<Transaction>(`${this.BASE_URL}/transactions`, dto).pipe(
@@ -78,7 +71,6 @@ export class FinanceService {
     );
   }
 
-  /** Update transaction */
   updateTransaction(id: string, dto: UpdateTransactionRequest): Observable<Transaction> {
     return this.http.put<Transaction>(`${this.BASE_URL}/transactions/${id}`, dto).pipe(
       map(tx => this.convertTransactionDates(tx)),
@@ -87,7 +79,6 @@ export class FinanceService {
     );
   }
 
-  /** Archive transaction */
   archiveTransaction(id: string): Observable<void> {
     return this.http.post<void>(`${this.BASE_URL}/transactions/${id}/archive`, {}).pipe(
       tap(() => console.log('✅ Transaction archived:', id)),
@@ -95,7 +86,6 @@ export class FinanceService {
     );
   }
 
-  /** Restore archived transaction */
   restoreTransaction(id: string): Observable<void> {
     return this.http.post<void>(`${this.BASE_URL}/transactions/${id}/restore`, {}).pipe(
       tap(() => console.log('✅ Transaction restored:', id)),
@@ -103,11 +93,6 @@ export class FinanceService {
     );
   }
 
-  // ============================================
-  // Categories
-  // ============================================
-
-  /** Get all categories (user + system) */
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.BASE_URL}/categories`).pipe(
       tap(list => console.log('📂 Categories fetched:', list)),
@@ -115,7 +100,6 @@ export class FinanceService {
     );
   }
 
-  /** Get single category */
   getCategory(id: string): Observable<Category> {
     return this.http.get<Category>(`${this.BASE_URL}/categories/${id}`).pipe(
       tap(cat => console.log('📂 Category fetched:', cat)),
@@ -123,7 +107,6 @@ export class FinanceService {
     );
   }
 
-  /** Create category */
   createCategory(dto: CreateCategoryRequest): Observable<Category> {
     return this.http.post<Category>(`${this.BASE_URL}/categories`, dto).pipe(
       tap(cat => console.log('✅ Category created:', cat)),
@@ -131,7 +114,6 @@ export class FinanceService {
     );
   }
 
-  /** Update category */
   updateCategory(id: string, dto: UpdateCategoryRequest): Observable<Category> {
     return this.http.put<Category>(`${this.BASE_URL}/categories/${id}`, dto).pipe(
       tap(cat => console.log('✅ Category updated:', cat)),
@@ -139,7 +121,6 @@ export class FinanceService {
     );
   }
 
-  /** Delete category */
   deleteCategory(id: string): Observable<void> {
     return this.http.delete<void>(`${this.BASE_URL}/categories/${id}`).pipe(
       tap(() => console.log('✅ Category deleted:', id)),
@@ -147,11 +128,6 @@ export class FinanceService {
     );
   }
 
-  // ============================================
-  // Budgets
-  // ============================================
-
-  /** Get budgets with filtering */
   getBudgets(filter?: BudgetFilter): Observable<Budget[]> {
     let params = new HttpParams();
 
@@ -170,7 +146,6 @@ export class FinanceService {
     );
   }
 
-  /** Get single budget */
   getBudget(id: string): Observable<Budget> {
     return this.http.get<Budget>(`${this.BASE_URL}/budgets/${id}`).pipe(
       map(b => this.convertBudgetDates(b)),
@@ -179,7 +154,6 @@ export class FinanceService {
     );
   }
 
-  /** Get budget transactions */
   getBudgetTransactions(budgetId: string): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.BASE_URL}/budgets/${budgetId}/transactions`).pipe(
       map(transactions => transactions.map(t => this.convertTransactionDates(t))),
@@ -188,7 +162,6 @@ export class FinanceService {
     );
   }
 
-  /** Create budget */
   createBudget(dto: CreateBudgetRequest): Observable<Budget> {
     return this.http.post<Budget>(`${this.BASE_URL}/budgets`, dto).pipe(
       map(b => this.convertBudgetDates(b)),
@@ -197,7 +170,6 @@ export class FinanceService {
     );
   }
 
-  /** Update budget */
   updateBudget(id: string, dto: UpdateBudgetRequest): Observable<Budget> {
     return this.http.put<Budget>(`${this.BASE_URL}/budgets/${id}`, dto).pipe(
       map(b => this.convertBudgetDates(b)),
@@ -206,8 +178,6 @@ export class FinanceService {
     );
   }
 
-  /** Delete budget */
-  /** Delete budget */
   deleteBudget(id: string): Observable<void> {
     return this.http.delete<void>(`${this.BASE_URL}/budgets/${id}`).pipe(
       tap(() => console.log('✅ Budget deleted:', id)),
@@ -215,7 +185,6 @@ export class FinanceService {
     );
   }
 
-  /** Archive budget */
   archiveBudget(id: string): Observable<void> {
     return this.http.post<void>(`${this.BASE_URL}/budgets/${id}/archive`, {}).pipe(
       tap(() => console.log('📦 Budget archived:', id)),
@@ -223,7 +192,6 @@ export class FinanceService {
     );
   }
 
-  /** Restore archived budget */
   restoreBudget(id: string): Observable<void> {
     return this.http.post<void>(`${this.BASE_URL}/budgets/${id}/restore`, {}).pipe(
       tap(() => console.log('♻️ Budget restored:', id)),
@@ -231,7 +199,6 @@ export class FinanceService {
     );
   }
 
-  /** Check if budget is overspent */
   isBudgetOverspent(id: string): Observable<BudgetOverspentResponse> {
     return this.http.get<BudgetOverspentResponse>(`${this.BASE_URL}/budgets/${id}/overspent`).pipe(
       tap(result => console.log('📊 Budget overspent check:', result)),
@@ -239,11 +206,6 @@ export class FinanceService {
     );
   }
 
-  // ============================================
-  // Financial Goals
-  // ============================================
-
-  /** Get financial goals with filtering */
   getGoals(filter?: GoalFilter): Observable<FinancialGoal[]> {
     let params = new HttpParams();
 
@@ -262,7 +224,6 @@ export class FinanceService {
     );
   }
 
-  /** Get single goal */
   getGoal(id: string): Observable<FinancialGoal> {
     return this.http.get<FinancialGoal>(`${this.BASE_URL}/goals/${id}`).pipe(
       map(g => this.convertGoalDates(g)),
@@ -271,7 +232,6 @@ export class FinanceService {
     );
   }
 
-  /** Get goal transactions */
   getGoalTransactions(goalId: string): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.BASE_URL}/goals/${goalId}/transactions`).pipe(
       map(transactions => transactions.map(t => this.convertTransactionDates(t))),
@@ -280,7 +240,6 @@ export class FinanceService {
     );
   }
 
-  /** Create financial goal */
   createGoal(dto: CreateGoalRequest): Observable<FinancialGoal> {
     return this.http.post<FinancialGoal>(`${this.BASE_URL}/goals`, dto).pipe(
       map(g => this.convertGoalDates(g)),
@@ -289,7 +248,6 @@ export class FinanceService {
     );
   }
 
-  /** Update financial goal */
   updateGoal(id: string, dto: UpdateGoalRequest): Observable<FinancialGoal> {
     return this.http.put<FinancialGoal>(`${this.BASE_URL}/goals/${id}`, dto).pipe(
       map(g => this.convertGoalDates(g)),
@@ -298,7 +256,6 @@ export class FinanceService {
     );
   }
 
-  /** Delete financial goal */
   deleteGoal(id: string): Observable<void> {
     return this.http.delete<void>(`${this.BASE_URL}/goals/${id}`).pipe(
       tap(() => console.log('✅ Goal deleted:', id)),
@@ -306,7 +263,6 @@ export class FinanceService {
     );
   }
 
-  /** Archive financial goal */
   archiveGoal(id: string): Observable<void> {
     return this.http.post<void>(`${this.BASE_URL}/goals/${id}/archive`, {}).pipe(
       tap(() => console.log('✅ Goal archived:', id)),
@@ -314,7 +270,6 @@ export class FinanceService {
     );
   }
 
-  /** Restore archived financial goal */
   restoreGoal(id: string): Observable<void> {
     return this.http.post<void>(`${this.BASE_URL}/goals/${id}/restore`, {}).pipe(
       tap(() => console.log('✅ Goal restored:', id)),
@@ -322,7 +277,6 @@ export class FinanceService {
     );
   }
 
-  /** Add amount to goal progress */
   addGoalAmount(id: string, dto: UpdateGoalAmountRequest): Observable<FinancialGoal> {
     return this.http.post<FinancialGoal>(`${this.BASE_URL}/goals/${id}/add-amount`, dto).pipe(
       map(g => this.convertGoalDates(g)),
@@ -331,7 +285,6 @@ export class FinanceService {
     );
   }
 
-  /** Subtract amount from goal progress */
   subtractGoalAmount(id: string, dto: UpdateGoalAmountRequest): Observable<FinancialGoal> {
     return this.http.post<FinancialGoal>(`${this.BASE_URL}/goals/${id}/subtract-amount`, dto).pipe(
       map(g => this.convertGoalDates(g)),
@@ -340,7 +293,6 @@ export class FinanceService {
     );
   }
 
-  /** Set current amount for goal */
   setGoalAmount(id: string, dto: UpdateGoalAmountRequest): Observable<FinancialGoal> {
     return this.http.post<FinancialGoal>(`${this.BASE_URL}/goals/${id}/set-amount`, dto).pipe(
       map(g => this.convertGoalDates(g)),
@@ -349,11 +301,6 @@ export class FinanceService {
     );
   }
 
-  // ============================================
-  // Statistics
-  // ============================================
-
-  /** Get financial statistics for custom period */
   getStats(periodStart: string | Date, periodEnd: string | Date, currencyCode?: string): Observable<FinanceStats> {
     let params = new HttpParams()
       .set('periodStart', this.toIsoDate(periodStart))
@@ -370,7 +317,6 @@ export class FinanceService {
     );
   }
 
-  /** Get statistics for current month */
   getCurrentMonthStats(currencyCode?: string): Observable<FinanceStats> {
     let params = new HttpParams();
     if (currencyCode) {
@@ -384,7 +330,6 @@ export class FinanceService {
     );
   }
 
-  /** Get statistics for current year */
   getCurrentYearStats(currencyCode?: string): Observable<FinanceStats> {
     let params = new HttpParams();
     if (currencyCode) {
@@ -398,7 +343,6 @@ export class FinanceService {
     );
   }
 
-  /** Get statistics for last N days */
   getLastDaysStats(days: number = 30, currencyCode?: string): Observable<FinanceStats> {
     let params = new HttpParams().set('days', String(days));
     if (currencyCode) {
@@ -411,10 +355,6 @@ export class FinanceService {
       catchError(this.handleError)
     );
   }
-
-  // ============================================
-  // Date Conversion Helpers
-  // ============================================
 
   private convertTransactionPagedDates(result: PaginatedResult<Transaction>): PaginatedResult<Transaction> {
     return { ...result, items: result.items.map(tx => this.convertTransactionDates(tx)) };
@@ -457,7 +397,6 @@ export class FinanceService {
     };
   }
 
-  /** Convert string or Date to ISO with timezone Z for backend query */
   private toIsoDate(value: string | Date): string {
     const dateObj = typeof value === 'string' ? new Date(value) : value;
     if (isNaN(dateObj.getTime())) {
@@ -473,21 +412,12 @@ export class FinanceService {
     )).toISOString();
   }
 
-  // ============================================
-  // Currencies
-  // ============================================
-
-  /** Get all available currencies */
   getCurrencies(): Observable<Currency[]> {
     return this.http.get<Currency[]>(this.CURRENCIES_URL).pipe(
       tap(currencies => console.log('💱 Currencies fetched:', currencies)),
       catchError(this.handleError)
     );
   }
-
-  // ============================================
-  // Error Handling
-  // ============================================
 
   private handleError(error: any): Observable<never> {
     const problemErrors = error?.error?.errors;
@@ -508,7 +438,6 @@ export class FinanceService {
     else if (error.status === 401) message = 'Unauthorized';
     else if (error.status === 403) message = 'Forbidden';
 
-    // Show first validation error if available
     if (problemErrors) {
       const first = Object.values(problemErrors).flat()[0];
       if (first) message = first as string;

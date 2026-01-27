@@ -1,5 +1,4 @@
-// Google Identity Services Types
-// Based on: https://developers.google.com/identity/gsi/web/reference/js-reference
+
 
 export interface GoogleAuthWindow extends Window {
   google?: {
@@ -32,7 +31,7 @@ export interface GoogleInitConfig {
 }
 
 export interface GoogleCallbackResponse {
-  credential: string; // JWT ID token
+  credential: string; 
   select_by?: string;
   clientId?: string;
 }

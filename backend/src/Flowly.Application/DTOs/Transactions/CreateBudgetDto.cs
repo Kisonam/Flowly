@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// DTO for creating a new budget
-/// </summary>
 public class CreateBudgetDto
 {
     public string Title { get; set; } = string.Empty;

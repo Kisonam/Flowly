@@ -27,7 +27,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
-  // Data
   tasks: Task[] = [];
   themes: TaskTheme[] = [];
   tags: { id: string; name: string; color?: string }[] = [];
@@ -36,17 +35,14 @@ export class TaskListComponent implements OnInit, OnDestroy {
   totalPages = 1;
   totalCount = 0;
 
-  // UI state
   loading = false;
   errorMessage = '';
   empty = false;
 
-  // Sorting
   sortOptions: SortOption[] = [];
   currentSort: SortOption | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  // Filter form
   filterForm: FormGroup = this.fb.group({
     search: [''],
     status: [''],
@@ -77,9 +73,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
     ];
   }
 
-
   loadAuxData(): void {
-    // Load themes & tags in parallel
+    
     this.tasksService.getThemes().pipe(takeUntil(this.destroy$)).subscribe({
       next: (themes) => (this.themes = themes),
       error: (err) => console.error('Failed to load themes', err)
@@ -94,7 +89,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.filterForm.valueChanges
       .pipe(debounceTime(250), takeUntil(this.destroy$))
       .subscribe(() => {
-        this.page = 1; // reset page on filter change
+        this.page = 1; 
         this.fetchTasks();
       });
   }
@@ -138,7 +133,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Sorting
   setSort(option: SortOption): void {
     if (this.currentSort?.key === option.key) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -194,7 +188,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Pagination
   nextPage(): void {
     if (this.page < this.totalPages) {
       this.page++;
@@ -209,7 +202,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Tag selection toggle
   toggleTag(tagId: string): void {
     const current: string[] = this.filterForm.value.tagIds || [];
     if (current.includes(tagId)) {

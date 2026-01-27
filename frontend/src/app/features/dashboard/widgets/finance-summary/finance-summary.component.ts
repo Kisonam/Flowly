@@ -15,11 +15,9 @@ export class FinanceSummaryComponent implements OnInit, OnChanges {
   @Input() stats: FinanceStats | null = null;
   @Input() multiCurrencyStats: MultiCurrencyFinanceStats | null = null;
 
-  // Currency filtering
   selectedCurrencies: Set<string> = new Set();
   availableCurrencies: string[] = [];
 
-  // Filtered stats
   filteredStats: CurrencyStats[] = [];
 
   ngOnInit(): void {
@@ -35,7 +33,7 @@ export class FinanceSummaryComponent implements OnInit, OnChanges {
   private initializeCurrencies(): void {
     if (this.multiCurrencyStats) {
       this.availableCurrencies = this.multiCurrencyStats.availableCurrencies;
-      // Select all currencies by default
+      
       this.selectedCurrencies = new Set(this.availableCurrencies);
       this.updateFilteredStats();
     }
@@ -43,7 +41,7 @@ export class FinanceSummaryComponent implements OnInit, OnChanges {
 
   toggleCurrency(currency: string): void {
     if (this.selectedCurrencies.has(currency)) {
-      // Don't allow deselecting all currencies
+      
       if (this.selectedCurrencies.size > 1) {
         this.selectedCurrencies.delete(currency);
       }

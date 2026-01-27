@@ -1,4 +1,4 @@
-// backend/src/Flowly.Api/Controllers/AuthController.cs
+
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,17 +23,6 @@ public class AuthController : ControllerBase
         _logger = logger;
     }
 
-    // ============================================
-    // POST /api/auth/register
-    // ============================================
-
-    /// <summary>
-    /// Register a new user
-    /// </summary>
-    /// <param name="dto">Registration details</param>
-    /// <returns>Authentication response with tokens</returns>
-    /// <response code="200">User registered successfully</response>
-    /// <response code="400">Validation error or user already exists</response>
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status400BadRequest)]
@@ -60,17 +49,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // POST /api/auth/login
-    // ============================================
-
-    /// <summary>
-    /// Login with email and password
-    /// </summary>
-    /// <param name="dto">Login credentials</param>
-    /// <returns>Authentication response with tokens</returns>
-    /// <response code="200">Login successful</response>
-    /// <response code="401">Invalid credentials</response>
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -97,18 +75,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // POST /api/auth/google
-    // ============================================
-
-    /// <summary>
-    /// Login or register with Google OAuth
-    /// </summary>
-    /// <param name="dto">Google ID token</param>
-    /// <returns>Authentication response with tokens</returns>
-    /// <response code="200">Login successful</response>
-    /// <response code="400">Invalid Google token</response>
-    /// <response code="501">Not implemented yet</response>
     [HttpPost("google")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -147,17 +113,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // POST /api/auth/refresh
-    // ============================================
-
-    /// <summary>
-    /// Refresh access token using refresh token
-    /// </summary>
-    /// <param name="dto">Access and refresh tokens</param>
-    /// <returns>New authentication response with tokens</returns>
-    /// <response code="200">Token refreshed successfully</response>
-    /// <response code="401">Invalid or expired refresh token</response>
     [HttpPost("refresh")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -184,17 +139,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // POST /api/auth/revoke
-    // ============================================
-
-    /// <summary>
-    /// Revoke refresh token (logout)
-    /// </summary>
-    /// <param name="dto">Refresh token to revoke</param>
-    /// <returns>Success message</returns>
-    /// <response code="200">Token revoked successfully</response>
-    /// <response code="400">Invalid token</response>
     [HttpPost("revoke")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -221,16 +165,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // GET /api/auth/me
-    // ============================================
-
-    /// <summary>
-    /// Get current authenticated user profile
-    /// </summary>
-    /// <returns>User profile</returns>
-    /// <response code="200">Profile retrieved successfully</response>
-    /// <response code="401">Not authenticated</response>
     [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
@@ -256,18 +190,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // PUT /api/auth/profile
-    // ============================================
-
-    /// <summary>
-    /// Update current user profile
-    /// </summary>
-    /// <param name="dto">Profile update data</param>
-    /// <returns>Updated profile</returns>
-    /// <response code="200">Profile updated successfully</response>
-    /// <response code="400">Validation error</response>
-    /// <response code="401">Not authenticated</response>
     [Authorize]
     [HttpPut("profile")]
     [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
@@ -296,18 +218,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // POST /api/auth/change-password
-    // ============================================
-
-    /// <summary>
-    /// Change user password
-    /// </summary>
-    /// <param name="dto">Password change data</param>
-    /// <returns>Success message</returns>
-    /// <response code="200">Password changed successfully</response>
-    /// <response code="400">Validation error or incorrect current password</response>
-    /// <response code="401">Not authenticated</response>
     [Authorize]
     [HttpPost("change-password")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -336,18 +246,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // POST /api/auth/avatar
-    // ============================================
-
-    /// <summary>
-    /// Upload user avatar
-    /// </summary>
-    /// <param name="file">Image file (max 5MB, jpg/png/gif)</param>
-    /// <returns>Avatar URL</returns>
-    /// <response code="200">Avatar uploaded successfully</response>
-    /// <response code="400">Invalid file or validation error</response>
-    /// <response code="401">Not authenticated</response>
     [Authorize]
     [HttpPost("avatar")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
@@ -393,16 +291,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // DELETE /api/auth/avatar
-    // ============================================
-
-    /// <summary>
-    /// Delete user avatar
-    /// </summary>
-    /// <returns>Success message</returns>
-    /// <response code="200">Avatar deleted successfully</response>
-    /// <response code="401">Not authenticated</response>
     [Authorize]
     [HttpDelete("avatar")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -430,13 +318,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    // ============================================
-    // Helper Methods
-    // ============================================
-
-    /// <summary>
-    /// Get current user ID from JWT claims
-    /// </summary>
     private Guid GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -447,18 +328,14 @@ public class AuthController : ControllerBase
         return userId;
     }
 
-    /// <summary>
-    /// Get client IP address
-    /// </summary>
     private string? GetIpAddress()
     {
-        // Try to get IP from X-Forwarded-For header (if behind proxy/load balancer)
+        
         if (Request.Headers.ContainsKey("X-Forwarded-For"))
         {
             return Request.Headers["X-Forwarded-For"].FirstOrDefault();
         }
 
-        // Get IP from connection
         return HttpContext.Connection.RemoteIpAddress?.ToString();
     }
 }

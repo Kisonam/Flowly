@@ -1,5 +1,5 @@
 <div class="note-list-container">
-  <!-- Header -->
+  
   <div class="notes-header">
     <div class="header-left">
       <h1>{{ 'NOTES.LIST.TITLE' | translate }}</h1>
@@ -26,7 +26,6 @@
     </div>
   </div>
 
-  <!-- Filters Bar -->
   <div class="filters-bar">
     <div class="search-box">
       <span class="search-icon" aria-hidden="true">🔎</span>
@@ -37,7 +36,6 @@
         ✖
       </button>
     </div>
-
 
     <button class="btn btn-outline-secondary" (click)="toggleFilters()" [class.active]="showFilters"
       [attr.aria-label]="'NOTES.LIST.BUTTONS.FILTERS' | translate" [attr.aria-expanded]="showFilters">
@@ -53,7 +51,6 @@
     </button>
   </div>
 
-  <!-- Expanded Filters -->
   <div class="filters-panel" *ngIf="showFilters">
     <div class="filter-section">
       <label class="filter-label">{{ 'NOTES.LIST.FILTERS.BY_TAGS' | translate }}</label>
@@ -67,7 +64,6 @@
     </div>
   </div>
 
-  <!-- Loading State -->
   <div class="loading-container" *ngIf="isLoading">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">{{ 'NOTES.LIST.LOADING' | translate }}</span>
@@ -75,7 +71,6 @@
     <p>{{ 'NOTES.LIST.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div class="alert alert-danger" *ngIf="errorMessage && !isLoading">
     ⚠️ {{ errorMessage }}
     <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadNotes()">
@@ -83,7 +78,6 @@
     </button>
   </div>
 
-  <!-- Empty State -->
   <div class="empty-state" *ngIf="!isLoading && notes.length === 0 && !errorMessage">
     <div class="empty-icon">📒</div>
     <h3>{{ 'NOTES.LIST.EMPTY.TITLE' | translate }}</h3>
@@ -95,14 +89,13 @@
     </button>
   </div>
 
-  <!-- Notes Grid/List with CDK Drag & Drop (only in list view) -->
   <div class="notes-container" *ngIf="!isLoading && notes.length > 0" [class.view-list]="viewMode === 'list'"
     cdkDropList [cdkDropListData]="notes" [cdkDropListDisabled]="viewMode !== 'list'"
     (cdkDropListDropped)="onNoteDrop($event)">
     <div *ngFor="let note of notes; let i = index" class="note-card" cdkDrag [cdkDragDisabled]="viewMode !== 'list'"
       (click)="viewNote(note.id)">
       <div class="note-placeholder" *cdkDragPlaceholder></div>
-      <!-- Note Header -->
+      
       <div class="note-header">
         <h3 class="note-title">{{ note.title }}</h3>
         <div class="note-actions">
@@ -126,12 +119,10 @@
         </div>
       </div>
 
-      <!-- Note Preview -->
       <div class="note-content">
         <p class="note-preview">{{ getPreview(note.markdown) }}</p>
       </div>
 
-      <!-- Note Footer -->
       <div class="note-footer">
         <div class="note-tags">
           <span *ngFor="let tag of note.tags.slice(0, 3)" class="tag-badge"
@@ -152,7 +143,6 @@
     </div>
   </div>
 
-  <!-- Pagination -->
   <div class="pagination-container" *ngIf="!isLoading && paginatedResult && paginatedResult.totalPages > 1">
     <div class="pagination-info">
       {{ 'NOTES.LIST.PAGINATION.SHOWING' | translate }} {{ (paginatedResult.page - 1) * paginatedResult.pageSize + 1 }}

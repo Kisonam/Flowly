@@ -19,9 +19,6 @@ public class CurrenciesController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get all available currencies
-    /// </summary>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()

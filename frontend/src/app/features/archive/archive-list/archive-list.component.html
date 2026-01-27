@@ -6,7 +6,6 @@
     </div>
   </div>
 
-  <!-- Filters -->
   <div class="filters-section">
     <div class="filter-group">
       <label for="entityTypeFilter">
@@ -29,13 +28,11 @@
     </div>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'ARCHIVE.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage && !loading" class="error-state">
     <i class="bi bi-exclamation-triangle"></i>
     <p>{{ errorMessage }}</p>
@@ -44,14 +41,12 @@
     </button>
   </div>
 
-  <!-- Empty State -->
   <div *ngIf="!loading && !errorMessage && archivedItems.length === 0" class="empty-state">
     <i class="bi bi-inbox"></i>
     <h3>{{ 'ARCHIVE.EMPTY.TITLE' | translate }}</h3>
     <p>{{ 'ARCHIVE.EMPTY.DESC' | translate }}</p>
   </div>
 
-  <!-- Archive Cards -->
   <div *ngIf="!loading && !errorMessage && archivedItems.length > 0" class="archive-cards-container">
     <div class="results-info">
       <span>{{ 'ARCHIVE.RESULTS_INFO' | translate: { count: totalCount, suffix: (totalCount === 1 ? 'element' :
@@ -60,7 +55,7 @@
 
     <div class="archive-cards">
       <div *ngFor="let item of archivedItems" class="archive-card" (click)="viewDetails(item)">
-        <!-- Card Header -->
+        
         <div class="card-header">
           <div class="entity-type-badge" [attr.data-type]="item.entityType">
             <i class="bi" [ngClass]="getEntityTypeIcon(item.entityType)"></i>
@@ -69,7 +64,6 @@
           <span class="archived-date">{{ formatDate(item.archivedAt) }}</span>
         </div>
 
-        <!-- Card Body -->
         <div class="card-body">
           <h3 class="item-title">{{ item.title }}</h3>
           <p *ngIf="item.description" class="item-description">{{ item.description }}</p>
@@ -79,7 +73,6 @@
           </div>
         </div>
 
-        <!-- Card Footer -->
         <div class="card-footer" (click)="$event.stopPropagation()">
           <button class="btn btn-sm btn-restore" (click)="$event.stopPropagation(); restore(item)"
             [title]="'ARCHIVE.ACTIONS.RESTORE' | translate">
@@ -95,7 +88,6 @@
       </div>
     </div>
 
-    <!-- Pagination -->
     <div class="pagination" *ngIf="totalPages > 1">
       <button class="btn btn-pagination" [disabled]="currentPage === 1" (click)="previousPage()">
         <i class="bi bi-chevron-left"></i>
@@ -114,7 +106,6 @@
   </div>
 </div>
 
-<!-- Detail Modal -->
 <div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -128,7 +119,7 @@
     </div>
 
     <div class="modal-body" *ngIf="selectedItem">
-      <!-- Basic Info -->
+      
       <div class="detail-section">
         <h3>{{ 'ARCHIVE.DETAIL_MODAL.BASIC_INFO' | translate }}</h3>
         <div class="detail-grid">
@@ -152,7 +143,6 @@
         </div>
       </div>
 
-      <!-- Metadata -->
       <div class="detail-section" *ngIf="selectedItem.metadata && Object.keys(selectedItem.metadata).length > 0">
         <h3>{{ 'ARCHIVE.DETAIL_MODAL.ADDITIONAL_INFO' | translate }}</h3>
         <div class="detail-grid">
@@ -163,7 +153,6 @@
         </div>
       </div>
 
-      <!-- Detailed Content from Payload -->
       <div class="detail-section" *ngIf="parsedPayload && !parsedPayload.error">
         <h3>{{ getContentSectionTitle() }}</h3>
         <div class="content-viewer">
@@ -177,7 +166,6 @@
         </div>
       </div>
 
-      <!-- Error state -->
       <div class="detail-section" *ngIf="parsedPayload && parsedPayload.error">
         <div class="error-message">
           <i class="bi bi-exclamation-triangle"></i>
@@ -185,7 +173,6 @@
         </div>
       </div>
 
-      <!-- Loading state -->
       <div class="detail-loading" *ngIf="!parsedPayload">
         <div class="spinner"></div>
         <p>{{ 'ARCHIVE.DETAIL_MODAL.LOADING' | translate }}</p>

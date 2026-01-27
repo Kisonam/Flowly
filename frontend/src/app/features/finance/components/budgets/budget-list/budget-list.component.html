@@ -1,5 +1,5 @@
 <div class="budget-list-container">
-  <!-- Header -->
+  
   <div class="module-header">
     <h2>💼 {{ 'FINANCE.BUDGETS.TITLE' | translate }}</h2>
     <div class="header-actions">
@@ -15,14 +15,12 @@
     </div>
   </div>
 
-  <!-- Filters -->
   <div class="filters-card" [formGroup]="filterForm">
-    <!-- Filter Results Counter -->
+    
     <div *ngIf="!loading && budgets.length > 0" class="filter-results">
       {{ 'FINANCE.BUDGETS.FILTERS.SHOWING' | translate:{count: filteredBudgets.length, total: budgets.length} }}
     </div>
 
-    <!-- First Row: Search and Status -->
     <div class="filters-row">
       <div class="filter-group">
         <label>{{ 'FINANCE.BUDGETS.FILTERS.SEARCH_LABEL' | translate }}</label>
@@ -41,7 +39,6 @@
       </div>
     </div>
 
-    <!-- Second Row: Amount and Date Range -->
     <div class="filters-row">
       <div class="filter-group">
         <label>{{ 'FINANCE.BUDGETS.FILTERS.MIN_AMOUNT' | translate }}</label>
@@ -72,19 +69,16 @@
     </div>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.BUDGETS.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="!loading && errorMessage" class="error-state">
     <p class="error-message">{{ errorMessage }}</p>
     <button class="btn btn-secondary" (click)="fetchBudgets()">{{ 'FINANCE.BUDGETS.ERRORS.RETRY' | translate }}</button>
   </div>
 
-  <!-- Empty State -->
   <div *ngIf="!loading && !errorMessage && budgets.length === 0" class="empty-state">
     <div class="empty-icon">💼</div>
     <h3>{{ 'FINANCE.BUDGETS.EMPTY.TITLE' | translate }}</h3>
@@ -94,7 +88,6 @@
     </button>
   </div>
 
-  <!-- No Results After Filtering -->
   <div *ngIf="!loading && !errorMessage && budgets.length > 0 && filteredBudgets.length === 0" class="empty-state">
     <div class="empty-icon">🔍</div>
     <h3>{{ 'FINANCE.BUDGETS.NO_RESULTS.TITLE' | translate }}</h3>
@@ -104,7 +97,6 @@
     </button>
   </div>
 
-  <!-- Budget List -->
   <div *ngIf="!loading && !errorMessage && filteredBudgets.length > 0" class="budgets-grid">
     <div *ngFor="let budget of filteredBudgets" class="budget-card"
       [class.overspent]="isOverspent(budget)"
@@ -112,7 +104,7 @@
       (click)="viewBudget(budget)">
 
       <div class="budget-content">
-        <!-- Header -->
+        
         <div class="budget-header">
           <h3 class="budget-title">{{ budget.title }}</h3>
           <div class="budget-period">
@@ -120,12 +112,10 @@
           </div>
         </div>
 
-        <!-- Description (always present, but may be empty) -->
         <div class="budget-description">
           <p *ngIf="budget.description">{{ budget.description }}</p>
         </div>
 
-        <!-- Category (always present, but may be empty) -->
         <div class="budget-category">
           <span *ngIf="budget.category" class="category-badge" [style.background]="getCategoryColor(budget.category)">
             <span *ngIf="budget.category.icon">{{ budget.category.icon }}</span>
@@ -133,7 +123,6 @@
           </span>
         </div>
 
-        <!-- Progress Bar -->
         <div class="progress-section">
         <div class="progress-info">
           <span class="spent">
@@ -162,7 +151,6 @@
         </div>
       </div>
 
-      <!-- Status Badge -->
       <div class="budget-status">
         <span *ngIf="isOverspent(budget)" class="status-badge overspent">
           {{ 'FINANCE.BUDGETS.CARD.OVER_BUDGET' | translate }}
@@ -175,19 +163,16 @@
         </span>
       </div>
 
-      <!-- Days Remaining -->
       <div class="budget-days">
         <span class="days-text">{{ getDaysRemaining(budget) }}</span>
       </div>
 
-        <!-- Expired Warning -->
         <div class="expired-warning" *ngIf="isExpired(budget)">
           <i class="bi bi-exclamation-triangle"></i>
           <span>{{ 'FINANCE.BUDGETS.CARD.EXPIRED_MESSAGE' | translate }}</span>
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="budget-actions" (click)="$event.stopPropagation()">
         <button *ngIf="budget.isArchived" class="btn-icon restore" (click)="restoreBudget(budget)"
           [title]="'FINANCE.BUDGETS.DETAIL.RESTORE' | translate">

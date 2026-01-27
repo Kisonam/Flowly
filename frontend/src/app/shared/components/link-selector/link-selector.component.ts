@@ -9,20 +9,6 @@ import { TasksService } from '../../services/tasks.service';
 import { TransactionsService } from '../../services/transactions.service';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, catchError, of } from 'rxjs';
 
-/**
- * Link Selector Component
- *
- * Allows searching and selecting entities (Notes, Tasks, Transactions) to create links,
- * and displays current links with the ability to delete them.
- *
- * @example
- * <app-link-selector
- *   [entityType]="LinkEntityType.Note"
- *   [entityId]="noteId"
- *   (linkCreated)="onLinkCreated($event)"
- *   (linkDeleted)="onLinkDeleted($event)">
- * </app-link-selector>
- */
 @Component({
   selector: 'app-link-selector',
   standalone: true,
@@ -37,42 +23,34 @@ export class LinkSelectorComponent implements OnInit {
   private transactionsService = inject(TransactionsService);
   private translate = inject(TranslateService);
 
-  // Inputs
   @Input({ required: true }) entityType!: LinkEntityType;
   @Input({ required: true }) entityId!: string;
   @Input() title = 'Links';
   @Input() showAddButton = true;
 
-  // Outputs
   @Output() linkCreated = new EventEmitter<Link>();
   @Output() linkDeleted = new EventEmitter<string>();
 
-  // State
   links = signal<Link[]>([]);
   isLoading = signal(false);
   error = signal<string | null>(null);
 
-  // Add link dialog state
   showAddDialog = signal(false);
   selectedLinkType = signal<LinkEntityType>(LinkEntityType.Note);
   searchQuery = signal('');
   searchResults = signal<any[]>([]);
   isSearching = signal(false);
 
-  // Search subject for debouncing
   private searchSubject = new Subject<string>();
 
-  // Expose LinkEntityType to template
   LinkEntityType = LinkEntityType;
 
-  // Available link types (excluding current entity type)
   availableLinkTypes = computed(() => {
     return Object.values(LinkEntityType)
       .filter((value): value is LinkEntityType => typeof value === 'number')
       .filter(type => type !== this.entityType);
   });
 
-  // Link type options for dropdown
   linkTypeOptions = [
     { value: LinkEntityType.Note, label: 'Note', icon: 'bi-journal-text' },
     { value: LinkEntityType.Task, label: 'Task', icon: 'bi-check2-square' },
@@ -84,9 +62,6 @@ export class LinkSelectorComponent implements OnInit {
     this.setupSearch();
   }
 
-  /**
-   * Load all links for the current entity
-   */
   loadLinks(): void {
     this.isLoading.set(true);
     this.error.set(null);
@@ -104,9 +79,6 @@ export class LinkSelectorComponent implements OnInit {
       });
   }
 
-  /**
-   * Setup search with debouncing
-   */
   private setupSearch(): void {
     this.searchSubject.pipe(
       debounceTime(300),
@@ -131,9 +103,6 @@ export class LinkSelectorComponent implements OnInit {
     });
   }
 
-  /**
-   * Perform search based on selected link type
-   */
   private performSearch(query: string) {
     const type = this.selectedLinkType();
 
@@ -159,47 +128,32 @@ export class LinkSelectorComponent implements OnInit {
     }
   }
 
-  /**
-   * Handle search query change
-   */
   onSearchChange(query: string): void {
     this.searchQuery.set(query);
     this.searchSubject.next(query);
   }
 
-  /**
-   * Handle link type change
-   */
   onLinkTypeChange(type: LinkEntityType): void {
     this.selectedLinkType.set(type);
     this.searchQuery.set('');
     this.searchResults.set([]);
   }
 
-  /**
-   * Open add link dialog
-   */
   openAddDialog(): void {
     this.showAddDialog.set(true);
-    // Set default link type to first available type
+    
     const available = this.availableLinkTypes();
     if (available.length > 0) {
       this.selectedLinkType.set(available[0]);
     }
   }
 
-  /**
-   * Close add link dialog
-   */
   closeAddDialog(): void {
     this.showAddDialog.set(false);
     this.searchQuery.set('');
     this.searchResults.set([]);
   }
 
-  /**
-   * Create a link to selected entity
-   */
   createLink(targetEntity: any): void {
     const request = {
       fromType: this.entityType,
@@ -221,9 +175,6 @@ export class LinkSelectorComponent implements OnInit {
       });
   }
 
-  /**
-   * Delete a link
-   */
   deleteLink(link: Link): void {
     if (!confirm(this.translate.instant('COMMON.CONFIRM.REMOVE_LINK'))) {
       return;
@@ -241,21 +192,15 @@ export class LinkSelectorComponent implements OnInit {
       });
   }
 
-  /**
-   * Get the preview to display for a link (the "other" entity)
-   */
   getLinkPreview(link: Link): EntityPreview | undefined {
-    // If current entity is the "from", show "to" preview
+    
     if (link.fromType === this.entityType && link.fromId === this.entityId) {
       return link.toPreview;
     }
-    // Otherwise show "from" preview
+    
     return link.fromPreview;
   }
 
-  /**
-   * Get icon class for entity type
-   */
   getEntityIcon(type: LinkEntityType): string {
     switch (type) {
       case LinkEntityType.Note:
@@ -269,9 +214,6 @@ export class LinkSelectorComponent implements OnInit {
     }
   }
 
-  /**
-   * Get display name for entity type
-   */
   getEntityTypeName(type: LinkEntityType): string {
     switch (type) {
       case LinkEntityType.Note:
@@ -285,16 +227,10 @@ export class LinkSelectorComponent implements OnInit {
     }
   }
 
-  /**
-   * Get display title for search result
-   */
   getResultTitle(result: any): string {
     return result.title || result.name || 'Untitled';
   }
 
-  /**
-   * Get display subtitle/snippet for search result
-   */
   getResultSubtitle(result: any): string {
     const type = this.selectedLinkType();
 

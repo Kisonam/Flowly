@@ -1,4 +1,4 @@
-// frontend/src/app/features/notes/notes.routes.ts
+
 
 import { Routes } from '@angular/router';
 import { authGuard } from '../auth/guards/auth.guard';

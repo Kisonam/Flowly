@@ -1,7 +1,6 @@
 <div class="finance-dashboard">
   <h1 class="dashboard-title">{{ 'FINANCE.DASHBOARD.TITLE' | translate }}</h1>
 
-  <!-- Filters -->
   <div class="filters-section">
     <form [formGroup]="filterForm" class="filters-form">
       <div class="filter-group">
@@ -25,21 +24,17 @@
     </form>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.DASHBOARD.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage && !loading" class="error-state">
     <p>❌ {{ errorMessage }}</p>
   </div>
 
-  <!-- Dashboard Content -->
   <div *ngIf="!loading && !errorMessage && stats" class="dashboard-content">
 
-    <!-- Summary Cards -->
     <div class="summary-cards">
       <div class="summary-card income">
         <div class="card-icon">📈</div>
@@ -72,22 +67,19 @@
       </div>
     </div>
 
-    <!-- Charts Section -->
     <div class="charts-section">
-      <!-- Income vs Expense Chart -->
+      
       <div class="chart-wrapper">
         <app-income-expense-chart [data]="incomeExpenseData" [chartType]="'bar'"
           [title]="'FINANCE.DASHBOARD.INCOME_VS_EXPENSE' | translate" [height]="'350px'"></app-income-expense-chart>
       </div>
 
-      <!-- Expense Breakdown Chart -->
       <div class="chart-wrapper">
         <app-category-breakdown-chart [data]="expenseCategoryData" [chartType]="'doughnut'"
           [title]="'FINANCE.DASHBOARD.EXPENSE_BY_CATEGORY' | translate" [height]="'350px'"
           [legendPosition]="'right'"></app-category-breakdown-chart>
       </div>
 
-      <!-- Income Breakdown Chart -->
       <div class="chart-wrapper" *ngIf="incomeCategoryData.length > 0">
         <app-category-breakdown-chart [data]="incomeCategoryData" [chartType]="'doughnut'"
           [title]="'FINANCE.DASHBOARD.INCOME_BY_CATEGORY' | translate" [height]="'350px'"
@@ -95,15 +87,13 @@
       </div>
     </div>
 
-    <!-- Budget Progress Section -->
     <div class="budget-progress-section" *ngIf="budgetProgressData.length > 0">
       <app-budget-progress-chart [data]="budgetProgressData" [title]="'FINANCE.DASHBOARD.BUDGET_PROGRESS' | translate"
         [height]="'400px'" [showPercentage]="true"></app-budget-progress-chart>
     </div>
 
-    <!-- Category Breakdown Tables -->
     <div class="category-breakdown">
-      <!-- Expense Categories -->
+      
       <div class="category-table-wrapper" *ngIf="stats.expenseByCategory && stats.expenseByCategory.length > 0">
         <h3>📉 {{ 'FINANCE.DASHBOARD.EXPENSE_BY_CATEGORY' | translate }}</h3>
         <table class="category-table">
@@ -126,7 +116,6 @@
         </table>
       </div>
 
-      <!-- Income Categories -->
       <div class="category-table-wrapper" *ngIf="stats.incomeByCategory && stats.incomeByCategory.length > 0">
         <h3>📈 {{ 'FINANCE.DASHBOARD.INCOME_BY_CATEGORY' | translate }}</h3>
         <table class="category-table">
@@ -150,7 +139,6 @@
       </div>
     </div>
 
-    <!-- Recent Transactions -->
     <div class="recent-transactions">
       <h3>🕒 {{ 'FINANCE.DASHBOARD.RECENT_TRANSACTIONS' | translate }}</h3>
 

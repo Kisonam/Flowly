@@ -3,9 +3,6 @@ using Flowly.Domain.Enums;
 
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// Complete transaction information DTO
-/// </summary>
 public class TransactionDto
 {
     public Guid Id { get; set; }
@@ -22,7 +19,6 @@ public class TransactionDto
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    // Related entities
     public CategoryDto? Category { get; set; }
     public BudgetSummaryDto? Budget { get; set; }
     public GoalSummaryDto? Goal { get; set; }

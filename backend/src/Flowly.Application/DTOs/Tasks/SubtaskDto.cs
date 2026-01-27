@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Tasks;
 
-/// <summary>
-/// Subtask information DTO
-/// </summary>
 public class SubtaskDto
 {
     public Guid Id { get; set; }

@@ -4,7 +4,6 @@ import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 import { Subscription } from 'rxjs';
 import { ThemeService } from '../../../../core/services/theme.service';
 
-// Register Chart.js components
 Chart.register(...registerables);
 
 export interface IncomeExpenseData {

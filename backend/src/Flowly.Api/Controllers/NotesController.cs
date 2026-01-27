@@ -23,21 +23,6 @@ public class NotesController : ControllerBase
         _logger = logger;
     }
 
-    // ============================================
-    // GET /api/notes
-    // ============================================
-
-    /// <summary>
-    /// Get all notes with optional filtering and pagination
-    /// </summary>
-    /// <param name="search">Search in title and content</param>
-    /// <param name="tagIds">Filter by tag IDs (comma-separated)</param>
-    /// <param name="isArchived">Filter by archive status</param>
-    /// <param name="page">Page number (default: 1)</param>
-    /// <param name="pageSize">Items per page (default: 10, max: 100)</param>
-    /// <returns>Paginated list of notes</returns>
-    /// <response code="200">Notes retrieved successfully</response>
-    /// <response code="401">Not authenticated</response>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<NoteDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -52,7 +37,6 @@ public class NotesController : ControllerBase
         {
             var userId = GetCurrentUserId();
 
-            // Parse tag IDs
             List<Guid>? tagIdList = null;
             if (!string.IsNullOrWhiteSpace(tagIds))
             {
@@ -62,7 +46,6 @@ public class NotesController : ControllerBase
                     .ToList();
             }
 
-            // Validate pagination
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
             if (pageSize > 100) pageSize = 100;
@@ -92,18 +75,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ============================================
-    // GET /api/notes/{id}
-    // ============================================
-
-    /// <summary>
-    /// Get a specific note by ID
-    /// </summary>
-    /// <param name="id">Note ID</param>
-    /// <returns>Note details</returns>
-    /// <response code="200">Note retrieved successfully</response>
-    /// <response code="404">Note not found</response>
-    /// <response code="401">Not authenticated</response>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -139,18 +110,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ============================================
-    // POST /api/notes
-    // ============================================
-
-    /// <summary>
-    /// Create a new note
-    /// </summary>
-    /// <param name="dto">Note creation data</param>
-    /// <returns>Created note</returns>
-    /// <response code="201">Note created successfully</response>
-    /// <response code="400">Validation error</response>
-    /// <response code="401">Not authenticated</response>
     [HttpPost]
     [ProducesResponseType(typeof(NoteDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationErrorResponse), StatusCodes.Status400BadRequest)]
@@ -188,20 +147,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ============================================
-    // PUT /api/notes/{id}
-    // ============================================
-
-    /// <summary>
-    /// Update an existing note
-    /// </summary>
-    /// <param name="id">Note ID</param>
-    /// <param name="dto">Note update data</param>
-    /// <returns>Updated note</returns>
-    /// <response code="200">Note updated successfully</response>
-    /// <response code="404">Note not found</response>
-    /// <response code="400">Validation error</response>
-    /// <response code="401">Not authenticated</response>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -240,18 +185,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ============================================
-    // DELETE /api/notes/{id}
-    // ============================================
-
-    /// <summary>
-    /// Archive a note (soft delete)
-    /// </summary>
-    /// <param name="id">Note ID</param>
-    /// <returns>Success message</returns>
-    /// <response code="200">Note archived successfully</response>
-    /// <response code="404">Note not found</response>
-    /// <response code="401">Not authenticated</response>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -289,8 +222,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // POST /api/notes/{id}/restore
-
     [HttpPost("{id}/restore")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -327,8 +258,7 @@ public class NotesController : ControllerBase
             });
         }
     }
-    // POST /api/notes/{id}/tags/{tagId}
- 
+
     [HttpPost("{id}/tags/{tagId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -366,8 +296,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // DELETE /api/notes/{id}/tags/{tagId}
-
     [HttpDelete("{id}/tags/{tagId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -404,7 +332,6 @@ public class NotesController : ControllerBase
             });
         }
     }
-    // POST /api/notes/{id}/media
 
     [HttpPost("{id}/media")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
@@ -473,18 +400,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ============================================
-    // GET /api/notes/{id}/export
-    // ============================================
-
-    /// <summary>
-    /// Export note as markdown file
-    /// </summary>
-    /// <param name="id">Note ID</param>
-    /// <returns>Markdown file</returns>
-    /// <response code="200">Note exported successfully</response>
-    /// <response code="404">Note not found</response>
-    /// <response code="401">Not authenticated</response>
     [HttpGet("{id}/export")]
     [Produces("text/markdown")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
@@ -497,7 +412,6 @@ public class NotesController : ControllerBase
             var userId = GetCurrentUserId();
             var markdown = await _noteService.ExportMarkdownAsync(userId, id);
 
-            // Get note to use title as filename
             var note = await _noteService.GetByIdAsync(userId, id);
             var fileName = $"{SanitizeFileName(note.Title)}.md";
 
@@ -528,13 +442,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ============================================
-    // Helper Methods
-    // ============================================
-
-    /// <summary>
-    /// Get current user ID from JWT claims
-    /// </summary>
     private Guid GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -545,15 +452,11 @@ public class NotesController : ControllerBase
         return userId;
     }
 
-    /// <summary>
-    /// Sanitize filename for safe file system usage
-    /// </summary>
     private string SanitizeFileName(string fileName)
     {
         var invalidChars = Path.GetInvalidFileNameChars();
         var sanitized = string.Join("_", fileName.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries));
-        
-        // Limit length
+
         if (sanitized.Length > 100)
         {
             sanitized = sanitized.Substring(0, 100);

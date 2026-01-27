@@ -1,10 +1,6 @@
 using Flowly.Domain.Enums;
-
 namespace Flowly.Application.DTOs.Tasks;
 
-/// <summary>
-/// DTO for filtering and paginating tasks
-/// </summary>
 public class TaskFilterDto
 {
     public string? Search { get; set; }
@@ -14,9 +10,6 @@ public class TaskFilterDto
     public TaskPriority? Priority { get; set; }
     public bool? IsArchived { get; set; }
     public bool? IsOverdue { get; set; }
-    /// <summary>
-    /// Match tasks whose DueDate falls on this exact calendar day (UTC) ignoring time component.
-    /// </summary>
     public DateTime? DueDateOn { get; set; }
     public DateTime? DueDateTo { get; set; }
     public int Page { get; set; } = 1;

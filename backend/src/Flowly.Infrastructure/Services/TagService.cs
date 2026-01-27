@@ -54,7 +54,7 @@ public class TagService : ITagService
 
     public async Task<TagDto> CreateAsync(Guid userId, CreateTagDto dto)
     {
-        // Check if tag with same name already exists for this user
+        
         var normalizedName = dto.Name.Trim().ToLowerInvariant();
         var existingTag = await _dbContext.Tags
             .FirstOrDefaultAsync(t => t.UserId == userId && t.Name == normalizedName);
@@ -97,8 +97,7 @@ public class TagService : ITagService
         if (!string.IsNullOrWhiteSpace(dto.Name))
         {
             var normalizedName = dto.Name.Trim().ToLowerInvariant();
-            
-            // Check if another tag with same name exists
+
             var existingTag = await _dbContext.Tags
                 .FirstOrDefaultAsync(t => t.UserId == userId && t.Name == normalizedName && t.Id != tagId);
 
@@ -137,7 +136,6 @@ public class TagService : ITagService
             throw new InvalidOperationException($"Tag with ID {tagId} not found");
         }
 
-        // Remove all associations
         _dbContext.NoteTags.RemoveRange(tag.NoteTags);
         _dbContext.TaskTags.RemoveRange(tag.TaskTags);
         _dbContext.Tags.Remove(tag);

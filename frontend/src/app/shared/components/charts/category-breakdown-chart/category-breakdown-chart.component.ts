@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, Afte
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 
-// Register Chart.js components
 Chart.register(...registerables);
 
 export interface CategoryBreakdownData {

@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// DTO for filtering budgets
-/// </summary>
 public class BudgetFilterDto
 {
     public bool? IsActive { get; set; }

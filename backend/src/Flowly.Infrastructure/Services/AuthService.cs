@@ -32,25 +32,23 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto, string? ipAddress = null)
     {
-        // Check if user already exists
+        
         var existingUser = await _userManager.FindByEmailAsync(dto.Email);
         if (existingUser != null)
         {
             throw new InvalidOperationException("User with this email already exists");
         }
 
-        // Create new user
         var user = new ApplicationUser
         {
             Id = Guid.NewGuid(),
             UserName = dto.Email,
             Email = dto.Email,
             DisplayName = dto.DisplayName,
-            EmailConfirmed = true, // Auto-confirm for now (can add email verification later)
+            EmailConfirmed = true, 
             CreatedAt = DateTime.UtcNow
         };
 
-        // Create user with password
         var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)
@@ -59,19 +57,17 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new InvalidOperationException($"Failed to create user: {errors}");
         }
 
-        // Generate tokens
         return await GenerateAuthResponse(user, ipAddress);
     }
     public async Task<AuthResponseDto> LoginAsync(LoginDto dto, string? ipAddress = null)
     {
-        // Find user
+        
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
         {
             throw new UnauthorizedAccessException("Invalid email or password");
         }
 
-        // Check password
         var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
 
         if (result.IsLockedOut)
@@ -84,7 +80,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new UnauthorizedAccessException("Invalid email or password");
         }
 
-        // Generate tokens
         return await GenerateAuthResponse(user, ipAddress);
     }
     public async Task ChangePasswordAsync(Guid userId, ChangePasswordDto dto)
@@ -95,7 +90,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new InvalidOperationException("User not found");
         }
 
-        // Change password
         var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
 
         if (!result.Succeeded)
@@ -104,7 +98,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new InvalidOperationException($"Failed to change password: {errors}");
         }
 
-        // Revoke all refresh tokens (force re-login on all devices)
         var now = DateTime.UtcNow;
         var refreshTokens = await _dbContext.RefreshTokens
             .Where(rt => rt.UserId == userId && !rt.IsRevoked && rt.ExpiresAt > now)
@@ -125,7 +118,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new InvalidOperationException("User not found");
         }
 
-        // Delete file if exists
         if (!string.IsNullOrEmpty(user.AvatarPath))
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.AvatarPath.TrimStart('/'));
@@ -135,7 +127,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             }
         }
 
-        // Update user
         user.AvatarPath = null;
 
         await _userManager.UpdateAsync(user);
@@ -151,63 +142,54 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         return MapToUserProfileDto(user);
     }
 
-    //TODO: Implement Google Login
     public async Task<AuthResponseDto> GoogleLoginAsync(GoogleLoginDto dto, string? ipAddress = null)
     {
       try
         {
-            // 1. Validate Google ID token
+            
             var payload = await ValidateGoogleTokenAsync(dto.IdToken);
-
             if (payload == null)
             {
                 throw new UnauthorizedAccessException("Invalid Google token");
             }
-
-            // 2. Check if user already exists
+            
             var user = await _userManager.FindByEmailAsync(payload.Email);
-
             if (user == null)
             {
-                // 3. Create new user if doesn't exist
+                
                 user = new ApplicationUser
                 {
                     Id = Guid.NewGuid(),
                     UserName = payload.Email,
                     Email = payload.Email,
                     DisplayName = payload.Name ?? payload.Email,
-                    EmailConfirmed = true, // Google emails are already verified
+                    EmailConfirmed = true, 
                     CreatedAt = DateTime.UtcNow
                 };
-
-                // Create user without password (external login)
+                
                 var result = await _userManager.CreateAsync(user);
-
                 if (!result.Succeeded)
                 {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                     throw new InvalidOperationException($"Failed to create user: {errors}");
                 }
-
-                // Add Google login info
+                
                 var loginInfo = new UserLoginInfo("Google", payload.Subject, "Google");
                 await _userManager.AddLoginAsync(user, loginInfo);
             }
             else
             {
-                // 4. Check if Google login is already linked
+                
                 var logins = await _userManager.GetLoginsAsync(user);
                 var googleLogin = logins.FirstOrDefault(l => l.LoginProvider == "Google");
 
                 if (googleLogin == null)
                 {
-                    // Link Google account to existing user
+                    
                     var loginInfo = new UserLoginInfo("Google", payload.Subject, "Google");
                     await _userManager.AddLoginAsync(user, loginInfo);
                 }
             }
-
-            // 5. Generate tokens
             return await GenerateAuthResponse(user, ipAddress);
         }
         catch (InvalidJwtException ex)
@@ -222,14 +204,13 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
     public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenDto dto, string? ipAddress = null)
     {
-        // Get user ID from expired access token
+        
         var userId = _jwtService.GetUserIdFromToken(dto.AccessToken);
         if (userId == null)
         {
             throw new UnauthorizedAccessException("Invalid access token");
         }
 
-        // Find refresh token in database
         var refreshToken = await _dbContext.RefreshTokens
             .FirstOrDefaultAsync(rt => rt.Token == dto.RefreshToken && rt.UserId == userId.Value);
 
@@ -238,26 +219,21 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new UnauthorizedAccessException("Invalid refresh token");
         }
 
-        // Check if token is active
         if (!refreshToken.IsActive)
         {
             throw new UnauthorizedAccessException("Refresh token is expired or revoked");
         }
 
-        // Get user
         var user = await _userManager.FindByIdAsync(userId.Value.ToString());
         if (user == null)
         {
             throw new UnauthorizedAccessException("User not found");
         }
 
-        // Revoke old refresh token
         refreshToken.Revoke(ipAddress);
 
-        // Generate new tokens
         var authResponse = await GenerateAuthResponse(user, ipAddress);
 
-        // Save changes
         await _dbContext.SaveChangesAsync();
 
         return authResponse;
@@ -278,7 +254,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new InvalidOperationException("Token is already inactive");
         }
 
-        // Revoke token
         token.Revoke(ipAddress);
         await _dbContext.SaveChangesAsync();
     }
@@ -291,7 +266,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new InvalidOperationException("User not found");
         }
 
-        // Update fields
         user.DisplayName = dto.DisplayName;
 
         if (dto.PreferredTheme.HasValue)
@@ -299,7 +273,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             user.PreferredTheme = dto.PreferredTheme.Value;
         }
 
-        // Save changes
         var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
         {
@@ -318,31 +291,25 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             throw new InvalidOperationException("User not found");
         }
 
-        // Validate file type
         var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png", "image/gif" };
         if (!allowedTypes.Contains(contentType.ToLower()))
         {
             throw new InvalidOperationException("Invalid file type. Only JPEG, PNG, and GIF are allowed");
         }
 
-        // Validate file size (max 5MB)
         if (fileStream.Length > 5 * 1024 * 1024)
         {
             throw new InvalidOperationException("File size exceeds 5MB limit");
         }
 
-        // Generate unique filename
         var extension = Path.GetExtension(fileName);
         var uniqueFileName = $"{userId}_avatar_{Guid.NewGuid()}{extension}";
-        
-        // Use /app/uploads directory (configured in docker-compose)
+
         var uploadsBasePath = _configuration["FileStorage:Path"] ?? "/app/uploads";
         var uploadPath = Path.Combine(uploadsBasePath, "avatars", userId.ToString());
 
-        // Create directory if not exists
         Directory.CreateDirectory(uploadPath);
 
-        // Delete old avatar if exists
         if (!string.IsNullOrEmpty(user.AvatarPath))
         {
             var oldPath = Path.Combine(uploadsBasePath, user.AvatarPath.TrimStart('/').Replace("uploads/", ""));
@@ -352,14 +319,12 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             }
         }
 
-        // Save file
         var filePath = Path.Combine(uploadPath, uniqueFileName);
         using (var fileStreamOutput = new FileStream(filePath, FileMode.Create))
         {
             await fileStream.CopyToAsync(fileStreamOutput);
         }
 
-        // Update user avatar path
         var avatarUrl = $"/uploads/avatars/{userId}/{uniqueFileName}";
         user.AvatarPath = avatarUrl;
 
@@ -368,19 +333,15 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         return avatarUrl;
     }
 
-    // Private Helper Methods
     private async Task<AuthResponseDto> GenerateAuthResponse(ApplicationUser user, string? ipAddress = null)
     {
-        // Get user roles
+        
         var roles = await _userManager.GetRolesAsync(user);
 
-        // Generate access token
         var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email!, roles);
 
-        // Generate refresh token
         var refreshTokenString = _jwtService.GenerateRefreshToken();
 
-        // Create refresh token entity
         var refreshToken = new RefreshToken
         {
             Id = Guid.NewGuid(),
@@ -391,16 +352,14 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             CreatedByIp = ipAddress
         };
 
-        // Save refresh token
         _dbContext.RefreshTokens.Add(refreshToken);
         await _dbContext.SaveChangesAsync();
 
-        // Return response
         return new AuthResponseDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshTokenString,
-            ExpiresIn = _jwtSettings.AccessTokenExpirationMinutes * 60, // Convert to seconds
+            ExpiresIn = _jwtSettings.AccessTokenExpirationMinutes * 60, 
             User = MapToUserProfileDto(user)
         };
     }
@@ -417,7 +376,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             CreatedAt = user.CreatedAt
         };
     }
-    // Validate Google ID token
+    
     private async Task<GoogleJsonWebSignature.Payload?> ValidateGoogleTokenAsync(string idToken)
     {
         try

@@ -20,7 +20,6 @@ public class TaskItem
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? CompletedAt { get; set; }
 
-    // Navigation Properties
     public TaskTheme? TaskTheme { get; set; }
     public ICollection<TaskSubtask> Subtasks { get; set; } = new List<TaskSubtask>();
     public TaskRecurrence? Recurrence { get; set; }
@@ -28,7 +27,6 @@ public class TaskItem
     public ICollection<Link> LinksFrom { get; set; } = new List<Link>();
     public ICollection<Link> LinksTo { get; set; } = new List<Link>();
 
-    // Methods
     public void UpdateContent(string title, string? description = null)
     {
         if (string.IsNullOrWhiteSpace(title))

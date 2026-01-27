@@ -1,5 +1,5 @@
 <div class="transaction-editor-container">
-  <!-- Header -->
+  
   <div class="editor-header">
     <div class="header-left">
       <button class="btn-back" (click)="onCancel()">
@@ -9,27 +9,22 @@
     </div>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.EDITOR.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error Message -->
   <div *ngIf="error" class="error-banner">
     <span>❌ {{ error }}</span>
     <button class="btn-close" (click)="error = ''">✕</button>
   </div>
 
-  <!-- Form -->
   <div *ngIf="!loading" class="editor-content">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-      <!-- Main Card -->
       <div class="form-card">
         <h3>{{ 'FINANCE.TRANSACTIONS.TITLE' | translate }}</h3>
 
-        <!-- Type Toggle -->
         <div class="form-group type-toggle-group">
           <label class="form-label">{{ 'FINANCE.EDITOR.TYPE' | translate }} *</label>
           <div class="type-toggle">
@@ -44,7 +39,6 @@
           </div>
         </div>
 
-        <!-- Amount & Currency Row -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="amount">{{ 'FINANCE.EDITOR.AMOUNT' | translate }} *</label>
@@ -73,7 +67,6 @@
           </div>
         </div>
 
-        <!-- Preview Amount -->
         <div class="amount-preview">
           <span class="preview-label">{{ 'FINANCE.EDITOR.PREVIEW' | translate }}</span>
           <span class="preview-amount" [style.color]="getTransactionColor(form.get('type')?.value)">
@@ -81,7 +74,6 @@
           </span>
         </div>
 
-        <!-- Title -->
         <div class="form-group">
           <label class="form-label" for="title">{{ 'FINANCE.EDITOR.TITLE_LABEL' | translate }} *</label>
           <input id="title" type="text" formControlName="title" class="input-field"
@@ -92,7 +84,6 @@
           </span>
         </div>
 
-        <!-- Date & Category Row -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="date">{{ 'FINANCE.EDITOR.DATE' | translate }} *</label>
@@ -177,7 +168,6 @@
           </div>
         </div>
 
-        <!-- Description -->
         <div class="form-group">
           <label class="form-label" for="description">
             {{ 'FINANCE.EDITOR.DESCRIPTION' | translate }}
@@ -192,14 +182,12 @@
           </div>
         </div>
 
-        <!-- Tags -->
         <div class="form-group">
           <app-tag-manager [title]="'FINANCE.EDITOR.TAGS' | translate" [selectedIds]="selectedTagIds"
             (selectedIdsChange)="onTagsChanged($event)" (tagsUpdated)="loadTags()">
           </app-tag-manager>
         </div>
 
-        <!-- Links -->
         <div class="form-group">
           <label class="form-label">
             <i class="bi bi-link-45deg"></i>
@@ -214,7 +202,6 @@
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="form-actions">
         <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="saving">
           {{ 'FINANCE.EDITOR.CANCEL' | translate }}

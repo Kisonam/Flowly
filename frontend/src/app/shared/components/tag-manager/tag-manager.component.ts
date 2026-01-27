@@ -8,12 +8,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { FocusTrapDirective } from '../../directives/focus-trap.directive';
 import { ThemeService } from '../../../core/services/theme.service';
 
-/**
- * Tag Manager Component
- *
- * Allows creating, editing, deleting and selecting tags inline.
- * Designed to be embedded in editors (notes, tasks, transactions).
- */
 @Component({
   selector: 'app-tag-manager',
   standalone: true,
@@ -32,17 +26,14 @@ export class TagManagerComponent implements OnInit {
   @Output() selectedIdsChange = new EventEmitter<string[]>();
   @Output() tagsUpdated = new EventEmitter<void>();
 
-  // State
   tags = signal<Tag[]>([]);
   isLoading = signal(false);
   error = signal<string | null>(null);
 
-  // Create/Edit form state
   showCreateForm = signal(false);
   showEditForm = signal(false);
   editingTag = signal<Tag | null>(null);
 
-  // Form data
   createFormData = {
     name: '',
     color: '#8b5cf6'
@@ -53,30 +44,28 @@ export class TagManagerComponent implements OnInit {
     color: '#8b5cf6'
   };
 
-  // Predefined colors
   readonly predefinedColors = [
-    '#8b5cf6', // Purple
-    '#3b82f6', // Blue
-    '#10b981', // Green
-    '#f59e0b', // Amber
-    '#ef4444', // Red
-    '#ec4899', // Pink
-    '#06b6d4', // Cyan
-    '#6366f1', // Indigo
-    '#84cc16', // Lime
-    '#14b8a6', // Teal
-    '#f97316', // Orange
-    '#a855f7', // Purple Variant
+    '#8b5cf6', 
+    '#3b82f6', 
+    '#10b981', 
+    '#f59e0b', 
+    '#ef4444', 
+    '#ec4899', 
+    '#06b6d4', 
+    '#6366f1', 
+    '#84cc16', 
+    '#14b8a6', 
+    '#f97316', 
+    '#a855f7', 
   ];
 
   ngOnInit(): void {
     this.loadTags();
 
-    // Subscribe to theme changes
     this.themeService.currentTheme$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        // Trigger change detection by updating tags signal
+        
         this.tags.set([...this.tags()]);
       });
   }
@@ -105,7 +94,6 @@ export class TagManagerComponent implements OnInit {
       });
   }
 
-  // Selection
   toggleTag(tagId: string): void {
     const set = new Set(this.selectedIds);
     if (set.has(tagId)) {
@@ -121,7 +109,6 @@ export class TagManagerComponent implements OnInit {
     return this.selectedIds?.includes(tagId) ?? false;
   }
 
-  // Create
   openCreateForm(): void {
     this.showCreateForm.set(true);
     this.createFormData = {
@@ -157,7 +144,7 @@ export class TagManagerComponent implements OnInit {
           console.log('✅ Tag created:', tag);
           this.loadTags();
           this.cancelCreate();
-          // Auto-select newly created tag
+          
           this.toggleTag(tag.id);
           this.tagsUpdated.emit();
         },
@@ -168,7 +155,6 @@ export class TagManagerComponent implements OnInit {
       });
   }
 
-  // Edit
   openEditForm(tag: Tag): void {
     this.editingTag.set(tag);
     this.editFormData = {
@@ -218,7 +204,6 @@ export class TagManagerComponent implements OnInit {
       });
   }
 
-  // Delete
   deleteTag(tag: Tag): void {
     if (!confirm(this.translate.instant('COMMON.CONFIRM.DELETE_TAG', { name: tag.name }))) {
       return;
@@ -231,7 +216,7 @@ export class TagManagerComponent implements OnInit {
           console.log('✅ Tag deleted:', tag.name);
           this.loadTags();
           this.cancelEdit();
-          // Remove from selection if selected
+          
           if (this.isSelected(tag.id)) {
             this.toggleTag(tag.id);
           }
@@ -253,7 +238,7 @@ export class TagManagerComponent implements OnInit {
   }
 
   getTagColor(tag: Tag): string {
-    // In low-stimulus mode, use gray colors
+    
     if (this.themeService.getCurrentTheme() === 'low-stimulus') {
       return '#6b7280';
     }
@@ -261,16 +246,13 @@ export class TagManagerComponent implements OnInit {
   }
 
   getButtonColor(color: string): string {
-    // In low-stimulus mode, all color buttons should be gray
+    
     if (this.themeService.getCurrentTheme() === 'low-stimulus') {
       return '#6b7280';
     }
     return color;
   }
 
-  /**
-   * Handle Escape key to close modals
-   */
   @HostListener('document:keydown.escape')
   handleEscapeKey(): void {
     if (this.showEditForm()) {

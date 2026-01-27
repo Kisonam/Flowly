@@ -1,5 +1,4 @@
 using System;
-
 namespace Flowly.Domain.Entities;
 
 public class Note
@@ -14,15 +13,12 @@ public class Note
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation Properties
     public ICollection<NoteTag> NoteTags { get; set; } = new List<NoteTag>();
     public ICollection<MediaAsset> MediaAssets { get; set; } = new List<MediaAsset>();
 
     public ICollection<Link> LinksFrom { get; set; } = new List<Link>();
     public ICollection<Link> LinksTo { get; set; } = new List<Link>();
     public NoteGroup? NoteGroup { get; set; }
-
-    // Methods
 
     public void UpdateContent(string title, string markdown)
     {
@@ -37,8 +33,7 @@ public class Note
         HtmlCache = null;
         UpdatedAt = DateTime.UtcNow;
     }
-    public void UpdateTitle(string title)
-    {
+    public void UpdateTitle(string title){
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException("Title cannot be empty", nameof(title));
 
@@ -46,22 +41,10 @@ public class Note
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void CacheHtml(string html)
-    {
-        HtmlCache = html;
-    }
-    public void Archive()
-    {
-        IsArchived = true;
-        UpdatedAt = DateTime.UtcNow;
-    }
-    public void Restore()
-    {
-        IsArchived = false;
-        UpdatedAt = DateTime.UtcNow;
-    }
-    public bool HasValidHtmlCache()
-    {
+    public void CacheHtml(string html) => HtmlCache = html; 
+    public void Archive() => IsArchived = true;
+    public void Restore() => IsArchived = false;
+    public bool HasValidHtmlCache() {
         return !string.IsNullOrEmpty(HtmlCache);
-    }
+    } 
 }

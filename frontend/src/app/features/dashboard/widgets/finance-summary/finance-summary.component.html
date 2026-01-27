@@ -1,5 +1,5 @@
 @if (multiCurrencyStats && filteredStats.length > 0) {
-  <!-- Currency Filter -->
+  
   <div class="currency-filter">
     <div class="filter-label">{{ 'DASHBOARD.FINANCE_SUMMARY.CURRENCIES' | translate }}</div>
     <div class="currency-chips">
@@ -14,7 +14,6 @@
     </div>
   </div>
 
-  <!-- Finance Summary Cards by Currency -->
   @for (currencyStats of filteredStats; track currencyStats.currencyCode) {
     <div class="currency-section">
       <div class="currency-header">
@@ -37,7 +36,6 @@
         </div>
       </div>
 
-      <!-- Category Statistics for this currency -->
       <div class="finance-chart">
         <h4>{{ 'DASHBOARD.FINANCE_SUMMARY.CATEGORY_STATS' | translate }}</h4>
 

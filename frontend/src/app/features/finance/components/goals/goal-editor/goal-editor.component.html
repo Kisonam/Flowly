@@ -2,24 +2,11 @@
   <div class="editor-header">
     <h2 class="editor-title">{{ (isEditMode ? 'FINANCE.GOALS.EDITOR.TITLE_EDIT' : 'FINANCE.GOALS.EDITOR.TITLE_CREATE') |
       translate }}</h2>
-    <!-- Assuming btn-close was not in SCSS, maybe it was global or I should use a different class. 
-         The previous code likely used a different structure for the header or just a button. 
-         I'll use a simple button with some inline style or standard class if I don't see it.
-         Actually, looking at the screenshot, the X is just floating. 
-         I'll try to make it look better or just remove it if it wasn't there. 
-         But wait, the user said "X is just a character". 
-         I'll use a standard button class if possible or just leave it as is but styled?
-         The SCSS has .btn-secondary, I can use that for a close button if I want.
-         But let's stick to the form classes first.
-    -->
-    <!-- I will remove the X button from header if it's not in SCSS or style it. 
-         The SCSS has .editor-title. 
-         I'll stick to the structure but fix the form elements.
-    -->
+
   </div>
 
   <form [formGroup]="goalForm" (ngSubmit)="onSubmit()" class="goal-form">
-    <!-- Title -->
+    
     <div class="form-group">
       <label for="title" class="form-label required">{{ 'FINANCE.GOALS.EDITOR.TITLE_LABEL' | translate }}</label>
       <input id="title" type="text" formControlName="title" class="form-input"
@@ -30,7 +17,6 @@
       </div>
     </div>
 
-    <!-- Description -->
     <div class="form-group">
       <label for="description" class="form-label">{{ 'FINANCE.GOALS.EDITOR.DESCRIPTION_LABEL' | translate }}</label>
       <textarea id="description" formControlName="description" class="form-textarea"
@@ -38,7 +24,7 @@
     </div>
 
     <div class="form-row">
-      <!-- Target Amount -->
+      
       <div class="form-group flex-2">
         <label for="targetAmount" class="form-label required">{{ 'FINANCE.GOALS.EDITOR.TARGET_AMOUNT_LABEL' | translate
           }}</label>
@@ -50,7 +36,6 @@
         </div>
       </div>
 
-      <!-- Currency -->
       <div class="form-group flex-1">
         <label for="currencyCode" class="form-label required">{{ 'FINANCE.GOALS.EDITOR.CURRENCY_LABEL' | translate
           }}</label>
@@ -64,7 +49,6 @@
       </div>
     </div>
 
-    <!-- Current Amount (Only for new goals) -->
     <div class="form-group" *ngIf="!isEditMode">
       <label for="currentAmount" class="form-label">{{ 'FINANCE.GOALS.EDITOR.CURRENT_AMOUNT_LABEL' | translate
         }}</label>
@@ -73,7 +57,6 @@
       <small class="form-hint">{{ 'FINANCE.GOALS.EDITOR.CURRENT_AMOUNT_HINT' | translate }}</small>
     </div>
 
-    <!-- Current Amount Info (Only for edit mode) -->
     <div class="info-message" *ngIf="isEditMode">
       <div class="info-icon">ℹ️</div>
       <div>
@@ -83,14 +66,12 @@
       </div>
     </div>
 
-    <!-- Deadline -->
     <div class="form-group">
       <label for="deadline" class="form-label">{{ 'FINANCE.GOALS.EDITOR.DEADLINE_LABEL' | translate }}</label>
       <input id="deadline" type="date" formControlName="deadline" [min]="minDate" class="form-input" />
       <small class="form-hint">{{ 'FINANCE.GOALS.EDITOR.DEADLINE_HINT' | translate }}</small>
     </div>
 
-    <!-- Progress indicator (edit mode only) -->
     <div class="progress-section" *ngIf="isEditMode && goal">
       <div class="progress-header">
         <span>{{ 'FINANCE.GOALS.EDITOR.PROGRESS' | translate }}: {{ goal.progressPercentage }}%</span>
@@ -102,7 +83,6 @@
       </div>
     </div>
 
-    <!-- Actions -->
     <div class="form-actions">
       <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="saving">
         {{ 'FINANCE.GOALS.EDITOR.CANCEL' | translate }}

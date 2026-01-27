@@ -56,7 +56,6 @@ export class LanguageSettingsComponent {
     this.error = '';
     this.message = '';
 
-    // TODO: Implement language persistence (localStorage or backend)
     localStorage.setItem('flowly_language', this.selectedLanguage);
 
     setTimeout(() => {

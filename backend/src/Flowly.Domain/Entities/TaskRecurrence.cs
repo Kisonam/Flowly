@@ -10,10 +10,8 @@ public class TaskRecurrence
     public DateTime? LastOccurrence { get; set; }
     public DateTime? NextOccurrence { get; set; }
 
-    // Navigation Properties
     public TaskItem TaskItem { get; set; } = null!;
 
-    // Methods
     public void UpdateRule(string rule)
     {
         if (string.IsNullOrWhiteSpace(rule))

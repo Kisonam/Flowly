@@ -25,7 +25,7 @@ interface LanguageOption {
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   @Output() moduleChange = new EventEmitter<string>();
-  @Input() showTabs: boolean = true; // Control tabs visibility
+  @Input() showTabs: boolean = true; 
 
   private router = inject(Router);
   private authService = inject(AuthService);
@@ -57,23 +57,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
-    // Load current user
+    
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
 
-    // Load current theme
     this.themeService.currentTheme$.subscribe(theme => {
       this.currentTheme = theme;
     });
 
-    // Load current language
     this.currentLanguage = this.localeService.getCurrentLocale();
 
-    // Update active module based on current route
     this.updateActiveModuleFromRoute(this.router.url);
 
-    // Listen to route changes
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -90,10 +86,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private updateActiveModuleFromRoute(url: string): void {
-    // Sort modules by route length (longest first) to match most specific routes first
+    
     const sortedModules = [...this.modules].sort((a, b) => b.route.length - a.route.length);
 
-    // Find which module matches the current URL
     for (const module of sortedModules) {
       if (url.startsWith(module.route)) {
         this.activeModule = module.id;
@@ -101,7 +96,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         return;
       }
     }
-    // Default to overview if no match
+    
     this.activeModule = 'overview';
   }
 
@@ -134,7 +129,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.localeService.setLocale(lang);
     this.currentLanguage = lang;
     this.closeLanguageMenu();
-    // No page reload needed - instant switch!
+    
   }
 
   toggleUserMenu(): void {
@@ -182,9 +177,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return this.languages.find(l => l.code === this.currentLanguage) || this.languages[0];
   }
 
-  /**
-   * Handle Escape key to close dropdowns
-   */
   @HostListener('document:keydown.escape')
   handleEscapeKey(): void {
     if (this.showUserMenu) {
@@ -198,9 +190,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Mobile create menu methods
-   */
   toggleCreateMenu(): void {
     this.showCreateMenu = !this.showCreateMenu;
     if (this.showCreateMenu) {

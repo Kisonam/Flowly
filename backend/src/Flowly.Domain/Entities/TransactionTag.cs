@@ -1,8 +1,5 @@
 namespace Flowly.Domain.Entities;
 
-/// <summary>
-/// Many-to-many relationship between Transaction and Tag
-/// </summary>
 public class TransactionTag
 {
     public Guid TransactionId { get; set; }

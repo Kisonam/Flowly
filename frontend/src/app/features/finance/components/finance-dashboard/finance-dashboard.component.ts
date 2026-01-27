@@ -44,19 +44,17 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
   loadingBudgets = false;
   errorMessage = '';
 
-  // Chart data
   incomeExpenseData: IncomeExpenseData[] = [];
   expenseCategoryData: CategoryBreakdownData[] = [];
   incomeCategoryData: CategoryBreakdownData[] = [];
   budgetProgressData: BudgetProgressData[] = [];
 
-  // Filter form
   filterForm: FormGroup;
 
   constructor() {
     const now = new Date();
-    const firstDayOfYear = new Date(now.getFullYear(), 0, 1); // January 1st
-    const lastDayOfYear = new Date(now.getFullYear(), 11, 31); // December 31st
+    const firstDayOfYear = new Date(now.getFullYear(), 0, 1); 
+    const lastDayOfYear = new Date(now.getFullYear(), 11, 31); 
 
     this.filterForm = this.fb.group({
       periodStart: [this.formatDateForInput(firstDayOfYear)],
@@ -71,7 +69,6 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
     this.loadRecentTransactions();
     this.loadBudgets();
 
-    // Listen to filter changes
     this.filterForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -110,7 +107,7 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (stats) => {
-          // Calculate averages if backend doesn't provide them
+          
           if (stats.averageIncome == null || stats.averageExpense == null) {
             const days = this.getDaysBetweenDates(stats.periodStart, stats.periodEnd);
             if (stats.averageIncome == null) {
@@ -124,7 +121,6 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
           this.stats = stats;
           this.loading = false;
 
-          // Prepare chart data
           this.prepareChartData();
         },
         error: (err) => {
@@ -147,7 +143,7 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          // Get top 5 most recent transactions
+          
           this.recentTransactions = result.items
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             .slice(0, 5);
@@ -187,20 +183,17 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
   private prepareChartData(): void {
     if (!this.stats) return;
 
-    // Prepare income vs expense timeline data
     this.incomeExpenseData = this.stats.byMonth.map(m => ({
       label: `${this.getMonthName(m.month)} ${m.year}`,
       income: m.totalIncome,
       expense: m.totalExpense
     }));
 
-    // Prepare expense category breakdown data
     this.expenseCategoryData = this.stats.expenseByCategory.map(c => ({
       categoryName: c.categoryName,
       amount: c.totalAmount
     }));
 
-    // Prepare income category breakdown data
     this.incomeCategoryData = this.stats.incomeByCategory.map(c => ({
       categoryName: c.categoryName,
       amount: c.totalAmount
@@ -236,7 +229,7 @@ export class FinanceDashboardComponent implements OnInit, OnDestroy {
     const startDate = new Date(start);
     const endDate = new Date(end);
     const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
-    return diffDays > 0 ? diffDays : 1; // At least 1 day
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+    return diffDays > 0 ? diffDays : 1; 
   }
 }

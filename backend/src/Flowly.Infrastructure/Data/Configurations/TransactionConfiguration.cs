@@ -34,7 +34,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(t => t.IsArchived)
             .HasDefaultValue(false);
 
-        // Indexes
         builder.HasIndex(t => t.UserId);
         builder.HasIndex(t => t.Date);
         builder.HasIndex(t => t.Type);
@@ -42,7 +41,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.HasIndex(t => t.IsArchived);
         builder.HasIndex(t => new { t.UserId, t.Date, t.IsArchived });
 
-        // Relationships
         builder.HasOne(t => t.Currency)
             .WithMany()
             .HasForeignKey(t => t.CurrencyCode)

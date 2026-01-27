@@ -1,16 +1,8 @@
-// Finance feature TypeScript models mirroring backend DTOs
+
 
 import { Tag } from '../../tasks/models/task.models';
 
-// ============================================
-// Enums
-// ============================================
-
 export type TransactionType = 'Income' | 'Expense';
-
-// ============================================
-// Entities
-// ============================================
 
 export interface Currency {
   code: string;
@@ -72,9 +64,9 @@ export interface Budget {
   updatedAt?: string | Date | null;
   isArchived: boolean;
   archivedAt?: string | Date | null;
-  // Related entities
+  
   category?: Category | null;
-  // Computed properties from backend
+  
   remainingAmount: number;
   progressPercentage: number;
   isExceeded: boolean;
@@ -94,16 +86,12 @@ export interface FinancialGoal {
   createdAt: string | Date;
   updatedAt: string | Date;
   completedAt?: string | Date | null;
-  // Computed properties from backend
+  
   progressPercentage: number;
   isCompleted: boolean;
   isOverdue: boolean;
   isDeadlineApproaching: boolean;
 }
-
-// ============================================
-// Statistics
-// ============================================
 
 export interface CategoryStats {
   categoryId?: string | null;
@@ -131,22 +119,18 @@ export interface FinanceStats {
   balance: number;
   averageIncome: number;
   averageExpense: number;
-  totalTransactionCount: number; // Changed from transactionCount to match backend
+  totalTransactionCount: number; 
   incomeByCategory: CategoryStats[];
   expenseByCategory: CategoryStats[];
   byMonth: MonthStats[];
 }
-
-// ============================================
-// Create / Update DTOs
-// ============================================
 
 export interface CreateTransactionRequest {
   title: string;
   description?: string;
   amount: number;
   type: TransactionType;
-  date: string; // ISO date - matches backend DTO
+  date: string; 
   categoryId?: string;
   budgetId?: string;
   goalId?: string;
@@ -159,7 +143,7 @@ export interface UpdateTransactionRequest {
   description?: string;
   amount: number;
   type: TransactionType;
-  date: string; // ISO date - matches backend DTO
+  date: string; 
   categoryId?: string;
   budgetId?: string;
   goalId?: string;
@@ -182,8 +166,8 @@ export interface UpdateCategoryRequest {
 export interface CreateBudgetRequest {
   title: string;
   description?: string;
-  periodStart: string; // ISO date
-  periodEnd: string; // ISO date
+  periodStart: string; 
+  periodEnd: string; 
   limit: number;
   currencyCode: string;
   categoryId?: string;
@@ -192,8 +176,8 @@ export interface CreateBudgetRequest {
 export interface UpdateBudgetRequest {
   title: string;
   description?: string;
-  periodStart: string; // ISO date
-  periodEnd: string; // ISO date
+  periodStart: string; 
+  periodEnd: string; 
   limit: number;
   currencyCode: string;
   categoryId?: string;
@@ -205,7 +189,7 @@ export interface CreateGoalRequest {
   targetAmount: number;
   currentAmount?: number;
   currencyCode: string;
-  deadline?: string; // ISO date
+  deadline?: string; 
 }
 
 export interface UpdateGoalRequest {
@@ -213,16 +197,12 @@ export interface UpdateGoalRequest {
   description?: string;
   targetAmount: number;
   currencyCode: string;
-  deadline?: string; // ISO date
+  deadline?: string; 
 }
 
 export interface UpdateGoalAmountRequest {
   amount: number;
 }
-
-// ============================================
-// Filtering & Pagination
-// ============================================
 
 export interface TransactionFilter {
   search?: string;
@@ -231,8 +211,8 @@ export interface TransactionFilter {
   currencyCode?: string;
   tagIds?: string[];
   isArchived?: boolean;
-  dateFrom?: string; // ISO date
-  dateTo?: string; // ISO date
+  dateFrom?: string; 
+  dateTo?: string; 
   page?: number;
   pageSize?: number;
 }
@@ -241,16 +221,16 @@ export interface BudgetFilter {
   isArchived?: boolean;
   categoryId?: string;
   currencyCode?: string;
-  dateFrom?: string; // ISO date
-  dateTo?: string; // ISO date
+  dateFrom?: string; 
+  dateTo?: string; 
 }
 
 export interface GoalFilter {
   isCompleted?: boolean;
   isArchived?: boolean;
   currencyCode?: string;
-  deadlineFrom?: string; // ISO date
-  deadlineTo?: string; // ISO date
+  deadlineFrom?: string; 
+  deadlineTo?: string; 
 }
 
 export interface PaginatedResult<T> {
@@ -262,10 +242,6 @@ export interface PaginatedResult<T> {
   hasNext: boolean;
   hasPrevious: boolean;
 }
-
-// ============================================
-// Specialized Responses
-// ============================================
 
 export interface BudgetOverspentResponse {
   budgetId: string;

@@ -21,9 +21,6 @@ public class GoalsController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get all financial goals with optional filtering
-    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<FinancialGoalDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
@@ -56,9 +53,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get financial goal by ID
-    /// </summary>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(FinancialGoalDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,9 +76,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Create a new financial goal
-    /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(FinancialGoalDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -114,9 +105,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update an existing financial goal
-    /// </summary>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(FinancialGoalDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -146,9 +134,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Delete a financial goal
-    /// </summary>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -173,9 +158,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Archive a financial goal
-    /// </summary>
     [HttpPost("{id}/archive")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -200,9 +182,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Restore an archived financial goal
-    /// </summary>
     [HttpPost("{id}/restore")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -227,13 +206,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    // ============================================
-    // Progress Management
-    // ============================================
-
-    /// <summary>
-    /// Add amount to goal progress
-    /// </summary>
     [HttpPost("{id}/add-amount")]
     [ProducesResponseType(typeof(FinancialGoalDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -263,9 +235,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Subtract amount from goal progress
-    /// </summary>
     [HttpPost("{id}/subtract-amount")]
     [ProducesResponseType(typeof(FinancialGoalDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -295,9 +264,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Set current amount for goal
-    /// </summary>
     [HttpPost("{id}/set-amount")]
     [ProducesResponseType(typeof(FinancialGoalDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -327,9 +293,6 @@ public class GoalsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get all transactions linked to a specific financial goal
-    /// </summary>
     [HttpGet("{id}/transactions")]
     [ProducesResponseType(typeof(List<TransactionListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

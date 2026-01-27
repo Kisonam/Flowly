@@ -1,5 +1,5 @@
 <div class="tags-manager-container">
-  <!-- Header -->
+  
   <div class="tags-header">
     <div class="header-left">
       <h1 class="page-title">Теги</h1>
@@ -16,7 +16,6 @@
     </div>
   </div>
 
-  <!-- Loading State -->
   <div class="loading-container" *ngIf="isLoading">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
@@ -24,7 +23,6 @@
     <p>Завантаження тегів...</p>
   </div>
 
-  <!-- Error State -->
   <div class="alert alert-danger" *ngIf="errorMessage && !isLoading">
     <i class="bi bi-exclamation-triangle"></i>
     {{ errorMessage }}
@@ -33,7 +31,6 @@
     </button>
   </div>
 
-  <!-- Empty State -->
   <div class="empty-state" *ngIf="!isLoading && tags.length === 0 && !errorMessage">
     <div class="empty-icon">
       <i class="bi bi-tags"></i>
@@ -46,7 +43,6 @@
     </button>
   </div>
 
-  <!-- Tags Grid -->
   <div class="tags-grid" *ngIf="!isLoading && tags.length > 0">
     <div
       *ngFor="let tag of tags"
@@ -72,7 +68,6 @@
     </div>
   </div>
 
-  <!-- Create/Edit Form Modal -->
   <div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">

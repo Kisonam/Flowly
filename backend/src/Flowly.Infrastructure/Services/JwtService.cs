@@ -26,7 +26,7 @@ public class JwtService : IJwtService
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique token ID
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), 
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(ClaimTypes.Email, email)
         };
@@ -90,12 +90,11 @@ public class JwtService : IJwtService
                 ValidIssuer = _jwtSettings.Issuer,
                 ValidAudience = _jwtSettings.Audience,
                 IssuerSigningKey = key,
-                ClockSkew = TimeSpan.Zero // Remove default 5 min clock skew
+                ClockSkew = TimeSpan.Zero 
             };
 
             var principal = _tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
 
-            // Verify it's a JWT with HMAC SHA256
             if (validatedToken is JwtSecurityToken jwtToken &&
                 jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {

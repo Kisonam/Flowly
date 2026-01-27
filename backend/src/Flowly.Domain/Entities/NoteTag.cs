@@ -7,7 +7,6 @@ public class NoteTag
      public Guid NoteId { get; set; }
      public Guid TagId { get; set; }
 
-     // Navigation Properties
      public Note Note { get; set; } = null!;
      public Tag Tag { get; set; } = null!;
 }

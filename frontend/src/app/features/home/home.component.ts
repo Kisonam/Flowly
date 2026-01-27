@@ -21,12 +21,11 @@ export class HomeComponent implements OnInit {
   currentTime = new Date();
 
   ngOnInit(): void {
-    // Subscribe to current user
+    
     this.authService.currentUser$.subscribe(user => {
       this.user = user;
     });
 
-    // Update time every second
     setInterval(() => {
       this.currentTime = new Date();
     }, 1000);

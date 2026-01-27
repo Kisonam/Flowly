@@ -1,4 +1,4 @@
-// backend/src/Flowly.Infrastructure/Data/Configurations/BudgetConfiguration.cs
+
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -27,12 +27,10 @@ public class BudgetConfiguration : IEntityTypeConfiguration<Budget>
             .IsRequired()
             .HasMaxLength(3);
 
-        // Indexes
         builder.HasIndex(b => b.UserId);
         builder.HasIndex(b => b.CategoryId);
         builder.HasIndex(b => new { b.UserId, b.PeriodStart, b.PeriodEnd });
 
-        // Relationships
         builder.HasOne(b => b.Currency)
             .WithMany()
             .HasForeignKey(b => b.CurrencyCode)

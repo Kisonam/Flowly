@@ -18,11 +18,10 @@ public class LinkService : ILinkService
 
     public async Task<LinkDto> CreateLinkAsync(Guid userId, CreateLinkDto dto)
     {
-        // Validate that both entities exist and belong to the user
+        
         await ValidateEntityOwnershipAsync(userId, dto.FromType, dto.FromId);
         await ValidateEntityOwnershipAsync(userId, dto.ToType, dto.ToId);
 
-        // Check if link already exists (in either direction)
         var existingLink = await _dbContext.Links
             .FirstOrDefaultAsync(l => 
                 (l.FromType == dto.FromType && l.FromId == dto.FromId && l.ToType == dto.ToType && l.ToId == dto.ToId) ||
@@ -33,7 +32,6 @@ public class LinkService : ILinkService
             throw new InvalidOperationException("Link already exists between these entities");
         }
 
-        // Create new link
         var link = new Link
         {
             Id = Guid.NewGuid(),
@@ -44,7 +42,6 @@ public class LinkService : ILinkService
             CreatedAt = DateTime.UtcNow
         };
 
-        // Validate link
         if (!link.IsValid())
         {
             throw new InvalidOperationException("Cannot create a link from an entity to itself");
@@ -53,7 +50,6 @@ public class LinkService : ILinkService
         _dbContext.Links.Add(link);
         await _dbContext.SaveChangesAsync();
 
-        // Load previews and return DTO
         return await MapToLinkDtoAsync(userId, link);
     }
 
@@ -66,7 +62,6 @@ public class LinkService : ILinkService
             throw new KeyNotFoundException($"Link with ID {linkId} not found");
         }
 
-        // Validate that user owns both linked entities
         await ValidateEntityOwnershipAsync(userId, link.FromType, link.FromId);
         await ValidateEntityOwnershipAsync(userId, link.ToType, link.ToId);
 
@@ -76,16 +71,14 @@ public class LinkService : ILinkService
 
     public async Task<List<LinkDto>> GetLinksForEntityAsync(Guid userId, LinkEntityType entityType, Guid entityId)
     {
-        // Validate entity ownership
+        
         await ValidateEntityOwnershipAsync(userId, entityType, entityId);
 
-        // Get all links where entity is either source or target
         var links = await _dbContext.Links
             .Where(l => (l.FromType == entityType && l.FromId == entityId) ||
                        (l.ToType == entityType && l.ToId == entityId))
             .ToListAsync();
 
-        // Map to DTOs with previews
         var linkDtos = new List<LinkDto>();
         foreach (var link in links)
         {
@@ -97,13 +90,11 @@ public class LinkService : ILinkService
 
     public async Task<EntityPreviewDto> GetPreviewAsync(Guid userId, LinkEntityType entityType, Guid entityId)
     {
-        // Validate entity ownership
+        
         await ValidateEntityOwnershipAsync(userId, entityType, entityId);
 
         return await GeneratePreviewAsync(entityType, entityId);
     }
-
-    // Private helper methods
 
     private async Task ValidateEntityOwnershipAsync(Guid userId, LinkEntityType entityType, Guid entityId)
     {
@@ -150,7 +141,6 @@ public class LinkService : ILinkService
             throw new KeyNotFoundException($"Note with ID {noteId} not found");
         }
 
-        // Generate snippet from markdown (first 150 characters)
         var snippet = note.Markdown.Length > 150 
             ? note.Markdown.Substring(0, 150) + "..." 
             : note.Markdown;
@@ -161,7 +151,7 @@ public class LinkService : ILinkService
             Id = note.Id,
             Title = note.Title,
             Snippet = snippet,
-            IconUrl = null // Could be set based on your needs
+            IconUrl = null 
         };
     }
 
@@ -177,7 +167,6 @@ public class LinkService : ILinkService
             throw new KeyNotFoundException($"Task with ID {taskId} not found");
         }
 
-        // Generate snippet with status and due date info
         var snippetParts = new List<string>();
         
         if (!string.IsNullOrEmpty(task.Description))
@@ -227,7 +216,6 @@ public class LinkService : ILinkService
             throw new KeyNotFoundException($"Transaction with ID {transactionId} not found");
         }
 
-        // Generate snippet with amount and category info
         var snippetParts = new List<string>
         {
             $"{transaction.Amount:F2} {transaction.CurrencyCode}",

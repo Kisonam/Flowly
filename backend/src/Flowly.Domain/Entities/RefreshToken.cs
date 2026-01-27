@@ -1,4 +1,4 @@
-// backend/src/Flowly.Domain/Entities/RefreshToken.cs
+
 
 namespace Flowly.Domain.Entities;
 public class RefreshToken

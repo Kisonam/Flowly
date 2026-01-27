@@ -10,25 +10,6 @@ import {
   LinkEntityType
 } from '../models/link.models';
 
-/**
- * Service for managing links between entities (Notes, Tasks, Transactions)
- *
- * @example
- * // Inject the service
- * private linkService = inject(LinkService);
- *
- * // Create a link from a note to a task
- * this.linkService.linkFromNote(noteId, LinkEntityType.Task, taskId)
- *   .subscribe(link => console.log('Link created:', link));
- *
- * // Get all links for a note
- * this.linkService.getLinksForNote(noteId)
- *   .subscribe(links => console.log('Links:', links));
- *
- * // Delete a link
- * this.linkService.deleteLink(linkId)
- *   .subscribe(() => console.log('Link deleted'));
- */
 @Injectable({
   providedIn: 'root'
 })
@@ -36,11 +17,6 @@ export class LinkService {
   private http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/links`;
 
-  /**
-   * Create a new link between two entities
-   * @param request Link creation data
-   * @returns Created link with previews
-   */
   createLink(request: CreateLinkRequest): Observable<Link> {
     console.log('📤 Creating link:', request);
     return this.http.post<Link>(this.API_URL, request)
@@ -51,10 +27,6 @@ export class LinkService {
       );
   }
 
-  /**
-   * Delete a link by ID
-   * @param linkId Link ID to delete
-   */
   deleteLink(linkId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${linkId}`)
       .pipe(
@@ -63,15 +35,9 @@ export class LinkService {
       );
   }
 
-  /**
-   * Get all links for a specific entity
-   * @param entityType Entity type (Note, Task, Transaction)
-   * @param entityId Entity ID
-   * @returns List of links with previews
-   */
   getLinksForEntity(entityType: LinkEntityType, entityId: string): Observable<Link[]> {
-    // Convert numeric enum to string name for backend
-    const typeName = LinkEntityType[entityType]; // 1 -> "Note", 2 -> "Task", 3 -> "Transaction"
+    
+    const typeName = LinkEntityType[entityType]; 
 
     const params = new HttpParams()
       .set('type', typeName)
@@ -88,14 +54,8 @@ export class LinkService {
       );
   }
 
-  /**
-   * Get a preview of an entity
-   * @param entityType Entity type (Note, Task, Transaction)
-   * @param entityId Entity ID
-   * @returns Entity preview
-   */
   getPreview(entityType: LinkEntityType, entityId: string): Observable<EntityPreview> {
-    // Convert numeric enum to string name for backend
+    
     const typeName = LinkEntityType[entityType];
 
     const params = new HttpParams()
@@ -109,34 +69,18 @@ export class LinkService {
       );
   }
 
-  /**
-   * Get all links for a note
-   * Helper method for convenience
-   */
   getLinksForNote(noteId: string): Observable<Link[]> {
     return this.getLinksForEntity(LinkEntityType.Note, noteId);
   }
 
-  /**
-   * Get all links for a task
-   * Helper method for convenience
-   */
   getLinksForTask(taskId: string): Observable<Link[]> {
     return this.getLinksForEntity(LinkEntityType.Task, taskId);
   }
 
-  /**
-   * Get all links for a transaction
-   * Helper method for convenience
-   */
   getLinksForTransaction(transactionId: string): Observable<Link[]> {
     return this.getLinksForEntity(LinkEntityType.Transaction, transactionId);
   }
 
-  /**
-   * Create a link from a note to another entity
-   * Helper method for convenience
-   */
   linkFromNote(noteId: string, toType: LinkEntityType, toId: string): Observable<Link> {
     return this.createLink({
       fromType: LinkEntityType.Note,
@@ -146,10 +90,6 @@ export class LinkService {
     });
   }
 
-  /**
-   * Create a link from a task to another entity
-   * Helper method for convenience
-   */
   linkFromTask(taskId: string, toType: LinkEntityType, toId: string): Observable<Link> {
     return this.createLink({
       fromType: LinkEntityType.Task,
@@ -159,10 +99,6 @@ export class LinkService {
     });
   }
 
-  /**
-   * Create a link from a transaction to another entity
-   * Helper method for convenience
-   */
   linkFromTransaction(transactionId: string, toType: LinkEntityType, toId: string): Observable<Link> {
     return this.createLink({
       fromType: LinkEntityType.Transaction,
@@ -172,15 +108,11 @@ export class LinkService {
     });
   }
 
-  /**
-   * Convert link date strings to Date objects and string enums to numbers
-   */
   private convertLinkDates(link: any): Link {
-    // Convert string enum types to numeric enum values
+    
     const fromType = this.convertTypeToEnum(link.fromType);
     const toType = this.convertTypeToEnum(link.toType);
 
-    // Convert preview types if they exist
     const fromPreview = link.fromPreview ? {
       ...link.fromPreview,
       type: this.convertTypeToEnum(link.fromPreview.type)
@@ -201,9 +133,6 @@ export class LinkService {
     };
   }
 
-  /**
-   * Convert string type to numeric enum
-   */
   private convertTypeToEnum(type: string | number): LinkEntityType {
     if (typeof type === 'number') return type as LinkEntityType;
 
@@ -215,9 +144,6 @@ export class LinkService {
     }
   }
 
-  /**
-   * Error handler
-   */
   private handleError(operation: string) {
     return (error: any): Observable<never> => {
       console.error(`❌ ${operation} failed:`, error);

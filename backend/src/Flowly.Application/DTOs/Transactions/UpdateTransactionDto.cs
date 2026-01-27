@@ -2,9 +2,6 @@ using Flowly.Domain.Enums;
 
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// DTO for updating an existing transaction
-/// </summary>
 public class UpdateTransactionDto
 {
     public string Title { get; set; } = string.Empty;

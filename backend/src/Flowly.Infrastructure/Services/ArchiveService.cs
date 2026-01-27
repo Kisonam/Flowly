@@ -9,9 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Flowly.Infrastructure.Services;
 
-/// <summary>
-/// Service for managing archived entities with JSON snapshots
-/// </summary>
 public class ArchiveService : IArchiveService
 {
     private readonly AppDbContext _dbContext;
@@ -23,13 +20,11 @@ public class ArchiveService : IArchiveService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task ArchiveEntityAsync(Guid userId, LinkEntityType entityType, Guid entityId)
     {
         object? entity = null;
         string payloadJson;
 
-        // Fetch entity and create JSON snapshot
         switch (entityType)
         {
             case LinkEntityType.Note:
@@ -58,7 +53,6 @@ public class ArchiveService : IArchiveService
 
                 task.Archive();
 
-                // Remove recurrence to avoid ghost scheduling
                 if (task.Recurrence != null)
                 {
                     _dbContext.TaskRecurrences.Remove(task.Recurrence);
@@ -109,7 +103,6 @@ public class ArchiveService : IArchiveService
                 throw new ArgumentException($"Unsupported entity type: {entityType}");
         }
 
-        // Create archive entry
         var archiveEntry = new ArchiveEntry
         {
             Id = Guid.NewGuid(),
@@ -131,7 +124,6 @@ public class ArchiveService : IArchiveService
         _logger.LogInformation("Archived {EntityType} {EntityId} for user {UserId}", entityType, entityId, userId);
     }
 
-    /// <inheritdoc />
     public async Task RestoreEntityAsync(Guid userId, Guid archiveEntryId)
     {
         var archiveEntry = await _dbContext.ArchiveEntries
@@ -140,7 +132,6 @@ public class ArchiveService : IArchiveService
         if (archiveEntry == null)
             throw new InvalidOperationException("Archive entry not found");
 
-        // Deserialize and restore entity
         switch (archiveEntry.EntityType)
         {
             case LinkEntityType.Note:
@@ -153,7 +144,7 @@ public class ArchiveService : IArchiveService
                 }
                 else
                 {
-                    // Entity was permanently deleted, recreate from snapshot
+                    
                     var restoredNote = DeserializeEntity<Note>(archiveEntry.PayloadJson);
                     restoredNote.Restore();
                     _dbContext.Notes.Add(restoredNote);
@@ -228,7 +219,6 @@ public class ArchiveService : IArchiveService
                 throw new ArgumentException($"Unsupported entity type: {archiveEntry.EntityType}");
         }
 
-        // Remove archive entry after restoration
         _dbContext.ArchiveEntries.Remove(archiveEntry);
         await _dbContext.SaveChangesAsync();
 
@@ -236,19 +226,16 @@ public class ArchiveService : IArchiveService
             archiveEntry.EntityType, archiveEntry.EntityId, userId);
     }
 
-    /// <inheritdoc />
     public async Task<ArchiveListResponseDto> GetArchivedAsync(Guid userId, ArchiveQueryDto query)
     {
         var archiveQuery = _dbContext.ArchiveEntries
             .Where(a => a.UserId == userId);
 
-        // Filter by entity type
         if (query.EntityType.HasValue)
         {
             archiveQuery = archiveQuery.Where(a => a.EntityType == query.EntityType.Value);
         }
 
-        // Search in JSON payload (basic text search)
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
             var searchLower = query.Search.ToLower();
@@ -256,10 +243,8 @@ public class ArchiveService : IArchiveService
                 EF.Functions.Like(a.PayloadJson.ToLower(), $"%{searchLower}%"));
         }
 
-        // Get total count
         var totalCount = await archiveQuery.CountAsync();
 
-        // Sorting
         archiveQuery = query.SortBy.ToLower() switch
         {
             "title" => query.SortDirection.ToLower() == "asc"
@@ -273,13 +258,11 @@ public class ArchiveService : IArchiveService
                 : archiveQuery.OrderByDescending(a => a.ArchivedAt)
         };
 
-        // Pagination
         var items = await archiveQuery
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
             .ToListAsync();
 
-        // Map to DTOs
         var dtos = items.Select(a => MapToDto(a)).ToList();
 
         return new ArchiveListResponseDto
@@ -291,7 +274,6 @@ public class ArchiveService : IArchiveService
         };
     }
 
-    /// <inheritdoc />
     public async Task<ArchivedEntityDetailDto> GetArchivedDetailAsync(Guid userId, Guid archiveEntryId)
     {
         var archiveEntry = await _dbContext.ArchiveEntries
@@ -309,7 +291,6 @@ public class ArchiveService : IArchiveService
             PayloadJson = archiveEntry.PayloadJson
         };
 
-        // Extract title and metadata using existing logic
         var baseDto = MapToDto(archiveEntry);
         detailDto.Title = baseDto.Title;
         detailDto.Description = baseDto.Description;
@@ -318,7 +299,6 @@ public class ArchiveService : IArchiveService
         return detailDto;
     }
 
-    /// <inheritdoc />
     public async Task PermanentDeleteAsync(Guid userId, Guid archiveEntryId)
     {
         var archiveEntry = await _dbContext.ArchiveEntries
@@ -333,10 +313,6 @@ public class ArchiveService : IArchiveService
         _logger.LogInformation("Permanently deleted archive entry {ArchiveEntryId} for user {UserId}",
             archiveEntryId, userId);
     }
-
-    // ============================================
-    // Helper Methods
-    // ============================================
 
     private string SerializeEntity(object entity, LinkEntityType entityType)
     {
@@ -371,17 +347,15 @@ public class ArchiveService : IArchiveService
             EntityType = archiveEntry.EntityType,
             EntityId = archiveEntry.EntityId,
             ArchivedAt = archiveEntry.ArchivedAt,
-            Title = $"{archiveEntry.EntityType} (untitled)", // Default fallback
+            Title = $"{archiveEntry.EntityType} (untitled)", 
             Metadata = new Dictionary<string, object>()
         };
 
-        // Extract title and metadata from JSON payload
         try
         {
             using var document = JsonDocument.Parse(archiveEntry.PayloadJson);
             var root = document.RootElement;
 
-            // Extract title - check both Title and title (case-insensitive)
             if (root.TryGetProperty("Title", out var titleElement))
             {
                 dto.Title = titleElement.GetString() ?? "Untitled";
@@ -391,7 +365,6 @@ public class ArchiveService : IArchiveService
                 dto.Title = titleLowerElement.GetString() ?? "Untitled";
             }
 
-            // Extract description (if exists)
             if (root.TryGetProperty("Description", out var descElement))
             {
                 dto.Description = descElement.GetString();
@@ -400,13 +373,13 @@ public class ArchiveService : IArchiveService
             {
                 dto.Description = descLowerElement.GetString();
             }
-            // For Notes, try to get description from Markdown field
+            
             if (archiveEntry.EntityType == LinkEntityType.Note && string.IsNullOrEmpty(dto.Description))
             {
                 if (root.TryGetProperty("Markdown", out var markdownElement))
                 {
                     var markdown = markdownElement.GetString() ?? "";
-                    // Take first 200 characters as description
+                    
                     dto.Description = markdown.Length > 200
                         ? markdown.Substring(0, 200) + "..."
                         : markdown;
@@ -419,11 +392,11 @@ public class ArchiveService : IArchiveService
                         : markdown;
                 }
             }
-            // Extract entity-specific metadata
+            
             switch (archiveEntry.EntityType)
             {
                 case LinkEntityType.Note:
-                    // Add character count as metadata
+                    
                     if (root.TryGetProperty("Markdown", out var noteMarkdownElement) ||
                         root.TryGetProperty("markdown", out noteMarkdownElement))
                     {
@@ -433,7 +406,7 @@ public class ArchiveService : IArchiveService
                     if (root.TryGetProperty("NoteGroupId", out var noteGroupElement) ||
                         root.TryGetProperty("noteGroupId", out noteGroupElement))
                     {
-                        // Check if the value is not null before trying to get Guid
+                        
                         if (noteGroupElement.ValueKind != JsonValueKind.Null)
                         {
                             var groupId = noteGroupElement.GetGuid();
@@ -507,7 +480,6 @@ public class ArchiveService : IArchiveService
                 archiveEntry.Id,
                 archiveEntry.PayloadJson?.Substring(0, Math.Min(500, archiveEntry.PayloadJson?.Length ?? 0)));
 
-            // Keep the default title set at the beginning instead of overwriting
             if (string.IsNullOrEmpty(dto.Title) || dto.Title.Contains("untitled"))
             {
                 dto.Title = $"{archiveEntry.EntityType} (metadata unavailable)";

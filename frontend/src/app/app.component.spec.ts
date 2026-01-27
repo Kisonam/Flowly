@@ -28,7 +28,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    // App component should have router-outlet for routing
+    
     expect(compiled).toBeTruthy();
   });
 });

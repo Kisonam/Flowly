@@ -1,7 +1,7 @@
-<!-- frontend/src/app/features/tasks/components/task-editor/task-editor.component.html -->
+
 
 <div class="task-editor-layout" [formGroup]="form">
-  <!-- Header -->
+  
   <div class="editor-header">
     <div class="header-left">
       <button type="button" class="btn-back" (click)="onCancel()" [title]="'TASKS.EDITOR.BACK_BUTTON' | translate">{{
@@ -28,7 +28,7 @@
   </div>
 
   <div class="editor-body">
-    <!-- Sidebar -->
+    
     <aside class="editor-sidebar">
       <div class="sidebar-section">
         <h3 class="sidebar-title">{{ 'TASKS.EDITOR.META_TITLE' | translate }}</h3>
@@ -65,7 +65,6 @@
           <code>{{ initialThemeId }}</code></div>
       </div>
 
-      <!-- Tags Section -->
       <div class="sidebar-section">
         <app-tag-manager [title]="'TASKS.EDITOR.TAGS_TITLE' | translate" [selectedIds]="selectedTagIds"
           (selectedIdsChange)="onTagsChanged($event)" (tagsUpdated)="loadAvailableTags()">
@@ -95,7 +94,6 @@
         </div>
       </div>
 
-      <!-- Links Section -->
       <div class="sidebar-section">
         <h3 class="sidebar-title">{{ 'TASKS.EDITOR.LINKS_TITLE' | translate }}</h3>
         <div *ngIf="!taskId" class="info-message">
@@ -107,7 +105,6 @@
       </div>
     </aside>
 
-    <!-- Main editor -->
     <div class="editor-main">
       <div class="form-group">
         <input type="text" formControlName="title" class="title-input"

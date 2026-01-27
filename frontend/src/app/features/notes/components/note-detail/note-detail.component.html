@@ -1,5 +1,5 @@
 <div class="container" *ngIf="!isLoading; else loadingTpl">
-  <!-- Header -->
+  
   <header class="page-header">
     <div class="header-left">
       <a class="btn-back" (click)="onBack()">
@@ -25,7 +25,7 @@
   </header>
 
   <section class="detail-content">
-    <!-- Main Info Card -->
+    
     <div class="detail-card main-card">
       <div class="note-header">
         <h2 class="note-title">{{ note?.title }}</h2>
@@ -41,7 +41,6 @@
         </div>
       </div>
 
-      <!-- Tags Section -->
       <div class="tags-section" *ngIf="note && note.tags && note.tags.length > 0">
         <div class="section-header">
           <div class="section-icon">
@@ -60,7 +59,6 @@
         </div>
       </div>
 
-      <!-- Description/Content Section -->
       <div class="description-section">
         <div class="section-header">
           <div class="section-icon">
@@ -70,12 +68,11 @@
           </div>
           <h3>{{ 'NOTES.DETAIL.CONTENT' | translate }}</h3>
         </div>
-        <!-- TODO Pictures must have a size editor-->
+        
         <div class="markdown-content" [innerHTML]="safeHtml"></div>
       </div>
     </div>
 
-    <!-- Linked Items -->
     <div class="detail-card linked-card"
       *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
       <h3>
@@ -84,7 +81,7 @@
       </h3>
 
       <div class="linked-sections">
-        <!-- Linked Notes -->
+        
         <div class="linked-section" *ngIf="linkedNotes.length > 0">
           <div class="section-header">
             <i class="bi bi-journal-text"></i>
@@ -107,7 +104,6 @@
           </div>
         </div>
 
-        <!-- Linked Tasks -->
         <div class="linked-section" *ngIf="linkedTasks.length > 0">
           <div class="section-header">
             <i class="bi bi-check-circle"></i>
@@ -130,7 +126,6 @@
           </div>
         </div>
 
-        <!-- Linked Transactions -->
         <div class="linked-section" *ngIf="linkedTransactions.length > 0">
           <div class="section-header">
             <i class="bi bi-currency-dollar"></i>

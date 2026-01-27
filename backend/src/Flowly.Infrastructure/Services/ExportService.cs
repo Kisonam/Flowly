@@ -1,4 +1,4 @@
-// backend/src/Flowly.Infrastructure/Services/ExportService.cs
+
 
 using System.IO.Compression;
 using System.Text;
@@ -28,10 +28,9 @@ public class ExportService : IExportService
         using var memoryStream = new MemoryStream();
         using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
         {
-            // README
+            
             await AddTextFileToArchive(archive, "README.md", GenerateReadme(data));
 
-            // Notes
             if (data.Notes.Any())
             {
                 foreach (var note in data.Notes)
@@ -42,35 +41,30 @@ public class ExportService : IExportService
                 }
             }
 
-            // Tasks
             if (data.Tasks.Any())
             {
                 var tasksContent = GenerateTasksMarkdown(data.Tasks);
                 await AddTextFileToArchive(archive, "tasks/tasks.md", tasksContent);
             }
 
-            // Transactions
             if (data.Transactions.Any())
             {
                 var transactionsContent = GenerateTransactionsMarkdown(data.Transactions);
                 await AddTextFileToArchive(archive, "finance/transactions.md", transactionsContent);
             }
 
-            // Budgets
             if (data.Budgets.Any())
             {
                 var budgetsContent = GenerateBudgetsMarkdown(data.Budgets);
                 await AddTextFileToArchive(archive, "finance/budgets.md", budgetsContent);
             }
 
-            // Goals
             if (data.Goals.Any())
             {
                 var goalsContent = GenerateGoalsMarkdown(data.Goals);
                 await AddTextFileToArchive(archive, "finance/goals.md", goalsContent);
             }
 
-            // Categories & Tags
             var metadataContent = GenerateMetadataMarkdown(data);
             await AddTextFileToArchive(archive, "metadata.md", metadataContent);
         }
@@ -99,35 +93,31 @@ public class ExportService : IExportService
         using var memoryStream = new MemoryStream();
         using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
         {
-            // Notes CSV
+            
             if (data.Notes.Any())
             {
                 var notesCsv = GenerateNotesCsv(data.Notes);
                 await AddTextFileToArchive(archive, "notes.csv", notesCsv);
             }
 
-            // Tasks CSV
             if (data.Tasks.Any())
             {
                 var tasksCsv = GenerateTasksCsv(data.Tasks);
                 await AddTextFileToArchive(archive, "tasks.csv", tasksCsv);
             }
 
-            // Transactions CSV
             if (data.Transactions.Any())
             {
                 var transactionsCsv = GenerateTransactionsCsv(data.Transactions);
                 await AddTextFileToArchive(archive, "transactions.csv", transactionsCsv);
             }
 
-            // Budgets CSV
             if (data.Budgets.Any())
             {
                 var budgetsCsv = GenerateBudgetsCsv(data.Budgets);
                 await AddTextFileToArchive(archive, "budgets.csv", budgetsCsv);
             }
 
-            // Goals CSV
             if (data.Goals.Any())
             {
                 var goalsCsv = GenerateGoalsCsv(data.Goals);
@@ -142,7 +132,6 @@ public class ExportService : IExportService
     {
         var data = await GetUserDataAsync(userId);
 
-        // Set QuestPDF license type (required)
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
         using var ms = new MemoryStream();
@@ -168,7 +157,6 @@ public class ExportService : IExportService
                     col.Item().Text($"Goals: {data.Goals.Count}");
                     col.Item().PaddingVertical(8);
 
-                    // Notes Table
                     if (data.Notes.Any())
                     {
                         col.Item().PaddingTop(10).Text("Notes").Bold().FontSize(16).FontColor("#1d4ed8");
@@ -176,12 +164,12 @@ public class ExportService : IExportService
                         {
                             table.ColumnsDefinition(c =>
                             {
-                                c.RelativeColumn(2); // Title
-                                c.RelativeColumn(3); // Content
-                                c.RelativeColumn(1); // Group
-                                c.RelativeColumn(2); // Tags
-                                c.RelativeColumn(1); // Created
-                                c.RelativeColumn(1); // Updated
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(3); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
                             });
                             table.Header(h =>
                             {
@@ -204,7 +192,6 @@ public class ExportService : IExportService
                         });
                     }
 
-                    // Tasks Table
                     if (data.Tasks.Any())
                     {
                         col.Item().PaddingTop(10).Text("Tasks").Bold().FontSize(16).FontColor("#1d4ed8");
@@ -212,12 +199,12 @@ public class ExportService : IExportService
                         {
                             table.ColumnsDefinition(c =>
                             {
-                                c.RelativeColumn(2); // Title
-                                c.RelativeColumn(2); // Description
-                                c.RelativeColumn(1); // Status
-                                c.RelativeColumn(1); // Priority
-                                c.RelativeColumn(1); // Theme
-                                c.RelativeColumn(1); // DueDate
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
                             });
                             table.Header(h =>
                             {
@@ -240,7 +227,6 @@ public class ExportService : IExportService
                         });
                     }
 
-                    // Transactions Table
                     if (data.Transactions.Any())
                     {
                         col.Item().PaddingTop(10).Text("Transactions").Bold().FontSize(16).FontColor("#1d4ed8");
@@ -248,13 +234,13 @@ public class ExportService : IExportService
                         {
                             table.ColumnsDefinition(c =>
                             {
-                                c.RelativeColumn(1); // Type
-                                c.RelativeColumn(1); // Amount
-                                c.RelativeColumn(1); // Currency
-                                c.RelativeColumn(2); // Description
-                                c.RelativeColumn(1); // Category
-                                c.RelativeColumn(2); // Tags
-                                c.RelativeColumn(1); // Date
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
                             });
                             table.Header(h =>
                             {
@@ -279,7 +265,6 @@ public class ExportService : IExportService
                         });
                     }
 
-                    // Budgets Table
                     if (data.Budgets.Any())
                     {
                         col.Item().PaddingTop(10).Text("Budgets").Bold().FontSize(16).FontColor("#1d4ed8");
@@ -287,13 +272,13 @@ public class ExportService : IExportService
                         {
                             table.ColumnsDefinition(c =>
                             {
-                                c.RelativeColumn(2); // Name
-                                c.RelativeColumn(1); // Amount
-                                c.RelativeColumn(1); // Currency
-                                c.RelativeColumn(1); // Period
-                                c.RelativeColumn(1); // Category
-                                c.RelativeColumn(1); // StartDate
-                                c.RelativeColumn(1); // EndDate
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
                             });
                             table.Header(h =>
                             {
@@ -318,7 +303,6 @@ public class ExportService : IExportService
                         });
                     }
 
-                    // Goals Table
                     if (data.Goals.Any())
                     {
                         col.Item().PaddingTop(10).Text("Goals").Bold().FontSize(16).FontColor("#1d4ed8");
@@ -326,13 +310,13 @@ public class ExportService : IExportService
                         {
                             table.ColumnsDefinition(c =>
                             {
-                                c.RelativeColumn(2); // Name
-                                c.RelativeColumn(1); // TargetAmount
-                                c.RelativeColumn(1); // CurrentAmount
-                                c.RelativeColumn(1); // Currency
-                                c.RelativeColumn(1); // Status
-                                c.RelativeColumn(1); // TargetDate
-                                c.RelativeColumn(1); // Created
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
                             });
                             table.Header(h =>
                             {
@@ -357,7 +341,6 @@ public class ExportService : IExportService
                         });
                     }
 
-                    // Categories Table
                     if (data.Categories.Any())
                     {
                         col.Item().PaddingTop(10).Text("Categories").Bold().FontSize(16).FontColor("#1d4ed8");
@@ -365,9 +348,9 @@ public class ExportService : IExportService
                         {
                             table.ColumnsDefinition(c =>
                             {
-                                c.RelativeColumn(2); // Name
-                                c.RelativeColumn(1); // Type
-                                c.RelativeColumn(1); // Color
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
+                                c.RelativeColumn(1); 
                             });
                             table.Header(h =>
                             {
@@ -384,7 +367,6 @@ public class ExportService : IExportService
                         });
                     }
 
-                    // Tags Table
                     if (data.Tags.Any())
                     {
                         col.Item().PaddingTop(10).Text("Tags").Bold().FontSize(16).FontColor("#1d4ed8");
@@ -392,8 +374,8 @@ public class ExportService : IExportService
                         {
                             table.ColumnsDefinition(c =>
                             {
-                                c.RelativeColumn(2); // Name
-                                c.RelativeColumn(1); // Color
+                                c.RelativeColumn(2); 
+                                c.RelativeColumn(1); 
                             });
                             table.Header(h =>
                             {
@@ -413,7 +395,6 @@ public class ExportService : IExportService
 
         return ms.ToArray();
 
-        // Local function for cell style
         IContainer CellStyle(IContainer container) => container.Padding(2).BorderBottom(0.5f).BorderColor("#e5e7eb");
     }
 
@@ -423,10 +404,8 @@ public class ExportService : IExportService
     {
         var userGuid = Guid.Parse(userId);
 
-        // Get user
         var user = await _dbContext.Users.FindAsync(userGuid);
 
-        // Get notes
         var notes = await _dbContext.Notes
             .Include(n => n.NoteGroup)
             .Include(n => n.NoteTags).ThenInclude(nt => nt.Tag)
@@ -443,7 +422,6 @@ public class ExportService : IExportService
             })
             .ToListAsync();
 
-        // Get tasks
         var tasks = await _dbContext.Tasks
             .Include(t => t.TaskTheme)
             .Where(t => t.UserId == userGuid)
@@ -461,7 +439,6 @@ public class ExportService : IExportService
             })
             .ToListAsync();
 
-        // Get transactions
         var transactions = await _dbContext.Transactions
             .Include(t => t.Category)
             .Include(t => t.Currency)
@@ -481,7 +458,6 @@ public class ExportService : IExportService
             })
             .ToListAsync();
 
-        // Get budgets
         var budgets = await _dbContext.Budgets
             .Include(b => b.Category)
             .Include(b => b.Currency)
@@ -492,14 +468,13 @@ public class ExportService : IExportService
                 Name = b.Title,
                 Amount = b.Limit,
                 Currency = b.Currency.Code,
-                Period = "Custom", // Budget doesn't have Period enum, just dates
+                Period = "Custom", 
                 Category = b.Category != null ? b.Category.Name : null,
                 StartDate = b.PeriodStart,
                 EndDate = b.PeriodEnd
             })
             .ToListAsync();
 
-        // Get goals
         var goalsQuery = await _dbContext.FinancialGoals
             .Include(g => g.Currency)
             .Where(g => g.UserId == userGuid)
@@ -517,19 +492,17 @@ public class ExportService : IExportService
             CreatedAt = g.CreatedAt
         }).ToList();
 
-        // Get categories
         var categories = await _dbContext.Categories
             .Where(c => c.UserId == userGuid)
             .Select(c => new CategoryExportDto
             {
                 Id = c.Id,
                 Name = c.Name,
-                Type = "General", // Category doesn't have Type field
+                Type = "General", 
                 Color = c.Color ?? "#808080"
             })
             .ToListAsync();
 
-        // Get tags
         var tags = await _dbContext.Tags
             .Where(t => t.UserId == userGuid)
             .Select(t => new TagExportDto
@@ -563,12 +536,10 @@ public class ExportService : IExportService
     {
         var entry = archive.CreateEntry(fileName, CompressionLevel.NoCompression);
         await using var entryStream = entry.Open();
-        
-        // Write UTF-8 BOM for better Excel compatibility
+
         var bom = new byte[] { 0xEF, 0xBB, 0xBF };
         await entryStream.WriteAsync(bom, 0, bom.Length);
-        
-        // Write content with UTF-8 encoding (without additional BOM since we already wrote it)
+
         var encoding = new UTF8Encoding(false);
         var bytes = encoding.GetBytes(content);
         await entryStream.WriteAsync(bytes, 0, bytes.Length);
@@ -576,18 +547,16 @@ public class ExportService : IExportService
 
     private static string SanitizeFileName(string fileName)
     {
-        // Split path into directory and filename
+        
         var lastSlashIndex = fileName.LastIndexOf('/');
         if (lastSlashIndex >= 0)
         {
             var directory = fileName.Substring(0, lastSlashIndex + 1);
             var filename = fileName.Substring(lastSlashIndex + 1);
-            
-            // Sanitize only the filename part, keep directory structure
+
             var invalid = Path.GetInvalidFileNameChars();
             var sanitized = string.Join("_", filename.Split(invalid));
-            
-            // Limit filename length (not the full path)
+
             if (sanitized.Length > 150)
                 sanitized = sanitized.Substring(0, 150) + ".md";
             
@@ -595,7 +564,7 @@ public class ExportService : IExportService
         }
         else
         {
-            // No directory, just sanitize the filename
+            
             var invalid = Path.GetInvalidFileNameChars();
             var sanitized = string.Join("_", fileName.Split(invalid));
             return sanitized.Length > 200 ? sanitized.Substring(0, 200) : sanitized;
@@ -815,7 +784,6 @@ public class ExportService : IExportService
         return sb.ToString();
     }
 
-    // CSV Generators
     private static string GenerateNotesCsv(List<NoteExportDto> notes)
     {
         var sb = new StringBuilder();

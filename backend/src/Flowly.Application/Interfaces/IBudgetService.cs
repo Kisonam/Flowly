@@ -2,9 +2,6 @@ using Flowly.Application.DTOs.Transactions;
 
 namespace Flowly.Application.Interfaces;
 
-/// <summary>
-/// Service for managing budgets and overspending checks
-/// </summary>
 public interface IBudgetService
 {
     Task<List<BudgetDto>> GetAllAsync(Guid userId, BudgetFilterDto? filter = null);
@@ -15,13 +12,7 @@ public interface IBudgetService
     Task ArchiveAsync(Guid userId, Guid budgetId);
     Task RestoreAsync(Guid userId, Guid budgetId);
 
-    /// <summary>
-    /// Check whether budget is overspent
-    /// </summary>
     Task<bool> IsOverspentAsync(Guid userId, Guid budgetId);
 
-    /// <summary>
-    /// Get all transactions linked to a specific budget
-    /// </summary>
     Task<List<TransactionListItemDto>> GetBudgetTransactionsAsync(Guid userId, Guid budgetId);
 }

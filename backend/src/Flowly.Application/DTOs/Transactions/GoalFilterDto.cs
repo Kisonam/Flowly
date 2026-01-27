@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// DTO for filtering financial goals
-/// </summary>
 public class GoalFilterDto
 {
     public bool? IsCompleted { get; set; }

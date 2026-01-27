@@ -1,7 +1,7 @@
-<!-- frontend/src/app/features/notes/components/note-editor/note-editor.component.html -->
+
 
 <div class="note-editor-container">
-  <!-- Header -->
+  
   <div class="editor-header">
     <div class="header-left">
       <button type="button" class="btn-back" (click)="onCancel()" [title]="'NOTES.EDITOR.BACK_BUTTON' | translate">
@@ -13,7 +13,7 @@
     </div>
 
     <div class="header-actions">
-      <!-- First Row: Save Actions -->
+      
       <div class="actions-row actions-primary">
         <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSaving">
           {{ 'NOTES.EDITOR.CANCEL' | translate }}
@@ -24,7 +24,6 @@
         </button>
       </div>
 
-      <!-- Second Row: View Mode Toggles -->
       <div class="actions-row actions-secondary">
         <button type="button" class="btn-secondary" [class.active]="isPreviewMode && !isSplitView"
           [attr.aria-label]="'NOTES.EDITOR.PREVIEW_MODE' | translate" (click)="togglePreview()"
@@ -42,7 +41,6 @@
           {{ 'NOTES.EDITOR.EDITOR_MODE' | translate }}
         </button>
 
-        <!-- Save Status -->
         <div class="save-status" *ngIf="lastSavedTime" role="status" aria-live="polite">
           ✅ <span class="save-time">{{ 'NOTES.EDITOR.SAVED' | translate }} {{ lastSavedTime | date: 'short' }}</span>
         </div>
@@ -50,30 +48,26 @@
     </div>
   </div>
 
-  <!-- Error Message -->
   <div class="alert alert-danger" *ngIf="errorMessage">
     <i class="bi bi-exclamation-triangle"></i>
     {{ errorMessage }}
   </div>
 
-  <!-- Loading State -->
   <div class="loading-state" *ngIf="isLoading">
     <div class="spinner"></div>
     <p>{{ 'NOTES.EDITOR.LOADING' | translate }}</p>
   </div>
 
-  <!-- Editor Content -->
   <div class="editor-content" *ngIf="!isLoading" [formGroup]="noteForm">
-    <!-- Sidebar: Tags & Upload -->
+    
     <aside class="editor-sidebar">
-      <!-- Tags Section -->
+      
       <div class="sidebar-section">
         <app-tag-manager [title]="'NOTES.EDITOR.TAGS_TITLE' | translate" [selectedIds]="selectedTagIds"
           (selectedIdsChange)="onTagsChanged($event)" (tagsUpdated)="loadAvailableTags()">
         </app-tag-manager>
       </div>
 
-      <!-- Links Section -->
       <div class="sidebar-section">
         <h3 class="sidebar-title">
           <i class="bi bi-link-45deg"></i>
@@ -87,7 +81,6 @@
         </app-link-selector>
       </div>
 
-      <!-- Upload Section -->
       <div class="sidebar-section">
         <h3 class="sidebar-title">
           <i class="bi bi-image"></i>
@@ -106,7 +99,6 @@
           </label>
         </div>
 
-        <!-- Upload Progress -->
         <div class="upload-progress" *ngIf="uploadProgress !== null">
           <div class="progress-bar">
             <div class="progress-fill" [style.width.%]="uploadProgress"></div>
@@ -116,9 +108,8 @@
       </div>
     </aside>
 
-    <!-- Main Editor Area -->
     <div class="editor-main">
-      <!-- Title Input -->
+      
       <div class="form-group">
         <input type="text" class="form-control title-input" formControlName="title"
           [placeholder]="'NOTES.EDITOR.TITLE_PLACEHOLDER' | translate"
@@ -130,9 +121,8 @@
         </div>
       </div>
 
-      <!-- Editor/Preview Container -->
       <div class="editor-preview-container" [class.split-view]="isSplitView">
-        <!-- Markdown Editor -->
+        
         <div class="markdown-editor" *ngIf="!isPreviewMode">
           <textarea class="form-control markdown-textarea" formControlName="markdown"
             [placeholder]="'NOTES.EDITOR.MARKDOWN_PLACEHOLDER' | translate"
@@ -144,7 +134,6 @@
           </div>
         </div>
 
-        <!-- Markdown Preview -->
         <div class="markdown-preview" *ngIf="isPreviewMode || isSplitView">
           <div class="preview-label">{{ 'NOTES.EDITOR.PREVIEW_LABEL' | translate }}</div>
           <div class="preview-content markdown-body" [innerHTML]="markdownPreview">

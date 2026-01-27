@@ -1,4 +1,4 @@
-// frontend/src/app/features/notes/components/note-editor/note-editor.component.ts
+
 
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -44,24 +44,19 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   isSaving = false;
   errorMessage = '';
 
-  // Preview state
   markdownPreview = '';
   isPreviewMode = false;
   isSplitView = true;
 
-  // Available tags (will be loaded from server or mock)
   availableTags: Tag[] = [];
   selectedTagIds: string[] = [];
 
-  // File upload
   uploadedFiles: File[] = [];
   isDragging = false;
   uploadProgress: number | null = null;
 
-  // Expose LinkEntityType to template
   LinkEntityType = LinkEntityType;
 
-  // Auto-save
   private autoSaveSubject = new Subject<void>();
   private readonly DRAFT_KEY_PREFIX = 'flowly_note_draft_';
   lastSavedTime: Date | null = null;
@@ -84,14 +79,12 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
       markdown: ['', Validators.required]
     });
 
-    // Update preview on markdown changes
     this.noteForm.get('markdown')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(markdown => {
         this.updatePreview(markdown);
       });
 
-    // Trigger auto-save on form changes
     this.noteForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -102,7 +95,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   private setupAutoSave(): void {
     this.autoSaveSubject
       .pipe(
-        debounceTime(2000), // Auto-save after 2 seconds of inactivity
+        debounceTime(2000), 
         takeUntil(this.destroy$)
       )
       .subscribe(() => {
@@ -117,7 +110,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
     if (this.isEditMode && this.noteId) {
       this.loadNote(this.noteId);
     } else {
-      // Check for draft in localStorage
+      
       this.loadDraft();
     }
   }
@@ -172,10 +165,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ============================================
-  // Form Actions
-  // ============================================
-
   onSubmit(): void {
     if (this.noteForm.invalid) {
       this.noteForm.markAllAsTouched();
@@ -195,7 +184,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   }
 
   private createNote(formValue: any): void {
-    // Filter out mock tags and invalid IDs
+    
     const realTags = this.sanitizeTagIds(this.selectedTagIds);
 
      console.log('🏷️ Selected tag IDs:', this.selectedTagIds);
@@ -217,7 +206,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
           this.clearDraft();
           this.lastSavedTime = new Date();
           this.isSaving = false;
-          // Navigate to notes list
+          
           this.router.navigate(['/notes']);
         },
         error: (error) => {
@@ -229,7 +218,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   }
 
   private updateNote(id: string, formValue: any): void {
-    // Filter out mock tags and invalid IDs
+    
     const realTags = this.sanitizeTagIds(this.selectedTagIds);
 
     const request: UpdateNoteRequest = {
@@ -262,10 +251,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ============================================
-  // View Mode Toggle
-  // ============================================
-
   togglePreview(): void {
     this.isPreviewMode = !this.isPreviewMode;
     if (this.isPreviewMode) {
@@ -279,10 +264,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
       this.isPreviewMode = false;
     }
   }
-
-  // ============================================
-  // Tag Management
-  // ============================================
 
   onTagsChanged(ids: string[]): void {
     this.selectedTagIds = ids;
@@ -302,10 +283,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   isTagSelected(tagId: string): boolean {
     return this.selectedTagIds.includes(tagId);
   }
-
-  // ============================================
-  // File Upload (Drag & Drop)
-  // ============================================
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -338,7 +315,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   }
 
   private handleFiles(files: FileList): void {
-    // Filter only images
+    
     const imageFiles = Array.from(files).filter(file =>
       file.type.startsWith('image/')
     );
@@ -348,7 +325,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Upload first file (for simplicity)
     this.uploadFile(imageFiles[0]);
   }
 
@@ -367,7 +343,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
           console.log('File uploaded:', response);
           this.uploadProgress = null;
 
-          // Insert markdown image syntax at cursor position
           const imageMarkdown = `\n![${file.name}](${response.mediaUrl})\n`;
           const currentMarkdown = this.noteForm.get('markdown')?.value || '';
           this.noteForm.patchValue({
@@ -381,10 +356,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
         }
       });
   }
-
-  // ============================================
-  // Draft Management (localStorage)
-  // ============================================
 
   private getDraftKey(): string {
     return this.DRAFT_KEY_PREFIX + (this.noteId || 'new');
@@ -408,14 +379,13 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
       try {
         const draft: NoteDraft = JSON.parse(draftJson);
 
-        // Only load draft if it's less than 24 hours old
         const hoursSinceDraft = (Date.now() - draft.timestamp) / (1000 * 60 * 60);
         if (hoursSinceDraft < 24) {
           this.noteForm.patchValue({
             title: draft.title,
             markdown: draft.markdown
           });
-          // Sanitize any stale/invalid tag IDs from older drafts
+          
           this.selectedTagIds = this.sanitizeTagIds(draft.tagIds || []);
           if (draft.tagIds && draft.tagIds.length !== this.selectedTagIds.length) {
             console.log('🧹 Draft tag IDs sanitized:', this.selectedTagIds);
@@ -435,19 +405,11 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
     console.log('🗑️ Draft cleared');
   }
 
-  // ============================================
-  // Helper Methods
-  // ============================================
-
   getTagStyle(color: string | undefined): any {
     return {
       '--tag-color': color || '#6b7280'
     };
   }
-
-  // ============================================
-  // Internal helpers
-  // ============================================
 
   private isGuid(id: string): boolean {
     if (typeof id !== 'string') return false;
@@ -471,10 +433,6 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   get markdownControl() {
     return this.noteForm.get('markdown');
   }
-
-  // ============================================
-  // Link Management
-  // ============================================
 
   onLinkCreated(link: Link): void {
     console.log('Link created:', link);

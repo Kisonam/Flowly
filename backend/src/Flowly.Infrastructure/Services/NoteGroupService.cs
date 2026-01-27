@@ -68,7 +68,6 @@ public class NoteGroupService(AppDbContext db) : INoteGroupService
             .FirstOrDefaultAsync(g => g.Id == id && g.UserId == userId);
         if (group == null) throw new InvalidOperationException("Group not found");
 
-        // Unassign notes from this group
         foreach (var note in group.Notes)
         {
             note.NoteGroupId = null;

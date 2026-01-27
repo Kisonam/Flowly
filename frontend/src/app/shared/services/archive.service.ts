@@ -13,9 +13,6 @@ export class ArchiveService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Get paginated list of archived entities
-   */
   getArchived(query?: ArchiveQuery): Observable<ArchiveListResponse> {
     let params = new HttpParams();
 
@@ -46,9 +43,6 @@ export class ArchiveService {
     );
   }
 
-  /**
-   * Get detailed information about a specific archived entity (includes full JSON payload)
-   */
   getDetail(archiveEntryId: string): Observable<ArchivedEntityDetail> {
     return this.http.get<ArchivedEntityDetail>(`${this.API_URL}/${archiveEntryId}/detail`).pipe(
       tap(() => console.log('🔍 Fetched archive detail:', archiveEntryId)),
@@ -56,9 +50,6 @@ export class ArchiveService {
     );
   }
 
-  /**
-   * Restore an archived entity
-   */
   restore(archiveEntryId: string): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/${archiveEntryId}/restore`, {}).pipe(
       tap(() => console.log('♻️ Restored archive entry:', archiveEntryId)),
@@ -66,9 +57,6 @@ export class ArchiveService {
     );
   }
 
-  /**
-   * Permanently delete an archived entity
-   */
   permanentDelete(archiveEntryId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${archiveEntryId}/permanent`).pipe(
       tap(() => console.log('🗑️ Permanently deleted archive entry:', archiveEntryId)),
@@ -76,9 +64,6 @@ export class ArchiveService {
     );
   }
 
-  /**
-   * Migrate existing archived entities to the new archive system
-   */
   migrateExistingArchives(): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.API_URL}/migrate`, {}).pipe(
       tap(() => console.log('🔄 Migration completed')),
@@ -86,9 +71,6 @@ export class ArchiveService {
     );
   }
 
-  /**
-   * Handle HTTP errors
-   */
   private handleError(error: any): Observable<never> {
     console.error('❌ Archive service error:', error);
     throw error;

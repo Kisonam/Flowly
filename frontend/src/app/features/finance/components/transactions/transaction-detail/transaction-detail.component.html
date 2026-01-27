@@ -1,5 +1,5 @@
 <div class="transaction-detail-container">
-  <!-- Header -->
+  
   <div class="detail-header">
     <button class="btn btn-back" (click)="goBack()">
       <span>←</span> {{ 'FINANCE.TRANSACTIONS.DETAIL.BACK' | translate }}
@@ -7,22 +7,19 @@
     <h2>💰 {{ 'FINANCE.TRANSACTIONS.DETAIL.TITLE' | translate }}</h2>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.TRANSACTIONS.DETAIL.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage" class="error-state">
     <p>❌ {{ errorMessage }}</p>
     <button class="btn btn-primary" (click)="goBack()">{{ 'FINANCE.TRANSACTIONS.DETAIL.BACK_LIST' | translate
       }}</button>
   </div>
 
-  <!-- Transaction Detail -->
   <div *ngIf="!loading && !errorMessage && transaction" class="transaction-detail">
-    <!-- Main Card -->
+    
     <div class="detail-card main-card">
       <div class="card-header" [style.background]="getTransactionColor(transaction.type)">
         <div class="type-badge">
@@ -35,7 +32,7 @@
       </div>
 
       <div class="card-body">
-        <!-- Title & Description -->
+        
         <div class="info-section">
           <h3 class="transaction-title">{{ transaction.title }}</h3>
           <p class="transaction-description" *ngIf="transaction.description">
@@ -46,7 +43,6 @@
           </p>
         </div>
 
-        <!-- Category -->
         <div class="info-section">
           <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.CATEGORY' | translate }}</label>
           <div class="category-display" *ngIf="transaction.category">
@@ -60,7 +56,6 @@
           </p>
         </div>
 
-        <!-- Budget -->
         <div class="info-section" *ngIf="transaction.budget">
           <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.BUDGET_LINK' | translate }}</label>
           <div class="linked-item budget-link" (click)="navigateToBudget(transaction.budgetId!)">
@@ -73,7 +68,6 @@
           </div>
         </div>
 
-        <!-- Goal -->
         <div class="info-section" *ngIf="transaction.goal">
           <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.GOAL_LINK' | translate }}</label>
           <div class="linked-item goal-link" (click)="navigateToGoal(transaction.goalId!)">
@@ -86,7 +80,6 @@
           </div>
         </div>
 
-        <!-- Tags -->
         <div class="info-section" *ngIf="transaction.tags && transaction.tags.length > 0">
           <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.TAGS' | translate }}</label>
           <div class="tags-display">
@@ -97,7 +90,6 @@
           </div>
         </div>
 
-        <!-- Date Information -->
         <div class="info-section">
           <div class="dates-grid">
             <div class="date-item">
@@ -115,7 +107,6 @@
           </div>
         </div>
 
-        <!-- Status -->
         <div class="info-section">
           <label>{{ 'FINANCE.TRANSACTIONS.DETAIL.STATUS' | translate }}</label>
           <div class="status-badge" [class.archived]="transaction.isArchived">
@@ -126,7 +117,6 @@
       </div>
     </div>
 
-    <!-- Linked Items Card -->
     <div class="detail-card linked-card"
       *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
       <h3>
@@ -135,7 +125,7 @@
       </h3>
 
       <div class="linked-sections">
-        <!-- Linked Notes -->
+        
         <div class="linked-section" *ngIf="linkedNotes.length > 0">
           <div class="section-header">
             <i class="bi bi-journal-text"></i>
@@ -158,7 +148,6 @@
           </div>
         </div>
 
-        <!-- Linked Tasks -->
         <div class="linked-section" *ngIf="linkedTasks.length > 0">
           <div class="section-header">
             <i class="bi bi-check-circle"></i>
@@ -181,7 +170,6 @@
           </div>
         </div>
 
-        <!-- Linked Transactions -->
         <div class="linked-section" *ngIf="linkedTransactions.length > 0">
           <div class="section-header">
             <i class="bi bi-currency-dollar"></i>
@@ -206,7 +194,6 @@
       </div>
     </div>
 
-    <!-- Actions Card -->
     <div class="detail-card actions-card">
       <h3>{{ 'FINANCE.TRANSACTIONS.DETAIL.ACTIONS' | translate }}</h3>
       <div class="action-buttons">

@@ -23,13 +23,6 @@ public class TasksController : ControllerBase
         _logger = logger;
     }
 
-    // ============================================
-    // Task CRUD
-    // ============================================
-
-    /// <summary>
-    /// Get all tasks with optional filtering and pagination
-    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<TaskDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -40,19 +33,14 @@ public class TasksController : ControllerBase
         [FromQuery] TasksStatus? status = null,
         [FromQuery] TaskPriority? priority = null,
         [FromQuery] bool? isArchived = null,
-    [FromQuery] bool? isOverdue = null,
-    [FromQuery] DateTime? dueDateOn = null,
-    [FromQuery] DateTime? dueDateTo = null,
+        [FromQuery] bool? isOverdue = null,
+        [FromQuery] DateTime? dueDateOn = null,
+        [FromQuery] DateTime? dueDateTo = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
         try
         {
-            _logger.LogInformation("➡️ GET /api/tasks: search={Search} tagIds={TagIds} themeIds={ThemeIds} status={Status} priority={Priority} archived={Archived} overdue={Overdue} dueOn={DueOn} dueTo={DueTo} page={Page} pageSize={PageSize}",
-                search, tagIds, themeIds, status, priority, isArchived, isOverdue, dueDateOn, dueDateTo, page, pageSize);
-            var userId = GetCurrentUserId();
-
-            // Parse tag IDs
             List<Guid>? tagIdList = null;
             if (!string.IsNullOrWhiteSpace(tagIds))
             {
@@ -62,7 +50,6 @@ public class TasksController : ControllerBase
                     .ToList();
             }
 
-            // Parse theme IDs
             List<Guid>? themeIdList = null;
             if (!string.IsNullOrWhiteSpace(themeIds))
             {
@@ -72,7 +59,6 @@ public class TasksController : ControllerBase
                     .ToList();
             }
 
-            // Validate pagination
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
             if (pageSize > 100) pageSize = 100;
@@ -92,9 +78,8 @@ public class TasksController : ControllerBase
                 PageSize = pageSize
             };
 
+            var userId = GetCurrentUserId();
             var result = await _taskService.GetAllTasksAsync(userId, filter);
-
-            _logger.LogInformation("✅ Tasks fetched for user {UserId}: count={Count} page={Page}/{TotalPages}", userId, result.Items.Count, result.Page, result.TotalPages);
             return Ok(result);
         }
         catch (UnauthorizedAccessException ex)
@@ -109,8 +94,6 @@ public class TasksController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get tasks. Raw query params: search={Search} tagIds={TagIds} themeIds={ThemeIds} status={Status} priority={Priority} archived={Archived} overdue={Overdue} dueOn={DueOn} dueTo={DueTo} page={Page} pageSize={PageSize}",
-                search, tagIds, themeIds, status, priority, isArchived, isOverdue, dueDateOn, dueDateTo, page, pageSize);
             return BadRequest(new ErrorResponse
             {
                 StatusCode = 400,
@@ -119,10 +102,6 @@ public class TasksController : ControllerBase
             });
         }
     }
-
-    /// <summary>
-    /// Get a specific task by ID
-    /// </summary>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(TaskDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -145,15 +124,12 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Create a new task
-    /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(TaskDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateTaskDto dto)
     {
-        // Log the incoming DTO as JSON
+        
         try
         {
             var dtoJson = System.Text.Json.JsonSerializer.Serialize(dto);
@@ -166,7 +142,7 @@ public class TasksController : ControllerBase
 
         if (!ModelState.IsValid)
         {
-            // Log all ModelState errors, null-safe
+            
             var errors = ModelState
                 .Where(x => x.Value != null && x.Value.Errors.Count > 0)
                 .Select(x => new {
@@ -192,9 +168,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update an existing task
-    /// </summary>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(TaskDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -218,9 +191,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Archive a task (soft delete)
-    /// </summary>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -244,13 +214,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    // ============================================
-    // Theme Management
-    // ============================================
-
-    /// <summary>
-    /// Get all themes for current user
-    /// </summary>
     [HttpGet("themes")]
     [ProducesResponseType(typeof(List<TaskThemeDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetThemes()
@@ -268,13 +231,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    // ============================================
-    // Ordering & Status helpers
-    // ============================================
-
-    /// <summary>
-    /// Reorder tasks across themes. Client should send full desired state for affected tasks.
-    /// </summary>
     [HttpPost("reorder")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -295,9 +251,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Mark task as completed (Done)
-    /// </summary>
     [HttpPost("{id}/complete")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -321,9 +274,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Change task status
-    /// </summary>
     [HttpPost("{id}/status/{status}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -347,9 +297,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Create a new theme
-    /// </summary>
     [HttpPost("themes")]
     [ProducesResponseType(typeof(TaskThemeDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateTheme([FromBody] CreateTaskThemeDto dto)
@@ -368,9 +315,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update an existing theme
-    /// </summary>
     [HttpPut("themes/{id}")]
     [ProducesResponseType(typeof(TaskThemeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -394,9 +338,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Delete a theme and move all its tasks to unassigned
-    /// </summary>
     [HttpDelete("themes/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -420,9 +361,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Reorder themes
-    /// </summary>
     [HttpPost("themes/reorder")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ReorderThemes([FromBody] List<Guid> themeIds)
@@ -441,9 +379,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Move task to a different theme
-    /// </summary>
     [HttpPost("{id}/move/{themeId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -475,13 +410,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    // ============================================
-    // Subtask Management
-    // ============================================
-
-    /// <summary>
-    /// Add a subtask to a task
-    /// </summary>
     [HttpPost("{id}/subtasks")]
     [ProducesResponseType(typeof(SubtaskDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -505,9 +433,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update a subtask
-    /// </summary>
     [HttpPut("{id}/subtasks/{subtaskId}")]
     [ProducesResponseType(typeof(SubtaskDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -531,9 +456,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Delete a subtask
-    /// </summary>
     [HttpDelete("{id}/subtasks/{subtaskId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -557,13 +479,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    // ============================================
-    // Recurrence Management
-    // ============================================
-
-    /// <summary>
-    /// Set or update recurrence rule for a task
-    /// </summary>
     [HttpPut("{id}/recurrence")]
     [ProducesResponseType(typeof(RecurrenceDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -587,13 +502,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    // ============================================
-    // Tag Management
-    // ============================================
-
-    /// <summary>
-    /// Add a tag to a task
-    /// </summary>
     [HttpPost("{id}/tags/{tagId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -617,9 +525,6 @@ public class TasksController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Remove a tag from a task
-    /// </summary>
     [HttpDelete("{id}/tags/{tagId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -642,10 +547,6 @@ public class TasksController : ControllerBase
             return BadRequest(new ErrorResponse { StatusCode = 400, Message = ex.Message, Path = Request.Path });
         }
     }
-
-    // ============================================
-    // Helper Methods
-    // ============================================
 
     private Guid GetCurrentUserId()
     {

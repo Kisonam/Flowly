@@ -7,9 +7,6 @@ using System.Text.Json;
 
 namespace Flowly.Infrastructure.Services;
 
-/// <summary>
-/// Service for migrating existing archived entities to the new archive system
-/// </summary>
 public class ArchiveMigrationService
 {
     private readonly AppDbContext _dbContext;
@@ -21,16 +18,12 @@ public class ArchiveMigrationService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Migrate all existing archived entities to ArchiveEntries table
-    /// </summary>
     public async Task MigrateExistingArchivedEntitiesAsync()
     {
         _logger.LogInformation("Starting migration of existing archived entities...");
 
         var migratedCount = 0;
 
-        // Migrate archived Notes
         var archivedNotes = await _dbContext.Notes
             .Include(n => n.NoteTags)
             .Include(n => n.MediaAssets)
@@ -39,7 +32,7 @@ public class ArchiveMigrationService
 
         foreach (var note in archivedNotes)
         {
-            // Check if archive entry already exists
+            
             var exists = await _dbContext.ArchiveEntries
                 .AnyAsync(a => a.EntityType == LinkEntityType.Note && a.EntityId == note.Id);
 
@@ -52,7 +45,7 @@ public class ArchiveMigrationService
                     EntityType = LinkEntityType.Note,
                     EntityId = note.Id,
                     PayloadJson = SerializeEntity(note),
-                    ArchivedAt = note.UpdatedAt // Use UpdatedAt as best approximation
+                    ArchivedAt = note.UpdatedAt 
                 };
 
                 _dbContext.ArchiveEntries.Add(archiveEntry);
@@ -60,7 +53,6 @@ public class ArchiveMigrationService
             }
         }
 
-        // Migrate archived Tasks
         var archivedTasks = await _dbContext.Tasks
             .Include(t => t.Subtasks)
             .Include(t => t.TaskTags)
@@ -89,7 +81,6 @@ public class ArchiveMigrationService
             }
         }
 
-        // Migrate archived Transactions
         var archivedTransactions = await _dbContext.Transactions
             .Include(t => t.TransactionTags)
             .Where(t => t.IsArchived)
@@ -117,7 +108,6 @@ public class ArchiveMigrationService
             }
         }
 
-        // Migrate archived Budgets
         var archivedBudgets = await _dbContext.Budgets
             .Where(b => b.IsArchived)
             .ToListAsync();
@@ -144,7 +134,6 @@ public class ArchiveMigrationService
             }
         }
 
-        // Migrate archived FinancialGoals
         var archivedGoals = await _dbContext.FinancialGoals
             .Where(g => g.IsArchived)
             .ToListAsync();

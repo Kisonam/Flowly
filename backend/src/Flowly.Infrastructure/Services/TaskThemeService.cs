@@ -68,7 +68,6 @@ public class TaskThemeService(AppDbContext db) : ITaskThemeService
             .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
         if (theme == null) throw new InvalidOperationException("Theme not found");
 
-        // Unassign tasks from this theme
         foreach (var task in theme.Tasks)
         {
             task.TaskThemeId = null;

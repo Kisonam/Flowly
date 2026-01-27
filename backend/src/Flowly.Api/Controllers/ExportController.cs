@@ -1,4 +1,4 @@
-// backend/src/Flowly.Api/Controllers/ExportController.cs
+
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,17 +22,6 @@ public class ExportController : ControllerBase
         _logger = logger;
     }
 
-    // ============================================
-    // GET /api/export
-    // ============================================
-
-    /// <summary>
-    /// Export all user data as Markdown ZIP archive
-    /// </summary>
-    /// <returns>ZIP file containing all user data in Markdown format</returns>
-    /// <response code="200">Data exported successfully</response>
-    /// <response code="401">Unauthorized</response>
-    /// <response code="500">Internal server error</response>
     [HttpGet]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -63,17 +52,6 @@ public class ExportController : ControllerBase
         }
     }
 
-    // ============================================
-    // GET /api/export/json
-    // ============================================
-
-    /// <summary>
-    /// Export all user data as JSON file
-    /// </summary>
-    /// <returns>JSON file containing all user data</returns>
-    /// <response code="200">Data exported successfully</response>
-    /// <response code="401">Unauthorized</response>
-    /// <response code="500">Internal server error</response>
     [HttpGet("json")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -104,17 +82,6 @@ public class ExportController : ControllerBase
         }
     }
 
-    // ============================================
-    // GET /api/export/csv
-    // ============================================
-
-    /// <summary>
-    /// Export all user data as CSV ZIP archive
-    /// </summary>
-    /// <returns>ZIP file containing CSV files for each data type</returns>
-    /// <response code="200">Data exported successfully</response>
-    /// <response code="401">Unauthorized</response>
-    /// <response code="500">Internal server error</response>
     [HttpGet("csv")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -145,17 +112,6 @@ public class ExportController : ControllerBase
         }
     }
 
-    // ============================================
-    // GET /api/export/pdf
-    // ============================================
-
-    /// <summary>
-    /// Export all user data as PDF file
-    /// </summary>
-    /// <returns>PDF file containing user data summary</returns>
-    /// <response code="200">Data exported successfully</response>
-    /// <response code="401">Unauthorized</response>
-    /// <response code="500">Internal server error</response>
     [HttpGet("pdf")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

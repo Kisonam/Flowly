@@ -2,9 +2,6 @@ using Flowly.Domain.Enums;
 
 namespace Flowly.Application.DTOs.Dashboard;
 
-/// <summary>
-/// Lightweight task DTO for dashboard
-/// </summary>
 public class UpcomingTaskDto
 {
     public Guid Id { get; set; }

@@ -20,7 +20,6 @@ public class CreateLinkDtoValidator : AbstractValidator<CreateLinkDto>
         RuleFor(x => x.ToId)
             .NotEmpty().WithMessage("ToId is required");
 
-        // Validate that we're not linking an entity to itself
         RuleFor(x => x)
             .Must(dto => !(dto.FromType == dto.ToType && dto.FromId == dto.ToId))
             .WithMessage("Cannot create a link from an entity to itself");

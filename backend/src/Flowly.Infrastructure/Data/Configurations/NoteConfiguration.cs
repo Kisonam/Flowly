@@ -9,13 +9,11 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
 {
      public void Configure(EntityTypeBuilder<Note> builder)
     {
-        // Table name
+        
         builder.ToTable("Notes");
 
-        // Primary key
         builder.HasKey(n => n.Id);
 
-        // Properties
         builder.Property(n => n.Title)
             .IsRequired()
             .HasMaxLength(500);
@@ -35,18 +33,16 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.Property(n => n.UpdatedAt)
             .IsRequired();
 
-        // Indexes
         builder.HasIndex(n => n.UserId);
         builder.HasIndex(n => n.IsArchived);
         builder.HasIndex(n => n.CreatedAt);
-        builder.HasIndex(n => new { n.UserId, n.IsArchived }); // Composite for filtering
+        builder.HasIndex(n => new { n.UserId, n.IsArchived }); 
 
         builder.HasMany(n => n.MediaAssets)
             .WithOne(m => m.Note)
             .HasForeignKey(m => m.NoteId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        // Group relationship configured in NoteGroupConfiguration; ensure FK exists
         builder.HasOne(n => n.NoteGroup)
             .WithMany(g => g.Notes)
             .HasForeignKey(n => n.NoteGroupId)

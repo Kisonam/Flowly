@@ -21,9 +21,6 @@ public class CategoriesController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get all categories (user + system)
-    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -42,9 +39,6 @@ public class CategoriesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Get category by ID
-    /// </summary>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -68,9 +62,6 @@ public class CategoriesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Create a new category
-    /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -100,9 +91,6 @@ public class CategoriesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update an existing category
-    /// </summary>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -132,9 +120,6 @@ public class CategoriesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Delete a category
-    /// </summary>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

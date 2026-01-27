@@ -84,7 +84,6 @@ export class DataExportComponent {
           return;
         }
 
-        // Extract filename from Content-Disposition header or use default
         const contentDisposition = response.headers.get('Content-Disposition');
         let filename = `flowly-export-${format}.${extension}`;
 
@@ -95,7 +94,6 @@ export class DataExportComponent {
           }
         }
 
-        // Create download link
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;

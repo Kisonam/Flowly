@@ -9,8 +9,7 @@ public class Link {
     public LinkEntityType ToType { get; set; }
     public Guid ToId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    // Methods
- 
+
     public bool IsValid()
     {
         return !(FromType == ToType && FromId == ToId);

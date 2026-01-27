@@ -1,8 +1,4 @@
 namespace Flowly.Application.DTOs.Transactions;
-
-/// <summary>
-/// Budget information DTO
-/// </summary>
 public class BudgetDto
 {
     public Guid Id { get; set; }
@@ -19,10 +15,8 @@ public class BudgetDto
     public bool IsArchived { get; set; }
     public DateTime? ArchivedAt { get; set; }
 
-    // Related entities
     public CategoryDto? Category { get; set; }
 
-    // Computed properties
     public decimal RemainingAmount => Math.Max(0, Limit - CurrentSpent);
     public int ProgressPercentage => Limit > 0 ? Math.Min(100, (int)((CurrentSpent / Limit) * 100)) : 0;
     public bool IsExceeded => CurrentSpent > Limit;

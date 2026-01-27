@@ -4,22 +4,18 @@
     {{ title }}
   </h3>
 
-  <!-- Loading State -->
   <div *ngIf="isLoading()" class="loading-state">
     <div class="spinner"></div>
     <span>Loading tags...</span>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="error()" class="error-state">
     <span>❌ {{ error() }}</span>
     <button type="button" class="btn-retry" (click)="loadTags()">Retry</button>
   </div>
 
-  <!-- Tags List -->
   <div *ngIf="!isLoading() && !error()" class="tags-content">
 
-    <!-- Existing Tags -->
     <div class="tags-list" *ngIf="tags().length > 0">
       <div *ngFor="let tag of tags()" class="tag-item">
         <button type="button" class="tag-chip" [class.selected]="isSelected(tag.id)"
@@ -33,13 +29,11 @@
       </div>
     </div>
 
-    <!-- No Tags Message -->
     <div *ngIf="tags().length === 0" class="no-tags">
       <p class="no-tags-hint">No tags yet</p>
       <p class="no-tags-sub">Create your first tag below</p>
     </div>
 
-    <!-- Create Form (Inline) -->
     <div *ngIf="showCreateForm()" class="tag-form">
       <div class="form-header">
         <h4>New Tag</h4>
@@ -84,14 +78,12 @@
       </div>
     </div>
 
-    <!-- Create Button -->
     <button *ngIf="!showCreateForm()" type="button" class="btn-create-tag" (click)="openCreateForm()">
       <i class="bi bi-plus-lg"></i>
       Create New Tag
     </button>
   </div>
 
-  <!-- Edit Modal -->
   <div *ngIf="showEditForm()" class="modal-overlay" (click)="cancelEdit()">
     <div class="modal-content" appFocusTrap role="dialog" aria-labelledby="edit-tag-title" aria-modal="true"
       (click)="$event.stopPropagation()">

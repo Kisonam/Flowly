@@ -2,9 +2,6 @@ using Flowly.Domain.Enums;
 
 namespace Flowly.Application.DTOs.Tasks;
 
-/// <summary>
-/// DTO for updating an existing task
-/// </summary>
 public class UpdateTaskDto
 {
     public string Title { get; set; } = string.Empty;

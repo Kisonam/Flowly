@@ -1,4 +1,4 @@
-// backend/src/Flowly.Infrastructure/Data/Configurations/CategoryConfiguration.cs
+
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -17,8 +17,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .IsRequired()
             .HasMaxLength(100);
 
-        // Indexes
         builder.HasIndex(c => c.UserId);
-        builder.HasIndex(c => new { c.UserId, c.Name }); // Not unique - allow nulls
+        builder.HasIndex(c => new { c.UserId, c.Name }); 
     }
 }

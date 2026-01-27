@@ -1,6 +1,6 @@
 @if (stats) {
   <div class="activity-stats-grid">
-    <!-- Active Tasks Block -->
+    
     <div class="stat-block tasks clickable" (click)="navigateToTasks()">
       <div class="stat-icon">✅</div>
       <div class="stat-content">
@@ -9,7 +9,6 @@
       </div>
     </div>
 
-    <!-- Notes Block -->
     <div class="stat-block notes clickable" (click)="navigateToNotes()">
       <div class="stat-icon">📝</div>
       <div class="stat-content">
@@ -18,7 +17,6 @@
       </div>
     </div>
 
-    <!-- Transactions Block -->
     <div class="stat-block transactions clickable" (click)="navigateToTransactions()">
       <div class="stat-icon">💰</div>
       <div class="stat-content">
@@ -27,7 +25,6 @@
       </div>
     </div>
 
-    <!-- Productivity Block -->
     <div class="stat-block productivity" [style.--productivity-color]="getProductivityColor()">
       <div class="stat-icon">{{ getProductivityIcon() }}</div>
       <div class="stat-content">
@@ -36,7 +33,6 @@
         <span class="productivity-level">{{ stats.productivityLevel }}</span>
       </div>
 
-      <!-- Productivity Breakdown Tooltip -->
       <div class="productivity-breakdown">
         <div class="breakdown-item">
           <span class="breakdown-label">{{ 'DASHBOARD.ACTIVITY_STATS.BREAKDOWN.TASK_COMPLETION' | translate }}</span>

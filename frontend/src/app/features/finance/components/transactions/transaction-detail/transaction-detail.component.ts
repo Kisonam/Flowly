@@ -29,7 +29,6 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   loading = false;
   errorMessage = '';
 
-  // Links
   links: Link[] = [];
   linkedNotes: EntityPreview[] = [];
   linkedTasks: EntityPreview[] = [];
@@ -91,7 +90,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
     this.linkedTransactions = [];
 
     links.forEach(link => {
-      // Get the preview of the entity we're linked to (the "other" entity)
+      
       const preview = link.fromType === LinkEntityType.Transaction && link.fromId === this.transaction?.id
         ? link.toPreview
         : link.fromPreview;

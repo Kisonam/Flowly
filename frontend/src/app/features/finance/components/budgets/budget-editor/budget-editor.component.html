@@ -1,26 +1,22 @@
 <div class="budget-editor-container">
-  <!-- Header -->
+  
   <div class="editor-header">
     <h2>{{ (isEditMode ? 'FINANCE.BUDGETS.EDITOR.TITLE_EDIT' : 'FINANCE.BUDGETS.EDITOR.TITLE_CREATE') | translate }}
     </h2>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-state">
     <div class="spinner"></div>
     <p>{{ 'FINANCE.BUDGETS.EDITOR.LOADING' | translate }}</p>
   </div>
 
-  <!-- Error Message -->
   <div *ngIf="errorMessage" class="error-banner">
     <span class="error-icon">⚠️</span>
     <span>{{ errorMessage }}</span>
   </div>
 
-  <!-- Form -->
   <form *ngIf="!isLoading" [formGroup]="budgetForm" (ngSubmit)="onSubmit()" class="budget-form">
 
-    <!-- Basic Information Section -->
     <div class="form-section">
       <h3 class="section-title">{{ 'FINANCE.BUDGETS.EDITOR.SECTION_BASIC' | translate }}</h3>
 
@@ -52,7 +48,6 @@
       </div>
     </div>
 
-    <!-- Budget Details Section -->
     <div class="form-section">
       <h3 class="section-title">{{ 'FINANCE.BUDGETS.EDITOR.SECTION_DETAILS' | translate }}</h3>
 
@@ -106,7 +101,6 @@
       </div>
     </div>
 
-    <!-- Period Section -->
     <div class="form-section">
       <h3 class="section-title">{{ 'FINANCE.BUDGETS.EDITOR.SECTION_PERIOD' | translate }}</h3>
 
@@ -140,7 +134,6 @@
       </div>
     </div>
 
-    <!-- Form Actions -->
     <div class="form-actions">
       <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSaving">
         {{ 'FINANCE.BUDGETS.EDITOR.CANCEL' | translate }}

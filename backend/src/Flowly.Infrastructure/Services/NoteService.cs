@@ -30,7 +30,6 @@ public class NoteService : INoteService
             .Where(n => n.UserId == userId)
             .AsQueryable();
 
-        // Apply filters
         if (!string.IsNullOrWhiteSpace(filter.Search))
         {
             var searchTerm = filter.Search.ToLower();
@@ -48,17 +47,14 @@ public class NoteService : INoteService
             query = query.Where(n => n.IsArchived == filter.IsArchived.Value);
         }
 
-        // Get total count
         var totalCount = await query.CountAsync();
 
-        // Apply pagination
         var notes = await query
             .OrderByDescending(n => n.UpdatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ToListAsync();
 
-        // Map to DTOs
         var noteDtos = notes.Select(MapToNoteDto).ToList();
 
         return new PagedResult<NoteDto>
@@ -87,7 +83,7 @@ public class NoteService : INoteService
 
     public async Task<NoteDto> CreateAsync(Guid userId, CreateNoteDto dto)
     {
-        // Validate input
+        
         if (string.IsNullOrWhiteSpace(dto.Title))
         {
             throw new ArgumentException("Title is required", nameof(dto.Title));
@@ -98,7 +94,6 @@ public class NoteService : INoteService
             throw new ArgumentException("Content is required", nameof(dto.Markdown));
         }
 
-        // Create note entity
         var note = new Note
         {
             Id = Guid.NewGuid(),
@@ -112,7 +107,6 @@ public class NoteService : INoteService
 
         _dbContext.Notes.Add(note);
 
-        // Add tags if provided
         if (dto.TagIds != null && dto.TagIds.Any())
         {
             await AddTagsToNoteAsync(note.Id, userId, dto.TagIds);
@@ -120,7 +114,6 @@ public class NoteService : INoteService
 
         await _dbContext.SaveChangesAsync();
 
-        // Reload with tags
         return await GetByIdAsync(userId, note.Id);
     }
 
@@ -135,7 +128,6 @@ public class NoteService : INoteService
             throw new InvalidOperationException("Note not found");
         }
 
-        // Update fields if provided
         var hasChanges = false;
 
         if (!string.IsNullOrWhiteSpace(dto.Title) && dto.Title != note.Title)
@@ -147,7 +139,7 @@ public class NoteService : INoteService
         if (!string.IsNullOrWhiteSpace(dto.Markdown) && dto.Markdown != note.Markdown)
         {
             note.Markdown = dto.Markdown;
-            note.HtmlCache = null; // Invalidate cache
+            note.HtmlCache = null; 
             hasChanges = true;
         }
 
@@ -156,21 +148,18 @@ public class NoteService : INoteService
             note.UpdatedAt = DateTime.UtcNow;
         }
 
-        // Update group if provided (including null to ungroup)
         if (dto.GroupId.HasValue)
         {
             note.NoteGroupId = dto.GroupId.Value == Guid.Empty ? null : dto.GroupId;
             note.UpdatedAt = DateTime.UtcNow;
         }
 
-        // Update tags if provided
         if (dto.TagIds != null)
         {
-            // Remove existing tags
+            
             var existingTags = note.NoteTags.ToList();
             _dbContext.NoteTags.RemoveRange(existingTags);
 
-            // Add new tags
             if (dto.TagIds.Any())
             {
                 await AddTagsToNoteAsync(noteId, userId, dto.TagIds);
@@ -189,8 +178,7 @@ public class NoteService : INoteService
 
     public async Task RestoreAsync(Guid userId, Guid noteId)
     {
-        // For direct restore by entity ID, we need to find the archive entry
-        // This is a simplified version - in production you might want to handle this differently
+
         var note = await _dbContext.Notes
             .FirstOrDefaultAsync(n => n.Id == noteId && n.UserId == userId);
 
@@ -205,7 +193,7 @@ public class NoteService : INoteService
 
     public async Task AddTagAsync(Guid userId, Guid noteId, Guid tagId)
     {
-        // Verify note belongs to user
+        
         var note = await _dbContext.Notes
             .FirstOrDefaultAsync(n => n.Id == noteId && n.UserId == userId);
 
@@ -214,7 +202,6 @@ public class NoteService : INoteService
             throw new InvalidOperationException("Note not found");
         }
 
-        // Verify tag belongs to user
         var tag = await _dbContext.Tags
             .FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == userId);
 
@@ -223,16 +210,14 @@ public class NoteService : INoteService
             throw new InvalidOperationException("Tag not found");
         }
 
-        // Check if tag already added
         var existingNoteTag = await _dbContext.NoteTags
             .FirstOrDefaultAsync(nt => nt.NoteId == noteId && nt.TagId == tagId);
 
         if (existingNoteTag != null)
         {
-            return; // Already exists, no need to add
+            return; 
         }
 
-        // Add tag
         var noteTag = new NoteTag
         {
             NoteId = noteId,
@@ -240,8 +225,7 @@ public class NoteService : INoteService
         };
 
         _dbContext.NoteTags.Add(noteTag);
-        
-        // Update note timestamp
+
         note.UpdatedAt = DateTime.UtcNow;
         
         await _dbContext.SaveChangesAsync();
@@ -249,7 +233,7 @@ public class NoteService : INoteService
 
     public async Task RemoveTagAsync(Guid userId, Guid noteId, Guid tagId)
     {
-        // Verify note belongs to user
+        
         var note = await _dbContext.Notes
             .FirstOrDefaultAsync(n => n.Id == noteId && n.UserId == userId);
 
@@ -258,15 +242,13 @@ public class NoteService : INoteService
             throw new InvalidOperationException("Note not found");
         }
 
-        // Find and remove note-tag relation
         var noteTag = await _dbContext.NoteTags
             .FirstOrDefaultAsync(nt => nt.NoteId == noteId && nt.TagId == tagId);
 
         if (noteTag != null)
         {
             _dbContext.NoteTags.Remove(noteTag);
-            
-            // Update note timestamp
+
             note.UpdatedAt = DateTime.UtcNow;
             
             await _dbContext.SaveChangesAsync();
@@ -275,7 +257,7 @@ public class NoteService : INoteService
 
     public async Task<string> UploadMediaAsync(Guid userId, Guid noteId, Stream fileStream, string fileName, string contentType)
     {
-        // Verify note belongs to user
+        
         var note = await _dbContext.Notes
             .FirstOrDefaultAsync(n => n.Id == noteId && n.UserId == userId);
 
@@ -284,7 +266,6 @@ public class NoteService : INoteService
             throw new InvalidOperationException("Note not found");
         }
 
-        // Validate file type
         var allowedTypes = new[] 
         { 
             "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp",
@@ -297,31 +278,25 @@ public class NoteService : INoteService
             throw new InvalidOperationException("Invalid file type. Only images, PDFs, and videos are allowed");
         }
 
-        // Validate file size (max 50MB)
         if (fileStream.Length > 50 * 1024 * 1024)
         {
             throw new InvalidOperationException("File size exceeds 50MB limit");
         }
 
-        // Generate unique filename
         var extension = Path.GetExtension(fileName);
         var uniqueFileName = $"{Guid.NewGuid()}{extension}";
-        
-        // Use /app/uploads directory (configured in docker-compose)
+
         var uploadsBasePath = _configuration["FileStorage:Path"] ?? "/app/uploads";
         var uploadPath = Path.Combine(uploadsBasePath, "notes", userId.ToString(), noteId.ToString());
 
-        // Create directory if not exists
         Directory.CreateDirectory(uploadPath);
 
-        // Save file
         var filePath = Path.Combine(uploadPath, uniqueFileName);
         using (var fileStreamOutput = new FileStream(filePath, FileMode.Create))
         {
             await fileStream.CopyToAsync(fileStreamOutput);
         }
 
-        // Create media asset entity
         var fileUrl = $"/uploads/notes/{userId}/{noteId}/{uniqueFileName}";
         var mediaAsset = new MediaAsset
         {
@@ -336,8 +311,7 @@ public class NoteService : INoteService
         };
 
         _dbContext.MediaAssets.Add(mediaAsset);
-        
-        // Update note timestamp
+
         note.UpdatedAt = DateTime.UtcNow;
         
         await _dbContext.SaveChangesAsync();
@@ -357,7 +331,6 @@ public class NoteService : INoteService
             throw new InvalidOperationException("Note not found");
         }
 
-        // Build markdown content with metadata
         var markdown = $"# {note.Title}\n\n";
         
         if (note.NoteTags.Any())
@@ -374,10 +347,9 @@ public class NoteService : INoteService
         return markdown;
     }
 
-    // Private helper methods
     private async Task AddTagsToNoteAsync(Guid noteId, Guid userId, List<Guid> tagIds)
     {
-        // Verify all tags belong to user
+        
         var tags = await _dbContext.Tags
             .Where(t => tagIds.Contains(t.Id) && t.UserId == userId)
             .ToListAsync();
@@ -387,7 +359,6 @@ public class NoteService : INoteService
             throw new InvalidOperationException("One or more tags not found");
         }
 
-        // Add note-tag relations
         var noteTags = tagIds.Select(tagId => new NoteTag
         {
             NoteId = noteId,

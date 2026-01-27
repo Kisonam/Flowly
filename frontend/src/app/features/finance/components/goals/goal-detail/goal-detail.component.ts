@@ -84,10 +84,10 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
 
   getProgressColor(): string {
     const percentage = this.getProgressPercentage();
-    if (percentage >= 100) return '#10b981'; // Green when complete
-    if (percentage >= 75) return '#8b5cf6'; // Purple when close
-    if (percentage >= 50) return '#3b82f6'; // Blue when halfway
-    return '#6b7280'; // Gray when starting
+    if (percentage >= 100) return '#10b981'; 
+    if (percentage >= 75) return '#8b5cf6'; 
+    if (percentage >= 50) return '#3b82f6'; 
+    return '#6b7280'; 
   }
 
   getRemainingAmount(): number {

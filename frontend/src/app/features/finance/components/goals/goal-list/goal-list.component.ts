@@ -27,18 +27,16 @@ export class GoalListComponent implements OnInit, OnDestroy {
   errorMessage = '';
   empty = false;
 
-  // Available currencies (loaded from backend)
   currencies: Currency[] = [];
   loadingCurrencies = false;
 
-  // Filter form
   filterForm: FormGroup;
 
   constructor() {
     this.filterForm = this.fb.group({
-      search: [''], // Search by title
-      status: ['active'], // 'all', 'active', 'completed', 'archived'
-      currencyCode: [''] // Filter by currency
+      search: [''], 
+      status: ['active'], 
+      currencyCode: [''] 
     });
   }
 
@@ -63,7 +61,7 @@ export class GoalListComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Failed to load currencies:', err);
         this.loadingCurrencies = false;
-        // Fallback to default currencies
+        
         this.currencies = [
           { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
           { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -114,18 +112,18 @@ export class GoalListComponent implements OnInit, OnDestroy {
     let isArchived: boolean | undefined = undefined;
 
     if (formValue.status === 'active') {
-      // Show only non-archived, non-completed goals
+      
       isCompleted = false;
       isArchived = false;
     } else if (formValue.status === 'completed') {
-      // Show only completed goals
+      
       isCompleted = true;
       isArchived = false;
     } else if (formValue.status === 'archived') {
-      // Show only archived goals
+      
       isArchived = true;
     } else {
-      // 'all' - show everything
+      
       isCompleted = undefined;
       isArchived = undefined;
     }
@@ -140,7 +138,6 @@ export class GoalListComponent implements OnInit, OnDestroy {
     return filter;
   }
 
-  // Client-side filtering for search
   get filteredGoals(): FinancialGoal[] {
     const formValue = this.filterForm.value;
     const searchTerm = formValue.search?.toLowerCase().trim();
@@ -155,7 +152,6 @@ export class GoalListComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Deadline countdown calculation
   getDeadlineCountdown(deadline: string | Date): string {
     const now = new Date();
     const target = new Date(deadline);
@@ -163,26 +159,16 @@ export class GoalListComponent implements OnInit, OnDestroy {
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays < 0) {
-      return this.translate.instant('FINANCE.BUDGETS.CARD.EXPIRED'); // Reusing expired or create new key? Let's use OVERDUE from GOALS
-      // Actually I added OVERDUE in GOALS.CARD.OVERDUE but that's just "Overdue".
-      // The original was "Overdue by X days".
-      // I should probably add a key for "Overdue by".
-      // For now I'll use a simple string concatenation or maybe I should have added a key.
-      // Let's check keys. I have 'FINANCE.GOALS.CARD.OVERDUE'.
-      // I'll use 'FINANCE.GOALS.CARD.OVERDUE' + ' ' + Math.abs(diffDays) + ' ' + 'days'.
-      // Better: I'll just return the days and handle "Overdue" in template? No, this returns string.
-      // I'll use a new key or reuse existing if possible.
-      // I'll stick to English structure for now and assume I can add keys later if needed.
-      // Wait, I can't easily add keys now without going back.
-      // I'll use 'FINANCE.GOALS.CARD.OVERDUE' and append days.
+      return this.translate.instant('FINANCE.BUDGETS.CARD.EXPIRED'); 
+
       return `${this.translate.instant('FINANCE.GOALS.CARD.OVERDUE')} (${Math.abs(diffDays)}d)`;
     } else if (diffDays === 0) {
       return this.translate.instant('FINANCE.BUDGETS.CARD.TODAY');
     } else if (diffDays === 1) {
       return this.translate.instant('FINANCE.BUDGETS.CARD.ONE_DAY_LEFT');
     } else if (diffDays < 7) {
-      return `${diffDays} ${this.translate.instant('FINANCE.BUDGETS.CARD.DAYS_REMAINING').replace('days left', 'd')}`; // Hacky.
-      // Let's just return number + "d".
+      return `${diffDays} ${this.translate.instant('FINANCE.BUDGETS.CARD.DAYS_REMAINING').replace('days left', 'd')}`; 
+      
       return `${diffDays} d`;
     } else if (diffDays < 30) {
       const weeks = Math.floor(diffDays / 7);

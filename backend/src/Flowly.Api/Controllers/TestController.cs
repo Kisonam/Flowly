@@ -1,4 +1,4 @@
-// backend/src/Flowly.Api/Controllers/TestController.cs
+
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ public class TestController : ControllerBase
         {
             accessToken,
             refreshToken,
-            expiresIn = 900 // 15 minutes in seconds
+            expiresIn = 900 
         });
     }
 

@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// DTO for updating an existing category
-/// </summary>
 public class UpdateCategoryDto
 {
     public string Name { get; set; } = string.Empty;

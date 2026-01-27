@@ -1,8 +1,5 @@
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// Financial goal information DTO
-/// </summary>
 public class FinancialGoalDto
 {
     public Guid Id { get; set; }
@@ -17,7 +14,6 @@ public class FinancialGoalDto
     public DateTime UpdatedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
 
-    // Computed properties
     public int ProgressPercentage => TargetAmount > 0 ? Math.Min(100, (int)((CurrentAmount / TargetAmount) * 100)) : 0;
     public decimal RemainingAmount => Math.Max(0, TargetAmount - CurrentAmount);
     public bool IsCompleted => CurrentAmount >= TargetAmount;

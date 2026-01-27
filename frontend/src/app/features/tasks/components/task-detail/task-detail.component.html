@@ -1,5 +1,5 @@
 <div class="container" *ngIf="task; else loadingTpl">
-  <!-- Header -->
+  
   <header class="page-header">
     <div class="header-left">
       <a routerLink="/tasks" class="btn-back">
@@ -16,7 +16,7 @@
   </header>
 
   <section class="detail-content">
-    <!-- Main Info Card -->
+    
     <div class="detail-card main-card">
       <div class="task-header">
         <h2 class="task-title">{{ task.title }}</h2>
@@ -31,7 +31,7 @@
       </div>
 
       <div class="task-properties">
-        <!-- Due Date -->
+        
         <div class="property-card" *ngIf="task.dueDate">
           <div class="property-icon calendar-icon">
             <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
@@ -46,7 +46,6 @@
           </div>
         </div>
 
-        <!-- Theme -->
         <div class="property-card" *ngIf="task.theme">
           <div class="property-icon theme-icon">
             <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
@@ -64,7 +63,6 @@
         </div>
       </div>
 
-      <!-- Recurrence Info -->
       <div class="recurrence-section" *ngIf="task.recurrence">
         <div class="recurrence-header">
           <div class="recurrence-icon">
@@ -94,7 +92,6 @@
         </div>
       </div>
 
-      <!-- Description -->
       <div class="description-section" *ngIf="task.description">
         <div class="section-header">
           <div class="section-icon">
@@ -107,7 +104,6 @@
         <div class="markdown-content" [innerHTML]="renderMarkdown(task.description)"></div>
       </div>
 
-      <!-- Subtasks -->
       <div class="info-section">
         <h3>{{ 'TASKS.DETAIL.SUBTASKS' | translate:{count: task.subtasks.length} }}</h3>
 
@@ -124,7 +120,6 @@
         </div>
       </div>
 
-      <!-- Tags -->
       <div class="tags-section" *ngIf="task.tags && task.tags.length > 0">
         <div class="section-header">
           <div class="section-icon">
@@ -144,7 +139,6 @@
       </div>
     </div>
 
-    <!-- Linked Items -->
     <div class="detail-card linked-card"
       *ngIf="linkedNotes.length > 0 || linkedTasks.length > 0 || linkedTransactions.length > 0">
       <h3>
@@ -153,7 +147,7 @@
       </h3>
 
       <div class="linked-sections">
-        <!-- Linked Notes -->
+        
         <div class="linked-section" *ngIf="linkedNotes.length > 0">
           <div class="section-header">
             <i class="bi bi-journal-text"></i>
@@ -176,7 +170,6 @@
           </div>
         </div>
 
-        <!-- Linked Tasks -->
         <div class="linked-section" *ngIf="linkedTasks.length > 0">
           <div class="section-header">
             <i class="bi bi-check-circle"></i>
@@ -199,7 +192,6 @@
           </div>
         </div>
 
-        <!-- Linked Transactions -->
         <div class="linked-section" *ngIf="linkedTransactions.length > 0">
           <div class="section-header">
             <i class="bi bi-currency-dollar"></i>
@@ -228,7 +220,7 @@
 
   <footer>
     <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
-    <!-- Footer Info -->
+    
     <div class="detail-footer">
       <p>{{ 'TASKS.DETAIL.LAST_UPDATED' | translate:{date: formatDate(task.updatedAt)} }}</p>
     </div>

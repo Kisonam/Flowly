@@ -2,9 +2,6 @@ using Flowly.Domain.Enums;
 
 namespace Flowly.Application.DTOs.Transactions;
 
-/// <summary>
-/// DTO for creating a new transaction
-/// </summary>
 public class CreateTransactionDto
 {
     public string Title { get; set; } = string.Empty;
