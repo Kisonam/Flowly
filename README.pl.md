@@ -34,12 +34,9 @@ Przed rozpoczęciem upewnij się, że masz zainstalowane następujące narzędzi
 
 Jest to najprostszy sposób uruchomienia projektu. Docker automatycznie skonfiguruje wszystkie usługi.
 
-#### Krok 1: Sklonuj repozytorium
+#### Krok 1: Rozpakuj projekt
 
-```bash
-git clone <url-repozytorium>
-cd Flowly
-```
+Rozpakuj projekt na swoje urządzenie
 
 #### Krok 2: Uruchom Docker Desktop
 
@@ -86,12 +83,8 @@ docker-compose -f docker-compose.prod.yml down -v
 
 ### Opcja 2: Uruchomienie Lokalne (Rozwój)
 
-#### Krok 1: Sklonuj repozytorium
-
-```bash
-git clone <url-repozytorium>
-cd Flowly
-```
+#### Krok 1: Rozpakuj projekt
+Rozpakuj projekt na swoje urządzenie.
 
 #### Krok 2: Skonfiguruj bazę danych PostgreSQL
 

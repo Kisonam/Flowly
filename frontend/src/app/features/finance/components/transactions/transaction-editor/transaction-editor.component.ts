@@ -45,22 +45,26 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   saving = false;
   error = '';
 
+  // Expose LinkEntityType to template
   LinkEntityType = LinkEntityType;
 
+  // Data
   categories: Category[] = [];
-  budgets: any[] = []; 
-  filteredBudgets: any[] = []; 
-  goals: any[] = []; 
-  filteredGoals: any[] = []; 
+  budgets: any[] = []; // All budgets list
+  filteredBudgets: any[] = []; // Budgets filtered by currency and type
+  goals: any[] = []; // All goals list
+  filteredGoals: any[] = []; // Goals filtered by currency
   tags: { id: string; name: string; color?: string }[] = [];
   selectedTagIds: string[] = [];
   currencies: { code: string; name: string; symbol: string }[] = [];
 
+  // Options
   readonly transactionTypes: { value: TransactionType; label: string; icon: string }[] = [
     { value: 'Income', label: 'FINANCE.DASHBOARD.INCOME', icon: '↑' },
     { value: 'Expense', label: 'FINANCE.DASHBOARD.EXPENSE', icon: '↓' }
   ];
 
+  // Form
   form: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(200)]],
     description: ['', Validators.maxLength(1000)],
@@ -70,7 +74,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     categoryId: [''],
     budgetId: [''],
     goalId: [''],
-    currencyCode: ['', Validators.required] 
+    currencyCode: ['', Validators.required] // Will be set after currencies load
   });
 
   ngOnInit(): void {
@@ -85,7 +89,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   }
 
   loadAuxData(): void {
-    
+    // Load currencies
     this.financeService.getCurrencies()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -93,6 +97,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
           this.currencies = currencies;
           console.log('💱 Currencies loaded:', currencies);
 
+          // Set default currency if not already set and currencies are available
           if (!this.form.get('currencyCode')?.value && currencies.length > 0) {
             const defaultCurrency = currencies.find(c => c.code === 'UAH') || currencies[0];
             this.form.patchValue({ currencyCode: defaultCurrency.code });
@@ -103,6 +108,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Load categories
     this.financeService.getCategories()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -115,13 +121,14 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Load budgets (active only)
     this.financeService.getBudgets({ isArchived: false })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (budgets) => {
           this.budgets = budgets;
           console.log('💼 Budgets loaded:', budgets);
-          
+          // Filter budgets after loading
           this.filterBudgets();
         },
         error: (err) => {
@@ -129,13 +136,14 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Load goals (active, non-archived only)
     this.financeService.getGoals({ isArchived: false })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (goals) => {
           this.goals = goals;
           console.log('🎯 Goals loaded:', goals);
-          
+          // Filter goals after loading
           this.filterGoals();
         },
         error: (err) => {
@@ -143,6 +151,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Load tags
     this.tagsService.getTags()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -157,12 +166,13 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   }
 
   setupFormListeners(): void {
-    
+    // Set today's date as default if creating new transaction
     if (!this.isEdit) {
       const today = new Date().toISOString().split('T')[0];
       this.form.patchValue({ date: today });
     }
 
+    // Filter budgets and goals when currency or type changes
     this.form.get('currencyCode')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -181,10 +191,15 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
   filterBudgets(): void {
     const currencyCode = this.form.get('currencyCode')?.value;
 
+    // Both Income and Expense transactions can be linked to budgets
+    // Income adds to budget, Expense subtracts from budget
+
+    // Filter budgets by currency and exclude expired budgets
     this.filteredBudgets = this.budgets.filter(
       budget => budget.currencyCode === currencyCode && budget.daysRemaining >= 0
     );
 
+    // Clear budget selection if current budget doesn't match currency or is expired
     const currentBudgetId = this.form.get('budgetId')?.value;
     if (currentBudgetId) {
       const budgetStillValid = this.filteredBudgets.some(b => b.id === currentBudgetId);
@@ -198,16 +213,22 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     const currencyCode = this.form.get('currencyCode')?.value;
     const type = this.form.get('type')?.value;
 
+    // Both Income and Expense transactions can be linked to goals
+    // Income adds to goal (contributes), Expense withdraws from goal
+
+    // Filter goals by currency
     let goals = this.goals.filter(
       goal => goal.currencyCode === currencyCode
     );
 
+    // For Income transactions, exclude completed goals
     if (type === 'Income') {
       goals = goals.filter(goal => !goal.isCompleted);
     }
 
     this.filteredGoals = goals;
 
+    // Clear goal selection if current goal doesn't match currency or is completed
     const currentGoalId = this.form.get('goalId')?.value;
     if (currentGoalId) {
       const goalStillValid = this.filteredGoals.some(g => g.id === currentGoalId);
@@ -262,7 +283,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error parsing transaction date:', transaction.date, error);
-      
+      // Default to today if date is invalid
       dateStr = new Date().toISOString().split('T')[0];
     }
 
@@ -281,6 +302,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     this.selectedTagIds = (transaction.tags || []).map(t => t.id);
   }
 
+  // Tag Management
   onTagsChanged(tagIds: string[]): void {
     this.selectedTagIds = tagIds;
   }
@@ -299,6 +321,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Form Actions
   onSubmit(): void {
     if (this.form.invalid) {
       this.markFormGroupTouched(this.form);
@@ -306,6 +329,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Validate goal funds before submitting
     const formValue = this.form.value;
     if (formValue.type === 'Expense' && formValue.goalId) {
       const goalId = formValue.goalId.trim();
@@ -344,7 +368,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       next: (transaction) => {
         console.log('✅ Transaction saved:', transaction);
         this.saving = false;
-        
+        // Navigate to transactions list
         this.router.navigate(['/finance/transactions']);
       },
       error: (err) => {
@@ -360,6 +384,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     const budgetId = formValue.budgetId?.trim();
     const goalId = formValue.goalId?.trim();
 
+    // Ensure amount is always positive
     const amount = Math.abs(Number(formValue.amount));
 
     console.log('📝 Building CreateDTO:', {
@@ -389,6 +414,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     const budgetId = formValue.budgetId?.trim();
     const goalId = formValue.goalId?.trim();
 
+    // Ensure amount is always positive
     const amount = Math.abs(Number(formValue.amount));
 
     console.log('📝 Building UpdateDTO:', {
@@ -441,6 +467,7 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Helpers
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
@@ -510,6 +537,9 @@ export class TransactionEditorComponent implements OnInit, OnDestroy {
     return availableAmount >= Math.abs(Number(amount));
   }
 
+  // =====================
+  // Link handlers
+  // =====================
   onLinkCreated(link: Link): void {
     console.log('✅ Link created:', link);
   }
